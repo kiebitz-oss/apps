@@ -1,0 +1,6 @@
+{
+    "commitSHA" : "COMMIT_SHA",
+    "apiUrl" : "https://api.kiebitz.eu",
+    "termsUrl" : "https://kiebitz.eu/demo/resources/terms",
+    "privacyUrl" : "https://kiebitz.eu/demo/resources/privacy"
+}

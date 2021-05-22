@@ -1,0 +1,96 @@
+_t:
+  path: apps/user/setup/translations.yml
+store-secrets:
+  bookmark-modal:
+    text:
+      de: Erstellen Sie über Ihr Browser-Menü ein Lesezeichen für die aktuelle Seite. Sie können dieses Lesezeichen dann öffnen, um Ihre geheimen Daten wiederherzustellen.
+    title:
+      de: Lesezeichen erstellen
+  local:
+    title:
+      de: Lokal
+    text:
+      de: Ihre Daten werden lokal als Datei gespeichert. Verwahren Sie diese Datei sorgsam auf, Sie benötigen se gegebenenfalls für die Kontaktnachverfolgung!
+  online:
+    title:
+      de: Online
+    text:
+      de: Ihre Daten werden verschlüsselt online gespeichert. Schreiben Sie die folgenden zwei Codes sorgfältig auf oder wählen Sie eine Speicheroption unten. Sie benötigen sie gegebenenfalls für die Kontaktnachverfolgung!
+  bookmark:
+    de: Als Bookmark speichern
+  copy:
+    de: Kopieren
+  download:
+    de: Datei speichern
+  text:
+    de: Bitte wählen Sie, wie Sie Ihre geheimen Daten aufbewahren wollen (Sie können mehrere Optionen nutzen).
+verify:
+  text:
+    de: Bitte prüfen Sie nochmals Ihre Daten, bevor Sie die Einrichtung abschließen.
+finalize:
+  text:
+    de: Bitte warten, Initialisierung wird abgeschlossen...
+wizard:
+  leave:
+    de: Zur Übersicht
+  finish:
+    de: Fertigstellen
+  hi:
+    de: |
+      Willkommen!
+
+      Dieser Assistent führt Sie durch den Prozess der Erstellung von QR-Codes
+      für die Besuchsdokumentation. Alle personenbezogenen Daten werden zur
+      Weiterverarbeitung verschlüsselt. Sie können Ihre Angaben im letzten
+      Schritt nochmals kontrollieren bevor sie gespeichert werden. 
+  continue:
+    de: Weiter
+  steps:
+    hi:
+      de: Hallo!
+    enter-contact-data:
+      de: Kontaktdaten eingeben
+    store-secrets:
+      de: Geheime Daten sichern
+    save-contact-data:
+      de: Kontakdaten angeben
+    finalize:
+      de: Fertigstellung
+    verify:
+      de: Daten prüfen
+contact-data:
+  not-given:
+    de: (keine Angabe)
+  change:
+    de: Anpassen
+  save-and-continue:
+    de: Weiter
+  optional:
+    title:
+      de: Optionale Angaben
+    text:
+      de: Die folgenden Angaben sind optional.
+  name:
+    de: Vollständiger Name
+  invalid-name:
+    de: Bitte geben Sie Ihren vollständigen Namen an.
+  phone:
+    de: Telefonnummer
+  invalid-phone:
+    de: Bitte geben Sie eine gültige Telefonnummer an.
+  email:
+    de: E-Mail Adresse
+  invalid-email:
+    de: Bitte geben Sie eine gültige E-Mail Adresse an.
+  zip-code:
+    de: Postleitzahl
+  invalid-zip-code:
+    de: Bitte geben Sie eine gültige Postleitzahl an.
+  city:
+    de: Ort
+  invalid-city:
+    de: Bitte geben Sie einen gültigen Ortsnamen an.
+  street:
+    de: Straße & Hausnummer
+  invalid-street:
+    de: Bitte geben Sie einen gültigen Straßennamen (inkl. Hausnummer) an.

@@ -1,0 +1,7 @@
+_t:
+  path: main/translations.yml
+redirecting:
+  de: Bitte warten, Sie werden umgeleitet...
+apps:
+  _ignore_unused: true
+  en: Apps

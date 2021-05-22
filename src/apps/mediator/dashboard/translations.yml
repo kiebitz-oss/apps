@@ -1,0 +1,21 @@
+providers:
+  title:
+    de: Anbieter
+  name:
+    de: Name
+  address:
+    de: Adresse
+  menu:
+    de: Menü
+  edit:
+    de: Anbieter editieren
+  confirm:
+    de: Anbieter freischalten
+  confirmText:
+    de: Wollen Sie den Anbieter wirklich freischalten?
+settings:
+  title:
+    de: Einstellungen
+queues:
+  title:
+    de: Warteschlangen  

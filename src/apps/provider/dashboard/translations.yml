@@ -1,0 +1,8 @@
+appointments:
+  title:
+    de: Termine
+settings:
+  title:
+    de: Einstellungen
+invalidKey:
+  de: Ihr Signaturschlüssel ist ungültig. Bitte prüfen Sie die Einstellungen!

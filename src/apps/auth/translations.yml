@@ -1,0 +1,7 @@
+_t:
+  path: apps/hd/translations.yml
+login:
+  en: Login
+title:
+  _ignore_unused: true
+  en: Authentication App

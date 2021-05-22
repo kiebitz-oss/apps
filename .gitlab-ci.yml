@@ -1,0 +1,32 @@
+image: ubuntu:20.04
+
+stages:
+  - deploy
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive # required for submodules
+  DEBIAN_FRONTEND: noninteractive
+
+cache: 
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules
+    policy: pull-push
+
+deploy-apps:
+  only:
+    - /^v(\d+)\.(\d+)\.(\d+)(\.[a-z]+)?$/
+  stage: deploy
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y curl locales rsync nodejs npm openssh-client expect
+    - npm install -g n
+    - n 15
+    - echo "en_US UTF-8" > /etc/locale.gen
+    - locale-gen en_US.UTF-8
+    - export LANG=en_US.UTF-8
+    - export LANGUAGE=en_US:en
+    - export LC_ALL=en_US.UTF-8
+  script:
+    - npm run-script lint
+    - npm run-script lint-scss
