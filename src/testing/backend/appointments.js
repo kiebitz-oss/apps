@@ -39,8 +39,8 @@ export default class AppointmentsBackend {
         this.initialize();
     }
 
-    async priorityToken(queue, n) {
-        return await e(deriveToken(queue.id, this.secret, n));
+    async priorityToken(queueID, n) {
+        return await e(deriveToken(queueID, this.secret, n));
     }
 
     async initialized() {
@@ -108,7 +108,23 @@ export default class AppointmentsBackend {
             this.store.set('rootSigningKeyPair', rootSigningKeyPair);
         }
 
+        let positions = this.store.get('queuePositions');
+
+        if (positions === null) {
+            positions = {};
+            this.store.set('queuePositions', positions);
+        }
+
+        this.queuePositions = positions;
+
         this.rootSigningKeyPair = rootSigningKeyPair;
+
+        let tokens = this.store.get('tokens');
+        if (tokens === null) {
+            tokens = {};
+            this.store.set('tokens', tokens);
+        }
+        this.tokens = tokens;
 
         // the key pair for encrypting queue data
         let queueKeyEncryptionKeyPair = this.store.get(
@@ -124,6 +140,16 @@ export default class AppointmentsBackend {
         }
 
         this.queueKeyEncryptionKeyPair = queueKeyEncryptionKeyPair;
+
+        // the key pair for encrypting queue data
+        let tokenSigningKeyPair = this.store.get('tokenSigningKeyPair');
+
+        if (tokenSigningKeyPair === null) {
+            tokenSigningKeyPair = await e(generateECDSAKeyPair());
+            this.store.set('tokenSigningKeyPair', tokenSigningKeyPair);
+        }
+
+        this.tokenSigningKeyPair = tokenSigningKeyPair;
 
         // the key pair for encrypting provider data
         let providerDataEncryptionKeyPair = this.store.get(
@@ -227,62 +253,12 @@ export default class AppointmentsBackend {
             providerData: this.providerDataEncryptionKeyPair.publicKey,
             // root signing key (also provided via app)
             rootKey: this.rootSigningKeyPair.publicKey,
+            // the token signing key (used by providers to verify a token hash)
+            tokenKey: this.tokenSigningKeyPair.publicKey,
         };
     }
 
-    // user endpoints
-
-    // get a token for a given queue
-    getToken(hash, encryptedData, queueID) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // retract a token from a given queue
-    retractToken(token) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // provider and user endpoints
-
-    // get (encrypted) messages stored under a given ID
-    getMessages(id) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // delete messages stored under a given ID
-    deleteMessages(id) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // post a message to a given ID
-    postMessage(id, encryptedData) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // provider-only endpoints
-
-    async storeProviderData(id, signedData, code) {
-        const result = await this.storeData(id, signedData);
-        if (!result) return;
-        let providerDataList = this.store.get('providers::list');
-        if (providerDataList === null) providerDataList = [];
-        for (const pid of providerDataList) {
-            if (id === pid) return;
-        }
-        providerDataList.push(id);
-        // we update the provider data list
-        this.store.set('providers::list', providerDataList);
-    }
+    // common endpoints
 
     async deleteDate(id) {
         return this.store.remove(`data::${id}`);
@@ -306,6 +282,97 @@ export default class AppointmentsBackend {
         }
         this.store.set(`data::${id}`, signedData);
         return true;
+    }
+
+    // user endpoints
+
+    // get a token for a given queue
+    async getToken(hash, encryptedData, queueID, signedTokenData) {
+        let queueData;
+        if (signedTokenData !== undefined) {
+            // to do: validate signature!
+            let signedToken = JSON.parse(signedTokenData.data);
+            if (
+                !(await e(
+                    verify(
+                        [this.tokenSigningKeyPair.publicKey],
+                        signedTokenData
+                    )
+                ))
+            )
+                throw 'signature does not match';
+            const newTokens = {};
+            for (const [qID, tokens] of Object.entries(this.tokens)) {
+                const newTokensList = [];
+                for (const et of tokens) {
+                    if (et.token == signedToken.token) {
+                        queueData = et;
+                        continue;
+                    }
+                    newTokensList.push(et);
+                }
+                newTokens[qID] = newTokensList;
+            }
+            this.tokens = newTokens;
+        }
+        // seems we haven't found this token in any queue (or no existing token was given)...
+        if (queueData === undefined) {
+            let position = this.queuePositions[queueID];
+
+            if (position === undefined) position = 0;
+
+            this.queuePositions[queueID] = position + 1;
+            this.store.set('queuePositions', this.queuePositions);
+
+            const token = await e(this.priorityToken(queueID, position));
+            const tokenData = {
+                token: token,
+                hash: hash,
+            };
+            const tokenDataJSON = JSON.stringify(tokenData);
+            signedTokenData = await e(
+                sign(this.tokenSigningKeyPair.privateKey, tokenDataJSON)
+            );
+            queueData = {
+                token: token,
+                position: position,
+                encryptedData: encryptedData,
+            };
+        }
+
+        let queueTokens = this.tokens[queueID];
+
+        if (queueTokens === undefined) {
+            queueTokens = [];
+            this.tokens[queueID] = queueTokens;
+        }
+
+        queueTokens.push(queueData);
+        this.store.set('tokens', this.tokens);
+
+        return signedTokenData;
+    }
+
+    // retract a token from a given queue
+    async retractToken(token) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
+    }
+
+    // provider-only endpoints
+
+    async storeProviderData(id, signedData, code) {
+        const result = await this.storeData(id, signedData);
+        if (!result) return;
+        let providerDataList = this.store.get('providers::list');
+        if (providerDataList === null) providerDataList = [];
+        for (const pid of providerDataList) {
+            if (id === pid) return;
+        }
+        providerDataList.push(id);
+        // we update the provider data list
+        this.store.set('providers::list', providerDataList);
     }
 
     // delete provider data stored for verification
@@ -348,34 +415,6 @@ export default class AppointmentsBackend {
             providers.push(providerData);
         }
         return providers;
-    }
-
-    // store the verified provider data in the system
-    storeVerifiedProviderData(id, signedProviderData) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // delete the verified provider data from the system
-    deleteVerifiedProviderData(id) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // store the signed queue data in the system
-    storeQueueData(signedQueueData) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
-    // delete queue data from the system
-    deleteQueueData(id) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
     }
 
     // simulates the background tasks that the normal operator backend would do

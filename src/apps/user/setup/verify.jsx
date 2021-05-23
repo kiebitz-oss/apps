@@ -39,6 +39,14 @@ codes, encrypts the contact data and stores the settings in the storage backend.
 const Verify = withSettings(
     withActions(
         ({ settings, contactData, contactDataAction }) => {
+            const [initialized, setInitialized] = useState(false);
+
+            useEffect(() => {
+                if (initialized) return;
+                contactDataAction();
+                setInitialized(true);
+            });
+
             if (contactData === undefined) return <div />;
             return (
                 <React.Fragment>
@@ -72,57 +80,25 @@ const Verify = withSettings(
                                 </li>
                                 <li>
                                     <span>
-                                        <T t={t} k="contact-data.phone" />
-                                    </span>{' '}
-                                    {contactData.phone || (
-                                        <T t={t} k="contact-data.not-given" />
-                                    )}
-                                </li>
-                                <li>
-                                    <span>
                                         <T t={t} k="contact-data.email" />
                                     </span>{' '}
                                     {contactData.email || (
                                         <T t={t} k="contact-data.not-given" />
                                     )}
                                 </li>
-                                <li>
-                                    <span>
-                                        <T t={t} k="contact-data.street" />
-                                    </span>{' '}
-                                    {contactData.street || (
-                                        <T t={t} k="contact-data.not-given" />
-                                    )}
-                                </li>
-                                <li>
-                                    <span>
-                                        <T t={t} k="contact-data.zip-code" />
-                                    </span>{' '}
-                                    {contactData.zip_code || (
-                                        <T t={t} k="contact-data.not-given" />
-                                    )}
-                                </li>
-                                <li>
-                                    <span>
-                                        <T t={t} k="contact-data.city" />
-                                    </span>{' '}
-                                    {contactData.city || (
-                                        <T t={t} k="contact-data.not-given" />
-                                    )}
-                                </li>
                             </ul>
                         </div>
                         <div className="kip-contact-data-links">
-                            <A className="bulma-button bulma-is-small">
+                            <A
+                                className="bulma-button bulma-is-small"
+                                href="/user/setup/enter-contact-data"
+                            >
                                 <T t={t} k="contact-data.change" />
                             </A>
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button
-                            type="success"
-                            href={`/user/setup/store-secrets`}
-                        >
+                        <Button type="success" href={`/user/setup/finalize`}>
                             <T t={t} k="wizard.continue" />
                         </Button>
                     </CardFooter>

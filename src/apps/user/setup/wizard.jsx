@@ -41,8 +41,8 @@ const pages = [
     'hi',
     'enter-contact-data',
     'verify',
-    'store-secrets',
     'finalize',
+    'store-secrets',
 ];
 
 const Hi = withSettings(({ settings }) => (

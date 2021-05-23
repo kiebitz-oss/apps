@@ -14,8 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { buf2b64 } from 'helpers/conversion';
+
 export function randomBytes(n) {
     const array = new Uint8Array(n);
     window.crypto.getRandomValues(array);
-    return Buffer.from(array).toString('hex');
+    return buf2b64(Buffer.from(array));
 }

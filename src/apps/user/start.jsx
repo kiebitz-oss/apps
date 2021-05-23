@@ -28,12 +28,12 @@ export default () => (
             <ul className="kip-cm-selector">
                 <li>
                     <A href="/user/setup">
-                        <T t={t} k="printable-qr-codes" />
+                        <T t={t} k="setup" />
                     </A>
                 </li>
                 <li>
                     <A href="/user/restore">
-                        <T t={t} k="load-settings" />
+                        <T t={t} k="restore" />
                     </A>
                 </li>
                 <li>

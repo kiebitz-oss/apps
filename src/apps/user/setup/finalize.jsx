@@ -15,18 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from 'react';
+import { QueueSelect } from 'apps/provider/dashboard/queue-select';
+import { queues } from 'apps/provider/dashboard/actions';
 import {
     withSettings,
     withActions,
-    Modal,
+    withRouter,
     CardContent,
     CardFooter,
+    WithLoader,
     Button,
     T,
     A,
 } from 'components';
 import Wizard from './wizard';
-
+import { submitToQueue, contactData, getToken } from './actions';
 import t from './translations.yml';
 import './finalize.scss';
 
@@ -36,56 +39,87 @@ the finalization. Once the button gets clicked, the system generates the QR
 codes, encrypts the contact data and stores the settings in the storage backend.
 */
 const Finalize = withSettings(
-    withActions(({ settings, route }) => {
-        const [uploadTriggered, setUploadTriggered] = useState(false);
+    withRouter(
+        withActions(
+            ({
+                settings,
+                router,
+                queues,
+                queuesAction,
+                contactData,
+                contactDataAction,
+                submitToQueue,
+                submitToQueueAction,
+            }) => {
+                const [initialized, setInitialized] = useState(false);
+                const [submitting, setSubmitting] = useState(false);
+                const [queue, setQueue] = useState(null);
+                useEffect(() => {
+                    if (initialized) return;
+                    setInitialized(true);
+                    queuesAction();
+                    contactDataAction().then(ct => setQueue(ct.queue || null));
+                });
 
-        useEffect(() => {
-            if (uploadTriggered) return;
+                const selectQueue = newQueue => {
+                    contactData.queue = newQueue;
+                    contactDataAction(contactData);
+                    setQueue(newQueue);
+                };
 
-            setUploadTriggered(true);
-        });
+                const removeQueue = queue => {
+                    setQueue(null);
+                };
 
-        return (
-            <React.Fragment>
-                <CardContent>
-                    <p className="kip-finalize-notice">
-                        <T
-                            t={t}
-                            k="finalize.text"
-                            link={
-                                <A
-                                    key="letUsKnow"
-                                    external
-                                    href={settings.get('supportEmail')}
+                const submit = () => {
+                    setSubmitting(true);
+                    submitToQueueAction(contactData, queue.data).then(hd => {
+                        setSubmitting(false);
+                        router.navigateToUrl('/user/setup/store-secrets');
+                    });
+                };
+
+                const render = () => {
+                    return (
+                        <React.Fragment>
+                            <CardContent>
+                                <QueueSelect
+                                    queues={queues.data}
+                                    single={true}
+                                    removeQueue={removeQueue}
+                                    existingQueues={
+                                        queue !== null ? [queue.id] : []
+                                    }
+                                    addQueue={selectQueue}
+                                />
+                            </CardContent>
+                            <CardFooter>
+                                <Button
+                                    waiting={submitting}
+                                    type="success"
+                                    onClick={submit}
+                                    disabled={submitting || queue === null}
                                 >
                                     <T
                                         t={t}
-                                        k="wizard.letUsKnow"
-                                        key="letUsKnow"
+                                        k={
+                                            submitting
+                                                ? 'wizard.please-wait'
+                                                : 'wizard.continue'
+                                        }
                                     />
-                                </A>
-                            }
-                        />
-                    </p>
-                    <div className="kip-finalize-box">
-                        <ul>
-                            <li>test</li>
-                        </ul>
-                    </div>
-                    <div className="kip-finalize-links">
-                        <A className="bulma-button bulma-is-small">
-                            <T t={t} k="contact-data.change" />
-                        </A>
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <Button type="success">
-                        <T t={t} k="wizard.leave" />
-                    </Button>
-                </CardFooter>
-            </React.Fragment>
-        );
-    }, [])
+                                </Button>
+                            </CardFooter>
+                        </React.Fragment>
+                    );
+                };
+                return (
+                    <WithLoader resources={[queues]} renderLoaded={render} />
+                );
+            },
+            [queues, submitToQueue, contactData]
+        )
+    )
 );
 
 export default Finalize;

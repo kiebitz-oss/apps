@@ -1,17 +1,10 @@
 _t:
-  path: apps/hd/translations.yml
-dashboard:
-  en: Dashboard
-title:
-  _ignore_unused: true
-  en: Health Department App
+  path: apps/user/translations.yml
 what-to-do:
   de: Was möchten Sie tun?
-printable-qr-codes:
-  de: Druckbare QR-Codes erzeugen
-smartphone-qr-codes:
-  de: QR-Codes fürs Smartphone erzeugen
-load-settings:
-  de: Gespeicherte Einstellungen laden
+setup:
+  de: Eine Impfanmeldung durchführen
+restore:
+  de: Impfdaten wiederherstellen
 show-help:
   de: Hilfe anzeigen

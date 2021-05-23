@@ -23,6 +23,7 @@ export const QueueSelect = ({
     disabled,
     queues,
     existingQueues,
+    single,
     addQueue,
     removeQueue,
 }) => {
@@ -33,6 +34,7 @@ export const QueueSelect = ({
         id: queue.id,
         description: '',
         value: queue.name,
+        data: queue,
     });
 
     const generateInitialQueues = () =>
@@ -91,15 +93,17 @@ export const QueueSelect = ({
     return (
         <div className="kip-queue-select">
             <ul className="kip-queues">{queueItems}</ul>
-            <SearchSelect
-                disabled={disabled}
-                search={search}
-                onSelect={selectQueue}
-                setSearch={updateSearch}
-                candidates={candidates}
-                label={<T t={t} k="queues.label" />}
-                description={<T t={t} k="queues.description" />}
-            />
+            {(!single || queueItems.length === 0) && (
+                <SearchSelect
+                    disabled={disabled}
+                    search={search}
+                    onSelect={selectQueue}
+                    setSearch={updateSearch}
+                    candidates={candidates}
+                    label={<T t={t} k="queues.label" />}
+                    description={<T t={t} k="queues.description" />}
+                />
+            )}
         </div>
     );
 };

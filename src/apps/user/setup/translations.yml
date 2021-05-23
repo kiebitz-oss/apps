@@ -12,12 +12,12 @@ store-secrets:
     title:
       de: Lokal
     text:
-      de: Ihre Daten werden lokal als Datei gespeichert. Verwahren Sie diese Datei sorgsam auf, Sie benötigen se gegebenenfalls für die Kontaktnachverfolgung!
+      de: Daten zur Ihrer Impfanmeldung werden in einer Datei gespeichert. Bitte bewahren Sie diese Datei sorgsam auf, ohne Sie können Ihre Daten nicht wiederhergestellt werden!
   online:
     title:
       de: Online
     text:
-      de: Ihre Daten werden verschlüsselt online gespeichert. Schreiben Sie die folgenden zwei Codes sorgfältig auf oder wählen Sie eine Speicheroption unten. Sie benötigen sie gegebenenfalls für die Kontaktnachverfolgung!
+      de: Daten zur Ihrer Impfanmeldung werden verschlüsselt online gespeichert. Bitte notieren Sie den Code sorgfältig, ohne ihn können Ihre Daten nicht wiederhergestellt werden!
   bookmark:
     de: Als Bookmark speichern
   copy:
@@ -33,27 +33,25 @@ finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
 wizard:
+  please-wait:
+    de: Bitte warten...
   leave:
     de: Zur Übersicht
   finish:
     de: Fertigstellen
   hi:
     de: |
-      Willkommen!
-
-      Dieser Assistent führt Sie durch den Prozess der Erstellung von QR-Codes
-      für die Besuchsdokumentation. Alle personenbezogenen Daten werden zur
-      Weiterverarbeitung verschlüsselt. Sie können Ihre Angaben im letzten
-      Schritt nochmals kontrollieren bevor sie gespeichert werden. 
+      Willkommen.
+      Dieser Assistent führt Sie durch den Prozess der Impfanmeldung. Keine Angst, es dauert nur eine Minute! 
   continue:
     de: Weiter
   steps:
     hi:
-      de: Hallo!
+      de: Hallo
     enter-contact-data:
       de: Kontaktdaten eingeben
     store-secrets:
-      de: Geheime Daten sichern
+      de: Wiederherstellungsdaten sichern
     save-contact-data:
       de: Kontakdaten angeben
     finalize:

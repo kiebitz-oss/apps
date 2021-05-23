@@ -21,13 +21,12 @@ import {
     withActions,
     withSettings,
     Message,
+    Switch,
     CardContent,
     CardFooter,
     Button,
     T,
     A,
-    Tabs,
-    Tab,
 } from 'components';
 import t from './translations.yml';
 import './store-secrets.scss';
@@ -103,7 +102,7 @@ const StoreLocal = ({ data }) => {
                 <T t={t} k="store-secrets.local.text" />
             </p>
             <a
-                className="bulma-button bulma-is-success"
+                className="bulma-button"
                 download={`geheime-daten.kiebitz`}
                 href={URL.createObjectURL(blob)}
             >
@@ -131,29 +130,19 @@ export default withActions(
 
         return (
             <React.Fragment>
-                <CardContent>
-                    <p className="kip-secrets-notice">
-                        <T t={t} k="store-secrets.text" />
-                    </p>
-                    <Tabs>
-                        <Tab
-                            active={tab === 'online'}
-                            onClick={() => setTab('online')}
-                        >
-                            <T t={t} k="store-secrets.online.title" />
-                        </Tab>
-                        <Tab
-                            active={tab === 'local'}
-                            onClick={() => setTab('local')}
-                        >
-                            <T t={t} k="store-secrets.local.title" />
-                        </Tab>
-                    </Tabs>
+                <CardContent className="kip-secrets">
+                    <Switch
+                        onChange={() =>
+                            setTab(tab === 'online' ? 'local' : 'online')
+                        }
+                    >
+                        <T t={t} k={`store-secrets.${tab}.title`} />
+                    </Switch>
                     {content}
                 </CardContent>
                 <CardFooter>
-                    <Button type="success" href={`/user/setup/finalize/${tab}`}>
-                        <T t={t} k="wizard.continue" />
+                    <Button type="success" href={`/user/dashboard`}>
+                        <T t={t} k="wizard.leave" />
                     </Button>
                 </CardFooter>
             </React.Fragment>
