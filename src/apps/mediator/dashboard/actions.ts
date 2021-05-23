@@ -25,15 +25,16 @@ import {
     ephemeralECDHDecrypt
 } from 'helpers/crypto';
 
-export async function confirmProvider(state, keyStore, settings, providerData, keyPairs){
+export async function confirmProvider(state, keyStore, settings, providerData, keyPairs, queueKeyPair){
 
-    console.log(providerData)
+    console.log(queueKeyPair)
 
     // we only store hashes of the public key values, as the actual keys are
     // always passed to the user, so they never need to be looked up...
     const keyHashesData = {
         signing: await e(hash(providerData.publicKeys.signing)),
         encryption: await e(hash(providerData.publicKeys.encryption)),
+        queues: providerData.data.queues,
     }
 
     const keysJSONData = JSON.stringify(keyHashesData)
@@ -48,13 +49,31 @@ export async function confirmProvider(state, keyStore, settings, providerData, k
     );
 
 
+    const backend = settings.get('backend')
+
+    const queues = await e(backend.appointments.getQueuesForProvider(providerData.data.queues))
+
+    const queuePrivateKeys = []
+    for(const queue of queues){
+        const queuePrivateKey = await e(ephemeralECDHDecrypt(queue.encryptedPrivateKey, queueKeyPair.privateKey))
+        queuePrivateKeys.push({
+            privateKey: queuePrivateKey,
+            id: queue.id,
+        })
+    }
+
     // this will be stored for the provider, so we add the public key data
     const signedProviderData = await e(
         sign(keyPairs.signing.privateKey, providerJSONData, keyPairs.signing.publicKey)
     );
 
+    const fullData = {
+        queuePrivateKeys: queuePrivateKeys,
+        signedData: signedProviderData    
+    }
+
     const entryData = JSON.parse(providerData.entry.data)
-    const signedJSONData = JSON.stringify(signedProviderData)
+    const signedJSONData = JSON.stringify(fullData)
 
     // we encrypt the data with the public key supplied by the provider
     const [encryptedData, _] = await e(
@@ -66,7 +85,6 @@ export async function confirmProvider(state, keyStore, settings, providerData, k
         sign(keyPairs.signing.privateKey, encryptedData, keyPairs.signing.publicKey)
     );
 
-    const backend = settings.get('backend')
     const result = await e(backend.appointments.confirmProvider({
         id: providerData.verifiedID, // the ID to store the data under
         key: providerData.entry.publicKey, // for access control
@@ -82,7 +100,13 @@ export async function confirmProvider(state, keyStore, settings, providerData, k
 
 export async function providers(state, keyStore, settings, keyPairs, dataKeyPair) {
     const backend = settings.get('backend');
-    keyStore.set({ status: 'loading' });
+    if (state !== undefined){
+        if (state.status === "loading")
+            return
+        if (state.status === "loaded")
+            keyStore.set({ status: 'updating' });
+    } else
+        keyStore.set({ status: 'loading' });
     try {
         const providersList = await e(
             backend.appointments.getPendingProviderData(keyPairs, 10)
@@ -123,6 +147,21 @@ export async function providerDataKeyPair(state, keyStore, settings, data){
         return {
             status: "loaded",
             data: backend.appointments.providerDataEncryptionKeyPair,
+        }
+    }
+    return {
+        status: "failed",
+    }
+}
+
+// return the provider list key pair
+export async function queueKeyPair(state, keyStore, settings, data){
+    if (settings.get("test")){
+        // in the test mode the key is stored in the backend
+        const backend = settings.get("backend")
+        return {
+            status: "loaded",
+            data: backend.appointments.queueKeyEncryptionKeyPair,
         }
     }
     return {

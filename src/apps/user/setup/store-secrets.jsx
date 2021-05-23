@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from 'react';
-import { setup } from './actions';
 import { b642buf } from 'helpers/conversion';
 import {
     Modal,
@@ -33,7 +32,7 @@ import {
 import t from './translations.yml';
 import './store-secrets.scss';
 
-const StoreOnline = ({ settings, suid, spwd }) => {
+const StoreOnline = ({ settings, secret }) => {
     const [bookmarkModal, setBookmarkModal] = useState(false);
     const [copyModal, setCopyModal] = useState(false);
 
@@ -43,7 +42,7 @@ const StoreOnline = ({ settings, suid, spwd }) => {
         history.pushState(
             {},
             settings.t(t, 'store-secrets.restore.title'),
-            `/restore#${suid},${spwd},v0.1`
+            `/user/restore#${secret},v0.1`
         );
         setBookmarkModal(true);
     };
@@ -73,12 +72,10 @@ const StoreOnline = ({ settings, suid, spwd }) => {
                 {
                     <React.Fragment>
                         <div className="kip-uid">
-                            <span>UID</span>
-                            <code>{suid}</code>
-                        </div>
-                        <div className="kip-pw">
-                            <span>PWD</span>
-                            <code>{spwd}</code>
+                            <span>
+                                <T t={t} k="store-secrets.secret" />
+                            </span>
+                            <code>{secret}</code>
                         </div>
                     </React.Fragment>
                 }
@@ -117,7 +114,7 @@ const StoreLocal = ({ data }) => {
 };
 
 export default withActions(
-    withSettings(({ type, settings, setup }) => {
+    withSettings(({ settings }) => {
         const [url, setUrl] = useState(null);
         const [tab, setTab] = useState('online');
 
@@ -125,21 +122,10 @@ export default withActions(
 
         switch (tab) {
             case 'online':
-                content = (
-                    <StoreOnline
-                        settings={settings}
-                        suid={setup.suid}
-                        spwd={setup.spwd}
-                    />
-                );
+                content = <StoreOnline settings={settings} secret={'foo'} />;
                 break;
             case 'local':
-                content = (
-                    <StoreLocal
-                        settings={settings}
-                        data={setup.unencryptedSecretData}
-                    />
-                );
+                content = <StoreLocal settings={settings} data={'data'} />;
                 break;
         }
 
@@ -166,15 +152,12 @@ export default withActions(
                     {content}
                 </CardContent>
                 <CardFooter>
-                    <Button
-                        type="success"
-                        href={`/setup/${type}/finalize/${tab}`}
-                    >
+                    <Button type="success" href={`/user/setup/finalize/${tab}`}>
                         <T t={t} k="wizard.continue" />
                     </Button>
                 </CardFooter>
             </React.Fragment>
         );
     }),
-    [setup]
+    []
 );

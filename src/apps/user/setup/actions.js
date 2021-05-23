@@ -14,25 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { ActionStates } from "actions/base";
-
-export async function uploadContactData(state, keyStore, settings, id, data){
-
-	console.log(state)
-
-	if (state !== undefined)
-		return
-
-	const backend = settings.get(["backend"])
-	const promise = backend.tracing.storeContactData(id, data)
-
-	promise.then((data) => keyStore.set({status: ActionStates.succeeded}))
-	promise.catch((error) => keyStore.set({status: ActionStates.failed}))
-
-	// we set an intermediate state
-	keyStore.set({
-		status: ActionStates.creating,
-	})
-
-	return promise
+export async function contactData(state, keyStore, settings, data) {
+    // we just store the data...
+    return data;
 }

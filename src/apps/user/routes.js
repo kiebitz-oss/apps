@@ -35,14 +35,13 @@ const routes = new Map([
     [
         'setup',
         {
-            url: '/user/setup(?:/([a-z-]+))?(?:/([a-z-]+))?(?:/([a-z-]+))?',
-            handler: (type, page, status) => ({
+            url: '/user/setup(?:/([a-z-]+))?(?:/([a-z-]+))?',
+            handler: (page, status) => ({
                 t: t,
                 title: 'setup',
                 isSimple: true,
                 component: Setup,
                 props: {
-                    type: type,
                     page: page,
                     status: status,
                 },

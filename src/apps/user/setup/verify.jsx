@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from 'react';
-import { append2buf, adler32, b642buf, buf2b64 } from 'helpers/conversion';
 import {
     withSettings,
     withActions,
@@ -27,9 +26,7 @@ import {
     A,
 } from 'components';
 import Wizard from './wizard';
-import QRCode from 'qrcode';
-import jsQR from 'jsqr';
-import { ks, setup, hdPublicKey, contactData } from './actions';
+import { contactData } from './actions';
 
 import t from './translations.yml';
 import './verify.scss';
@@ -41,40 +38,7 @@ codes, encrypts the contact data and stores the settings in the storage backend.
 */
 const Verify = withSettings(
     withActions(
-        ({
-            settings,
-            contactData,
-            contactDataAction,
-            hdPublicKey,
-            hdPublicKeyAction,
-            setup,
-            type,
-            setupAction,
-            ks,
-            ksAction,
-        }) => {
-            useEffect(() => {
-                if (contactData === undefined) {
-                    contactDataAction({ name: 'Hans Meier' });
-                    return;
-                }
-
-                if (hdPublicKey === undefined) {
-                    hdPublicKeyAction();
-                    return;
-                }
-
-                // we generate H_s and H_is
-                if (ks === undefined) {
-                    ksAction();
-                    return;
-                }
-
-                if (setup === undefined)
-                    setupAction(ks, hdPublicKey, contactData);
-                else console.log(setup);
-            });
-
+        ({ settings, contactData, contactDataAction }) => {
             if (contactData === undefined) return <div />;
             return (
                 <React.Fragment>
@@ -157,7 +121,7 @@ const Verify = withSettings(
                     <CardFooter>
                         <Button
                             type="success"
-                            href={`/setup/${type}/store-secrets`}
+                            href={`/user/setup/store-secrets`}
                         >
                             <T t={t} k="wizard.continue" />
                         </Button>
@@ -165,7 +129,7 @@ const Verify = withSettings(
                 </React.Fragment>
             );
         },
-        [setup, ks, hdPublicKey, contactData]
+        [contactData]
     )
 );
 

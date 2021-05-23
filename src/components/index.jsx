@@ -18,6 +18,7 @@ export * from './t';
 export * from './a';
 export * from './card';
 export * from './title';
+export * from './timer';
 export * from './navbar';
 export * from './list';
 export * from './dropdown';

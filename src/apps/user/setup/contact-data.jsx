@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect } from 'react';
+import { QueueSelect } from 'apps/provider/dashboard/queue-select';
+import { queues } from 'apps/provider/dashboard/actions';
 import Form from 'helpers/form';
-import { contactData, ks } from './actions';
+import { contactData } from './actions';
 import {
     withRouter,
     withForm,
     withActions,
+    WithLoader,
     Form as FormComponent,
     FieldSet,
     RetractingLabelInput,
@@ -44,7 +47,8 @@ class ContactDataForm extends Form {
 }
 
 const BaseContactData = ({
-    type,
+    queues,
+    queuesAction,
     contactData,
     contactDataAction,
     form: { set, data, error, valid },
@@ -55,15 +59,15 @@ const BaseContactData = ({
 
     const onSubmit = () => {
         if (!valid) return;
-        // we store the contact data so it can be used in the next step
         contactDataAction(data);
-        // we redirect to the 'store-secrets' step
-        router.navigateToUrl(`/setup/${type}/verify`);
+        // we redirect to the 'verify' step
+        router.navigateToUrl(`/user/setup/verify`);
     };
 
     useEffect(() => {
         if (initialized) return;
         setInitialized(true);
+        queuesAction();
         setModified(false);
     });
 
@@ -74,103 +78,108 @@ const BaseContactData = ({
         set(key, value);
     };
 
-    const controls = (
-        <React.Fragment>
-            <ErrorFor error={error} field="name" />
-            <RetractingLabelInput
-                value={data.name || ''}
-                onChange={value => setAndMarkModified('name', value)}
-                label={<T t={t} k="contact-data.name" />}
-            />
-            <ErrorFor error={error} field="phone" />
-            <RetractingLabelInput
-                value={data.phone || ''}
-                onChange={value => setAndMarkModified('phone', value)}
-                label={<T t={t} k="contact-data.phone" />}
-            />
-            <h2>
-                <T t={t} k="contact-data.optional.title" />
-            </h2>
-            <p>
-                <T t={t} k="contact-data.optional.text" />
-            </p>
-            <ErrorFor error={error} field="email" />
-            <RetractingLabelInput
-                value={data.email || ''}
-                onChange={value => setAndMarkModified('email', value)}
-                label={<T t={t} k="contact-data.email" />}
-            />
-            <ErrorFor error={error} field="street" />
-            <RetractingLabelInput
-                value={data.street || ''}
-                onChange={value => setAndMarkModified('street', value)}
-                label={<T t={t} k="contact-data.street" />}
-            />
-            <ErrorFor error={error} field="zip-code" />
-            <RetractingLabelInput
-                value={data.zip_code || ''}
-                onChange={value => setAndMarkModified('zip_code', value)}
-                label={<T t={t} k="contact-data.zip-code" />}
-            />
-            <ErrorFor error={error} field="city" />
-            <RetractingLabelInput
-                value={data.city || ''}
-                onChange={value => setAndMarkModified('city', value)}
-                label={<T t={t} k="contact-data.city" />}
-            />
-        </React.Fragment>
-    );
+    const removeQueue = oldQueue => {
+        const queues = data.queues || [];
+        const newQueues = [];
+        for (const queue of queues) {
+            if (queue === oldQueue.id) continue;
+            newQueues.push(queue);
+        }
+        set('queues', newQueues);
+        setModified(true);
+    };
 
-    const redirecting = false;
+    const addQueue = newQueue => {
+        const queues = data.queues || [];
+        for (const queue of queues) {
+            if (queue === newQueue.id) return;
+        }
+        queues.push(newQueue.id);
+        set('queues', queues);
+        setModified(true);
+    };
 
-    return (
-        <React.Fragment>
-            <div className="kip-cm-contact-data">
-                <FormComponent onSubmit={onSubmit}>
-                    <FieldSet disabled={submitting}>
-                        {
-                            <React.Fragment>
-                                <CardContent>{controls}</CardContent>
-                                <CardFooter>
-                                    <SubmitField
-                                        disabled={!valid}
-                                        type={'success'}
-                                        onClick={onSubmit}
-                                        waiting={submitting || redirecting}
-                                        title={
-                                            redirecting ? (
-                                                <T
-                                                    t={t}
-                                                    k="contact-data.success"
-                                                />
-                                            ) : submitting ? (
-                                                <T
-                                                    t={t}
-                                                    k="contact-data.saving"
-                                                />
-                                            ) : (
-                                                <T
-                                                    t={t}
-                                                    k={
-                                                        'contact-data.save-and-continue'
-                                                    }
-                                                />
-                                            )
-                                        }
-                                    />
-                                </CardFooter>
-                            </React.Fragment>
-                        }
-                    </FieldSet>
-                </FormComponent>
-            </div>
-        </React.Fragment>
-    );
+    const render = () => {
+        const controls = (
+            <React.Fragment>
+                <ErrorFor error={error} field="queues" />
+                <QueueSelect
+                    queues={queues.data}
+                    existingQueues={data.queues || []}
+                    addQueue={addQueue}
+                    removeQueue={removeQueue}
+                />
+                <ErrorFor error={error} field="name" />
+                <RetractingLabelInput
+                    value={data.name || ''}
+                    onChange={value => setAndMarkModified('name', value)}
+                    label={<T t={t} k="contact-data.name" />}
+                />
+                <h2>
+                    <T t={t} k="contact-data.optional.title" />
+                </h2>
+                <ErrorFor error={error} field="email" />
+                <RetractingLabelInput
+                    value={data.email || ''}
+                    onChange={value => setAndMarkModified('email', value)}
+                    label={<T t={t} k="contact-data.email" />}
+                />
+            </React.Fragment>
+        );
+
+        const redirecting = false;
+
+        return (
+            <React.Fragment>
+                <div className="kip-cm-contact-data">
+                    <FormComponent onSubmit={onSubmit}>
+                        <FieldSet disabled={submitting}>
+                            {
+                                <React.Fragment>
+                                    <CardContent>{controls}</CardContent>
+                                    <CardFooter>
+                                        <SubmitField
+                                            disabled={!valid}
+                                            type={'success'}
+                                            onClick={onSubmit}
+                                            waiting={submitting || redirecting}
+                                            title={
+                                                redirecting ? (
+                                                    <T
+                                                        t={t}
+                                                        k="contact-data.success"
+                                                    />
+                                                ) : submitting ? (
+                                                    <T
+                                                        t={t}
+                                                        k="contact-data.saving"
+                                                    />
+                                                ) : (
+                                                    <T
+                                                        t={t}
+                                                        k={
+                                                            'contact-data.save-and-continue'
+                                                        }
+                                                    />
+                                                )
+                                            }
+                                        />
+                                    </CardFooter>
+                                </React.Fragment>
+                            }
+                        </FieldSet>
+                    </FormComponent>
+                </div>
+            </React.Fragment>
+        );
+    };
+
+    return <WithLoader resources={[queues]} renderLoaded={render} />;
 };
 
 const ContactData = withActions(
     withForm(withRouter(BaseContactData), ContactDataForm, 'form'),
-    [contactData]
+    [contactData, queues]
 );
 
 export default ContactData;

@@ -1,6 +1,8 @@
 _t:
   path: apps/user/setup/translations.yml
 store-secrets:
+  secret:
+    de: Geheimnis
   bookmark-modal:
     text:
       de: Erstellen Sie über Ihr Browser-Menü ein Lesezeichen für die aktuelle Seite. Sie können dieses Lesezeichen dann öffnen, um Ihre geheimen Daten wiederherzustellen.

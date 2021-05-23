@@ -97,7 +97,6 @@ export async function providerData(state, keyStore, settings, data) {
 export async function validKeyPairs(state, keyStore, settings, keyPairs, keys) {
     const signingKeyHash = await e(hash(keyPairs.signing.publicKey));
     const encryptionKeyHash = await e(hash(keyPairs.encryption.publicKey));
-    console.log(keys);
     let found = false;
     for (const providerKeys of keys.lists.providers) {
         // to do: check signature!
@@ -139,8 +138,11 @@ export async function checkVerifiedProviderData(
             ephemeralECDHDecrypt(verifiedData.data, encryptionKey)
         );
         const decryptedData = JSON.parse(decryptedJSONData);
-        decryptedData.json = decryptedData.json;
-        decryptedData.data = JSON.parse(decryptedData.json);
+        decryptedData.signedData.json = decryptedData.signedData.data;
+        decryptedData.signedData.data = JSON.parse(
+            decryptedData.signedData.data
+        );
+        backend.local.set('provider::data::verified', decryptedData);
         return { status: 'loaded', data: decryptedData };
     } catch (e) {
         return { status: 'failed' };

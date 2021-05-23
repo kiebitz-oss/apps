@@ -55,16 +55,18 @@ export default class AppointmentsBackend {
 
     async confirmProvider({ id, key, providerData, keyData }) {
         let found = false;
+        const keyDataJSON = JSON.parse(keyData.data);
+        const newProviders = [];
         for (const existingKey of this.keys.providers) {
-            if (existingKey.data === keyData.data) {
-                found = true;
-                break;
+            const existingKeyDataJSON = JSON.parse(existingKey.data);
+            if (existingKeyDataJSON.signing === keyDataJSON.signing) {
+                newProviders.push(keyData);
+            } else {
+                newProviders.push(existingKey);
             }
         }
-        if (!found) {
-            this.keys.providers.push(keyData);
-            this.store.set('keys', this.keys);
-        }
+        this.keys.providers = newProviders;
+        this.store.set('keys', this.keys);
         // we store the verified provider data
         const result = await e(this.storeData(id, providerData));
         if (!result) return;
@@ -108,30 +110,20 @@ export default class AppointmentsBackend {
 
         this.rootSigningKeyPair = rootSigningKeyPair;
 
-        // the key pair for encrypting list keys
-        let listKeysEncryptionKeyPair = this.store.get(
-            'listKeysEncryptionKeyPair'
+        // the key pair for encrypting queue data
+        let queueKeyEncryptionKeyPair = this.store.get(
+            'queueKeyEncryptionKeyPair'
         );
 
-        if (listKeysEncryptionKeyPair === null) {
-            listKeysEncryptionKeyPair = await e(generateECDHKeyPair());
+        if (queueKeyEncryptionKeyPair === null) {
+            queueKeyEncryptionKeyPair = await e(generateECDHKeyPair());
             this.store.set(
-                'listKeysEncryptionKeyPair',
-                listKeysEncryptionKeyPair
+                'queueKeyEncryptionKeyPair',
+                queueKeyEncryptionKeyPair
             );
         }
 
-        this.listKeysEncryptionKeyPair = listKeysEncryptionKeyPair;
-
-        // the key pair for encrypting queue data
-        let queueEncryptionKeyPair = this.store.get('queueEncryptionKeyPair');
-
-        if (queueEncryptionKeyPair === null) {
-            queueEncryptionKeyPair = await e(generateECDHKeyPair());
-            this.store.set('queueEncryptionKeyPair', queueEncryptionKeyPair);
-        }
-
-        this.queueEncryptionKeyPair = queueEncryptionKeyPair;
+        this.queueKeyEncryptionKeyPair = queueKeyEncryptionKeyPair;
 
         // the key pair for encrypting provider data
         let providerDataEncryptionKeyPair = this.store.get(
@@ -189,13 +181,13 @@ export default class AppointmentsBackend {
                 [queue.encryptedPrivateKey, _] = await e(
                     ephemeralECDHEncrypt(
                         queue.keyPair.privateKey,
-                        queueEncryptionKeyPair.publicKey
+                        queueKeyEncryptionKeyPair.publicKey
                     )
                 );
                 const decrypted = await e(
                     ephemeralECDHDecrypt(
                         queue.encryptedPrivateKey,
-                        queueEncryptionKeyPair.privateKey
+                        queueKeyEncryptionKeyPair.privateKey
                     )
                 );
 
@@ -292,6 +284,10 @@ export default class AppointmentsBackend {
         this.store.set('providers::list', providerDataList);
     }
 
+    async deleteDate(id) {
+        return this.store.remove(`data::${id}`);
+    }
+
     async getData(id) {
         // to do: implement access control (not really relevant though for the demo)
         return this.store.get(`data::${id}`);
@@ -327,6 +323,20 @@ export default class AppointmentsBackend {
     }
 
     // mediator-only endpoint
+
+    async getQueuesForProvider(queueIDs) {
+        queueIDs = new Set(queueIDs);
+        await e(this.initialized());
+        return this.queues
+            .filter(queue => queueIDs.has(queue.id))
+            .map(queue => ({
+                name: queue.name,
+                type: queue.type,
+                id: queue.id,
+                publicKey: queue.keyPair.publicKey,
+                encryptedPrivateKey: queue.encryptedPrivateKey,
+            }));
+    }
 
     async getPendingProviderData(keyPairs, limit) {
         const providersList = this.store.get('providers::list');

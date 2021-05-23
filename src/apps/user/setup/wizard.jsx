@@ -45,7 +45,7 @@ const pages = [
     'finalize',
 ];
 
-const Hi = withSettings(({ type, settings }) => (
+const Hi = withSettings(({ settings }) => (
     <React.Fragment>
         <CardContent>
             <p>
@@ -65,14 +65,14 @@ const Hi = withSettings(({ type, settings }) => (
             </p>
         </CardContent>
         <CardFooter>
-            <Button type="success" href={`/setup/${type}/enter-contact-data`}>
+            <Button type="success" href={`/user/setup/enter-contact-data`}>
                 <T t={t} k="wizard.continue" />
             </Button>
         </CardFooter>
     </React.Fragment>
 ));
 
-const Wizard = ({ route, router, page, type, privacyManager }) => {
+const Wizard = ({ route, router, page, privacyManager }) => {
     const pageRef = useRef(null);
 
     const checkPage = () => {
@@ -110,7 +110,7 @@ const Wizard = ({ route, router, page, type, privacyManager }) => {
                         disabled={!canShow(p)}
                         onClick={() => {
                             if (canShow(p))
-                                router.navigateToUrl(`/setup/${type}/${p}`);
+                                router.navigateToUrl(`/user/setup/${p}`);
                         }}
                         active={page === p}
                     >
@@ -132,25 +132,22 @@ const Wizard = ({ route, router, page, type, privacyManager }) => {
 
         switch (page) {
             case 'hi':
-                populate('hi', <Hi key="hiNotice" type={type} />);
+                populate('hi', <Hi key="hiNotice" />);
                 break;
             case 'enter-contact-data':
                 populate(
                     'enter-contact-data',
-                    <ContactData key="enterContactData" type={type} />
+                    <ContactData key="enterContactData" />
                 );
                 break;
             case 'store-secrets':
-                populate(
-                    'store-secrets',
-                    <StoreSecrets key="storeSecrets" type={type} />
-                );
+                populate('store-secrets', <StoreSecrets key="storeSecrets" />);
                 break;
             case 'verify':
-                populate('verify', <Verify key="verify" type={type} />);
+                populate('verify', <Verify key="verify" />);
                 break;
             case 'finalize':
-                populate('finalize', <Finalize key="finalize" type={type} />);
+                populate('finalize', <Finalize key="finalize" />);
                 break;
         }
 

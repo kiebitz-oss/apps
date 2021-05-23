@@ -19,12 +19,14 @@ import Form from 'helpers/form';
 import {
     providers,
     keyPairs,
+    queueKeyPair,
     providerDataKeyPair,
     confirmProvider,
 } from './actions';
 import {
     withActions,
     withRouter,
+    withTimer,
     Message,
     Modal,
     WithLoader,
@@ -37,183 +39,231 @@ import {
 import t from './translations.yml';
 import './settings.scss';
 
-const Providers = withRouter(
-    withActions(
-        ({
-            router,
-            providerDataKeyPair,
-            providerDataKeyPairAction,
-            action,
-            id,
-            confirmProvider,
-            confirmProviderAction,
-            keyPairs,
-            keyPairsAction,
-            providers,
-            providersAction,
-        }) => {
-            const [initialized, setInitialized] = useState();
+const Providers = withTimer(
+    withRouter(
+        withActions(
+            ({
+                router,
+                providerDataKeyPair,
+                providerDataKeyPairAction,
+                action,
+                id,
+                timer,
+                confirmProvider,
+                confirmProviderAction,
+                queueKeyPair,
+                queueKeyPairAction,
+                keyPairs,
+                keyPairsAction,
+                providers,
+                providersAction,
+            }) => {
+                const [lastRun, setLastRun] = useState(-1);
 
-            useEffect(() => {
-                if (!initialized) {
-                    setInitialized(true);
+                const getData = t => {
+                    setLastRun(t);
                     providerDataKeyPairAction().then(kp =>
-                        keyPairsAction().then(keyPairs =>
-                            providersAction(keyPairs.data, kp.data)
+                        queueKeyPairAction().then(qk =>
+                            keyPairsAction().then(keyPairs =>
+                                providersAction(keyPairs.data, kp.data)
+                            )
                         )
                     );
-                }
-            });
-
-            const render = () => {
-                const showProvider = i =>
-                    router.navigateToUrl(`/mediator/providers/show/${i}`);
-
-                let modal;
-
-                const closeModal = () =>
-                    router.navigateToUrl('/mediator/providers');
-
-                const doConfirmProvider = () => {
-                    const provider = providers.data[id];
-                    confirmProviderAction(provider, keyPairs.data).then(() => {
-                        // we reload the providersAction
-                        setInitialized(false);
-                        router.navigateToUrl('/mediator/providers');
-                    });
                 };
 
-                if (action === 'show' && id !== undefined) {
-                    const provider = providers.data[id];
-                    modal = (
-                        <Modal
-                            title={<T t={t} k="providers.edit" />}
-                            save={<T t={t} k="providers.confirm" />}
-                            onSave={doConfirmProvider}
-                            saveType="success"
-                            onClose={closeModal}
-                            onCancel={closeModal}
+                useEffect(() => {
+                    if (lastRun !== timer) getData(timer);
+                });
+
+                const render = () => {
+                    const showProvider = i =>
+                        router.navigateToUrl(`/mediator/providers/show/${i}`);
+
+                    let modal;
+
+                    const closeModal = () =>
+                        router.navigateToUrl('/mediator/providers');
+
+                    const doConfirmProvider = () => {
+                        const provider = providers.data.find(
+                            provider => provider.id === id
+                        );
+                        if (provider === null) return;
+                        confirmProviderAction(
+                            provider,
+                            keyPairs.data,
+                            queueKeyPair.data
+                        ).then(() => {
+                            getData();
+                            router.navigateToUrl('/mediator/providers');
+                        });
+                    };
+
+                    if (action === 'show' && id !== undefined) {
+                        const provider = providers.data.find(
+                            provider => provider.id === id
+                        );
+                        if (provider !== null)
+                            modal = (
+                                <Modal
+                                    title={<T t={t} k="providers.edit" />}
+                                    save={<T t={t} k="providers.confirm" />}
+                                    onSave={doConfirmProvider}
+                                    saveType="success"
+                                    onClose={closeModal}
+                                    onCancel={closeModal}
+                                >
+                                    <div className="kip-provider-data">
+                                        <T t={t} k="providers.confirmText" />
+                                        <table className="bulma-table bulma-is-fullwidth bulma-is-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.field"
+                                                        />
+                                                    </th>
+                                                    <th>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.value"
+                                                        />
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.name"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.name}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.street"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.street}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.city"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.city}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.zip_code"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.zip_code}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.email"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.email}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.phone"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.phone}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </Modal>
+                            );
+                    }
+
+                    const providerItems = providers.data.map(provider => (
+                        <ListItem
+                            onClick={() => showProvider(provider.id)}
+                            key={provider.id}
+                            isCard
                         >
-                            <div className="kip-provider-data">
-                                <T t={t} k="providers.confirmText" />
-                                <table className="bulma-table bulma-is-fullwidth bulma-is-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.field"
-                                                />
-                                            </th>
-                                            <th>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.value"
-                                                />
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.name"
-                                                />
-                                            </td>
-                                            <td>{provider.data.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.street"
-                                                />
-                                            </td>
-                                            <td>{provider.data.street}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.city"
-                                                />
-                                            </td>
-                                            <td>{provider.data.city}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.zip_code"
-                                                />
-                                            </td>
-                                            <td>{provider.data.zip_code}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.email"
-                                                />
-                                            </td>
-                                            <td>{provider.data.email}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <T
-                                                    t={t}
-                                                    k="provider-data.phone"
-                                                />
-                                            </td>
-                                            <td>{provider.data.phone}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </Modal>
+                            <ListColumn size="md">
+                                {provider.data.name}
+                            </ListColumn>
+                            <ListColumn size="md">
+                                {provider.data.street} · {provider.data.city}
+                            </ListColumn>
+                            <ListColumn size="icon"></ListColumn>
+                        </ListItem>
+                    ));
+
+                    return (
+                        <F>
+                            {modal}
+                            <List>
+                                <ListHeader>
+                                    <ListColumn size="md">
+                                        <T t={t} k="providers.name" />
+                                    </ListColumn>
+                                    <ListColumn size="md">
+                                        <T t={t} k="providers.address" />
+                                    </ListColumn>
+                                    <ListColumn size="icon">
+                                        <T t={t} k="providers.menu" />
+                                    </ListColumn>
+                                </ListHeader>
+                                {providerItems}
+                            </List>
+                        </F>
                     );
-                }
-
-                const providerItems = providers.data.map((provider, i) => (
-                    <ListItem onClick={() => showProvider(i)} key={i} isCard>
-                        <ListColumn size="md">{provider.data.name}</ListColumn>
-                        <ListColumn size="md">
-                            {provider.data.street} · {provider.data.city}
-                        </ListColumn>
-                        <ListColumn size="icon"></ListColumn>
-                    </ListItem>
-                ));
-
+                };
                 return (
-                    <F>
-                        {modal}
-                        <List>
-                            <ListHeader>
-                                <ListColumn size="md">
-                                    <T t={t} k="providers.name" />
-                                </ListColumn>
-                                <ListColumn size="md">
-                                    <T t={t} k="providers.address" />
-                                </ListColumn>
-                                <ListColumn size="icon">
-                                    <T t={t} k="providers.menu" />
-                                </ListColumn>
-                            </ListHeader>
-                            {providerItems}
-                        </List>
-                    </F>
+                    <WithLoader
+                        resources={[
+                            providers,
+                            keyPairs,
+                            queueKeyPair,
+                            providerDataKeyPair,
+                        ]}
+                        renderLoaded={render}
+                    />
                 );
-            };
-            return (
-                <WithLoader
-                    resources={[providers, keyPairs, providerDataKeyPair]}
-                    renderLoaded={render}
-                />
-            );
-        },
-        [providers, keyPairs, providerDataKeyPair, confirmProvider]
-    )
+            },
+            [
+                providers,
+                keyPairs,
+                providerDataKeyPair,
+                queueKeyPair,
+                confirmProvider,
+            ]
+        )
+    ),
+    10000
 );
 
 export default Providers;
