@@ -8,11 +8,28 @@ providers:
   menu:
     de: Menü
   edit:
-    de: Anbieter editieren
+    de: Anbieter bearbeiten
   confirm:
     de: Anbieter freischalten
   confirmText:
     de: Wollen Sie den Anbieter wirklich freischalten?
+provider-data:
+  field:
+    de: Feld
+  value:
+    de: Wert
+  name:
+    de: Name
+  street:
+    de: Straße
+  city:
+    de: Stadt
+  zip_code:
+    de: Postleitzahl
+  email:
+    de: E-Mail
+  phone:
+    de: Telefonnummer
 settings:
   title:
     de: Einstellungen

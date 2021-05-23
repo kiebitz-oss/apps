@@ -15,13 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect, Fragment as F } from 'react';
-import { e } from 'helpers/async';
 import Form from 'helpers/form';
+import {
+    providers,
+    keyPairs,
+    providerDataKeyPair,
+    confirmProvider,
+} from './actions';
 import {
     withActions,
     withRouter,
     Message,
     Modal,
+    WithLoader,
     List,
     ListHeader,
     ListItem,
@@ -31,100 +37,182 @@ import {
 import t from './translations.yml';
 import './settings.scss';
 
-async function providers(state, keyStore, settings, keyPairs) {
-    const backend = settings.get('backend');
-    keyStore.set({ status: 'loading' });
-    try {
-        const providersList = await e(
-            backend.appointments.getPendingProviderData(keyPairs, 10)
-        );
-        return { list: providersList, status: 'loaded' };
-    } catch (e) {
-        return { status: 'failed', error: e.toString() };
-    }
-}
-
 const Providers = withRouter(
     withActions(
-        ({ router, action, id, keyPairs, providers, providersAction }) => {
-            const [loaded, setLoaded] = useState();
+        ({
+            router,
+            providerDataKeyPair,
+            providerDataKeyPairAction,
+            action,
+            id,
+            confirmProvider,
+            confirmProviderAction,
+            keyPairs,
+            keyPairsAction,
+            providers,
+            providersAction,
+        }) => {
+            const [initialized, setInitialized] = useState();
 
             useEffect(() => {
-                if (!loaded) {
-                    setLoaded(true);
-                    providersAction(keyPairs);
+                if (!initialized) {
+                    setInitialized(true);
+                    providerDataKeyPairAction().then(kp =>
+                        keyPairsAction().then(keyPairs =>
+                            providersAction(keyPairs.data, kp.data)
+                        )
+                    );
                 }
             });
 
-            if (providers === undefined || providers.status === 'loading')
+            const render = () => {
+                const showProvider = i =>
+                    router.navigateToUrl(`/mediator/providers/show/${i}`);
+
+                let modal;
+
+                const closeModal = () =>
+                    router.navigateToUrl('/mediator/providers');
+
+                const doConfirmProvider = () => {
+                    const provider = providers.data[id];
+                    confirmProviderAction(provider, keyPairs.data).then(() => {
+                        // we reload the providersAction
+                        setInitialized(false);
+                        router.navigateToUrl('/mediator/providers');
+                    });
+                };
+
+                if (action === 'show' && id !== undefined) {
+                    const provider = providers.data[id];
+                    modal = (
+                        <Modal
+                            title={<T t={t} k="providers.edit" />}
+                            save={<T t={t} k="providers.confirm" />}
+                            onSave={doConfirmProvider}
+                            saveType="success"
+                            onClose={closeModal}
+                            onCancel={closeModal}
+                        >
+                            <div className="kip-provider-data">
+                                <T t={t} k="providers.confirmText" />
+                                <table className="bulma-table bulma-is-fullwidth bulma-is-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.field"
+                                                />
+                                            </th>
+                                            <th>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.value"
+                                                />
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.name"
+                                                />
+                                            </td>
+                                            <td>{provider.data.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.street"
+                                                />
+                                            </td>
+                                            <td>{provider.data.street}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.city"
+                                                />
+                                            </td>
+                                            <td>{provider.data.city}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.zip_code"
+                                                />
+                                            </td>
+                                            <td>{provider.data.zip_code}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.email"
+                                                />
+                                            </td>
+                                            <td>{provider.data.email}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <T
+                                                    t={t}
+                                                    k="provider-data.phone"
+                                                />
+                                            </td>
+                                            <td>{provider.data.phone}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </Modal>
+                    );
+                }
+
+                const providerItems = providers.data.map((provider, i) => (
+                    <ListItem onClick={() => showProvider(i)} key={i} isCard>
+                        <ListColumn size="md">{provider.data.name}</ListColumn>
+                        <ListColumn size="md">
+                            {provider.data.street} · {provider.data.city}
+                        </ListColumn>
+                        <ListColumn size="icon"></ListColumn>
+                    </ListItem>
+                ));
+
                 return (
                     <F>
-                        <Message type="info">
-                            <T t={t} k="providers.loading" />
-                        </Message>
+                        {modal}
+                        <List>
+                            <ListHeader>
+                                <ListColumn size="md">
+                                    <T t={t} k="providers.name" />
+                                </ListColumn>
+                                <ListColumn size="md">
+                                    <T t={t} k="providers.address" />
+                                </ListColumn>
+                                <ListColumn size="icon">
+                                    <T t={t} k="providers.menu" />
+                                </ListColumn>
+                            </ListHeader>
+                            {providerItems}
+                        </List>
                     </F>
                 );
-
-            if (providers.status === 'failed')
-                return (
-                    <F>
-                        <Message type="danger">
-                            <T t={t} k="providers.failed" />
-                        </Message>
-                    </F>
-                );
-
-            const showProvider = i =>
-                router.navigateToUrl(`/mediator/providers/show/${i}`);
-
-            let modal;
-
-            const closeModal = () =>
-                router.navigateToUrl('/mediator/providers');
-            const confirmProvider = () =>
-                router.navigateToUrl('/mediator/providers');
-
-            if (action === 'show' && id !== undefined) {
-                modal = (
-                    <Modal
-                        title={<T t={t} k="providers.edit" />}
-                        save={<T t={t} k="providers.confirm" />}
-                        onSave={confirmProvider}
-                        onClose={closeModal}
-                        onCancel={closeModal}
-                    >
-                        <T t={t} k="providers.confirmText" />
-                    </Modal>
-                );
-            }
-
-            const providerItems = providers.list.map((provider, i) => (
-                <ListItem onClick={() => showProvider(i)} key={i} isCard>
-                    <ListColumn>{provider.data.info.name}</ListColumn>
-                </ListItem>
-            ));
-
+            };
             return (
-                <F>
-                    {modal}
-                    <List>
-                        <ListHeader>
-                            <ListColumn>
-                                <T t={t} k="providers.name" />
-                            </ListColumn>
-                            <ListColumn>
-                                <T t={t} k="providers.address" />
-                            </ListColumn>
-                            <ListColumn size="icon">
-                                <T t={t} k="providers.menu" />
-                            </ListColumn>
-                        </ListHeader>
-                        {providerItems}
-                    </List>
-                </F>
+                <WithLoader
+                    resources={[providers, keyPairs, providerDataKeyPair]}
+                    renderLoaded={render}
+                />
             );
         },
-        [providers]
+        [providers, keyPairs, providerDataKeyPair, confirmProvider]
     )
 );
 

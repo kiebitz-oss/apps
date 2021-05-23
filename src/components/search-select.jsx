@@ -44,7 +44,6 @@ export const SearchSelect = ({
     if (items.length > 0)
         searchCandidates = <ul className="kip-candidates">{items}</ul>;
     else {
-        console.log('no candidates');
         searchCandidates = (
             <ul className="kip-candidates">
                 <li className="kip-candidate" key="not-found">

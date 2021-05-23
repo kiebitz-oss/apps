@@ -28,45 +28,8 @@ import {
     A,
     Message,
 } from 'components';
-import {
-    verify,
-    sign,
-    generateECDSAKeyPair,
-    generateECDHKeyPair,
-} from 'helpers/crypto';
-import { e } from 'helpers/async';
+import { keyPairs, validKeyPairs } from './actions';
 import t from './translations.yml';
-
-// make sure the signing and encryption key pairs exist
-async function keyPairs(state, keyStore, settings) {
-    const backend = settings.get('backend');
-
-    let providerKeyPairs = backend.local.get('mediator::keyPairs');
-
-    if (providerKeyPairs === null) {
-        const encryptionKeyPair = await generateECDSAKeyPair();
-        const signingKeyPair = await generateECDHKeyPair();
-        let providerKeyPairs = {
-            signing: signingKeyPair,
-            encryption: encryptionKeyPair,
-        };
-        backend.local.set('mediator::keyPairs', providerKeyPairs);
-    }
-
-    // in the test environment we automatically add the mediator keys to
-    // the public key list and sign them with the root key so that they're
-    // accepted as valid keys...
-    if (settings.get('test')) {
-        await e(backend.appointments.addMediatorPublicKeys(providerKeyPairs));
-    }
-
-    return providerKeyPairs;
-}
-
-// make sure the keys are registered in the backend
-async function validKeyPairs(state, keyStore, settings, key) {
-    return { valid: true };
-}
 
 const Dashboard = withActions(
     withSettings(
@@ -101,16 +64,10 @@ const Dashboard = withActions(
             if (keyPairs !== undefined) {
                 switch (tab) {
                     case 'settings':
-                        content = <Settings keyPairs={keyPairs} />;
+                        content = <Settings />;
                         break;
                     case 'providers':
-                        content = (
-                            <Providers
-                                action={action}
-                                id={id}
-                                keyPairs={keyPairs}
-                            />
-                        );
+                        content = <Providers action={action} id={id} />;
                         break;
                 }
             }

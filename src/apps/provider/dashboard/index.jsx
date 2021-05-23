@@ -18,7 +18,13 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
 
-import { keyPairs, validKeyPairs, providerData } from './actions';
+import {
+    keyPairs,
+    keys,
+    validKeyPairs,
+    providerData,
+    checkVerifiedProviderData,
+} from './actions';
 import {
     withSettings,
     withActions,
@@ -41,28 +47,28 @@ const Dashboard = withActions(
             settings,
             providerData,
             providerDataAction,
+            checkVerifiedProviderData,
+            checkVerifiedProviderDataAction,
+            keys,
+            keysAction,
             keyPairs,
             keyPairsAction,
             validKeyPairs,
             validKeyPairsAction,
         }) => {
-            const [data, setData] = useState(false);
-            const [key, setKey] = useState(false);
-            const [validKey, setValidKey] = useState(false);
+            const [initialized, setInitialized] = useState(false);
 
             useEffect(() => {
-                if (!data) {
-                    setData(true);
-                    providerDataAction();
-                }
-                if (!key) {
-                    setKey(true);
-                    keyPairsAction();
-                }
-                if (!validKey && keyPairs !== undefined) {
-                    setValidKey(true);
-                    validKeyPairsAction(keyPairs);
-                }
+                if (initialized) return;
+                setInitialized(true);
+                providerDataAction().then(pd =>
+                    checkVerifiedProviderDataAction(pd.data)
+                );
+                keysAction().then(ks =>
+                    keyPairsAction().then(kp =>
+                        validKeyPairsAction(kp.data, ks.data)
+                    )
+                );
             });
 
             let content;
@@ -104,7 +110,7 @@ const Dashboard = withActions(
             );
         }
     ),
-    [keyPairs, validKeyPairs, providerData]
+    [keyPairs, keys, validKeyPairs, providerData, checkVerifiedProviderData]
 );
 
 export default Dashboard;

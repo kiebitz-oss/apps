@@ -90,7 +90,8 @@ const Settings = withActions(
                         providerDataAction(data).then(pd => {
                             submitProviderDataAction(
                                 pd.data,
-                                keyPairs.data
+                                keyPairs.data,
+                                keys.data
                             ).then(() => {
                                 setModified(false);
                                 setSubmitting(false);

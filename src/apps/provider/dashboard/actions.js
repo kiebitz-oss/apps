@@ -16,8 +16,11 @@
 
 import {
     sign,
+    hash,
     randomBytes,
     generateECDSAKeyPair,
+    ephemeralECDHEncrypt,
+    ephemeralECDHDecrypt,
     generateECDHKeyPair,
 } from 'helpers/crypto';
 import { e } from 'helpers/async';
@@ -91,8 +94,23 @@ export async function providerData(state, keyStore, settings, data) {
 }
 
 // make sure the keys are registered in the backend
-export async function validKeyPairs(state, keyStore, settings, key) {
-    return { valid: false };
+export async function validKeyPairs(state, keyStore, settings, keyPairs, keys) {
+    const signingKeyHash = await e(hash(keyPairs.signing.publicKey));
+    const encryptionKeyHash = await e(hash(keyPairs.encryption.publicKey));
+    console.log(keys);
+    let found = false;
+    for (const providerKeys of keys.lists.providers) {
+        // to do: check signature!
+        const keyData = JSON.parse(providerKeys.data);
+        if (
+            keyData.signing == signingKeyHash &&
+            keyData.encryption == encryptionKeyHash
+        ) {
+            found = true;
+            break;
+        }
+    }
+    return { valid: found };
 }
 
 export async function queues(state, keyStore, settings) {
@@ -106,20 +124,71 @@ export async function queues(state, keyStore, settings) {
     }
 }
 
+export async function checkVerifiedProviderData(
+    state,
+    keyStore,
+    settings,
+    data
+) {
+    const backend = settings.get('backend');
+    const verifiedData = await e(backend.appointments.getData(data.verifiedID));
+    if (verifiedData === null) return { status: 'not-found' };
+    const encryptionKey = backend.local.get('provider::data::encryptionKey');
+    try {
+        const decryptedJSONData = await e(
+            ephemeralECDHDecrypt(verifiedData.data, encryptionKey)
+        );
+        const decryptedData = JSON.parse(decryptedJSONData);
+        decryptedData.json = decryptedData.json;
+        decryptedData.data = JSON.parse(decryptedData.json);
+        return { status: 'loaded', data: decryptedData };
+    } catch (e) {
+        return { status: 'failed' };
+    }
+}
+
 // store the provider data for validation in the backend
 export async function submitProviderData(
     state,
     keyStore,
     settings,
     data,
-    keyPairs
+    keyPairs,
+    keys
 ) {
     const backend = settings.get('backend');
-    const signedData = await e(sign(keyPairs.signing.privateKey, data));
-    // we add the public key so that the backend can verify it
-    signedData.publicKeys = {
+    const dataToEncrypt = Object.assign({}, data);
+    dataToEncrypt.publicKeys = {
         signing: keyPairs.signing.publicKey,
         encryption: keyPairs.encryption.publicKey,
     };
-    return await e(backend.appointments.storeProviderData(data.id, signedData));
+
+    const providerDataKey = keys.providerData;
+
+    // we convert the data to JSON
+    const jsonData = JSON.stringify(dataToEncrypt);
+    const [encryptedData, privateKey] = await e(
+        ephemeralECDHEncrypt(jsonData, providerDataKey)
+    );
+
+    const encryptedJSONData = JSON.stringify(encryptedData);
+
+    // we store the provider data key so we can decrypt the data later
+    backend.local.set('provider::data::encryptionKey', privateKey);
+
+    const signedData = await e(
+        sign(
+            keyPairs.signing.privateKey,
+            encryptedJSONData,
+            keyPairs.signing.publicKey
+        )
+    );
+
+    try {
+        return await e(
+            backend.appointments.storeProviderData(data.id, signedData)
+        );
+    } catch (e) {
+        return { status: 'failed', error: e.toString() };
+    }
 }

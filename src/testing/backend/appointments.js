@@ -53,17 +53,32 @@ export default class AppointmentsBackend {
         }
     }
 
-    // add the mediator key to the list of keys
+    async confirmProvider({ id, key, providerData, keyData }) {
+        let found = false;
+        for (const existingKey of this.keys.providers) {
+            if (existingKey.data === keyData.data) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            this.keys.providers.push(keyData);
+            this.store.set('keys', this.keys);
+        }
+        // we store the verified provider data
+        const result = await e(this.storeData(id, providerData));
+        if (!result) return;
+        return {};
+    }
+
+    // add the mediator key to the list of keys (only for testing)
     async addMediatorPublicKeys(keys) {
         await e(this.initialized());
-        // first we hash the key
-        const signingKeyHash = await e(hash(keys.signing.publicKey));
-        const encryptionKeyHash = await e(hash(keys.encryption.publicKey));
-        const hashes = {
-            encryption: encryptionKeyHash,
-            signing: signingKeyHash,
+        const keyData = {
+            encryption: keys.encryption.publicKey,
+            signing: keys.signing.publicKey,
         };
-        const jsonData = JSON.stringify(hashes);
+        const jsonData = JSON.stringify(keyData);
         const signedData = await e(
             sign(this.rootSigningKeyPair.privateKey, jsonData)
         );
@@ -149,6 +164,7 @@ export default class AppointmentsBackend {
             keys = {
                 mediators: [],
                 notifiers: [],
+                providers: [],
             };
             this.store.set('keys', keys);
         }
@@ -170,7 +186,7 @@ export default class AppointmentsBackend {
                 queue.keyPair = await e(generateECDHKeyPair());
                 // we encrypt the queue key with the queue encryption key pair
                 // to which all mediators have access...
-                queue.encryptedPrivateKey = await e(
+                [queue.encryptedPrivateKey, _] = await e(
                     ephemeralECDHEncrypt(
                         queue.keyPair.privateKey,
                         queueEncryptionKeyPair.publicKey
@@ -263,25 +279,9 @@ export default class AppointmentsBackend {
 
     // provider-only endpoints
 
-    // store provider data for verification
-    async storeProviderData(id, signedProviderData, code) {
-        const existingData = this.store.get(`providers::${id}`);
-        if (existingData !== null) {
-            // there is already data under this entry, we verify the public key
-            // of the stored data against the new data. If the key doesn't
-            // verif the new data we don't update it...
-            if (
-                !(await e(
-                    verify(
-                        [existingData.publicKeys.signing],
-                        signedProviderData
-                    )
-                ))
-            ) {
-                return;
-            }
-        }
-        this.store.set(`providers::${id}`, signedProviderData);
+    async storeProviderData(id, signedData, code) {
+        const result = await this.storeData(id, signedData);
+        if (!result) return;
         let providerDataList = this.store.get('providers::list');
         if (providerDataList === null) providerDataList = [];
         for (const pid of providerDataList) {
@@ -290,6 +290,26 @@ export default class AppointmentsBackend {
         providerDataList.push(id);
         // we update the provider data list
         this.store.set('providers::list', providerDataList);
+    }
+
+    async getData(id) {
+        // to do: implement access control (not really relevant though for the demo)
+        return this.store.get(`data::${id}`);
+    }
+
+    // store provider data for verification
+    async storeData(id, signedData) {
+        const existingData = this.store.get(`data::${id}`);
+        if (existingData !== null) {
+            // there is already data under this entry, we verify the public key
+            // of the stored data against the new data. If the key doesn't
+            // verif the new data we don't update it...
+            if (!(await e(verify([existingData.publicKey], signedData)))) {
+                throw 'cannot update';
+            }
+        }
+        this.store.set(`data::${id}`, signedData);
+        return true;
     }
 
     // delete provider data stored for verification
@@ -313,7 +333,7 @@ export default class AppointmentsBackend {
         if (providersList === null) return [];
         const providers = [];
         for (const providerID of providersList) {
-            const providerData = this.store.get(`providers::${providerID}`);
+            const providerData = this.store.get(`data::${providerID}`);
             if (providerData === null) return [];
             providers.push(providerData);
         }

@@ -17,7 +17,7 @@
 import { b642buf, buf2b64, str2ab } from 'helpers/conversion';
 import { e } from 'helpers/async';
 
-export async function sign(keyData, rawData) {
+export async function sign(keyData, rawData, publicKeyData) {
     const data = str2ab(rawData);
     const ab = b642buf(keyData);
 
@@ -35,7 +35,9 @@ export async function sign(keyData, rawData) {
         const result = await e(
             crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, data)
         );
-        return { signature: buf2b64(result), data: rawData };
+        const d = { signature: buf2b64(result), data: rawData };
+        if (publicKeyData !== undefined) d.publicKey = publicKeyData;
+        return d;
     } catch (e) {
         console.log(e);
     }

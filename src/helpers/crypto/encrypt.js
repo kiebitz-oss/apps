@@ -76,11 +76,14 @@ export async function ephemeralECDHEncrypt(rawData, publicKeyData) {
 
         // we return the data and the public ephemeral key (which the receiver needs to derive
         // the symmetric key using his/her private key)
-        return {
-            iv: buf2b64(iv),
-            data: buf2b64(encryptedData),
-            publicKey: ephemeralKeyPair.publicKey,
-        };
+        return [
+            {
+                iv: buf2b64(iv),
+                data: buf2b64(encryptedData),
+                publicKey: ephemeralKeyPair.publicKey,
+            },
+            ephemeralKeyPair.privateKey,
+        ];
     } catch (e) {
         console.log(e);
     }
