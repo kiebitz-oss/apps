@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { NotFound } from "components";
-import t from "./translations.yml";
+import { NotFound } from 'components';
+import t from './translations.yml';
 
 // Routes are matched in order, so be sure to put a specific route like
 // /actions/new before /actions/(${id}) which would match "new" as well.
 const routes = new Map([
-/*    [
+    /*    [
         "appSelector",
         {
             url: "/?",
@@ -33,16 +33,16 @@ const routes = new Map([
         }
     ],*/
     [
-        "notFound",
+        'notFound',
         {
             handler: () => ({
                 t: t,
-                title: "notFound",
+                title: 'notFound',
                 component: NotFound,
-                isSimple: true
-            })
-        }
-    ]
+                isSimple: true,
+            }),
+        },
+    ],
 ]);
 
 export default routes;

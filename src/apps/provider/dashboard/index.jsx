@@ -14,117 +14,97 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment as F } from "react";
+import React, { useEffect, useState, Fragment as F } from 'react';
 
-import Settings from "./settings"
+import Settings from './settings';
 
-import { withSettings, withActions, Tabs, Tab, T, A, Message } from "components";
-import { randomBytes, verify, sign, generateECDSAKeyPair, generateECDHKeyPair} from "helpers/crypto";
-import { e } from "helpers/async";
-import t from "./translations.yml";
+import { keyPairs, validKeyPairs, providerData } from './actions';
+import {
+    withSettings,
+    withActions,
+    Tabs,
+    Tab,
+    T,
+    A,
+    Message,
+} from 'components';
+import t from './translations.yml';
 
-// make sure the signing and encryption key pairs exist
-async function keyPairs(state, keyStore, settings){
-	const backend = settings.get("backend")
+const Dashboard = withActions(
+    withSettings(
+        ({
+            route: {
+                handler: {
+                    props: { tab },
+                },
+            },
+            settings,
+            providerData,
+            providerDataAction,
+            keyPairs,
+            keyPairsAction,
+            validKeyPairs,
+            validKeyPairsAction,
+        }) => {
+            const [data, setData] = useState(false);
+            const [key, setKey] = useState(false);
+            const [validKey, setValidKey] = useState(false);
 
-	const providerKeyPairs = backend.local.get("provider::keyPairs")
+            useEffect(() => {
+                if (!data) {
+                    setData(true);
+                    providerDataAction();
+                }
+                if (!key) {
+                    setKey(true);
+                    keyPairsAction();
+                }
+                if (!validKey && keyPairs !== undefined) {
+                    setValidKey(true);
+                    validKeyPairsAction(keyPairs);
+                }
+            });
 
-	if (providerKeyPairs === null){
-		const encryptionKeyPair = await generateECDSAKeyPair()
-		const signingKeyPair = await generateECDHKeyPair()
-		const keyPairs = {
-			signing: signingKeyPair,
-			encryption: encryptionKeyPair,
-		}
-		backend.local.set("provider::keyPairs", keyPairs)
-		return keyPairs
-	} else {
-		return providerKeyPairs
-	}
-}
+            let content;
 
-// make sure the keys are registered in the backend
-async function validKeyPairs(state, keyStore, settings, key){
-	return {valid: false}
+            switch (tab) {
+                case 'settings':
+                    content = <Settings />;
+            }
 
-}
+            let invalidKeyMessage;
 
-// store the provider data for validation in the backend
-async function storeProviderData(state, keyStore, settings, data, keyPairs){
-	const backend = settings.get("backend")
-	let id = backend.local.get("provider::ID")
-	if (id === null){
-		id = randomBytes(32)
-		backend.local.set("provider::ID", id)
-	}
-	const signedData = await e(sign(keyPairs.signing.privateKey, data))
-	// we add the public key so that the backend can verify it
-	signedData.publicKeys = {
-		signing: keyPairs.signing.publicKey,
-		encryption: keyPairs.encryption.publicKey
-	}
-	return await e(backend.appointments.storeProviderData(id, signedData))
-}
+            if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
+                invalidKeyMessage = (
+                    <Message type="danger">
+                        <T t={t} k="invalid-key" />
+                    </Message>
+                );
+            }
 
-const Dashboard = withActions(withSettings(({
-	route : {handler: {props: {tab}}},
-	settings,
-	storeProviderData,
-	storeProviderDataAction,
-	keyPairs,
-	keyPairsAction,
-	validKeyPairs,
-	validKeyPairsAction}) => {
-
-	const [key, setKey] = useState(false)
-	const [validKey, setValidKey] = useState(false)
-	const [dataStored, setDataStored] = useState(false)
-
-	useEffect(() => {
-		if (!key){
-			setKey(true)
-			keyPairsAction()
-		}
-		if (!validKey && keyPairs !== undefined){
-			setValidKey(true)
-			validKeyPairsAction(keyPairs)
-		}
-		if (!dataStored && keyPairs !== undefined){
-			setDataStored(true)
-
-			// we store...
-			const providerData = {
-				// basic information about the provider
-				info: {
-					name: "Muster AG",
-				},
-			}
-
-			storeProviderDataAction(providerData, keyPairs)
-		}
-	})
-
-	let content
-
-	switch(tab){
-		case "settings":
-		content = <Settings />
-	}
-
-	let invalidKeyMessage
-
-	if (validKeyPairs !== undefined && validKeyPairs.valid === false){
-		invalidKeyMessage = <Message type="danger"><T t={t} k="invalidKey" /></Message>
-	}
-
-	return <F>
-	    <Tabs>
-	    	<Tab active={tab === "appointments"} href="/provider/appointments"><T t={t} k="appointments.title"/></Tab>
-	    	<Tab active={tab === "settings"} href="/provider/settings"><T t={t} k="settings.title"/></Tab>
-	    </Tabs>
-	    {invalidKeyMessage}
-	    {content}
-	</F>
-}), [keyPairs, validKeyPairs, storeProviderData])
+            return (
+                <F>
+                    <Tabs>
+                        <Tab
+                            active={tab === 'appointments'}
+                            href="/provider/appointments"
+                        >
+                            <T t={t} k="appointments.title" />
+                        </Tab>
+                        <Tab
+                            active={tab === 'settings'}
+                            href="/provider/settings"
+                        >
+                            <T t={t} k="settings.title" />
+                        </Tab>
+                    </Tabs>
+                    {invalidKeyMessage}
+                    {content}
+                </F>
+            );
+        }
+    ),
+    [keyPairs, validKeyPairs, providerData]
+);
 
 export default Dashboard;

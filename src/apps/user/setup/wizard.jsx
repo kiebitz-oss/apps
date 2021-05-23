@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
     T,
     A,
@@ -28,48 +28,71 @@ import {
     CardFooter,
     Switch,
     Message,
-    CardNav
-} from "components";
-import ContactData from "./contact-data";
-import StoreSecrets from "./store-secrets";
-import Verify from "./verify";
-import Finalize from "./finalize";
-import t from "./translations.yml";
-import "./wizard.scss";
+    CardNav,
+} from 'components';
+import ContactData from './contact-data';
+import StoreSecrets from './store-secrets';
+import Verify from './verify';
+import Finalize from './finalize';
+import t from './translations.yml';
+import './wizard.scss';
 
-const pages = ["hi", "enter-contact-data", "verify", "store-secrets", "finalize"];
+const pages = [
+    'hi',
+    'enter-contact-data',
+    'verify',
+    'store-secrets',
+    'finalize',
+];
 
-const Hi = withSettings(({type, settings}) => <React.Fragment>
-    <CardContent>
-        <p>
-            <T t={t} k="wizard.hi" link={<A key="letUsKnow" external href={settings.get("supportEmail")} ><T t={t} k="wizard.letUsKnow" key="letUsKnow"/></A>} />
-        </p>
-    </CardContent>
-    <CardFooter>
-        <Button type="success" href={`/setup/${type}/enter-contact-data`}><T t={t} k="wizard.continue" /></Button>
-    </CardFooter>
-</React.Fragment>)
+const Hi = withSettings(({ type, settings }) => (
+    <React.Fragment>
+        <CardContent>
+            <p>
+                <T
+                    t={t}
+                    k="wizard.hi"
+                    link={
+                        <A
+                            key="letUsKnow"
+                            external
+                            href={settings.get('supportEmail')}
+                        >
+                            <T t={t} k="wizard.letUsKnow" key="letUsKnow" />
+                        </A>
+                    }
+                />
+            </p>
+        </CardContent>
+        <CardFooter>
+            <Button type="success" href={`/setup/${type}/enter-contact-data`}>
+                <T t={t} k="wizard.continue" />
+            </Button>
+        </CardFooter>
+    </React.Fragment>
+));
 
-const Wizard = ({route, router, page, type, privacyManager}) => {
-
-    const pageRef = useRef(null)
+const Wizard = ({ route, router, page, type, privacyManager }) => {
+    const pageRef = useRef(null);
 
     const checkPage = () => {
-        return true
-    }
+        return true;
+    };
 
-    const canShow = (_page) => {
-        return true
-    }
+    const canShow = _page => {
+        return true;
+    };
 
-    if (!page)
-        page = pages[0]
+    if (!page) page = pages[0];
 
-    // we always 
+    // we always
     useEffect(() => {
         if (pageRef.current !== undefined)
-            pageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })        
-    })
+            pageRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+    });
 
     const renderLoaded = () => {
         const { app } = route.handler;
@@ -81,18 +104,18 @@ const Wizard = ({route, router, page, type, privacyManager}) => {
         for (const p of pages)
             components.set(
                 p,
-                <a key={`${p}Link`} ref={p === page ? pageRef: undefined}>
-                <CardNav
-                    key={p}
-                    disabled={!canShow(p)}
-                    onClick={() => {
-                        if (canShow(p))
-                            router.navigateToUrl(`/setup/${type}/${p}`);
-                    }}
-                    active={page === p}
-                >
-                    {i++}. <T t={t} k={`wizard.steps.${p}`} />
-                </CardNav>
+                <a key={`${p}Link`} ref={p === page ? pageRef : undefined}>
+                    <CardNav
+                        key={p}
+                        disabled={!canShow(p)}
+                        onClick={() => {
+                            if (canShow(p))
+                                router.navigateToUrl(`/setup/${type}/${p}`);
+                        }}
+                        active={page === p}
+                    >
+                        {i++}. <T t={t} k={`wizard.steps.${p}`} />
+                    </CardNav>
                 </a>
             );
 
@@ -107,52 +130,27 @@ const Wizard = ({route, router, page, type, privacyManager}) => {
             components.set(p, newComponent);
         };
 
-
         switch (page) {
-            case "hi":
+            case 'hi':
+                populate('hi', <Hi key="hiNotice" type={type} />);
+                break;
+            case 'enter-contact-data':
                 populate(
-                    "hi",
-                    <Hi
-                        key="hiNotice"
-                        type={type}
-                    />
+                    'enter-contact-data',
+                    <ContactData key="enterContactData" type={type} />
                 );
                 break;
-            case "enter-contact-data":
+            case 'store-secrets':
                 populate(
-                    "enter-contact-data",
-                    <ContactData
-                        key="enterContactData"
-                        type={type}
-                    />
+                    'store-secrets',
+                    <StoreSecrets key="storeSecrets" type={type} />
                 );
                 break;
-            case "store-secrets":
-                populate(
-                    "store-secrets",
-                    <StoreSecrets
-                        key="storeSecrets"
-                        type={type}
-                    />
-                );
+            case 'verify':
+                populate('verify', <Verify key="verify" type={type} />);
                 break;
-            case "verify":
-                populate(
-                    "verify",
-                    <Verify
-                        key="verify"
-                        type={type}
-                    />
-                );
-                break;
-            case "finalize":
-                populate(
-                    "finalize",
-                    <Finalize
-                        key="finalize"
-                        type={type}
-                    />
-                );
+            case 'finalize':
+                populate('finalize', <Finalize key="finalize" type={type} />);
                 break;
         }
 
@@ -163,13 +161,9 @@ const Wizard = ({route, router, page, type, privacyManager}) => {
 
     return (
         <CenteredCard className="kip-cm-wizard">
-            <WithLoader
-                resources={[]}
-                renderLoaded={renderLoaded}
-            />
+            <WithLoader resources={[]} renderLoaded={renderLoaded} />
         </CenteredCard>
     );
-
-}
+};
 
 export default withActions(withRouter(Wizard), []);

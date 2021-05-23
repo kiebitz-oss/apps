@@ -45,10 +45,7 @@ export default class Settings extends BaseActions {
         };
 
         const xhr = new XMLHttpRequest();
-        xhr.open(
-            'GET',
-            settings.get('externalSettingsPath', '/settings.json')
-        );
+        xhr.open('GET', settings.get('externalSettingsPath', '/settings.json'));
 
         const promise = new Promise((resolve, reject) => {
             xhr.onload = () => {

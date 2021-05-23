@@ -14,17 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React from "react";
-import { Title, T } from "components";
-import t from "./translations.yml";
+import React from 'react';
+import { Title, T } from 'components';
+import t from './translations.yml';
 
 const menu = new Map([
-    [
-        "auth",
-        new Map([
-        ])
-    ],
-    ["nav", new Map([])]
+    ['auth', new Map([])],
+    ['nav', new Map([])],
 ]);
 
 export default menu;

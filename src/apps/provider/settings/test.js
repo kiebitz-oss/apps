@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Settings from "helpers/settings";
-import baseSettings from "./base";
+import Settings from 'helpers/settings';
+import baseSettings from './base';
 
 const settings = new Settings();
 settings.update(baseSettings);

@@ -16,7 +16,7 @@
 
 import Settings from 'helpers/settings';
 import Fixtures from 'testing/fixtures';
-import Backend, {LocalStorageStore} from 'testing/backend';
+import Backend, { LocalStorageStore } from 'testing/backend';
 import baseSettings from './base';
 
 const settings = new Settings();
@@ -25,15 +25,15 @@ settings.update(baseSettings);
 
 settings.update(
     new Settings([
-    	['externalSettingsPath', '/settings_test.json'],
-    	['fixtures', Fixtures],
+        ['externalSettingsPath', '/settings_test.json'],
+        ['fixtures', Fixtures],
     ])
 );
 
 // by default we use the local testing backend (will be overwritten in the
 // production or development settings)
-const backend = new Backend(settings, new LocalStorageStore())
+const backend = new Backend(settings, new LocalStorageStore());
 
-settings.set('backend', backend)
+settings.set('backend', backend);
 
 export default settings;

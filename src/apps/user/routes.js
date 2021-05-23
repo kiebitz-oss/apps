@@ -14,31 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Setup from "./setup";
-import Start from "./start";
-import t from "./translations.yml";
+import Setup from './setup';
+import Start from './start';
+import t from './translations.yml';
 
 const routes = new Map([
     [
-        "index",
+        'index',
         {
-            url: "/user/?",
+            url: '/user/?',
             handler: () => ({
                 t: t,
-                title: "welcome",
+                title: 'welcome',
                 component: Start,
                 isSimple: true,
                 props: {},
-            })
+            }),
         },
     ],
     [
-        "setup",
+        'setup',
         {
-            url: "/user/setup(?:/([a-z-]+))?(?:/([a-z-]+))?(?:/([a-z-]+))?",
+            url: '/user/setup(?:/([a-z-]+))?(?:/([a-z-]+))?(?:/([a-z-]+))?',
             handler: (type, page, status) => ({
                 t: t,
-                title: "setup",
+                title: 'setup',
                 isSimple: true,
                 component: Setup,
                 props: {
@@ -46,8 +46,8 @@ const routes = new Map([
                     page: page,
                     status: status,
                 },
-            })
-        }
+            }),
+        },
     ],
 ]);
 

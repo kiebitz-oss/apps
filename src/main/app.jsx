@@ -32,9 +32,9 @@ import {
     SidebarContainer,
 } from 'components';
 
-import t from "./translations.yml"
-import { user } from "actions";
-import { encodeQueryData } from "helpers/url";
+import t from './translations.yml';
+import { user } from 'actions';
+import { encodeQueryData } from 'helpers/url';
 import './app.scss';
 
 class App extends React.Component {
@@ -43,29 +43,29 @@ class App extends React.Component {
         this.state = {
             sidebarActive: false,
         };
-        this.checkRoute(true)
+        this.checkRoute(true);
     }
 
     handleSidebarToggle = () => {
         this.setState({ sidebarActive: !this.state.sidebarActive });
     };
 
-    checkRoute(redirect){
+    checkRoute(redirect) {
         const { route } = this.props;
-        if (route.handler.authentication !== undefined){
-            if (user === undefined){
-                if (redirect){
-                    const data = encodeQueryData({redirectTo: route.path})
-                    router.navigateToUrl(`/login#${data}`)                    
+        if (route.handler.authentication !== undefined) {
+            if (user === undefined) {
+                if (redirect) {
+                    const data = encodeQueryData({ redirectTo: route.path });
+                    router.navigateToUrl(`/login#${data}`);
                 }
-                return false
+                return false;
             }
         }
-        return true
+        return true;
     }
 
     componentDidUpdate() {
-        this.checkRoute(true)
+        this.checkRoute(true);
     }
 
     render() {
@@ -73,11 +73,13 @@ class App extends React.Component {
         const RouteComponent = route.handler.component;
 
         if (!this.checkRoute())
-            return <CenteredCard>
-                <CardContent>
-                    <T t={t} k="redirecting" />
-                </CardContent>
-            </CenteredCard>
+            return (
+                <CenteredCard>
+                    <CardContent>
+                        <T t={t} k="redirecting" />
+                    </CardContent>
+                </CenteredCard>
+            );
 
         if (route.handler.isSimple)
             return this.renderSimple(RouteComponent, route.handler.props);
@@ -141,7 +143,10 @@ class App extends React.Component {
             <React.Fragment>
                 <div className="kip-with-logo-wrapper">
                     <div className="kip-logo-wrapper">
-                        <img className="kip-logo" src={settings.get("whiteLogo")} />
+                        <img
+                            className="kip-logo"
+                            src={settings.get('whiteLogo')}
+                        />
                     </div>
                     <Component {...props} route={route} settings={settings} />
                 </div>
@@ -164,4 +169,6 @@ App.propTypes = {
     }).isRequired,
 };
 
-export default withSettings(withActions(withRoute(withRouter(App)), [TitleActions, user]));
+export default withSettings(
+    withActions(withRoute(withRouter(App)), [TitleActions, user])
+);

@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Dashboard from "./dashboard";
-import t from "./translations.yml";
+import Dashboard from './dashboard';
+import t from './translations.yml';
 
 const routes = new Map([
     [
-        "mediatorDashboard",
+        'mediatorDashboard',
         {
-            url: "/mediator(?:/([a-z]+))?(?:/([a-z]+))?(?:/([a-z0-9]+))?",
+            url: '/mediator(?:/([a-z]+))?(?:/([a-z]+))?(?:/([a-z0-9]+))?',
             handler: (tab, action, id) => ({
                 t: t,
-                title: "dashboard",
+                title: 'dashboard',
                 component: Dashboard,
-                props: {tab: tab || 'providers', action: action, id: id},
-            })
-        }
+                props: { tab: tab || 'providers', action: action, id: id },
+            }),
+        },
     ],
 ]);
 

@@ -45,6 +45,11 @@ div.kip {
         @include font-open-sans;
     }
 
+    hr {
+        background-color: #ccc;
+        height: 1px;
+    }
+
     h1,
     h2,
     h3,

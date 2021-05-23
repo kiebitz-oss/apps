@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export const queues = [
-	{
-		name: '47361',
-		type: 'zip_code',
-	}
-]
+    {
+        name: '47361 - Obertupfingen',
+        type: 'zip_code',
+    },
+];

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /* eslint-env node */
-import { render } from "./index_common";
-import settings from "web/settings/prod";
+import { render } from './index_common';
+import settings from 'web/settings/prod';
 
 render(settings);

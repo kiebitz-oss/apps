@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import React from 'react';
+import { T } from './t';
 import { RetractingLabelInput } from './retracting-label-input';
 import './search-select.scss';
+import t from './translations.yml';
 
 export const SearchSelect = ({
     search,
@@ -41,28 +43,30 @@ export const SearchSelect = ({
     let searchCandidates;
     if (items.length > 0)
         searchCandidates = <ul className="kip-candidates">{items}</ul>;
+    else {
+        console.log('no candidates');
+        searchCandidates = (
+            <ul className="kip-candidates">
+                <li className="kip-candidate" key="not-found">
+                    <T t={t} k="search-select.no-candidates" />
+                </li>
+            </ul>
+        );
+    }
 
     return (
         <div className="kip-search-select">
-            <form
-                onSubmit={e => {
-                    e.preventDefault();
-                    onSelect();
-                }}
+            <RetractingLabelInput
+                onChange={setSearch}
+                onEnter={e => e.preventDefault()}
+                label={label}
+                disabled={disabled}
+                description={description}
+                autoComplete="off"
+                value={search}
             >
-                <fieldset disabled={disabled}>
-                    <RetractingLabelInput
-                        onChange={setSearch}
-                        label={label}
-                        disabled={disabled}
-                        description={description}
-                        autoComplete="off"
-                        value={search}
-                    >
-                        {searchCandidates}
-                    </RetractingLabelInput>
-                </fieldset>
-            </form>
+                {searchCandidates}
+            </RetractingLabelInput>
         </div>
     );
 };

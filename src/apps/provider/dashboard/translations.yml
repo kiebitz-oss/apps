@@ -4,5 +4,48 @@ appointments:
 settings:
   title:
     de: Einstellungen
-invalidKey:
+invalid-key:
   de: Ihr Signaturschlüssel ist ungültig. Bitte prüfen Sie die Einstellungen!
+save-and-restore:
+  de: Speichern & Wiederherstellen
+save:
+  de: Einstellungen speichern
+restore:
+  de: Einstellungen wiederherstellen
+provider-data:
+  please-add-one-queue:
+    de: Bitte wählen Sie zumindest ein Einzugsgebiet aus.
+  access-code:
+    label:
+      de: Zugangscode (falls vorhanden)
+    description:
+      de: Falls Sie einen Zugangscode per E-Mail oder über einen anderen Kanal erhalten haben geben Sie diesen bitte hier ein.
+  description:
+    de: Hier können Sie die Daten Ihrer Organisation angeben (die Daten werden geprüft bevor Sie diese einsetzen können).
+  title:
+    de: Ihre Daten
+  invalid-name:
+    de: Bitte gegen Sie einen gültigen Namen an
+  name:
+    de: Name Ihrer Organisation (für Nutzer sichtbar)
+  phone:
+    de: Optionale Telefonnummer für Rückfragen (für Nutzer sichtbar)
+  e-mail:
+    de: E-Mail Adresse (nicht öffentlich)
+  street:
+    de: Straße & Hausnummer (für Nutzer sichtbar)
+  zip-code:
+    de: Postleitzahl (für Nutzer sichtbar)
+  city:
+    de: Stadt (für Nutzer sichtbar)
+  submit:
+    de: Zur Überprüfung übermitteln
+  saving:
+    de: Bitte warten...
+  success:
+    de: Daten erfolgreich übermittelt!
+queues:
+  label:
+    de: Einzugsgebiete
+  description:
+    de: Hier können Sie festlegen, welche Einzugsgebiete für Sie relevant sind.

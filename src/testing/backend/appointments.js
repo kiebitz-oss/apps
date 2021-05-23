@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { 
+import {
     hash,
     sign,
     verify,
@@ -23,288 +23,331 @@ import {
     ephemeralECDHEncrypt,
     ephemeralECDHDecrypt,
     generateECDHKeyPair,
-    randomBytes 
-} from "helpers/crypto"
-import { e } from "helpers/async"
+    randomBytes,
+} from 'helpers/crypto';
+import { e } from 'helpers/async';
 
 function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 // The appointments backend
 export default class AppointmentsBackend {
-
-    constructor(settings, store){
-        this.initialized = false
-        this.settings = settings
-        this.store = store
-        this.initialize()
+    constructor(settings, store) {
+        this._initialized = false;
+        this.settings = settings;
+        this.store = store;
+        this.initialize();
     }
 
-    async priorityToken(queue, n){
-        return await e(deriveToken(queue.id, this.secret, n))
+    async priorityToken(queue, n) {
+        return await e(deriveToken(queue.id, this.secret, n));
+    }
+
+    async initialized() {
+        let i = 0;
+        while (!this._initialized) {
+            await e(timeout(10));
+            if (i++ > 100) {
+                throw 'still not initialized';
+            }
+        }
     }
 
     // add the mediator key to the list of keys
-    async addMediatorPublicKeys(keys){
-        let i = 0
-        while(!this.initialized){
-            await timeout(10)
-            if (i++>100){
-                return
-            }
-        }
+    async addMediatorPublicKeys(keys) {
+        await e(this.initialized());
         // first we hash the key
-        const signingKeyHash = await e(hash(keys.signing.publicKey))
-        const encryptionKeyHash = await e(hash(keys.encryption.publicKey))
+        const signingKeyHash = await e(hash(keys.signing.publicKey));
+        const encryptionKeyHash = await e(hash(keys.encryption.publicKey));
         const hashes = {
             encryption: encryptionKeyHash,
             signing: signingKeyHash,
-        }
-        const jsonData = JSON.stringify(hashes)
-        const signedData = await e(sign(this.rootSigningKeyPair.privateKey, jsonData))
-        for(const data of this.keys.mediators){
-            if (data.data == signedData.data){
-                return
+        };
+        const jsonData = JSON.stringify(hashes);
+        const signedData = await e(
+            sign(this.rootSigningKeyPair.privateKey, jsonData)
+        );
+        for (const data of this.keys.mediators) {
+            if (data.data == signedData.data) {
+                return;
             }
         }
         // we add the signed mediator key
-        this.keys.mediators.push(signedData)
-        this.store.set("keys", this.keys)
+        this.keys.mediators.push(signedData);
+        this.store.set('keys', this.keys);
     }
 
     // returns the public root signing key (required to e.g. verify mediator keys)
-    get rootSigningPublicKey(){
-        return this.rootSigningKeyPair.publicKey
+    get rootSigningPublicKey() {
+        return this.rootSigningKeyPair.publicKey;
     }
 
     // initializes the appointments testing backend
-    async initialize(){
-
+    async initialize() {
         // we generate a root signing key pair that will sign e.g. mediator keys
-        let keyPair = this.store.get("rootSigningKeyPair")
-        if (keyPair === null){
-            keyPair = await e(generateECDSAKeyPair())
-            this.store.set("rootSigningKeyPair", keyPair)
+        let rootSigningKeyPair = this.store.get('rootSigningKeyPair');
+        if (rootSigningKeyPair === null) {
+            rootSigningKeyPair = await e(generateECDSAKeyPair());
+            this.store.set('rootSigningKeyPair', rootSigningKeyPair);
         }
 
-        this.rootSigningKeyPair = keyPair
+        this.rootSigningKeyPair = rootSigningKeyPair;
 
         // the key pair for encrypting list keys
-        let listKeysEncryptionKeyPair = this.store.get("listKeysEncryptionKeyPair")
+        let listKeysEncryptionKeyPair = this.store.get(
+            'listKeysEncryptionKeyPair'
+        );
 
-        if (listKeysEncryptionKeyPair === null){
-            listKeysEncryptionKeyPair = await e(generateECDHKeyPair())
-            this.store.set("listKeysEncryptionKeyPair", keyPair)
+        if (listKeysEncryptionKeyPair === null) {
+            listKeysEncryptionKeyPair = await e(generateECDHKeyPair());
+            this.store.set(
+                'listKeysEncryptionKeyPair',
+                listKeysEncryptionKeyPair
+            );
         }
 
-        this.listKeysEncryptionKeyPair = listKeysEncryptionKeyPair
+        this.listKeysEncryptionKeyPair = listKeysEncryptionKeyPair;
+
+        // the key pair for encrypting queue data
+        let queueEncryptionKeyPair = this.store.get('queueEncryptionKeyPair');
+
+        if (queueEncryptionKeyPair === null) {
+            queueEncryptionKeyPair = await e(generateECDHKeyPair());
+            this.store.set('queueEncryptionKeyPair', queueEncryptionKeyPair);
+        }
+
+        this.queueEncryptionKeyPair = queueEncryptionKeyPair;
 
         // the key pair for encrypting provider data
-        let providerDataEncryptionKeyPair = this.store.get("providerDataEncryptionKeyPair")
+        let providerDataEncryptionKeyPair = this.store.get(
+            'providerDataEncryptionKeyPair'
+        );
 
-        if (providerDataEncryptionKeyPair === null){
-            providerDataEncryptionKeyPair = await e(generateECDHKeyPair())
-            this.store.set("providerDataEncryptionKeyPair", keyPair)
+        if (providerDataEncryptionKeyPair === null) {
+            providerDataEncryptionKeyPair = await e(generateECDHKeyPair());
+            this.store.set(
+                'providerDataEncryptionKeyPair',
+                providerDataEncryptionKeyPair
+            );
         }
 
-        this.providerDataEncryptionKeyPair = providerDataEncryptionKeyPair
+        this.providerDataEncryptionKeyPair = providerDataEncryptionKeyPair;
 
         // we generate a secret that will be used to generate priority tokens
-        let secret = this.store.get("secret")
-        if (secret === null){
-            secret = randomBytes(32)
-            this.store.set("secret", secret)
+        let secret = this.store.get('secret');
+        if (secret === null) {
+            secret = randomBytes(32);
+            this.store.set('secret', secret);
         }
 
-        this.secret = secret
+        this.secret = secret;
 
-        const fixtures = this.settings.get("fixtures")
-        let keys = this.store.get("keys")
+        const fixtures = this.settings.get('fixtures');
+        let keys = this.store.get('keys');
 
         if (keys === null) {
             keys = {
                 mediators: [],
                 notifiers: [],
-            }
-            this.store.set("keys", keys)
+            };
+            this.store.set('keys', keys);
         }
 
-        this.keys = keys
+        this.keys = keys;
 
-        let queues = this.store.get("queues")
+        let queues = this.store.get('queues');
 
         if (queues === null) {
-            const queuesFixtures = fixtures.get("queues")
-            const queueEncryptionKeyPair = await e(generateECDHKeyPair())
+            const queuesFixtures = fixtures.get('queues');
 
-            const queues = []
-            for(let queue of queuesFixtures){
+            queues = [];
+            for (let queue of queuesFixtures) {
                 // we make a copy...
-                queue = Object.assign({}, queue)
+                queue = Object.assign({}, queue);
                 // we generate an ID for each queue
-                queue.id = randomBytes(32)
+                queue.id = randomBytes(32);
                 // we generate a key for each queue
-                queue.keyPair = await e(generateECDHKeyPair())
+                queue.keyPair = await e(generateECDHKeyPair());
                 // we encrypt the queue key with the queue encryption key pair
                 // to which all mediators have access...
-                queue.encryptedPrivateKey = await e(ephemeralECDHEncrypt(queue.keyPair.privateKey, queueEncryptionKeyPair.publicKey))
-                const decrypted = await e(ephemeralECDHDecrypt(queue.encryptedPrivateKey, queueEncryptionKeyPair.privateKey))
+                queue.encryptedPrivateKey = await e(
+                    ephemeralECDHEncrypt(
+                        queue.keyPair.privateKey,
+                        queueEncryptionKeyPair.publicKey
+                    )
+                );
+                const decrypted = await e(
+                    ephemeralECDHDecrypt(
+                        queue.encryptedPrivateKey,
+                        queueEncryptionKeyPair.privateKey
+                    )
+                );
 
                 // we make sure the encryption & decryption works
-                if (decrypted !==  queue.keyPair.privateKey)
-                    throw "uh oh"
+                if (decrypted !== queue.keyPair.privateKey) throw 'uh oh';
 
-                queues.push(queue)
+                queues.push(queue);
             }
-            this.store.set("queues", queues)
+            this.store.set('queues', queues);
         }
 
-        this.queues = queues
+        this.queues = queues;
 
         // and we're done!
-        this.initialized = true
-
+        this._initialized = true;
     }
 
     // public endpoints
 
+    async getQueues() {
+        await e(this.initialized());
+        return this.queues.map(queue => ({
+            name: queue.name,
+            type: queue.type,
+            id: queue.id,
+            publicKey: queue.keyPair.publicKey,
+        }));
+    }
+
     // return all public keys present in the system
-    async getKeys(){
+    async getKeys() {
+        await e(this.initialized());
         return {
             // keys of providers and mediators
             lists: this.keys,
             // key to encrypt provider data for verification
             providerData: this.providerDataEncryptionKeyPair.publicKey,
             // root signing key (also provided via app)
-            rootKey: rootSigningKeyPair.publicKey,
-        }
+            rootKey: this.rootSigningKeyPair.publicKey,
+        };
     }
 
     // user endpoints
 
     // get a token for a given queue
-    getToken(hash, encryptedData, queueID){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })
+    getToken(hash, encryptedData, queueID) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // retract a token from a given queue
-    retractToken(token){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })
+    retractToken(token) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // provider and user endpoints
 
     // get (encrypted) messages stored under a given ID
-    getMessages(id){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })
+    getMessages(id) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // delete messages stored under a given ID
-    deleteMessages(id){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })
+    deleteMessages(id) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // post a message to a given ID
-    postMessage(id, encryptedData){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })
+    postMessage(id, encryptedData) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // provider-only endpoints
 
     // store provider data for verification
-    async storeProviderData(id, signedProviderData, code){
-        const existingData = this.store.get(`providers::${id}`)
-        if (existingData !== null){
+    async storeProviderData(id, signedProviderData, code) {
+        const existingData = this.store.get(`providers::${id}`);
+        if (existingData !== null) {
             // there is already data under this entry, we verify the public key
             // of the stored data against the new data. If the key doesn't
             // verif the new data we don't update it...
-            if (!await verify([existingData.publicKeys.signing], signedProviderData)){
-                return
+            if (
+                !(await e(
+                    verify(
+                        [existingData.publicKeys.signing],
+                        signedProviderData
+                    )
+                ))
+            ) {
+                return;
             }
         }
-        this.store.set(`providers::${id}`, signedProviderData)
-        let providerDataList = this.store.get("providers::list")
-        if (providerDataList === null)
-            providerDataList = []
-        for(const pid of providerDataList){
-            if (id === pid)
-                return
+        this.store.set(`providers::${id}`, signedProviderData);
+        let providerDataList = this.store.get('providers::list');
+        if (providerDataList === null) providerDataList = [];
+        for (const pid of providerDataList) {
+            if (id === pid) return;
         }
-        providerDataList.push(id)
+        providerDataList.push(id);
         // we update the provider data list
-        this.store.set("providers::list", providerDataList)
+        this.store.set('providers::list', providerDataList);
     }
 
     // delete provider data stored for verification
-    deleteProviderData(id){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })        
+    deleteProviderData(id) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // mark a given token as used using its secret
-    markTokenAsUsed(token, secret){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })        
+    markTokenAsUsed(token, secret) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // mediator-only endpoint
 
-    async getPendingProviderData(keyPairs, limit){
-        const providersList = this.store.get("providers::list")
-        if (providersList === null)
-            return []
-        const providers = []
-        for(const providerID of providersList){
-            const providerData = this.store.get(`providers::${providerID}`)
-            if (providerData === null)
-                return []
-            providers.push(providerData)
+    async getPendingProviderData(keyPairs, limit) {
+        const providersList = this.store.get('providers::list');
+        if (providersList === null) return [];
+        const providers = [];
+        for (const providerID of providersList) {
+            const providerData = this.store.get(`providers::${providerID}`);
+            if (providerData === null) return [];
+            providers.push(providerData);
         }
-        return providers
+        return providers;
     }
 
     // store the verified provider data in the system
-    storeVerifiedProviderData(id, signedProviderData){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })        
+    storeVerifiedProviderData(id, signedProviderData) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // delete the verified provider data from the system
-    deleteVerifiedProviderData(id){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })        
+    deleteVerifiedProviderData(id) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // store the signed queue data in the system
-    storeQueueData(signedQueueData){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })        
+    storeQueueData(signedQueueData) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // delete queue data from the system
-    deleteQueueData(id){
-        return new Promise((resolve, reject) =>{
-            resolve()
-        })        
+    deleteQueueData(id) {
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     // simulates the background tasks that the normal operator backend would do
-    backgroundTasks(){
-
-    }
+    backgroundTasks() {}
 }

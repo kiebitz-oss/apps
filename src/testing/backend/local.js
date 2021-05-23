@@ -16,21 +16,20 @@
 
 // The local backend
 export default class LocalBackend {
-
-    constructor(settings, store){
-        this.settings = settings
-        this.store = store
+    constructor(settings, store) {
+        this.settings = settings;
+        this.store = store;
     }
 
-    get(key){
-        return this.store.get(key)
+    get(key) {
+        return this.store.get(key);
     }
 
-    set(key, data){
-        return this.store.set(key, data)
+    set(key, data) {
+        return this.store.set(key, data);
     }
 
-    delete(key){
-        return this.store.delete(key)
+    delete(key) {
+        return this.store.delete(key);
     }
 }

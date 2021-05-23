@@ -14,34 +14,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from 'react';
 
-import { user } from "actions";
-import { withRouter, withActions, CenteredCard, CardContent } from "components";
-import "./index.scss";
+import { user } from 'actions';
+import { withRouter, withActions, CenteredCard, CardContent } from 'components';
+import './index.scss';
 
-const Login = withRouter(withActions(({userAction, user, route, router}) => {
+const Login = withRouter(
+    withActions(
+        ({ userAction, user, route, router }) => {
+            const [ok, setOk] = useState(false);
 
-	const [ok, setOk] = useState(false)
+            useEffect(() => {
+                if (user !== undefined) {
+                    if (route.hashParams.redirectTo !== undefined)
+                        router.navigateToUrl(route.hashParams.redirectTo);
+                    else router.navigateTo('/');
+                }
+                if (!ok) {
+                    setOk(true);
+                    userAction({});
+                }
+            });
 
-	useEffect(() => {
-		if (user !== undefined){
-			if (route.hashParams.redirectTo !== undefined)
-				router.navigateToUrl(route.hashParams.redirectTo)
-			else
-				router.navigateTo("/")
-		}
-		if (!ok){
-			setOk(true)
-			userAction({})
-		}
-	})
+            return (
+                <CenteredCard className="kip-cm-wizard">
+                    <CardContent>Test</CardContent>
+                </CenteredCard>
+            );
+        },
+        [user]
+    )
+);
 
-    return <CenteredCard className="kip-cm-wizard">
-    	<CardContent>
-    		Test
-    	</CardContent>
-    </CenteredCard>
-}, [user]))
-
-export default Login
+export default Login;

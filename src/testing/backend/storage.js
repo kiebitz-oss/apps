@@ -16,23 +16,21 @@
 
 // The storage backend
 export default class StorageBackend {
-
-    constructor(settings, store){
-        this.settings = settings
-        this.store = store
+    constructor(settings, store) {
+        this.settings = settings;
+        this.store = store;
     }
 
-    storeSettings(id, data){
-        return new Promise((resolve, reject) =>{
-            this.store.set(`settings:${id}`, data)
-            resolve()
-        })
+    storeSettings(id, data) {
+        return new Promise((resolve, reject) => {
+            this.store.set(`settings:${id}`, data);
+            resolve();
+        });
     }
 
-    getSettings(id){
-        return new Promise((resolve, reject) =>{
-            resolve(this.store.get(`settings:${id}`))
-        })
+    getSettings(id) {
+        return new Promise((resolve, reject) => {
+            resolve(this.store.get(`settings:${id}`));
+        });
     }
-
 }

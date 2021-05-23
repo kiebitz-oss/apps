@@ -180,9 +180,9 @@ export default class Settings {
         const lang = this.lang();
         const value = hget(t, [...kl, lang]);
         if (value === undefined) {
-            let source;
+            let source = '';
             if (t._t !== undefined && t._t.path !== undefined)
-                source = ` (${t._t.path})`;
+                source = `/(${t._t.path})`;
             return [`[mt: ${kl.join("/")}/${lang}${source}]`];
         }
         if (typeof value !== "string")

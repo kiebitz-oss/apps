@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Settings from "helpers/settings";
+import Settings from 'helpers/settings';
 
-import baseSettings from "./base";
-import genericSettings from "settings/prod";
-import userSettings from "apps/user/settings/prod";
-import providerSettings from "apps/provider/settings/prod";
-import mediatorSettings from "apps/mediator/settings/prod";
-import authSettings from "apps/auth/settings/prod";
+import baseSettings from './base';
+import genericSettings from 'settings/prod';
+import userSettings from 'apps/user/settings/prod';
+import providerSettings from 'apps/provider/settings/prod';
+import mediatorSettings from 'apps/mediator/settings/prod';
+import authSettings from 'apps/auth/settings/prod';
 
 const settings = new Settings();
 

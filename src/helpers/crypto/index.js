@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-export * from "./generate-key";
-export * from "./encrypt";
-export * from "./verify";
-export * from "./sign";
-export * from "./hash";
-export * from "./random";
-export * from "./token";
+export * from './generate-key';
+export * from './encrypt';
+export * from './verify';
+export * from './sign';
+export * from './hash';
+export * from './random';
+export * from './token';

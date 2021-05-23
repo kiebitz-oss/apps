@@ -116,8 +116,13 @@ export function withActions(Component, actionNames, keyList, noStore) {
                                             error !== undefined &&
                                             store.set(key, error)
                                     );
+                                return result;
                             } else if (result !== undefined) {
                                 store.set(key, result);
+                                // we always return a promise
+                                return new Promise((resolve, reject) => {
+                                    resolve(result);
+                                });
                             }
                         };
                         actionProvider = wrapper;

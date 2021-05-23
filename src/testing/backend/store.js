@@ -15,53 +15,52 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export class PrefixStore {
-	constructor(store, prefix){
-		this.store = store
-		this.prefix = prefix
-	}
+    constructor(store, prefix) {
+        this.store = store;
+        this.prefix = prefix;
+    }
 
-	set(key, data){
-		return this.store.set(`${this.prefix}::${key}`, data)
-	}
+    set(key, data) {
+        return this.store.set(`${this.prefix}::${key}`, data);
+    }
 
-	get(key){
-		return this.store.get(`${this.prefix}::${key}`)
-	}
+    get(key) {
+        return this.store.get(`${this.prefix}::${key}`);
+    }
 
-	remove(key){
-		return this.store.remove(`${this.prefix}::${key}`)		
-	}
+    remove(key) {
+        return this.store.remove(`${this.prefix}::${key}`);
+    }
 }
 
 export class StorageStore {
-	constructor(storage){
-		this.storage = storage
-	}
+    constructor(storage) {
+        this.storage = storage;
+    }
 
-	set(key, data){
-		this.storage.setItem(key, JSON.stringify(data))
-	}
+    set(key, data) {
+        this.storage.setItem(key, JSON.stringify(data));
+    }
 
-	get(key){
-		const data = this.storage.getItem(key)
-		if (data !== null)
-			return JSON.parse(data)
-		return data
-	}
+    get(key) {
+        const data = this.storage.getItem(key);
+        if (data !== null) return JSON.parse(data);
+        return data;
+    }
 
-	remove(key){
-		this.storage.removeItem(key)
-	}
+    remove(key) {
+        this.storage.removeItem(key);
+    }
 }
 
 export class LocalStorageStore extends StorageStore {
-	constructor(){
-		super(localStorage)
-	}
+    constructor() {
+        super(localStorage);
+    }
 }
 
 export class SessionStorageStore extends StorageStore {
-	constructor(){
-		super(sessionStorage)
-	}
+    constructor() {
+        super(sessionStorage);
+    }
 }

@@ -14,19 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
-import Form from "helpers/form";
-import { contactData, ks } from "./actions";
-import { withRouter, withForm, withActions, Form as FormComponent, FieldSet, RetractingLabelInput, ErrorFor, T, CardFooter, CardContent, SubmitField, Button } from "components"
-import t from "./translations.yml";
-import "./contact-data.scss";
+import React, { useState, useEffect } from 'react';
+import Form from 'helpers/form';
+import { contactData, ks } from './actions';
+import {
+    withRouter,
+    withForm,
+    withActions,
+    Form as FormComponent,
+    FieldSet,
+    RetractingLabelInput,
+    ErrorFor,
+    T,
+    CardFooter,
+    CardContent,
+    SubmitField,
+    Button,
+} from 'components';
+import t from './translations.yml';
+import './contact-data.scss';
 
 class ContactDataForm extends Form {
-    validate(){
-        const errors = {}
-        if ((!this.data.name) || this.data.name.length < 2)
-            errors.name = this.settings.t(t, "contact-data.invalid-name")
-        return errors
+    validate() {
+        const errors = {};
+        if (!this.data.name || this.data.name.length < 2)
+            errors.name = this.settings.t(t, 'contact-data.invalid-name');
+        return errors;
     }
 }
 
@@ -34,89 +47,130 @@ const BaseContactData = ({
     type,
     contactData,
     contactDataAction,
-    form: {set, data, error, valid },
-    router
+    form: { set, data, error, valid },
+    router,
 }) => {
-
-    const [modified, setModified] = useState(false)
-    const [initialized, setInitialized] = useState(false)
+    const [modified, setModified] = useState(false);
+    const [initialized, setInitialized] = useState(false);
 
     const onSubmit = () => {
-        if (!valid)
-            return
+        if (!valid) return;
         // we store the contact data so it can be used in the next step
-        contactDataAction(data)
+        contactDataAction(data);
         // we redirect to the 'store-secrets' step
         router.navigateToUrl(`/setup/${type}/verify`);
-    }
+    };
 
     useEffect(() => {
-        if (initialized)
-            return
-        setInitialized(true)
-        setModified(false)
-    })
+        if (initialized) return;
+        setInitialized(true);
+        setModified(false);
+    });
 
-    const submitting = false
+    const submitting = false;
 
     const setAndMarkModified = (key, value) => {
-        setModified(true)
-        set(key, value)
-    }
+        setModified(true);
+        set(key, value);
+    };
 
-    const controls = <React.Fragment>
-        <ErrorFor error={error} field="name" />
-        <RetractingLabelInput value={data.name || ''} onChange={value => setAndMarkModified('name', value)} label={<T t={t} k="contact-data.name" />}/>
-        <ErrorFor error={error} field="phone" />
-        <RetractingLabelInput value={data.phone || ''} onChange={value => setAndMarkModified('phone', value)} label={<T t={t} k="contact-data.phone" />}/>
-        <h2><T t={t} k="contact-data.optional.title" /></h2>
-        <p><T t={t} k="contact-data.optional.text" /></p>
-        <ErrorFor error={error} field="email" />
-        <RetractingLabelInput value={data.email || ''} onChange={value => setAndMarkModified('email', value)} label={<T t={t} k="contact-data.email" />}/>
-        <ErrorFor error={error} field="street" />
-        <RetractingLabelInput value={data.street || ''} onChange={value => setAndMarkModified('street', value)} label={<T t={t} k="contact-data.street" />}/>
-        <ErrorFor error={error} field="zip-code" />
-        <RetractingLabelInput value={data.zip_code || ''} onChange={value => setAndMarkModified('zip_code', value)} label={<T t={t} k="contact-data.zip-code" />}/>
-        <ErrorFor error={error} field="city" />
-        <RetractingLabelInput value={data.city || ''} onChange={value => setAndMarkModified('city', value)} label={<T t={t} k="contact-data.city" />}/>
-    </React.Fragment>
+    const controls = (
+        <React.Fragment>
+            <ErrorFor error={error} field="name" />
+            <RetractingLabelInput
+                value={data.name || ''}
+                onChange={value => setAndMarkModified('name', value)}
+                label={<T t={t} k="contact-data.name" />}
+            />
+            <ErrorFor error={error} field="phone" />
+            <RetractingLabelInput
+                value={data.phone || ''}
+                onChange={value => setAndMarkModified('phone', value)}
+                label={<T t={t} k="contact-data.phone" />}
+            />
+            <h2>
+                <T t={t} k="contact-data.optional.title" />
+            </h2>
+            <p>
+                <T t={t} k="contact-data.optional.text" />
+            </p>
+            <ErrorFor error={error} field="email" />
+            <RetractingLabelInput
+                value={data.email || ''}
+                onChange={value => setAndMarkModified('email', value)}
+                label={<T t={t} k="contact-data.email" />}
+            />
+            <ErrorFor error={error} field="street" />
+            <RetractingLabelInput
+                value={data.street || ''}
+                onChange={value => setAndMarkModified('street', value)}
+                label={<T t={t} k="contact-data.street" />}
+            />
+            <ErrorFor error={error} field="zip-code" />
+            <RetractingLabelInput
+                value={data.zip_code || ''}
+                onChange={value => setAndMarkModified('zip_code', value)}
+                label={<T t={t} k="contact-data.zip-code" />}
+            />
+            <ErrorFor error={error} field="city" />
+            <RetractingLabelInput
+                value={data.city || ''}
+                onChange={value => setAndMarkModified('city', value)}
+                label={<T t={t} k="contact-data.city" />}
+            />
+        </React.Fragment>
+    );
 
     const redirecting = false;
 
-    return <React.Fragment>
-        <div className="kip-cm-contact-data">
-            <FormComponent onSubmit={onSubmit}>
-                <FieldSet disabled={submitting}>
-                    {
-                        <React.Fragment>
-                            <CardContent>
-                                {controls}
-                            </CardContent>
-                            <CardFooter>
-                                <SubmitField
-                                    disabled={!valid}
-                                    type={"success"}
-                                    onClick={onSubmit}
-                                    waiting={submitting || redirecting}
-                                    title={
-                                        redirecting ? (
-                                            <T t={t} k="contact-data.success" />
-                                        ) : submitting ? (
-                                            <T t={t} k="contact-data.saving" />
-                                        ) : (
-                                            <T t={t} k={"contact-data.save-and-continue"} />
-                                        )
-                                    }
-                                />
-                            </CardFooter>
-                        </React.Fragment>
-                    }
-                </FieldSet>
-            </FormComponent>
-        </div>
-    </React.Fragment>
-}
+    return (
+        <React.Fragment>
+            <div className="kip-cm-contact-data">
+                <FormComponent onSubmit={onSubmit}>
+                    <FieldSet disabled={submitting}>
+                        {
+                            <React.Fragment>
+                                <CardContent>{controls}</CardContent>
+                                <CardFooter>
+                                    <SubmitField
+                                        disabled={!valid}
+                                        type={'success'}
+                                        onClick={onSubmit}
+                                        waiting={submitting || redirecting}
+                                        title={
+                                            redirecting ? (
+                                                <T
+                                                    t={t}
+                                                    k="contact-data.success"
+                                                />
+                                            ) : submitting ? (
+                                                <T
+                                                    t={t}
+                                                    k="contact-data.saving"
+                                                />
+                                            ) : (
+                                                <T
+                                                    t={t}
+                                                    k={
+                                                        'contact-data.save-and-continue'
+                                                    }
+                                                />
+                                            )
+                                        }
+                                    />
+                                </CardFooter>
+                            </React.Fragment>
+                        }
+                    </FieldSet>
+                </FormComponent>
+            </div>
+        </React.Fragment>
+    );
+};
 
-const ContactData = withActions(withForm(withRouter(BaseContactData), ContactDataForm, "form"), [contactData])
+const ContactData = withActions(
+    withForm(withRouter(BaseContactData), ContactDataForm, 'form'),
+    [contactData]
+);
 
-export default ContactData
+export default ContactData;

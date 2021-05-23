@@ -14,20 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React, { useEffect, useRef, useState } from "react";
-import { withActions } from "components";
-import Wizard from "./wizard";
+import React, { useEffect, useRef, useState } from 'react';
+import { withActions } from 'components';
+import Wizard from './wizard';
 
-import "./index.scss";
+import './index.scss';
 
-const Setup = withActions(
-    ({route}) => {
-
-        return <React.Fragment>
-            <Wizard route={route} type={route.handler.props.type || 'print'} page={route.handler.props.page || 'hi'} />
-        </React.Fragment>;
-    },
-    []
-)
+const Setup = withActions(({ route }) => {
+    return (
+        <React.Fragment>
+            <Wizard
+                route={route}
+                type={route.handler.props.type || 'print'}
+                page={route.handler.props.page || 'hi'}
+            />
+        </React.Fragment>
+    );
+}, []);
 
 export default Setup;

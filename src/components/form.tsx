@@ -202,7 +202,7 @@ export class Input extends PureComponent<InputProps> {
                 onKeyDown={e =>
                     onEnter &&
                     (e.key === 'Enter' || e.keyCode === 13) &&
-                    onEnter(e.target.value)
+                    onEnter(e)
                 }
                 className={classnames('kip-input', this.props.className)}
                 onChange={this.handleChange}

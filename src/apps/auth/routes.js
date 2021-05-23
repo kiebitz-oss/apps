@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Login from "./login";
-import t from "./translations.yml";
+import Login from './login';
+import t from './translations.yml';
 
 const routes = new Map([
     [
-        "login",
+        'login',
         {
-            url: "/login?",
+            url: '/login?',
             handler: () => ({
                 t: t,
-                title: "login",
+                title: 'login',
                 component: Login,
                 isSimple: true,
                 props: {},
-            })
-        }
+            }),
+        },
     ],
 ]);
 

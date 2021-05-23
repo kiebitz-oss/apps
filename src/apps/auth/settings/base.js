@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Settings from "helpers/settings";
-import routes from "../routes";
-import menu from "../menu";
+import Settings from 'helpers/settings';
+import routes from '../routes';
+import menu from '../menu';
 
 export default new Settings([
-    ["routes", routes],
-    ["menu", menu]
+    ['routes', routes],
+    ['menu', menu],
 ]);

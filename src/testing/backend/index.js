@@ -14,20 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import AppointmentsBackend from "./appointments";
-import { PrefixStore } from "./store";
-import StorageBackend from "./storage";
-import LocalBackend from "./local";
+import AppointmentsBackend from './appointments';
+import { PrefixStore } from './store';
+import StorageBackend from './storage';
+import LocalBackend from './local';
 
-export * from "./store";
+export * from './store';
 
 export default class Backend {
-
-    constructor(settings, store){
-        this.settings = settings
-        this.storage = new StorageBackend(settings, new PrefixStore(store, 'storage'))
-        this.appointments = new AppointmentsBackend(settings, new PrefixStore(store, 'appts'))
-        this.local = new LocalBackend(settings, new PrefixStore(store, 'local'))
+    constructor(settings, store) {
+        this.settings = settings;
+        this.storage = new StorageBackend(
+            settings,
+            new PrefixStore(store, 'storage')
+        );
+        this.appointments = new AppointmentsBackend(
+            settings,
+            new PrefixStore(store, 'appts')
+        );
+        this.local = new LocalBackend(
+            settings,
+            new PrefixStore(store, 'local')
+        );
     }
-
 }

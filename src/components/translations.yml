@@ -7,6 +7,9 @@ errorBoundary:
     en:
       We're terribly sorry, but something went unexpectedly wrong. You can try to
       reload this page to see if that helps. If the problem persists, please {contactUs}.
+search-select:
+  no-candidates:
+    de: Keine Kandidaten gefunden
 leave:
   cancel:
     en: Go back

@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Dashboard from "./dashboard";
-import t from "./translations.yml";
+import Dashboard from './dashboard';
+import t from './translations.yml';
 
 const routes = new Map([
     [
-        "providerDashboard",
+        'providerDashboard',
         {
-            url: "/provider(?:/([a-z]+))?",
-            handler: (tab) => ({
+            url: '/provider(?:/([a-z]+))?',
+            handler: tab => ({
                 t: t,
-                title: "dashboard",
+                title: 'dashboard',
                 component: Dashboard,
-                authentication: "provider",
-                props: {tab: tab || 'appointments'},
-            })
-        }
+                authentication: 'provider',
+                props: { tab: tab || 'appointments' },
+            }),
+        },
     ],
 ]);
 
