@@ -1,33 +1,27 @@
 // Kiebitz - Privacy-Friendly Appointments
 // Copyright (C) 2021-2021 The Kiebitz Authors
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// README.md contains license information.
 
 import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
+import Invitations from './invitations';
 
 import {
     keyPairs,
     keys,
     validKeyPairs,
     providerData,
+    sendInvitations,
+    updateAppointments,
+    checkInvitations,
+    verifiedProviderData,
     checkVerifiedProviderData,
 } from './actions';
 import {
     withSettings,
     withActions,
+    withTimer,
     Tabs,
     Tab,
     T,
@@ -36,81 +30,140 @@ import {
 } from 'components';
 import t from './translations.yml';
 
-const Dashboard = withActions(
-    withSettings(
-        ({
-            route: {
-                handler: {
-                    props: { tab },
+const Dashboard = withTimer(
+    withActions(
+        withSettings(
+            ({
+                route: {
+                    handler: {
+                        props: { tab },
+                    },
                 },
-            },
-            settings,
-            providerData,
-            providerDataAction,
-            checkVerifiedProviderData,
-            checkVerifiedProviderDataAction,
-            keys,
-            keysAction,
-            keyPairs,
-            keyPairsAction,
-            validKeyPairs,
-            validKeyPairsAction,
-        }) => {
-            const [initialized, setInitialized] = useState(false);
+                settings,
+                providerData,
+                providerDataAction,
+                checkInvitations,
+                checkInvitationsAction,
+                verifiedProviderData,
+                verifiedProviderDataAction,
+                checkVerifiedProviderData,
+                checkVerifiedProviderDataAction,
+                updateAppointments,
+                updateAppointmentsAction,
+                timer,
+                keys,
+                keysAction,
+                sendInvitations,
+                sendInvitationsAction,
+                keyPairs,
+                keyPairsAction,
+                validKeyPairs,
+                validKeyPairsAction,
+            }) => {
+                const [initialized, setInitialized] = useState(false);
+                const [tv, setTv] = useState(-1);
 
-            useEffect(() => {
-                if (initialized) return;
-                setInitialized(true);
-                providerDataAction().then(pd =>
-                    checkVerifiedProviderDataAction(pd.data)
-                );
-                keysAction().then(ks =>
-                    keyPairsAction().then(kp =>
-                        validKeyPairsAction(kp.data, ks.data)
+                useEffect(() => {
+                    if (initialized) return;
+                    setInitialized(true);
+                    keysAction().then(ks =>
+                        keyPairsAction().then(kp =>
+                            validKeyPairsAction(kp.data, ks.data)
+                        )
+                    );
+                });
+
+                useEffect(() => {
+                    // we do this only once per timer interval...
+                    if (timer === tv) return;
+                    setTv(timer);
+                    verifiedProviderDataAction();
+                    providerDataAction().then(pd => {
+                        // we check whether the data is verified already...
+                        if (pd.data.verified) return;
+                        checkVerifiedProviderDataAction(pd.data);
+                    });
+                    if (
+                        keyPairs === undefined ||
+                        verifiedProviderData === undefined ||
+                        keyPairs.status !== 'loaded' ||
+                        verifiedProviderData.status !== 'loaded'
                     )
+                        return;
+                    updateAppointmentsAction().then(d => {
+                        sendInvitationsAction(
+                            keyPairs.data,
+                            verifiedProviderData.data
+                        );
+                        checkInvitationsAction(keyPairs, d.data);
+                    });
+                });
+
+                let content;
+
+                switch (tab) {
+                    case 'settings':
+                        content = <Settings />;
+                        break;
+                    case 'invitations':
+                        content = <Invitations />;
+                        break;
+                }
+
+                let invalidKeyMessage;
+
+                if (
+                    validKeyPairs !== undefined &&
+                    validKeyPairs.valid === false
+                ) {
+                    invalidKeyMessage = (
+                        <Message type="danger">
+                            <T t={t} k="invalid-key" />
+                        </Message>
+                    );
+                }
+
+                return (
+                    <F>
+                        <Tabs>
+                            <Tab
+                                active={tab === 'appointments'}
+                                href="/provider/appointments"
+                            >
+                                <T t={t} k="appointments.title" />
+                            </Tab>
+                            <Tab
+                                active={tab === 'invitations'}
+                                href="/provider/invitations"
+                            >
+                                <T t={t} k="invitations.title" />
+                            </Tab>
+                            <Tab
+                                active={tab === 'settings'}
+                                href="/provider/settings"
+                            >
+                                <T t={t} k="settings.title" />
+                            </Tab>
+                        </Tabs>
+                        {invalidKeyMessage}
+                        {content}
+                    </F>
                 );
-            });
-
-            let content;
-
-            switch (tab) {
-                case 'settings':
-                    content = <Settings />;
             }
-
-            let invalidKeyMessage;
-
-            if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
-                invalidKeyMessage = (
-                    <Message type="danger">
-                        <T t={t} k="invalid-key" />
-                    </Message>
-                );
-            }
-
-            return (
-                <F>
-                    <Tabs>
-                        <Tab
-                            active={tab === 'appointments'}
-                            href="/provider/appointments"
-                        >
-                            <T t={t} k="appointments.title" />
-                        </Tab>
-                        <Tab
-                            active={tab === 'settings'}
-                            href="/provider/settings"
-                        >
-                            <T t={t} k="settings.title" />
-                        </Tab>
-                    </Tabs>
-                    {invalidKeyMessage}
-                    {content}
-                </F>
-            );
-        }
+        ),
+        [
+            verifiedProviderData,
+            updateAppointments,
+            sendInvitations,
+            keyPairs,
+            keys,
+            validKeyPairs,
+            providerData,
+            checkInvitations,
+            checkVerifiedProviderData,
+        ]
     ),
-    [keyPairs, keys, validKeyPairs, providerData, checkVerifiedProviderData]
+    2000
 );
 
 export default Dashboard;

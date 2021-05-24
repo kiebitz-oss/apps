@@ -1,20 +1,13 @@
 // Kiebitz - Privacy-Friendly Appointments
 // Copyright (C) 2021-2021 The Kiebitz Authors
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// README.md contains license information.
 
-import { hashString, randomBytes, ephemeralECDHEncrypt } from 'helpers/crypto';
+import {
+    hashString,
+    randomBytes,
+    ephemeralECDHEncrypt,
+    generateECDSAKeyPair,
+} from 'helpers/crypto';
 import { e } from 'helpers/async';
 
 async function hashContactData(data) {
@@ -61,7 +54,9 @@ export async function submitToQueue(state, keyStore, settings, data, queue) {
     try {
         // we hash the user data to prove it didn't change later...
         const [dataHash, hashData] = await e(hashContactData(data));
+        const signingKeyPair = await e(generateECDSAKeyPair());
         const tokenData = {
+            publicKey: signingKeyPair.publicKey, // the signing key to control the ID
             id: randomBytes(32), // the ID where we want to receive data
         };
         const tokenDataJSON = JSON.stringify(tokenData);
@@ -69,6 +64,7 @@ export async function submitToQueue(state, keyStore, settings, data, queue) {
         const [encryptedTokenData, privateKey] = await e(
             ephemeralECDHEncrypt(tokenDataJSON, queue.publicKey)
         );
+
         const signedToken = await e(
             backend.appointments.getToken(
                 dataHash,
@@ -78,6 +74,7 @@ export async function submitToQueue(state, keyStore, settings, data, queue) {
         );
         backend.local.set('user::tokenData', {
             signedToken: signedToken,
+            signingKeyPair: signingKeyPair,
             hashData: hashData,
             dataHash: dataHash,
             tokenData: tokenData,

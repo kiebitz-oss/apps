@@ -1,0 +1,22 @@
+appointments:
+  title:
+    de: Termine
+settings:
+  title:
+    de: Einstellungen
+appointment-accept:
+  de:
+    OK
+invitation-accepted:
+  title:
+    de: Termin angenommen!
+appointments-notice:
+  de: Bitte wählen Sie alle für Sie passenden Termine und bestätigen Sie anschließend Ihre Auswahl durch Klicken auf "Terminauswahl bestätigen". 
+confirm-appointment:
+  de: Terminauswahl bestätigen
+appointment-date:
+  de:
+    Datum
+invitation-received:
+  title:
+    de: Einladung erhalten!

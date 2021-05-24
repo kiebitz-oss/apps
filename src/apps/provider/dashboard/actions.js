@@ -1,18 +1,6 @@
 // Kiebitz - Privacy-Friendly Appointments
 // Copyright (C) 2021-2021 The Kiebitz Authors
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// README.md contains license information.
 
 import {
     sign,
@@ -20,10 +8,235 @@ import {
     randomBytes,
     generateECDSAKeyPair,
     ephemeralECDHEncrypt,
-    ephemeralECDHDecrypt,
+    ecdhEncrypt,
+    ecdhDecrypt,
     generateECDHKeyPair,
 } from 'helpers/crypto';
 import { e } from 'helpers/async';
+
+// returns or updates the schedule
+export async function schedule(state, keyStore, settings, data) {
+    const backend = settings.get('backend');
+    let schedule = backend.local.get('provider::schedule');
+    if (data !== null) {
+        schedule = data;
+        backend.local.set('provider::schedule', schedule);
+    }
+    return {
+        status: 'loaded',
+        data: schedule,
+    };
+}
+
+export async function createAppointments(state, keyStore, settings) {}
+
+function getQueuePrivateKey(queueID, verifiedProviderData) {
+    for (const queueKeys of verifiedProviderData.queuePrivateKeys) {
+        if (queueKeys.id === queueID) return queueKeys.privateKey;
+    }
+    return null;
+}
+
+export async function updateAppointments(state, keyStore, settings, schedule) {
+    const backend = settings.get('backend');
+    const appointments = [];
+    const openAppointments = backend.local.get(
+        'provider::appointments::open',
+        []
+    );
+    if (openAppointments.length >= 10) return { data: openAppointments };
+    let d = new Date('2021-06-01T10:00:00+02:00');
+    for (let i = 0; i < 10; i++) {
+        const dt = new Date(d.getTime() + 30 * 1000 * 60 * i);
+        appointments.push({
+            id: randomBytes(32), // where the user can submit his confirmation
+            status: randomBytes(32), // where the user can get the appointment status
+            cancel: randomBytes(32), // where the user can cancel his confirmation
+            date: dt.toISOString(),
+            duration: 60, // estimated duration
+            cancelable_until: '2021-05-27T10:00:00Z',
+        });
+    }
+    backend.local.set('provider::appointments::open', appointments);
+    return {
+        status: 'loaded',
+        data: appointments,
+    };
+}
+
+// regularly checks open appointment slots
+export async function sendInvitations(
+    state,
+    keyStore,
+    settings,
+    keyPairs,
+    verifiedProviderData
+) {
+    const backend = settings.get('backend');
+    let openAppointments = backend.local.get(
+        'provider::appointments::open',
+        []
+    );
+    let openTokens = backend.local.get('provider::tokens::open', []);
+    if (openAppointments.length === 0)
+        // we don't have any new appointments to give out
+        return {
+            status: 'succeeded',
+        };
+    try {
+        const n = Math.max(0, openAppointments.length - openTokens.length);
+        // we don't have enough tokens for our open appointments, we generate more
+        if (n > 0) {
+            const newTokens = await e(
+                backend.appointments.getQueueTokens(
+                    n,
+                    verifiedProviderData.signedData.json.queues,
+                    keyPairs.signing
+                )
+            );
+            for (const token of newTokens) {
+                token.keyPair = await e(generateECDHKeyPair());
+            }
+            openTokens = [...openTokens, ...newTokens];
+            // we update the list of open tokens
+            backend.local.set('provider::tokens::open', openTokens);
+        }
+        const dataToSubmit = [];
+        // we make sure all token holders can initialize all appointment data IDs
+        for (const token of openTokens) {
+            const privateKey = getQueuePrivateKey(
+                token.queue,
+                verifiedProviderData
+            );
+            try {
+                const decryptedTokenJSONData = await e(
+                    ecdhDecrypt(token.token.encryptedData, privateKey)
+                );
+                const decryptedTokenData = JSON.parse(decryptedTokenJSONData);
+                const grantData = {
+                    rights: ['write', 'read', 'delete'],
+                    single_use: true,
+                    id: randomBytes(32),
+                    ids: openAppointments.map(oa => oa.id),
+                    meta: {
+                        token: token.token.token,
+                    },
+                    permissions: [
+                        {
+                            rights: ['write', 'read', 'delete'],
+                            keys: [keyPairs.signing.publicKey],
+                        },
+                    ],
+                };
+                const signedGrantData = await e(
+                    sign(
+                        keyPairs.signing.privateKey,
+                        JSON.stringify(grantData),
+                        keyPairs.signing.publicKey
+                    )
+                );
+                const userData = {
+                    provider: verifiedProviderData.signedData,
+                    grant: signedGrantData,
+                    offers: openAppointments,
+                };
+                // we first encrypt the data
+                const encryptedUserData = await e(
+                    ecdhEncrypt(
+                        JSON.stringify(userData),
+                        token.keyPair,
+                        token.token.encryptedData.publicKey
+                    )
+                );
+                // we sign the data with our private key
+                const signedEncryptedUserData = await e(
+                    sign(
+                        keyPairs.signing.privateKey,
+                        JSON.stringify(encryptedUserData),
+                        keyPairs.signing.publicKey
+                    )
+                );
+                dataToSubmit.push({
+                    id: decryptedTokenData.id,
+                    data: signedEncryptedUserData,
+                    permissions: [
+                        {
+                            rights: ['read'],
+                            keys: [decryptedTokenData.publicKey],
+                        },
+                    ],
+                });
+            } catch (e) {
+                console.log(e.toString());
+                continue;
+            }
+        }
+        backend.local.set('provider::tokens::open', openTokens);
+        // we send the signed, encrypted data to the backend
+        await e(
+            backend.appointments.bulkStoreData(keyPairs.signing, dataToSubmit)
+        );
+
+        return { status: 'succeeded' };
+    } catch (e) {
+        console.log(e.toString());
+        return { status: 'failed', error: e.toString() };
+    }
+}
+
+// checks invitations
+export async function checkInvitations(
+    state,
+    keyStore,
+    settings,
+    keyPairs,
+    invitations
+) {
+    const backend = settings.get('backend');
+    let openTokens = backend.local.get('provider::tokens::open', []);
+    let acceptedInvitations = backend.local.get(
+        'provider::invitations::accepted',
+        []
+    );
+    try {
+        const results = await backend.appointments.bulkGetData(
+            invitations.map(i => i.id),
+            keyPairs.signing
+        );
+        for (const [i, result] of results.entries()) {
+            if (result === null) continue;
+            // we try to decrypt this data with the private key of each token
+            for (const openToken of openTokens) {
+                try {
+                    const decryptedData = JSON.parse(
+                        await ecdhDecrypt(result, openToken.keyPair.privateKey)
+                    );
+                    if (
+                        acceptedInvitations.find(
+                            ai => ai.token.token.token === openToken.token.token
+                        )
+                    )
+                        continue;
+                    acceptedInvitations.push({
+                        token: openToken,
+                        data: decryptedData,
+                        invitation: invitations[i],
+                    });
+                } catch (e) {
+                    continue;
+                }
+            }
+        }
+        backend.local.set(
+            'provider::invitations::accepted',
+            acceptedInvitations
+        );
+        return {
+            status: 'loaded',
+            data: acceptedInvitations,
+        };
+    } catch (e) {}
+}
 
 // make sure the signing and encryption key pairs exist
 export async function keyPairs(state, keyStore, settings) {
@@ -70,8 +283,19 @@ export async function keys(state, keyStore, settings) {
             data: keys,
         };
     } catch (e) {
+        console.log(e.toString());
         return { status: 'failed', error: e.toString() };
     }
+}
+
+// generate and return the (local) verified provider data (if it exists)
+export async function verifiedProviderData(state, keyStore, settings) {
+    const backend = settings.get('backend');
+    let providerData = backend.local.get('provider::data::verified');
+    return {
+        status: 'loaded',
+        data: providerData,
+    };
 }
 
 // generate and return the (local) provider data
@@ -99,11 +323,9 @@ export async function validKeyPairs(state, keyStore, settings, keyPairs, keys) {
     const encryptionKeyHash = await e(hash(keyPairs.encryption.publicKey));
     let found = false;
     for (const providerKeys of keys.lists.providers) {
-        // to do: check signature!
-        const keyData = JSON.parse(providerKeys.data);
         if (
-            keyData.signing == signingKeyHash &&
-            keyData.encryption == encryptionKeyHash
+            providerKeys.json.signing == signingKeyHash &&
+            providerKeys.json.encryption == encryptionKeyHash
         ) {
             found = true;
             break;
@@ -112,11 +334,12 @@ export async function validKeyPairs(state, keyStore, settings, keyPairs, keys) {
     return { valid: found };
 }
 
-export async function queues(state, keyStore, settings) {
+// to do: add keyPair to queue request (as the request needs to be signed)
+export async function queues(state, keyStore, settings, queueIDs) {
     const backend = settings.get('backend');
     keyStore.set({ status: 'loading' });
     try {
-        const queues = await e(backend.appointments.getQueues());
+        const queues = await e(backend.appointments.getQueues(queueIDs));
         return { status: 'loaded', data: queues };
     } catch (e) {
         return { status: 'failed', error: e.toString() };
@@ -135,11 +358,14 @@ export async function checkVerifiedProviderData(
     const encryptionKey = backend.local.get('provider::data::encryptionKey');
     try {
         const decryptedJSONData = await e(
-            ephemeralECDHDecrypt(verifiedData.data, encryptionKey)
+            ecdhDecrypt(verifiedData.data, encryptionKey)
         );
+        if (decryptedJSONData === null) {
+            // can't decrypt
+            return { status: 'failed' };
+        }
         const decryptedData = JSON.parse(decryptedJSONData);
-        decryptedData.signedData.json = decryptedData.signedData.data;
-        decryptedData.signedData.data = JSON.parse(
+        decryptedData.signedData.json = JSON.parse(
             decryptedData.signedData.data
         );
         backend.local.set('provider::data::verified', decryptedData);

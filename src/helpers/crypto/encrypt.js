@@ -1,22 +1,73 @@
 // Kiebitz - Privacy-Friendly Appointments
 // Copyright (C) 2021-2021 The Kiebitz Authors
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// README.md contains license information.
 
 import { generateECDHKeyPair } from './generate-key';
 import { b642buf, buf2b64, str2ab, ab2str } from 'helpers/conversion';
 import { e } from 'helpers/async';
+
+export async function ecdhEncrypt(rawData, keyPair, publicKeyData) {
+    const data = str2ab(rawData);
+
+    try {
+        const publicKey = await e(
+            crypto.subtle.importKey(
+                'spki',
+                b642buf(publicKeyData),
+                { name: 'ECDH', namedCurve: 'P-256' },
+                true,
+                []
+            )
+        );
+        const privateKey = await e(
+            crypto.subtle.importKey(
+                'pkcs8',
+                b642buf(keyPair.privateKey),
+                { name: 'ECDH', namedCurve: 'P-256' },
+                false,
+                ['deriveKey']
+            )
+        );
+
+        const symmetricKey = await e(
+            crypto.subtle.deriveKey(
+                {
+                    name: 'ECDH',
+                    public: publicKey,
+                },
+                privateKey,
+                {
+                    name: 'AES-GCM',
+                    length: 256,
+                },
+                true,
+                ['encrypt', 'decrypt']
+            )
+        );
+
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+
+        const encryptedData = await e(
+            crypto.subtle.encrypt(
+                {
+                    name: 'AES-GCM',
+                    tagLength: 32, // to do: validate that 32 is acceptable
+                    iv: iv,
+                },
+                symmetricKey,
+                data
+            )
+        );
+
+        return {
+            iv: buf2b64(iv),
+            data: buf2b64(encryptedData),
+            publicKey: keyPair.publicKey,
+        };
+    } catch (e) {
+        return null;
+    }
+}
 
 export async function ephemeralECDHEncrypt(rawData, publicKeyData) {
     const data = str2ab(rawData);
@@ -85,12 +136,11 @@ export async function ephemeralECDHEncrypt(rawData, publicKeyData) {
             ephemeralKeyPair.privateKey,
         ];
     } catch (e) {
-        console.log(e);
+        return null;
     }
-    return null;
 }
 
-export async function ephemeralECDHDecrypt(data, privateKeyData) {
+export async function ecdhDecrypt(data, privateKeyData) {
     try {
         const privateKey = await e(
             crypto.subtle.importKey(
@@ -138,10 +188,8 @@ export async function ephemeralECDHDecrypt(data, privateKeyData) {
                 b642buf(data.data)
             )
         );
-
         return ab2str(decryptedData);
     } catch (e) {
-        console.log(e);
+        return null;
     }
-    return null;
 }

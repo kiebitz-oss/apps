@@ -1,0 +1,25 @@
+@import "scss/variables";
+
+.kip-appointments {
+	.kip-invitation-details {
+		table {
+			tbody {
+				tr {
+					cursor: pointer;
+				}
+				tr.kip-selected, tr.kip-selected:nth-child(even) {
+					background: $kip-green;
+					color: #fff;
+				}
+			}
+		}
+	}
+	.kip-provider-details {
+		padding: 10px;
+		p {
+			font-size: 20px;
+			font-weight: bolder;
+			margin-bottom: map-get($kip-space, lg);
+		}
+	}
+}

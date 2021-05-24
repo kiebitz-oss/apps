@@ -1,18 +1,6 @@
 // Kiebitz - Privacy-Friendly Appointments
 // Copyright (C) 2021-2021 The Kiebitz Authors
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// README.md contains license information.
 
 import React from 'react';
 
@@ -54,6 +42,22 @@ export function withActions(Component, actionNames, keyList, noStore) {
             this.actionProviders = {};
             this.state = {};
             this._state = {};
+            // this is a map, we convert it to a list of action names and keys
+            if (actionNames instanceof Map) {
+                const newActionNames = [];
+                const newKeyList = [];
+                for (let [key, value] of actionNames) {
+                    if (value === undefined) {
+                        let functional = !(key.prototype instanceof Base);
+                        if (functional) value = key.name;
+                        else value = key.defaultKey;
+                    }
+                    newActionNames.push(key);
+                    newKeyList.push(value);
+                }
+                actionNames = newActionNames;
+                keyList = newKeyList;
+            }
             // Ensure actionNames and keyList are arrays
             if (!Array.isArray(actionNames)) {
                 actionNames = [actionNames];
@@ -96,6 +100,16 @@ export function withActions(Component, actionNames, keyList, noStore) {
                 if (actions[actionKey] === undefined) {
                     if (functional) {
                         const keyStore = new KeyStore(store, key);
+                        if (
+                            ActionProvider.init !== undefined &&
+                            keyStore.get() === undefined
+                        ) {
+                            const initialValue = ActionProvider.init(
+                                keyStore,
+                                settings
+                            );
+                            store.set(key, initialValue);
+                        }
                         const wrapper = function() {
                             const state = store.get(key);
                             const result = ActionProvider(

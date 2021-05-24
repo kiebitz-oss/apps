@@ -1,18 +1,6 @@
 // Kiebitz - Privacy-Friendly Appointments
 // Copyright (C) 2021-2021 The Kiebitz Authors
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// README.md contains license information.
 
 import {
     hash,
@@ -21,10 +9,12 @@ import {
     deriveToken,
     generateECDSAKeyPair,
     ephemeralECDHEncrypt,
-    ephemeralECDHDecrypt,
+    ecdhDecrypt,
     generateECDHKeyPair,
     randomBytes,
 } from 'helpers/crypto';
+import { copy } from 'helpers/store';
+import { shuffle } from 'helpers/lists';
 import { e } from 'helpers/async';
 
 function timeout(ms) {
@@ -211,7 +201,7 @@ export default class AppointmentsBackend {
                     )
                 );
                 const decrypted = await e(
-                    ephemeralECDHDecrypt(
+                    ecdhDecrypt(
                         queue.encryptedPrivateKey,
                         queueKeyEncryptionKeyPair.privateKey
                     )
@@ -246,7 +236,7 @@ export default class AppointmentsBackend {
     // return all public keys present in the system
     async getKeys() {
         await e(this.initialized());
-        return {
+        const keys = copy({
             // keys of providers and mediators
             lists: this.keys,
             // key to encrypt provider data for verification
@@ -255,32 +245,59 @@ export default class AppointmentsBackend {
             rootKey: this.rootSigningKeyPair.publicKey,
             // the token signing key (used by providers to verify a token hash)
             tokenKey: this.tokenSigningKeyPair.publicKey,
-        };
+        });
+
+        for (const providerKeys of keys.lists.providers) {
+            providerKeys.json = JSON.parse(providerKeys.data);
+        }
+        for (const mediatorKeys of keys.lists.mediators) {
+            mediatorKeys.json = JSON.parse(mediatorKeys.data);
+        }
+
+        return keys;
     }
 
-    // common endpoints
+    // data endpoints
 
-    async deleteDate(id) {
+    async deleteDate(id, keyPair) {
         return this.store.remove(`data::${id}`);
     }
 
-    async getData(id) {
+    async getData(id, keyPair) {
         // to do: implement access control (not really relevant though for the demo)
         return this.store.get(`data::${id}`);
     }
 
-    // store provider data for verification
-    async storeData(id, signedData) {
-        const existingData = this.store.get(`data::${id}`);
-        if (existingData !== null) {
-            // there is already data under this entry, we verify the public key
-            // of the stored data against the new data. If the key doesn't
-            // verif the new data we don't update it...
-            if (!(await e(verify([existingData.publicKey], signedData)))) {
-                throw 'cannot update';
+    async bulkGetData(ids, keyPair) {
+        const results = [];
+        for (const id of ids) {
+            results.push(await this.getData(id, keyPair));
+        }
+        return results;
+    }
+
+    async bulkStoreData(keyPair, dataList) {
+        const results = [];
+        for (const data of dataList) {
+            try {
+                const result = await e(
+                    this.storeData(
+                        data.id,
+                        data.data,
+                        keyPair,
+                        data.permissions
+                    )
+                );
+                results.push(result);
+            } catch (e) {
+                results.push(null);
             }
         }
-        this.store.set(`data::${id}`, signedData);
+    }
+
+    // store provider data for verification
+    async storeData(id, data, keyPair, permissions, grant) {
+        this.store.set(`data::${id}`, data);
         return true;
     }
 
@@ -361,6 +378,31 @@ export default class AppointmentsBackend {
     }
 
     // provider-only endpoints
+
+    // get n tokens from the given queue IDs
+    async getQueueTokens(n, queueIDs, keyPair) {
+        const tokens = [];
+        // we shuffle the queue IDs to avoid starvation of individual queues
+        shuffle(queueIDs);
+        // we also always remove just one token from every eligible list to
+        // avoid starvation of individual lists of tokens...
+        while (tokens.length < n) {
+            let addedTokens = 0;
+            for (const queueID of queueIDs) {
+                const queueTokens = this.tokens[queueID];
+                if (queueTokens === undefined || queueTokens.length === 0)
+                    continue;
+                tokens.push({ token: queueTokens.shift(), queue: queueID });
+                if (tokens.length === n)
+                    // we've got enough tokens
+                    return copy(tokens);
+                addedTokens++;
+            }
+            if (addedTokens === 0)
+                // no more tokens left
+                return copy(tokens);
+        }
+    }
 
     async storeProviderData(id, signedData, code) {
         const result = await this.storeData(id, signedData);

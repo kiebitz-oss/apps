@@ -1,6 +1,9 @@
 appointments:
   title:
     de: Termine
+invitations:
+  title:
+    de: Einladungen
 settings:
   title:
     de: Einstellungen
