@@ -1,0 +1,79 @@
+@import "scss/variables";
+
+.kip-new-appointment {
+	fieldset {
+		display: flex;
+		flex-direction: columns;
+		.field {
+			flex-grow: 0;
+			margin-right: map-get($kip-space, lg);
+		}
+	}
+}
+
+$border: 1px dashed #ccc;
+
+.kip-week-calendar {
+	position: relative;
+	display: flex;
+	flex-direction: columns;
+	overflow-x: auto;
+	box-shadow: $kip-box-shadow;
+	margin-top: 20px;
+	.kip-day-column {
+		min-width: 120px;
+		flex-grow: 1;
+		min-height: 100vh;
+
+		.kip-hour-row {
+			height: 60px;
+			padding: 10px;
+			background: #fff;
+
+			&.kip-has-appointments {
+			}
+
+			&.kip-is-hour-label {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			&.kip-is-day-label {
+				text-align: center;
+				span.kip-day, span.kip-date {
+					font-size: 14px;
+					display: block;
+				}
+				span.kip-date {
+					font-size: 12px;
+					font-weight: bolder;
+				}
+			}
+
+			.kip-appointments {
+				box-shadow: $kip-box-shadow;
+				padding: 4px;
+				border-radius: $kip-border-radius;
+				background: $kip-green;
+				color: #fff;
+				cursor: pointer;
+			}
+
+		}
+
+		&.kip-is-day-label {
+			min-width: 100px;
+			max-width: 100px;
+			font-size: 14px;
+			font-weight: bolder;
+		}
+
+		.kip-hour-row:not(:last-child) {
+			border-bottom: $border;
+		}
+	}
+	.kip-day-column:not(:last-child){
+		border-right: $border;	
+	}
+}

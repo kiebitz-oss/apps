@@ -4,9 +4,9 @@ appointments:
 settings:
   title:
     de: Einstellungen
-appointment-accept:
+appointment-preference:
   de:
-    OK
+    Präferenz
 invitation-accepted:
   title:
     de: Termin angenommen!
@@ -20,3 +20,31 @@ appointment-date:
 invitation-received:
   title:
     de: Einladung erhalten!
+save-and-restore:
+  de: Nutzer-Daten speichern oder wiederherstellen
+restore:
+  de: Wiederherstellen
+save:
+  de: Speichern
+delete-data:
+  de: Nutzer-Daten löschen
+delete:
+  de: Daten löschen
+delete-warning:
+  de: Vorsicht, nach der Löschung Ihrer Daten können Sie Ihre Termine nicht mehr einsehen. Wir haben generell keine Kenntnis Ihrer Daten und können diese nicht wiederherstellen!
+delete-modal:
+  title:
+    de: Nutzer-Daten löschen
+  text:
+    de: Möchten Sie Ihre Daten wirklich unwiderruflich löschen?
+  deleting-text:
+    de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
+cancel-appointment:
+  de: Termin absagen
+no-invitations:
+  title:
+    de: Keine Einladungen
+  notice:
+    de: Bisher sind keine Einladungen eingegangen.
+  update-notice:
+    de: Diese Seite wird automatisch aktualisiert...

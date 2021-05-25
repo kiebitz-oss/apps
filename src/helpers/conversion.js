@@ -32,9 +32,9 @@ export function buf2base32(buffer) {
     // the last bits are not producing an ambiguous result but checking the
     // decoding works as expected is a good idea anyway, so we just do that...
     const bb = base322buf(base32);
-    if (bb.length != buffer.length) throw 'conversion error';
+    if (bb.length != array.length) throw 'conversion error (length)';
     for (let i = 0; i < bb.length; i++)
-        if (bb[i] != buffer[i]) throw 'conversion error';
+        if (bb[i] != array[i]) throw 'conversion error (value)';
     return base32;
 }
 

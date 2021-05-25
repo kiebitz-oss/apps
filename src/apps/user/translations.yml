@@ -8,3 +8,7 @@ restore:
   de: Impfdaten wiederherstellen
 show-help:
   de: Hilfe anzeigen
+data-deleted:
+  de: Daten erfolgreich gelöscht
+thanks-for-using-us:
+  de: Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie {service} genutzt haben!

@@ -58,4 +58,15 @@ div.kip {
     h6 {
         @include font-oxanium;
     }
+
+    h2 {
+        @include fs(normal);
+        margin-bottom: map-get($kip-space, md);
+        margin-top: map-get($kip-space, lg);
+    }
+
+    .bulma-label {
+        margin-top: map-get($kip-space, md);
+    }
+
 }

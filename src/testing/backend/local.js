@@ -10,7 +10,7 @@ export default class LocalBackend {
     }
 
     get(key, defaultValue) {
-        return this.store.get(key) || defaultValue;
+        return this.store.get(key, defaultValue);
     }
 
     set(key, data) {
@@ -19,5 +19,9 @@ export default class LocalBackend {
 
     delete(key) {
         return this.store.delete(key);
+    }
+
+    deleteAll(prefix) {
+        return this.store.deleteAll(prefix);
     }
 }

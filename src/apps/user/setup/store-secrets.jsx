@@ -16,6 +16,7 @@ import {
     T,
     A,
 } from 'components';
+import { userSecret } from './actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
@@ -101,7 +102,7 @@ const StoreLocal = ({ data }) => {
 };
 
 export default withActions(
-    withSettings(({ settings }) => {
+    withSettings(({ settings, userSecret }) => {
         const [url, setUrl] = useState(null);
         const [tab, setTab] = useState('online');
 
@@ -109,7 +110,9 @@ export default withActions(
 
         switch (tab) {
             case 'online':
-                content = <StoreOnline settings={settings} secret={'foo'} />;
+                content = (
+                    <StoreOnline settings={settings} secret={userSecret.data} />
+                );
                 break;
             case 'local':
                 content = <StoreLocal settings={settings} data={'data'} />;
@@ -136,5 +139,5 @@ export default withActions(
             </React.Fragment>
         );
     }),
-    []
+    [userSecret]
 );

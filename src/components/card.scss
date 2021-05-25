@@ -21,7 +21,16 @@
         &.kip-card-no-padding {
             padding: 0;
         }
+
     }
+
+    .bulma-message {
+        border: none;
+        .bulma-message-body {
+            border: none;
+        }
+    }
+
 
     &.kip-is-centered {
         @media (min-width: $kip-tablet) {

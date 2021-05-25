@@ -15,11 +15,13 @@ import {
 import {
     withSettings,
     withActions,
+    ButtonIcon,
     Button,
     Card,
     CardContent,
     CardHeader,
     CardFooter,
+    WithLoader,
     T,
     A,
     Message,
@@ -30,36 +32,80 @@ import './appointments.scss';
 const ProviderDetails = ({ data }) => {
     return (
         <div className="kip-provider-details">
-            <p>
-                {data.json.name} · {data.json.street} · {data.json.zip_code} ·{' '}
-                {data.json.city}
-            </p>
+            <ul>
+                <li>{data.json.name}</li>
+                <li>{data.json.street}</li>
+                <li>{data.json.zip_code}</li>
+                <li>{data.json.city}</li>
+            </ul>
+        </div>
+    );
+};
+
+const AcceptedInvitation = ({ data }) => {
+    const d = new Date(data.offer.date);
+    return (
+        <div className="kip-accepted-invitation">
+            <Card>
+                <CardHeader>
+                    <h2>
+                        <T t={t} k="invitation-accepted.title" />
+                    </h2>
+                </CardHeader>
+                <CardContent>
+                    <ProviderDetails data={data.invitationData.provider} />
+                    <p className="kip-appointment-date">
+                        {d.toLocaleDateString()} ·{' '}
+                        <u>{d.toLocaleTimeString()}</u>
+                    </p>
+                </CardContent>
+                <CardFooter>
+                    <Button type="warning">
+                        <T t={t} k="cancel-appointment" />
+                    </Button>
+                </CardFooter>
+            </Card>
+        </div>
+    );
+};
+
+const NoInvitations = ({ tokenData }) => {
+    return (
+        <div className="kip-no-invitations">
+            <Card>
+                <CardHeader>
+                    <h2>
+                        <T t={t} k="no-invitations.title" />
+                    </h2>
+                </CardHeader>
+                <CardContent>
+                    <p className="kip-no-invitations-text">
+                        <T t={t} k="no-invitations.notice" />
+                    </p>
+                </CardContent>
+                <CardFooter>
+                    <p>
+                        <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
+                        <T t={t} k="no-invitations.update-notice" />
+                    </p>
+                </CardFooter>
+            </Card>
         </div>
     );
 };
 
 async function toggleOffers(state, keyStore, settings, offer) {
-    if (state.data[offer.id] === true) {
-        delete state.data[offer.id];
-    } else state.data[offer.id] = true;
+    if (offer === null) return { data: [] };
+    if (state.data.find(i => i === offer.id) !== undefined) {
+        state.data = state.data.filter(i => i !== offer.id);
+    } else {
+        state.data.push(offer.id);
+    }
     return { data: state.data };
 }
 
 toggleOffers.init = function() {
-    return { data: {} };
-};
-
-const AcceptedInvitation = ({ data }) => {
-    return (
-        <Card>
-            <CardHeader>
-                <h2>
-                    <T t={t} k="invitation-accepted.title" />
-                </h2>
-            </CardHeader>
-            <CardContent>Accepted</CardContent>
-        </Card>
-    );
+    return { data: [] };
 };
 
 const InvitationDetails = withActions(
@@ -74,46 +120,57 @@ const InvitationDetails = withActions(
         confirmOffersAction,
     }) => {
         const [confirming, setConfirming] = useState(false);
+        const [initialized, setInitialized] = useState(false);
+
+        useEffect(() => {
+            if (initialized) return;
+            setInitialized(true);
+            toggleOffersAction(null);
+        });
 
         const toggle = offer => {
             toggleOffersAction(offer);
         };
 
         const doConfirmOffers = () => {
-            const selectedOffers = data.offers.filter(
-                offer => toggleOffers.data[offer.id] === true
-            );
+            const selectedOffers = [];
+            // we add the selected offers in the order the user chose
+            for (const offerID of toggleOffers.data) {
+                const offer = data.offers.find(offer => offer.id === offerID);
+                selectedOffers.push(offer);
+            }
             setConfirming(true);
-            confirmOffersAction(
-                selectedOffers,
-                data,
-                tokenData.data
-            ).finally(() => setConfirming(false));
+            const p = confirmOffersAction(selectedOffers, data, tokenData.data);
+            p.then(() => acceptedInvitationAction());
+            p.finally(() => setConfirming(false));
         };
 
         if (acceptedInvitation.data !== null) {
             return <AcceptedInvitation data={acceptedInvitation.data} />;
         }
 
+        let content;
+        if (data === null) content = <NoInvitations data={tokenData} />;
+
         const offers = data.offers.map(offer => {
             const d = new Date(offer.date);
-            const selected = toggleOffers.data[offer.id] === true;
+            const selected = toggleOffers.data.includes(offer.id);
+            let pref;
+            if (selected) pref = toggleOffers.data.indexOf(offer.id) + 1;
             return (
                 <tr
                     key={offer.id}
-                    className={selected ? 'kip-selected' : ''}
+                    className={selected ? `kip-selected kip-pref-${pref}` : ''}
                     onClick={() => toggle(offer)}
                 >
+                    <td>{selected ? pref : '-'}</td>
                     <td>
-                        <input readOnly type="checkbox" checked={selected} />
-                    </td>
-                    <td>
-                        {d.toLocaleDateString()} {d.toLocaleTimeString()}
+                        {d.toLocaleDateString()} · {d.toLocaleTimeString()}
                     </td>
                 </tr>
             );
         });
-        return (
+        content = (
             <div className="kip-invitation-details">
                 <Card>
                     <CardHeader>
@@ -126,11 +183,12 @@ const InvitationDetails = withActions(
                         <p>
                             <T t={t} k="appointments-notice" />
                         </p>
-                        <table className="bulma-table bulma-is-striped">
+                        <hr />
+                        <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
                             <thead>
                                 <tr>
                                     <th>
-                                        <T t={t} k="appointment-accept" />
+                                        <T t={t} k="appointment-preference" />
                                     </th>
                                     <th>
                                         <T t={t} k="appointment-date" />
@@ -154,23 +212,30 @@ const InvitationDetails = withActions(
                 </Card>
             </div>
         );
+        return <F>{content}</F>;
     },
     [toggleOffers, confirmOffers, acceptedInvitation]
 );
 
 const Appointments = withActions(
-    ({ settings, invitationData, tokenData, keys }) => {
+    ({ settings, invitationData, tokenData }) => {
         let content;
-        if (invitationData !== undefined && invitationData.status === 'loaded')
-            content = (
+        const render = () => {
+            return (
                 <InvitationDetails
                     tokenData={tokenData}
                     data={invitationData.data}
                 />
             );
-        return <div className="kip-appointments">{content}</div>;
+        };
+        return (
+            <WithLoader
+                resources={[tokenData, invitationData]}
+                renderLoaded={render}
+            />
+        );
     },
-    [tokenData, invitationData, keys]
+    [tokenData, invitationData]
 );
 
 export default Appointments;

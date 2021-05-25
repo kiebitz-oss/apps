@@ -2,11 +2,6 @@
 
 .kip-provider-data {
 
-	h2 {
-		@include fs(normal);
-		margin-bottom: map-get($kip-space, sm);
-		margin-top: map-get($kip-space, md);
-	}
 	form {
 		max-width: 640px;
 	}

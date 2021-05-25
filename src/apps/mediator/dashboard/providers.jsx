@@ -19,9 +19,12 @@ import {
     Modal,
     WithLoader,
     List,
+    Icon,
     ListHeader,
     ListItem,
     ListColumn,
+    DropdownMenu,
+    DropdownMenuItem,
     T,
 } from 'components';
 import t from './translations.yml';
@@ -213,6 +216,26 @@ const Providers = withTimer(
                     return (
                         <F>
                             {modal}
+                            <DropdownMenu
+                                title={
+                                    <F>
+                                        <Icon icon="check-circle" /> Bestätigt
+                                    </F>
+                                }
+                            >
+                                <DropdownMenuItem
+                                    icon="check-circle"
+                                    onClick={() => console.log('foo')}
+                                >
+                                    Bestätigt
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    icon="exclamation-circle"
+                                    onClick={() => console.log('foo')}
+                                >
+                                    Unbestätigt
+                                </DropdownMenuItem>
+                            </DropdownMenu>
                             <List>
                                 <ListHeader>
                                     <ListColumn size="md">

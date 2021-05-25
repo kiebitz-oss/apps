@@ -52,7 +52,7 @@ const BaseContactData = ({
         if (initialized) return;
         setInitialized(true);
         setModified(false);
-        contactDataAction().then(ct => reset(ct));
+        contactDataAction().then(ct => reset(ct.data));
     });
 
     const submitting = false;

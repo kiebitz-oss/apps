@@ -58,7 +58,7 @@ export default class AppointmentsBackend {
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
         // we store the verified provider data
-        const result = await e(this.storeData(id, providerData));
+        const result = await this.storeData(id, providerData);
         if (!result) return;
         return {};
     }
@@ -259,7 +259,7 @@ export default class AppointmentsBackend {
 
     // data endpoints
 
-    async deleteDate(id, keyPair) {
+    async deleteData(id, keyPair) {
         return this.store.remove(`data::${id}`);
     }
 
@@ -381,6 +381,9 @@ export default class AppointmentsBackend {
 
     // get n tokens from the given queue IDs
     async getQueueTokens(n, queueIDs, keyPair) {
+        // we update the tokens
+        this.tokens = this.store.get('tokens', {});
+
         const tokens = [];
         // we shuffle the queue IDs to avoid starvation of individual queues
         shuffle(queueIDs);
@@ -398,10 +401,19 @@ export default class AppointmentsBackend {
                     return copy(tokens);
                 addedTokens++;
             }
-            if (addedTokens === 0)
-                // no more tokens left
-                return copy(tokens);
+            if (addedTokens === 0) break;
         }
+        const selectedTokens = [
+            ...this.store.get('selectedTokens', []),
+            ...tokens,
+        ];
+
+        // we persist the changes
+        this.store.set('selectedTokens', selectedTokens);
+        this.store.set('tokens', this.tokens);
+
+        // no more tokens left
+        return copy(tokens);
     }
 
     async storeProviderData(id, signedData, code) {

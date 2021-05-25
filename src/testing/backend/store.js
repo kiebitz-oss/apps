@@ -12,12 +12,16 @@ export class PrefixStore {
         return this.store.set(`${this.prefix}::${key}`, data);
     }
 
-    get(key) {
-        return this.store.get(`${this.prefix}::${key}`);
+    get(key, defaultValue) {
+        return this.store.get(`${this.prefix}::${key}`, defaultValue);
     }
 
-    remove(key) {
-        return this.store.remove(`${this.prefix}::${key}`);
+    delete(key) {
+        return this.store.delete(`${this.prefix}::${key}`);
+    }
+
+    deleteAll(prefix) {
+        this.store.deleteAll(`${this.prefix}::${prefix}`);
     }
 }
 
@@ -30,14 +34,21 @@ export class StorageStore {
         this.storage.setItem(key, JSON.stringify(data));
     }
 
-    get(key) {
+    get(key, defaultValue) {
         const data = this.storage.getItem(key);
         if (data !== null) return JSON.parse(data);
-        return data;
+        if (defaultValue !== undefined) return defaultValue;
+        return null;
     }
 
-    remove(key) {
+    delete(key) {
         this.storage.removeItem(key);
+    }
+
+    deleteAll(prefix) {
+        for (const key in this.storage) {
+            if (key.startsWith(prefix)) this.storage.removeItem(key);
+        }
     }
 }
 

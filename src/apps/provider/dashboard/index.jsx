@@ -5,7 +5,7 @@
 import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
-import Invitations from './invitations';
+import Schedule from './schedule';
 
 import {
     keyPairs,
@@ -36,7 +36,7 @@ const Dashboard = withTimer(
             ({
                 route: {
                     handler: {
-                        props: { tab },
+                        props: { tab, action, id },
                     },
                 },
                 settings,
@@ -105,8 +105,8 @@ const Dashboard = withTimer(
                     case 'settings':
                         content = <Settings />;
                         break;
-                    case 'invitations':
-                        content = <Invitations />;
+                    case 'schedule':
+                        content = <Schedule action={action} id={id} />;
                         break;
                 }
 
@@ -127,16 +127,10 @@ const Dashboard = withTimer(
                     <F>
                         <Tabs>
                             <Tab
-                                active={tab === 'appointments'}
-                                href="/provider/appointments"
+                                active={tab === 'schedule'}
+                                href="/provider/schedule"
                             >
-                                <T t={t} k="appointments.title" />
-                            </Tab>
-                            <Tab
-                                active={tab === 'invitations'}
-                                href="/provider/invitations"
-                            >
-                                <T t={t} k="invitations.title" />
+                                <T t={t} k="schedule.title" />
                             </Tab>
                             <Tab
                                 active={tab === 'settings'}

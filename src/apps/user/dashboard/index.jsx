@@ -27,7 +27,7 @@ const Dashboard = withTimer(
             ({
                 route: {
                     handler: {
-                        props: { tab },
+                        props: { tab, action },
                     },
                 },
                 settings,
@@ -60,7 +60,7 @@ const Dashboard = withTimer(
 
                 switch (tab) {
                     case 'settings':
-                        content = <Settings />;
+                        content = <Settings action={action} />;
                         break;
                     case 'appointments':
                         content = <Appointments />;

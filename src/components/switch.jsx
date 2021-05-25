@@ -41,7 +41,7 @@ export class Switch extends React.Component {
                     className={
                         'kip-switch' + (updating ? ' kip-switch-updating' : '')
                     }
-                    style={{ width: textWidth + 44 + 'px' }}
+                    style={{ width: textWidth + 54 + 'px' }}
                 >
                     <input
                         type="checkbox"

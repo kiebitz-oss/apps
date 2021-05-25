@@ -61,97 +61,11 @@ const BaseSettings = ({
         set(key, value);
     };
 
-    const controls = (
-        <React.Fragment>
-            <ErrorFor error={error} field="name" />
-            <RetractingLabelInput
-                value={data.name || ''}
-                onChange={value => setAndMarkModified('name', value)}
-                label={<T t={t} k="provider-data.name" />}
-            />
-            <ErrorFor error={error} field="phone" />
-            <RetractingLabelInput
-                value={data.phone || ''}
-                onChange={value => setAndMarkModified('phone', value)}
-                label={<T t={t} k="provider-data.phone" />}
-            />
-            <h2>
-                <T t={t} k="provider-data.optional.title" />
-            </h2>
-            <p>
-                <T t={t} k="provider-data.optional.text" />
-            </p>
-            <ErrorFor error={error} field="email" />
-            <RetractingLabelInput
-                value={data.email || ''}
-                onChange={value => setAndMarkModified('email', value)}
-                label={<T t={t} k="provider-data.email" />}
-            />
-            <ErrorFor error={error} field="street" />
-            <RetractingLabelInput
-                value={data.street || ''}
-                onChange={value => setAndMarkModified('street', value)}
-                label={<T t={t} k="provider-data.street" />}
-            />
-            <ErrorFor error={error} field="zip-code" />
-            <RetractingLabelInput
-                value={data.zip_code || ''}
-                onChange={value => setAndMarkModified('zip_code', value)}
-                label={<T t={t} k="provider-data.zip-code" />}
-            />
-            <ErrorFor error={error} field="city" />
-            <RetractingLabelInput
-                value={data.city || ''}
-                onChange={value => setAndMarkModified('city', value)}
-                label={<T t={t} k="provider-data.city" />}
-            />
-        </React.Fragment>
-    );
-
     const redirecting = false;
 
     return (
         <React.Fragment>
-            <div className="kip-cm-provider-data">
-                <FormComponent onSubmit={onSubmit}>
-                    <FieldSet disabled={submitting}>
-                        {
-                            <React.Fragment>
-                                <h2>
-                                    <T t={t} k="saveAndRestore" />
-                                </h2>
-                                <h2>
-                                    <T t={t} k="providerData" />
-                                </h2>
-                                {controls}
-                                <SubmitField
-                                    disabled={!valid}
-                                    type={'success'}
-                                    onClick={onSubmit}
-                                    waiting={submitting || redirecting}
-                                    title={
-                                        redirecting ? (
-                                            <T
-                                                t={t}
-                                                k="provider-data.success"
-                                            />
-                                        ) : submitting ? (
-                                            <T t={t} k="provider-data.saving" />
-                                        ) : (
-                                            <T
-                                                t={t}
-                                                k={
-                                                    'provider-data.save-and-continue'
-                                                }
-                                            />
-                                        )
-                                    }
-                                />
-                            </React.Fragment>
-                        }
-                    </FieldSet>
-                </FormComponent>
-            </div>
+            <div className="kip-cm-provider-data"></div>
         </React.Fragment>
     );
 };

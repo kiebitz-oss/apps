@@ -2,18 +2,21 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React from 'react';
+import React, { Fragment as F } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'helpers/classnames';
 import { A } from './a';
 import './dropdown.scss';
 
-export const DropdownMenu = ({ children }) => (
+export const DropdownMenu = ({ title, children }) => (
     <Dropdown
         title={
-            <span aria-label="More options" className="bulma-icon">
-                <i className="fas fa-ellipsis-h" />
-            </span>
+            <F>
+                {title && <span>{title}</span>}
+                <span aria-label="More options" className="bulma-icon">
+                    <i className="fas fa-caret-down" />
+                </span>
+            </F>
         }
     >
         <ul className="kip-dropdownmenu">{children}</ul>
@@ -111,6 +114,7 @@ export class Dropdown extends React.Component {
             >
                 <button
                     aria-expanded={expanded}
+                    className="bulma-button"
                     type="button"
                     onClick={this.handleToggle}
                 >

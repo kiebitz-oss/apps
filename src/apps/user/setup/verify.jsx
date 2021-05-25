@@ -8,6 +8,7 @@ import {
     withActions,
     Modal,
     CardContent,
+    WithLoader,
     CardFooter,
     Button,
     T,
@@ -35,8 +36,7 @@ const Verify = withSettings(
                 setInitialized(true);
             });
 
-            if (contactData === undefined) return <div />;
-            return (
+            const render = () => (
                 <React.Fragment>
                     <CardContent>
                         <p className="kip-verify-notice">
@@ -64,13 +64,13 @@ const Verify = withSettings(
                                     <span>
                                         <T t={t} k="contact-data.name" />
                                     </span>{' '}
-                                    {contactData.name}
+                                    {contactData.data.name}
                                 </li>
                                 <li>
                                     <span>
                                         <T t={t} k="contact-data.email" />
                                     </span>{' '}
-                                    {contactData.email || (
+                                    {contactData.data.email || (
                                         <T t={t} k="contact-data.not-given" />
                                     )}
                                 </li>
@@ -91,6 +91,9 @@ const Verify = withSettings(
                         </Button>
                     </CardFooter>
                 </React.Fragment>
+            );
+            return (
+                <WithLoader resources={[contactData]} renderLoaded={render} />
             );
         },
         [contactData]

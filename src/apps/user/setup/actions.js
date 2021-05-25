@@ -8,6 +8,8 @@ import {
     ephemeralECDHEncrypt,
     generateECDSAKeyPair,
 } from 'helpers/crypto';
+import { buf2base32, b642buf } from 'helpers/conversion';
+
 import { e } from 'helpers/async';
 
 async function hashContactData(data) {
@@ -90,9 +92,44 @@ export async function submitToQueue(state, keyStore, settings, data, queue) {
     }
 }
 
+export async function userSecret(state, keyStore, settings, data) {
+    const backend = settings.get('backend');
+    if (data !== undefined) backend.local.set('user::secret', data);
+    data = backend.local.get('user::secret');
+    if (data === null)
+        return {
+            status: 'failed',
+        };
+    return {
+        status: 'loaded',
+        data: data,
+    };
+}
+
+userSecret.init = (keyStore, settings) => {
+    const backend = settings.get('backend');
+    let data = backend.local.get('user::secret');
+    if (data === null || true) {
+        data = buf2base32(b642buf(randomBytes(8)));
+        backend.local.set('user::secret', data);
+    }
+    return {
+        status: 'loaded',
+        data: data,
+    };
+};
+
 export async function contactData(state, keyStore, settings, data) {
     const backend = settings.get('backend');
     // we just store the data...
     if (data !== undefined) backend.local.set('user::contactData', data);
-    return backend.local.get('user::contactData') || {};
+    data = backend.local.get('user::contactData');
+    if (data === null)
+        return {
+            status: 'failed',
+        };
+    return {
+        status: 'loaded',
+        data: data,
+    };
 }

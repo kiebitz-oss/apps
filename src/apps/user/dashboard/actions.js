@@ -82,12 +82,13 @@ export async function confirmOffers(
     );
     for (const offer of offers) {
         try {
+            console.log(offer);
             const result = await backend.appointments.storeData(
                 offer.id,
                 encryptedProviderData,
                 tokenData.signingKeyPair,
                 [],
-                invitationData.grant
+                offer.grant
             );
             // we store the information about the offer which we've accepted
             backend.local.set('user::invitation::accepted', {

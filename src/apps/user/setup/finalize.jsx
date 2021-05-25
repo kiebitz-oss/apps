@@ -46,12 +46,14 @@ const Finalize = withSettings(
                     if (initialized) return;
                     setInitialized(true);
                     queuesAction();
-                    contactDataAction().then(ct => setQueue(ct.queue || null));
+                    contactDataAction().then(ct =>
+                        setQueue(ct.data.queue || null)
+                    );
                 });
 
                 const selectQueue = newQueue => {
-                    contactData.queue = newQueue;
-                    contactDataAction(contactData);
+                    contactData.data.queue = newQueue;
+                    contactDataAction(contactData.data);
                     setQueue(newQueue);
                 };
 
@@ -61,10 +63,12 @@ const Finalize = withSettings(
 
                 const submit = () => {
                     setSubmitting(true);
-                    submitToQueueAction(contactData, queue.data).then(hd => {
-                        setSubmitting(false);
-                        router.navigateToUrl('/user/setup/store-secrets');
-                    });
+                    submitToQueueAction(contactData.data, queue.data).then(
+                        hd => {
+                            setSubmitting(false);
+                            router.navigateToUrl('/user/setup/store-secrets');
+                        }
+                    );
                 };
 
                 const render = () => {

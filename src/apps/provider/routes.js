@@ -9,13 +9,14 @@ const routes = new Map([
     [
         'providerDashboard',
         {
-            url: '/provider(?:/([a-z]+))?',
-            handler: tab => ({
+            url:
+                '/provider(?:/(schedule|settings))?(?:/([a-z-]+))?(?:/([a-z0-9]+))?',
+            handler: (tab, action, id) => ({
                 t: t,
                 title: 'dashboard',
                 component: Dashboard,
                 authentication: 'provider',
-                props: { tab: tab || 'appointments' },
+                props: { tab: tab || 'schedule', action: action, id: id },
             }),
         },
     ],

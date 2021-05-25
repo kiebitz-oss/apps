@@ -15,18 +15,19 @@
 
 .kip-contact-data-box {
 	width: 100%;
-	background: #eee;
-	padding: map-get($kip-space, md);
-	border: 1px solid #ddd;
+	border: 1px solid #aea;
 	border-radius: $kip-border-radius;
+	background: #efe;
+	padding: map-get($kip-space, md);
+	padding-top: 0;
 
 	ul {
 		li {
 			font-weight: bolder;
 			span {
 				display: block;
-				font-weight: normal;
-				color: #999;
+				font-weight: lighter;
+				color: #888;
 				padding-top: map-get($kip-space, sm);
 			}
 		}

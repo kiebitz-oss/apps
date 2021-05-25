@@ -45,7 +45,7 @@ export async function updateAppointments(state, keyStore, settings, schedule) {
         []
     );
     if (openAppointments.length >= 10) return { data: openAppointments };
-    let d = new Date('2021-06-01T10:00:00+02:00');
+    let d = new Date('2021-05-24T10:00:00+02:00');
     for (let i = 0; i < 10; i++) {
         const dt = new Date(d.getTime() + 30 * 1000 * 60 * i);
         appointments.push({
@@ -113,32 +113,34 @@ export async function sendInvitations(
                     ecdhDecrypt(token.token.encryptedData, privateKey)
                 );
                 const decryptedTokenData = JSON.parse(decryptedTokenJSONData);
-                const grantData = {
-                    rights: ['write', 'read', 'delete'],
-                    single_use: true,
-                    id: randomBytes(32),
-                    ids: openAppointments.map(oa => oa.id),
-                    meta: {
-                        token: token.token.token,
-                    },
-                    permissions: [
-                        {
-                            rights: ['write', 'read', 'delete'],
-                            keys: [keyPairs.signing.publicKey],
-                        },
-                    ],
-                };
-                const signedGrantData = await e(
-                    sign(
-                        keyPairs.signing.privateKey,
-                        JSON.stringify(grantData),
-                        keyPairs.signing.publicKey
+                // we generate grants for all appointments IDs
+                const grantsData = await Promise.all(
+                    openAppointments.map(
+                        async oa =>
+                            await sign(
+                                keyPairs.signing.privateKey,
+                                JSON.stringify({
+                                    rights: ['write', 'read', 'delete'],
+                                    single_use: true,
+                                    id: oa.id,
+                                    permissions: [
+                                        {
+                                            rights: ['write', 'read', 'delete'],
+                                            keys: [keyPairs.signing.publicKey],
+                                        },
+                                    ],
+                                }),
+                                keyPairs.signing.publicKey
+                            )
                     )
                 );
                 const userData = {
                     provider: verifiedProviderData.signedData,
-                    grant: signedGrantData,
-                    offers: openAppointments,
+                    offers: openAppointments.map((oa, i) => {
+                        const on = { ...oa };
+                        on.grant = grantsData[i];
+                        return on;
+                    }),
                 };
                 // we first encrypt the data
                 const encryptedUserData = await e(
@@ -195,7 +197,7 @@ export async function checkInvitations(
     const backend = settings.get('backend');
     let openTokens = backend.local.get('provider::tokens::open', []);
     let acceptedInvitations = backend.local.get(
-        'provider::invitations::accepted',
+        'provider::appointments::accepted',
         []
     );
     try {
@@ -227,8 +229,13 @@ export async function checkInvitations(
                 }
             }
         }
+        let openInvitations = backend.local.get('provider::appointments::open');
+        openInvitations = openInvitations.filter(
+            oi => !acceptedInvitations.find(ai => ai.invitation.id === oi.id)
+        );
+        backend.local.set('provider::appointments::open', openInvitations);
         backend.local.set(
-            'provider::invitations::accepted',
+            'provider::appointments::accepted',
             acceptedInvitations
         );
         return {

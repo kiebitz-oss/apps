@@ -1,9 +1,9 @@
-appointments:
+schedule:
   title:
-    de: Termine
-invitations:
+    de: Terminplan
+appointments-overview:
   title:
-    de: Einladungen
+    de: Terminübersicht
 settings:
   title:
     de: Einstellungen
@@ -15,6 +15,31 @@ save:
   de: Einstellungen speichern
 restore:
   de: Einstellungen wiederherstellen
+day-1:
+  de: Montag
+day-2:
+  de: Dienstag
+day-3:
+  de: Mittwoch
+day-4:
+  de: Donnerstag
+day-5:
+  de: Freitag
+day-6:
+  de: Samstag
+day-7:
+  de: Sonntag
+new-appointment:
+  title:
+    de: Neuen Termin erstellen
+  date:
+    de: Datum
+  time:
+    de: Uhrzeit
+  please-enter-date:
+    de: Bitte wählen Sie ein Datum
+  please-enter-time:
+    de: Bitte wählen Sie eine Uhrzeit
 provider-data:
   please-add-one-queue:
     de: Bitte wählen Sie zumindest ein Einzugsgebiet aus.

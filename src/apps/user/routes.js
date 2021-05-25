@@ -4,6 +4,7 @@
 
 import Setup from './setup';
 import Start from './start';
+import Deleted from './deleted';
 import Dashboard from './dashboard';
 import t from './translations.yml';
 
@@ -22,14 +23,27 @@ const routes = new Map([
         },
     ],
     [
+        'deleted',
+        {
+            url: '/user/deleted',
+            handler: () => ({
+                t: t,
+                title: 'deleted',
+                component: Deleted,
+                isSimple: true,
+                props: {},
+            }),
+        },
+    ],
+    [
         'userDashboard',
         {
-            url: '/user/(appointments|settings)',
-            handler: tab => ({
+            url: '/user/(appointments|settings)(?:/([a-z]+))?',
+            handler: (tab, action) => ({
                 t: t,
                 title: 'dashboard',
                 component: Dashboard,
-                props: { tab: tab },
+                props: { tab: tab, action: action },
             }),
         },
     ],

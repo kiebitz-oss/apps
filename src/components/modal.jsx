@@ -17,8 +17,10 @@ export class Modal extends React.Component {
             className,
             title,
             waiting,
+            disabled,
             saveDisabled,
             cancelDisabled,
+            closeDisabled,
             save,
             cancel,
             onSave,
@@ -26,6 +28,8 @@ export class Modal extends React.Component {
             onClose,
             saveType,
         } = this.props;
+
+        const close = () => !closeDisabled && !disabled && onClose();
         return (
             <div
                 className={classnames(
@@ -34,7 +38,7 @@ export class Modal extends React.Component {
                     className
                 )}
             >
-                <div className="bulma-modal-background" onClick={onClose}></div>
+                <div className="bulma-modal-background" onClick={close}></div>
                 <div className="bulma-modal-card">
                     {title && (
                         <header className="bulma-modal-card-head">
@@ -45,7 +49,7 @@ export class Modal extends React.Component {
                                     aria-label="Close modal"
                                     className="bulma-delete"
                                     data-test-id="modal-close"
-                                    onClick={onClose}
+                                    onClick={close}
                                 />
                             )}
                         </header>
@@ -60,8 +64,10 @@ export class Modal extends React.Component {
                                     type={saveType}
                                     data-test-id="modal-save"
                                     waiting={waiting}
-                                    disabled={saveDisabled}
-                                    onClick={() => !saveDisabled && onSave()}
+                                    disabled={saveDisabled || disabled}
+                                    onClick={() =>
+                                        !saveDisabled && !disabled && onSave()
+                                    }
                                 >
                                     {save || <T t={t} k="modal.save" />}
                                 </Button>
@@ -69,9 +75,11 @@ export class Modal extends React.Component {
                             {onCancel && (
                                 <Button
                                     type=""
-                                    disabled={cancelDisabled}
+                                    disabled={cancelDisabled || disabled}
                                     onClick={() =>
-                                        !cancelDisabled && onCancel()
+                                        !cancelDisabled &&
+                                        !disabled &&
+                                        onCancel()
                                     }
                                 >
                                     {cancel || <T t={t} k="modal.cancel" />}
@@ -87,7 +95,9 @@ export class Modal extends React.Component {
 
 Modal.defaultProps = {
     cancelDisabled: false,
+    closeDisabled: false,
     waiting: false,
+    disabled: false,
     saveDisabled: false,
     save: undefined,
     cancel: undefined,

@@ -67,8 +67,10 @@ const Wizard = ({ route, router, page, privacyManager }) => {
         return true;
     };
 
+    const index = pages.indexOf(page);
+
     const canShow = _page => {
-        return true;
+        return pages.indexOf(_page) <= index;
     };
 
     if (!page) page = pages[0];

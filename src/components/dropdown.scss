@@ -2,25 +2,16 @@
 
 .kip-dropdown {
     position: relative;
+    display: inline-block;
+    margin-right: 10px;
+
 
     > button {
         display: inline-flex;
         vertical-align: middle;
         align-items: center;
         justify-content: center;
-        width: 2em;
-        height: 2em;
-        font-size: 1em;
 
-        // reset button
-        border-style: none;
-        background-color: transparent;
-
-        &:focus,
-        &:hover {
-            border-radius: 25px;
-            background-color: $kip-gray-light;
-        }
     }
 
     > .kip-dropdowncontent {
@@ -32,7 +23,7 @@
         &.kip-dropdownexpanded {
             display: block;
             position: absolute;
-            top: 35px;
+            top: 55px;
             z-index: 100;
             left: 0;
             border-radius: $kip-border-radius;
