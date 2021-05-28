@@ -7,6 +7,54 @@
 
 Welcome to the Kiebitz project! Please visit our [website](https://kiebitz.eu) to learn more about us.
 
+# Getting Started
+
+Kiebietz consists of three apps for providers, mediators and users, which can be reached under `/providers`, `/mediators` and `/users`, respectively. The app can be built with different environments:
+
+* The `test` environment provides an integrated backend that simulates the functionality of the real backend and allows testing and developing all apps without running the latter.
+* The `dev` environment works against a locally deployed backend and is great for testing the apps against a real backend.
+* The `production` environment build the app bundles for production deployment, i.e. minified and optimized code that works against the production backend.
+
+To run the app in test mode, simply run
+
+```bash
+npm run-script make-test
+``` 
+
+after running `npm install`. To build the `dev` and `production` versions simply run
+
+```bash
+# build the development version
+npm run-script make-dev
+# build the production version
+npm run-script make
+```
+
+# Linting & Formatting
+
+We use `eslint` and `prettier` for linting and formatting of code. To lint code, run
+
+```bash
+# just lint
+npm run-script lint
+# lint and autofix where possible
+npm run-script lint-fix
+# lint SCSS
+npm run-script lint-scss
+# lint and fix SCSS where possible
+npm run-script lint-scss-fix
+# format code
+npm run-script prettier
+```
+
+# Analyzing Bundle Size
+
+You can run the bundle size analyzer (which helps you to identify packages and assets taking up a lot of space in the bunde) via
+
+```bash
+npm run-script analyze
+```
+
 # Licenses
 
 The Kiebitz software code is licensed under Affero GPL version 3 (AGPL-3.0). Please see the [license file for](LICENSE) more information. The license was chosen to ensure that any changes to Kiebitz will benefit the community.
