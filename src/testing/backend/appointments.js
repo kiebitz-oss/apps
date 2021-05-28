@@ -44,17 +44,21 @@ export default class AppointmentsBackend {
     }
 
     async confirmProvider({ id, key, providerData, keyData }) {
+        console.log(providerData, keyData);
         let found = false;
         const keyDataJSON = JSON.parse(keyData.data);
         const newProviders = [];
         for (const existingKey of this.keys.providers) {
             const existingKeyDataJSON = JSON.parse(existingKey.data);
             if (existingKeyDataJSON.signing === keyDataJSON.signing) {
+                found = true;
                 newProviders.push(keyData);
             } else {
                 newProviders.push(existingKey);
             }
         }
+        if (!found) newProviders.push(keyData);
+        console.log(this.keys.providers);
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
         // we store the verified provider data
@@ -194,7 +198,7 @@ export default class AppointmentsBackend {
                 queue.keyPair = await e(generateECDHKeyPair());
                 // we encrypt the queue key with the queue encryption key pair
                 // to which all mediators have access...
-                [queue.encryptedPrivateKey, _] = await e(
+                [queue.encryptedPrivateKey] = await e(
                     ephemeralECDHEncrypt(
                         queue.keyPair.privateKey,
                         queueKeyEncryptionKeyPair.publicKey
@@ -235,7 +239,8 @@ export default class AppointmentsBackend {
 
     // return all public keys present in the system
     async getKeys() {
-        await e(this.initialized());
+        await this.initialized();
+        this.keys = this.store.get('keys');
         const keys = copy({
             // keys of providers and mediators
             lists: this.keys,

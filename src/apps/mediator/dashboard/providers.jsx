@@ -3,6 +3,7 @@
 // README.md contains license information.
 
 import React, { useState, useEffect, Fragment as F } from 'react';
+import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
 import Form from 'helpers/form';
 import {
     providers,
@@ -67,34 +68,34 @@ const Providers = withTimer(
                 });
 
                 const render = () => {
-                    const showProvider = i =>
-                        router.navigateToUrl(`/mediator/providers/show/${i}`);
+                    const showProvider = i => {
+                        const id = buf2hex(b642buf(i));
+                        router.navigateToUrl(`/mediator/providers/show/${id}`);
+                    };
 
                     let modal;
 
                     const closeModal = () =>
                         router.navigateToUrl('/mediator/providers');
 
-                    const doConfirmProvider = () => {
-                        const provider = providers.data.find(
-                            provider => provider.id === id
-                        );
-                        if (provider === null) return;
-                        confirmProviderAction(
-                            provider,
-                            keyPairs.data,
-                            queueKeyPair.data
-                        ).then(() => {
-                            getData();
-                            router.navigateToUrl('/mediator/providers');
-                        });
-                    };
-
                     if (action === 'show' && id !== undefined) {
+                        const base64Id = buf2b64(hex2buf(id));
                         const provider = providers.data.find(
-                            provider => provider.id === id
+                            provider => provider.id === base64Id
                         );
-                        if (provider !== null)
+
+                        const doConfirmProvider = () => {
+                            confirmProviderAction(
+                                provider,
+                                keyPairs.data,
+                                queueKeyPair.data
+                            ).then(() => {
+                                getData();
+                                router.navigateToUrl('/mediator/providers');
+                            });
+                        };
+
+                        if (provider !== undefined)
                             modal = (
                                 <Modal
                                     title={<T t={t} k="providers.edit" />}

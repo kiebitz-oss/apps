@@ -150,7 +150,8 @@ const InvitationDetails = withActions(
         }
 
         let content;
-        if (data === null) content = <NoInvitations data={tokenData} />;
+        if (data === null || data.offers === null)
+            return <NoInvitations data={tokenData} />;
 
         const offers = data.offers.map(offer => {
             const d = new Date(offer.date);
@@ -170,49 +171,54 @@ const InvitationDetails = withActions(
                 </tr>
             );
         });
-        content = (
-            <div className="kip-invitation-details">
-                <Card>
-                    <CardHeader>
-                        <h2>
-                            <T t={t} k="invitation-received.title" />
-                        </h2>
-                    </CardHeader>
-                    <CardContent>
-                        <ProviderDetails data={data.provider} />
-                        <p>
-                            <T t={t} k="appointments-notice" />
-                        </p>
-                        <hr />
-                        <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <T t={t} k="appointment-preference" />
-                                    </th>
-                                    <th>
-                                        <T t={t} k="appointment-date" />
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>{offers}</tbody>
-                        </table>
-                        <Button
-                            waiting={confirming}
-                            onClick={doConfirmOffers}
-                            disabled={
-                                confirming ||
-                                Object.keys(toggleOffers.data).length === 0
-                            }
-                            type="success"
-                        >
-                            <T t={t} k="confirm-appointment" />
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
+
+        return (
+            <F>
+                <div className="kip-invitation-details">
+                    <Card>
+                        <CardHeader>
+                            <h2>
+                                <T t={t} k="invitation-received.title" />
+                            </h2>
+                        </CardHeader>
+                        <CardContent>
+                            <ProviderDetails data={data.provider} />
+                            <p>
+                                <T t={t} k="appointments-notice" />
+                            </p>
+                            <hr />
+                            <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <T
+                                                t={t}
+                                                k="appointment-preference"
+                                            />
+                                        </th>
+                                        <th>
+                                            <T t={t} k="appointment-date" />
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>{offers}</tbody>
+                            </table>
+                            <Button
+                                waiting={confirming}
+                                onClick={doConfirmOffers}
+                                disabled={
+                                    confirming ||
+                                    Object.keys(toggleOffers.data).length === 0
+                                }
+                                type="success"
+                            >
+                                <T t={t} k="confirm-appointment" />
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            </F>
         );
-        return <F>{content}</F>;
     },
     [toggleOffers, confirmOffers, acceptedInvitation]
 );

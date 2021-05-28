@@ -13,6 +13,7 @@ import {
     generateECDHKeyPair,
 } from 'helpers/crypto';
 import { e } from 'helpers/async';
+import { markAsLoading } from 'helpers/actions';
 
 // returns or updates the schedule
 export async function schedule(state, keyStore, settings, data) {
@@ -39,16 +40,15 @@ function getQueuePrivateKey(queueID, verifiedProviderData) {
 
 export async function updateAppointments(state, keyStore, settings, schedule) {
     const backend = settings.get('backend');
-    const appointments = [];
     const openAppointments = backend.local.get(
         'provider::appointments::open',
         []
     );
     if (openAppointments.length >= 10) return { data: openAppointments };
     let d = new Date('2021-05-24T10:00:00+02:00');
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < openAppointments.length - 10; i++) {
         const dt = new Date(d.getTime() + 30 * 1000 * 60 * i);
-        appointments.push({
+        openAppointments.push({
             id: randomBytes(32), // where the user can submit his confirmation
             status: randomBytes(32), // where the user can get the appointment status
             cancel: randomBytes(32), // where the user can cancel his confirmation
@@ -57,10 +57,10 @@ export async function updateAppointments(state, keyStore, settings, schedule) {
             cancelable_until: '2021-05-27T10:00:00Z',
         });
     }
-    backend.local.set('provider::appointments::open', appointments);
+    backend.local.set('provider::appointments::open', openAppointments);
     return {
         status: 'loaded',
-        data: appointments,
+        data: openAppointments,
     };
 }
 
@@ -229,15 +229,34 @@ export async function checkInvitations(
                 }
             }
         }
-        let openInvitations = backend.local.get('provider::appointments::open');
-        openInvitations = openInvitations.filter(
-            oi => !acceptedInvitations.find(ai => ai.invitation.id === oi.id)
-        );
-        backend.local.set('provider::appointments::open', openInvitations);
+
+        // we update the list of accepted appointments
         backend.local.set(
             'provider::appointments::accepted',
             acceptedInvitations
         );
+
+        // we remove the accepted appointments from the list of open appointments
+        let openAppointments = backend.local.get(
+            'provider::appointments::open',
+            []
+        );
+        openAppointments = openAppointments.filter(
+            oa => !acceptedInvitations.find(ai => ai.invitation.id === oa.id)
+        );
+        backend.local.set('provider::appointments::open', openAppointments);
+
+        // we remove the tokens corresponding to the accepted invitations from
+        // the list of open tokens...
+        let openTokens = backend.local.get('provider::tokens::open', []);
+        openTokens = openTokens.filter(
+            ot =>
+                !acceptedInvitations.find(
+                    ai => ai.token.token.token === openToken.token.token
+                )
+        );
+        backend.local.set('provider::tokens::open', openTokens);
+
         return {
             status: 'loaded',
             data: acceptedInvitations,
@@ -248,10 +267,9 @@ export async function checkInvitations(
 // make sure the signing and encryption key pairs exist
 export async function keyPairs(state, keyStore, settings) {
     const backend = settings.get('backend');
-
     const providerKeyPairs = backend.local.get('provider::keyPairs');
 
-    keyStore.set({ status: 'loading' });
+    markAsLoading(state, keyStore);
 
     if (providerKeyPairs === null) {
         try {
@@ -282,15 +300,15 @@ export async function keyPairs(state, keyStore, settings) {
 
 export async function keys(state, keyStore, settings) {
     const backend = settings.get('backend');
-    keyStore.set({ status: 'loading' });
+    markAsLoading(state, keyStore);
+    console.log('getting keys...');
     try {
-        const keys = await e(backend.appointments.getKeys());
+        const keys = await backend.appointments.getKeys();
         return {
             status: 'loaded',
             data: keys,
         };
     } catch (e) {
-        console.log(e.toString());
         return { status: 'failed', error: e.toString() };
     }
 }
@@ -300,7 +318,7 @@ export async function verifiedProviderData(state, keyStore, settings) {
     const backend = settings.get('backend');
     let providerData = backend.local.get('provider::data::verified');
     return {
-        status: 'loaded',
+        status: providerData !== null ? 'loaded' : 'failed',
         data: providerData,
     };
 }
@@ -329,11 +347,15 @@ export async function validKeyPairs(state, keyStore, settings, keyPairs, keys) {
     const signingKeyHash = await e(hash(keyPairs.signing.publicKey));
     const encryptionKeyHash = await e(hash(keyPairs.encryption.publicKey));
     let found = false;
+    console.log('Checking key pairs...');
+    console.log(keys);
+    console.log(keyPairs);
     for (const providerKeys of keys.lists.providers) {
         if (
             providerKeys.json.signing == signingKeyHash &&
             providerKeys.json.encryption == encryptionKeyHash
         ) {
+            console.log('found em!');
             found = true;
             break;
         }
@@ -344,7 +366,7 @@ export async function validKeyPairs(state, keyStore, settings, keyPairs, keys) {
 // to do: add keyPair to queue request (as the request needs to be signed)
 export async function queues(state, keyStore, settings, queueIDs) {
     const backend = settings.get('backend');
-    keyStore.set({ status: 'loading' });
+    markAsLoading(state, keyStore);
     try {
         const queues = await e(backend.appointments.getQueues(queueIDs));
         return { status: 'loaded', data: queues };

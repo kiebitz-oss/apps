@@ -58,7 +58,7 @@ provider-data:
     de: Name Ihrer Organisation (für Nutzer sichtbar)
   phone:
     de: Optionale Telefonnummer für Rückfragen (für Nutzer sichtbar)
-  e-mail:
+  email:
     de: E-Mail Adresse (nicht öffentlich)
   street:
     de: Straße & Hausnummer (für Nutzer sichtbar)

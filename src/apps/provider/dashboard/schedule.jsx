@@ -295,11 +295,12 @@ const Invitations = withTimer(
                         if (initialized) return;
                         setInitialized(true);
                         // we load all the necessary data
-                        verifiedProviderDataAction().then(pd =>
+                        verifiedProviderDataAction().then(pd => {
+                            if (pd.data === null) return;
                             invitationQueuesAction(
                                 pd.data.signedData.json.queues
-                            )
-                        );
+                            );
+                        });
                         keyPairsAction();
                         keysAction();
                     });

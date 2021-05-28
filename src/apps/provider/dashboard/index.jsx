@@ -30,9 +30,9 @@ import {
 } from 'components';
 import t from './translations.yml';
 
-const Dashboard = withTimer(
-    withActions(
-        withSettings(
+const Dashboard = withActions(
+    withSettings(
+        withTimer(
             ({
                 route: {
                     handler: {
@@ -79,9 +79,16 @@ const Dashboard = withTimer(
                     setTv(timer);
                     verifiedProviderDataAction();
                     providerDataAction().then(pd => {
+                        if (pd.data === null) return;
                         // we check whether the data is verified already...
                         if (pd.data.verified) return;
-                        checkVerifiedProviderDataAction(pd.data);
+                        checkVerifiedProviderDataAction(pd.data).then(() =>
+                            keysAction().then(ks =>
+                                keyPairsAction().then(kp =>
+                                    validKeyPairsAction(kp.data, ks.data)
+                                )
+                            )
+                        );
                     });
                     if (
                         keyPairs === undefined ||
@@ -103,10 +110,12 @@ const Dashboard = withTimer(
 
                 switch (tab) {
                     case 'settings':
-                        content = <Settings />;
+                        content = <Settings key="settings" />;
                         break;
                     case 'schedule':
-                        content = <Schedule action={action} id={id} />;
+                        content = (
+                            <Schedule action={action} id={id} key="schedule" />
+                        );
                         break;
                 }
 
@@ -143,21 +152,21 @@ const Dashboard = withTimer(
                         {content}
                     </F>
                 );
-            }
-        ),
-        [
-            verifiedProviderData,
-            updateAppointments,
-            sendInvitations,
-            keyPairs,
-            keys,
-            validKeyPairs,
-            providerData,
-            checkInvitations,
-            checkVerifiedProviderData,
-        ]
+            },
+            2000
+        )
     ),
-    2000
+    [
+        verifiedProviderData,
+        updateAppointments,
+        sendInvitations,
+        keyPairs,
+        keys,
+        validKeyPairs,
+        providerData,
+        checkInvitations,
+        checkVerifiedProviderData,
+    ]
 );
 
 export default Dashboard;

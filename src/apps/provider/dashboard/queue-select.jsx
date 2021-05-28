@@ -50,6 +50,7 @@ export const QueueSelect = ({
 
     const queueItems = existingQueues.map(queueId => {
         const queue = queuesById[queueId];
+        if (queue === undefined) return;
         return (
             <li key={queue.id}>
                 {queue.name}{' '}

@@ -3,6 +3,7 @@
 // README.md contains license information.
 
 import { e } from "helpers/async";
+import { markAsLoading } from "helpers/actions";
 import {
     verify,
     sign,
@@ -14,8 +15,6 @@ import {
 } from 'helpers/crypto';
 
 export async function confirmProvider(state, keyStore, settings, providerData, keyPairs, queueKeyPair){
-
-    console.log(queueKeyPair)
 
     // we only store hashes of the public key values, as the actual keys are
     // always passed to the user, so they never need to be looked up...
@@ -88,13 +87,7 @@ export async function confirmProvider(state, keyStore, settings, providerData, k
 
 export async function providers(state, keyStore, settings, keyPairs, dataKeyPair) {
     const backend = settings.get('backend');
-    if (state !== undefined){
-        if (state.status === "loading")
-            return
-        if (state.status === "loaded")
-            keyStore.set({ status: 'updating' });
-    } else
-        keyStore.set({ status: 'loading' });
+    markAsLoading(state, keyStore)
     try {
         const providersList = await e(
             backend.appointments.getPendingProviderData(keyPairs, 10)
@@ -132,9 +125,10 @@ export async function providerDataKeyPair(state, keyStore, settings, data){
     if (settings.get("test")){
         // in the test mode the key is stored in the backend
         const backend = settings.get("backend")
+        const keyPair = backend.appointments.providerDataEncryptionKeyPair
         return {
-            status: "loaded",
-            data: backend.appointments.providerDataEncryptionKeyPair,
+            status: keyPair !== undefined ? "loaded" : "failed",
+            data: keyPair,
         }
     }
     return {
@@ -147,9 +141,10 @@ export async function queueKeyPair(state, keyStore, settings, data){
     if (settings.get("test")){
         // in the test mode the key is stored in the backend
         const backend = settings.get("backend")
+        const keyPair = backend.appointments.queueKeyEncryptionKeyPair
         return {
-            status: "loaded",
-            data: backend.appointments.queueKeyEncryptionKeyPair,
+            status: keyPair !== undefined ? "loaded" : "failed",
+            data: keyPair,
         }
     }
     return {
@@ -160,17 +155,8 @@ export async function queueKeyPair(state, keyStore, settings, data){
 // make sure the signing and encryption key pairs exist
 export async function keyPairs(state, keyStore, settings) {
     const backend = settings.get('backend');
-
     let providerKeyPairs = backend.local.get('mediator::keyPairs');
-
-    if (state !== undefined){
-        if (state.status === "loading")
-            return state
-        if (state.status === "loaded")
-            keyStore.set({status: "updating", data: state.data})
-    } else {
-        keyStore.set({status: "loading"})        
-    }
+    markAsLoading(state, keyStore)
 
     if (providerKeyPairs === null) {
         const encryptionKeyPair = await generateECDSAKeyPair();

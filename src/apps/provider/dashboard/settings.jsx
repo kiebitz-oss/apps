@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import Form from 'helpers/form';
 import {
     withRouter,
@@ -136,6 +136,7 @@ const Settings = withActions(
                                     queues={queues.data}
                                     existingQueues={data.queues || []}
                                     addQueue={addQueue}
+                                    key="qs"
                                     removeQueue={removeQueue}
                                 />
                                 <ErrorFor error={error} field="access_code" />
