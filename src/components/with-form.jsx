@@ -32,7 +32,7 @@ export function withForm(Component, Form, formName) {
 
         set = (key, value) => {
             const data = this.actions.get().data || {};
-            if (data[key] === value) return;
+            if (data[key] === value) return data;
             data[key] = value;
             const error = this.actions.get().error;
             // we clear the independent error for the updated field, as it has
@@ -45,6 +45,7 @@ export function withForm(Component, Form, formName) {
                 delete error.errors[key];
             }
             this.actions.update({ data: data, error: error });
+            return data;
         };
 
         clearError = () => {

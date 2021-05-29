@@ -4,7 +4,12 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { queues } from 'apps/provider/actions';
-import { submitToQueue, contactData, getToken } from 'apps/user/actions';
+import {
+    submitToQueue,
+    contactData,
+    queueData,
+    getToken,
+} from 'apps/user/actions';
 import {
     withSettings,
     withActions,
@@ -26,7 +31,7 @@ import Wizard from './wizard';
 import t from './translations.yml';
 import './finalize.scss';
 
-class QueueForm extends Form {
+class FinalizeForm extends Form {
     validate() {
         const errors = {};
         if (!this.data.zip_code || this.data.zip_code.length != 5)
@@ -52,6 +57,8 @@ const Finalize = withForm(
                     router,
                     queues,
                     queuesAction,
+                    queueData,
+                    queueDataAction,
                     contactData,
                     contactDataAction,
                     submitToQueue,
@@ -61,45 +68,38 @@ const Finalize = withForm(
                     const [initialized, setInitialized] = useState(false);
                     const [modified, setModified] = useState(false);
                     const [submitting, setSubmitting] = useState(false);
-                    const [queue, setQueue] = useState(null);
+                    const [tv, setTV] = useState(0);
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
-                        queuesAction();
-                        contactDataAction().then(ct =>
-                            setQueue(ct.data.queue || null)
-                        );
+                        contactDataAction();
+                        queueDataAction().then(qd => {
+                            reset(qd.data || {});
+                        });
                     });
-
-                    const selectQueue = newQueue => {
-                        contactData.data.queue = newQueue;
-                        contactDataAction(contactData.data);
-                        setQueue(newQueue);
-                    };
-
-                    const removeQueue = queue => {
-                        setQueue(null);
-                    };
 
                     const submit = () => {
                         setSubmitting(true);
-                        submitToQueueAction(contactData.data, queue.data).then(
-                            hd => {
-                                setSubmitting(false);
-                                router.navigateToUrl(
-                                    '/user/setup/store-secrets'
-                                );
+                        queuesAction(data.zip_code, data.radius).then(qd => {
+                            if (qd.status === 'loaded' && qd.data.length > 0) {
+                                submitToQueueAction(
+                                    contactData.data,
+                                    qd.data[0]
+                                ).then(hd => {
+                                    setSubmitting(false);
+                                    router.navigateToUrl(
+                                        '/user/setup/store-secrets'
+                                    );
+                                });
                             }
-                        );
-                        reset({ radius: '10' });
+                        });
+                        reset({ radius: 10 });
                     };
 
                     const setAndMarkModified = (key, value) => {
                         setModified(true);
                         set(key, value);
                     };
-
-                    console.log(data);
 
                     const render = () => {
                         return (
@@ -137,7 +137,7 @@ const Finalize = withForm(
                                         />
                                         <RichSelect
                                             id="radius"
-                                            value={data.radius || '10'}
+                                            value={data.radius || 10}
                                             onChange={value =>
                                                 setAndMarkModified(
                                                     'radius',
@@ -146,11 +146,11 @@ const Finalize = withForm(
                                             }
                                             options={[
                                                 {
-                                                    value: '10',
+                                                    value: 10,
                                                     description: '10 Kilometer',
                                                 },
                                                 {
-                                                    value: '20',
+                                                    value: 20,
                                                     description: '20 Kilometer',
                                                 },
                                             ]}
@@ -238,18 +238,13 @@ const Finalize = withForm(
                             </React.Fragment>
                         );
                     };
-                    return (
-                        <WithLoader
-                            resources={[queues]}
-                            renderLoaded={render}
-                        />
-                    );
+                    return <WithLoader resources={[]} renderLoaded={render} />;
                 },
-                [queues, submitToQueue, contactData]
+                [queues, submitToQueue, queueData, contactData]
             )
         )
     ),
-    QueueForm,
+    FinalizeForm,
     'form'
 );
 

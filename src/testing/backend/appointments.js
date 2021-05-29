@@ -227,14 +227,23 @@ export default class AppointmentsBackend {
 
     // public endpoints
 
-    async getQueues() {
+    async getQueues(zipCode, radius) {
         await e(this.initialized());
-        return this.queues.map(queue => ({
-            name: queue.name,
-            type: queue.type,
-            id: queue.id,
-            publicKey: queue.keyPair.publicKey,
-        }));
+        // we just look at nearest neighbors here...
+        return this.queues
+            .filter(
+                q =>
+                    q.zip_code === zipCode ||
+                    q.related.find(
+                        r => r.zip_code === zipCode && r.distance < radius
+                    )
+            )
+            .map(queue => ({
+                name: queue.name,
+                type: queue.type,
+                id: queue.id,
+                publicKey: queue.keyPair.publicKey,
+            }));
     }
 
     // return all public keys present in the system

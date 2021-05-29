@@ -4,11 +4,13 @@
 
 export function markAsLoading(state, keyStore) {
     if (state !== undefined) {
-        if (state.status === 'updating') return;
+        if (state.status === 'updating' || state.status === 'loading')
+            return false;
         else if (state.status === 'loaded')
             keyStore.set({ status: 'updating', data: state.data });
         else keyStore.set({ status: 'loading' });
     } else {
         keyStore.set({ status: 'loading' });
     }
+    return true;
 }

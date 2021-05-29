@@ -10,3 +10,4 @@ export * from './invitation-data';
 export * from './submit-to-queue';
 export * from './token-data';
 export * from './user-secret';
+export * from './queue-data';

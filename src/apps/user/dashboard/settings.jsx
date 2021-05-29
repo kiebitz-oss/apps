@@ -91,7 +91,7 @@ const Settings = withSettings(
                             t={t}
                             k={
                                 loggingOut
-                                    ? 'log-out-modal.logging-out-text'
+                                    ? 'log-out-modal.logging-out'
                                     : 'log-out-modal.text'
                             }
                         />
