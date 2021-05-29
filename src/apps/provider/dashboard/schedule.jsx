@@ -25,7 +25,7 @@ import {
     CardContent,
     Button,
 } from 'components';
-import { queues, keys, keyPairs, verifiedProviderData } from './actions';
+import { queues, keys, keyPairs, verifiedProviderData } from '../actions';
 import t from './translations.yml';
 import './schedule.scss';
 
@@ -314,7 +314,7 @@ const Invitations = withTimer(
 
                     const render = () => {
                         return (
-                            <div>
+                            <div className="kip-schedule">
                                 {newAppointmentModal}
                                 <DropdownMenu
                                     title={

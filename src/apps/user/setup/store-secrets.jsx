@@ -20,7 +20,7 @@ import { userSecret } from './actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
-const StoreOnline = ({ settings, secret }) => {
+export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     const [bookmarkModal, setBookmarkModal] = useState(false);
     const [copyModal, setCopyModal] = useState(false);
 
@@ -50,32 +50,45 @@ const StoreOnline = ({ settings, secret }) => {
             </Modal>
         );
 
+    const chunks = secret.match(/.{1,4}/g);
+    const readableSecret = chunks.join('·');
+
     return (
         <React.Fragment>
             {modal}
-            <p className="kip-secrets-notice">
-                <T t={t} k="store-secrets.online.text" />
-            </p>
-            <div className="kip-secrets-box">
+            {!embedded && (
+                <p className="kip-secrets-notice">
+                    <T t={t} k="store-secrets.online.text" />
+                </p>
+            )}
+            <div
+                className={
+                    'kip-secrets-box' + (embedded ? ' kip-is-embedded' : '')
+                }
+            >
                 {
                     <React.Fragment>
                         <div className="kip-uid">
-                            <span>
-                                <T t={t} k="store-secrets.secret" />
-                            </span>
-                            <code>{secret}</code>
+                            {!hideNotice && (
+                                <span>
+                                    <T t={t} k="store-secrets.secret" />
+                                </span>
+                            )}
+                            <code>{readableSecret}</code>
                         </div>
                     </React.Fragment>
                 }
             </div>
-            <div className="kip-secrets-links">
-                <A
-                    className="bulma-button bulma-is-small"
-                    onClick={showBookmarkModal}
-                >
-                    <T t={t} k="store-secrets.bookmark" />
-                </A>
-            </div>
+            {!embedded && (
+                <div className="kip-secrets-links">
+                    <A
+                        className="bulma-button bulma-is-small"
+                        onClick={showBookmarkModal}
+                    >
+                        <T t={t} k="store-secrets.bookmark" />
+                    </A>
+                </div>
+            )}
         </React.Fragment>
     );
 };
@@ -121,16 +134,7 @@ export default withActions(
 
         return (
             <React.Fragment>
-                <CardContent className="kip-secrets">
-                    <Switch
-                        onChange={() =>
-                            setTab(tab === 'online' ? 'local' : 'online')
-                        }
-                    >
-                        <T t={t} k={`store-secrets.${tab}.title`} />
-                    </Switch>
-                    {content}
-                </CardContent>
+                <CardContent className="kip-secrets">{content}</CardContent>
                 <CardFooter>
                     <Button type="success" href={`/user/appointments`}>
                         <T t={t} k="wizard.leave" />
@@ -141,3 +145,13 @@ export default withActions(
     }),
     [userSecret]
 );
+
+/*
+    <Switch
+        onChange={() =>
+            setTab(tab === 'online' ? 'local' : 'online')
+        }
+    >
+        <T t={t} k={`store-secrets.${tab}.title`} />
+    </Switch>
+*/

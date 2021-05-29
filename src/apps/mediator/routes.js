@@ -14,6 +14,7 @@ const routes = new Map([
                 t: t,
                 title: 'dashboard',
                 component: Dashboard,
+                isSimple: true,
                 props: { tab: tab || 'providers', action: action, id: id },
             }),
         },

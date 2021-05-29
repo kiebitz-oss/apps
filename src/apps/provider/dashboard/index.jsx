@@ -17,11 +17,15 @@ import {
     checkInvitations,
     verifiedProviderData,
     checkVerifiedProviderData,
-} from './actions';
+} from '../actions';
 import {
     withSettings,
     withActions,
     withTimer,
+    CenteredCard,
+    CardHeader,
+    Icon,
+    CardContent,
     Tabs,
     Tab,
     T,
@@ -101,8 +105,7 @@ const Dashboard = withActions(
                         sendInvitationsAction(
                             keyPairs.data,
                             verifiedProviderData.data
-                        );
-                        checkInvitationsAction(keyPairs, d.data);
+                        ).then(() => checkInvitationsAction(keyPairs, d.data));
                     });
                 });
 
@@ -133,24 +136,36 @@ const Dashboard = withActions(
                 }
 
                 return (
-                    <F>
-                        <Tabs>
-                            <Tab
-                                active={tab === 'schedule'}
-                                href="/provider/schedule"
-                            >
-                                <T t={t} k="schedule.title" />
-                            </Tab>
-                            <Tab
-                                active={tab === 'settings'}
-                                href="/provider/settings"
-                            >
-                                <T t={t} k="settings.title" />
-                            </Tab>
-                        </Tabs>
-                        {invalidKeyMessage}
-                        {content}
-                    </F>
+                    <CenteredCard size="fullwidth" tight>
+                        <CardHeader>
+                            <Tabs>
+                                <Tab
+                                    active={tab === 'schedule'}
+                                    href="/provider/schedule"
+                                >
+                                    <T t={t} k="schedule.title" />
+                                </Tab>
+                                <Tab
+                                    active={tab === 'settings'}
+                                    href="/provider/settings"
+                                >
+                                    <T t={t} k="settings.title" />
+                                </Tab>
+                                <Tab
+                                    last
+                                    icon={<Icon icon="sign-out-alt" />}
+                                    active={tab === 'log-out'}
+                                    href="/user/settings/logout"
+                                >
+                                    <T t={t} k="log-out" />
+                                </Tab>
+                            </Tabs>
+                        </CardHeader>
+                        <CardContent>
+                            {invalidKeyMessage}
+                            {content}
+                        </CardContent>
+                    </CenteredCard>
                 );
             },
             2000

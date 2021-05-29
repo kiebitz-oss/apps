@@ -1,0 +1,36 @@
+@import "scss/variables";
+
+.kip-verify-notice {
+	font-size: 14px;
+	padding-bottom: map-get($kip-space, lg);
+}
+
+.kip-contact-data-links {
+	margin-top: map-get($kip-space, sm);
+	a {
+		height: 32px;
+		margin-right: map-get($kip-space, sm);
+	}
+}
+
+.kip-contact-data-box {
+	width: 100%;
+	border: 1px solid #aea;
+	border-radius: $kip-border-radius;
+	background: #efe;
+	padding: map-get($kip-space, md);
+	padding-top: 0;
+
+	ul {
+		li {
+			font-weight: bolder;
+			span {
+				display: block;
+				font-weight: lighter;
+				color: #888;
+				padding-top: map-get($kip-space, sm);
+			}
+		}
+	}
+
+}

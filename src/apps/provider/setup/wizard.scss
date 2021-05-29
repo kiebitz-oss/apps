@@ -1,0 +1,31 @@
+@import "scss/variables";
+
+.kip-card.kip-cm-wizard {
+    .bulma-message:not(:last-child) {
+        margin-bottom: 0;
+    }
+
+    p.kip-cm-activate {
+        margin-bottom: map-get($kip-space, lg);
+    }
+
+    .kip-cm-activation {
+
+
+        ul {
+            margin-top: map-get($kip-space, lg);
+            li {
+                background: #fafafa;
+                box-shadow: $kip-box-shadow;
+                margin-bottom: map-get($kip-space, md);
+
+                a {
+                    color: $cm-blue2;
+                    font-size: 16px;
+                    padding: map-get($kip-space, md);
+                    display: block;
+                }
+            }
+        }
+    }
+}

@@ -13,6 +13,10 @@
 
 $border: 1px dashed #ccc;
 
+.kip-schedule {
+	padding-top: map-get($kip-space, md);
+}
+
 .kip-week-calendar {
 	position: relative;
 	display: flex;

@@ -1,5 +1,11 @@
 @import "scss/variables";
 
 .kip-user-settings {
+}
 
+.kip-buttons {
+	button {
+		display: inline-block;
+		margin-right: map-get($kip-space, md);
+	}
 }

@@ -5,7 +5,7 @@
 import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
-import { keys } from 'apps/provider/dashboard/actions';
+import { keys } from 'apps/provider/actions';
 import {
     tokenData,
     invitationData,
@@ -45,52 +45,46 @@ const ProviderDetails = ({ data }) => {
 const AcceptedInvitation = ({ data }) => {
     const d = new Date(data.offer.date);
     return (
-        <div className="kip-accepted-invitation">
-            <Card>
-                <CardHeader>
+        <F>
+            <CardContent>
+                <div className="kip-accepted-invitation">
                     <h2>
                         <T t={t} k="invitation-accepted.title" />
                     </h2>
-                </CardHeader>
-                <CardContent>
                     <ProviderDetails data={data.invitationData.provider} />
                     <p className="kip-appointment-date">
                         {d.toLocaleDateString()} ·{' '}
                         <u>{d.toLocaleTimeString()}</u>
                     </p>
-                </CardContent>
-                <CardFooter>
-                    <Button type="warning">
-                        <T t={t} k="cancel-appointment" />
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
+                </div>
+            </CardContent>
+            <CardFooter>
+                <Button type="warning">
+                    <T t={t} k="cancel-appointment" />
+                </Button>
+            </CardFooter>
+        </F>
     );
 };
 
 const NoInvitations = ({ tokenData }) => {
     return (
-        <div className="kip-no-invitations">
-            <Card>
-                <CardHeader>
+        <F>
+            <CardContent>
+                <div className="kip-no-invitations">
                     <h2>
                         <T t={t} k="no-invitations.title" />
                     </h2>
-                </CardHeader>
-                <CardContent>
                     <p className="kip-no-invitations-text">
                         <T t={t} k="no-invitations.notice" />
                     </p>
-                </CardContent>
-                <CardFooter>
-                    <p>
-                        <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
-                        <T t={t} k="no-invitations.update-notice" />
-                    </p>
-                </CardFooter>
-            </Card>
-        </div>
+                </div>
+            </CardContent>
+            <Message type="info">
+                <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
+                <T t={t} k="no-invitations.update-notice" />
+            </Message>
+        </F>
     );
 };
 
@@ -174,49 +168,44 @@ const InvitationDetails = withActions(
 
         return (
             <F>
-                <div className="kip-invitation-details">
-                    <Card>
-                        <CardHeader>
-                            <h2>
-                                <T t={t} k="invitation-received.title" />
-                            </h2>
-                        </CardHeader>
-                        <CardContent>
-                            <ProviderDetails data={data.provider} />
-                            <p>
-                                <T t={t} k="appointments-notice" />
-                            </p>
-                            <hr />
-                            <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <T
-                                                t={t}
-                                                k="appointment-preference"
-                                            />
-                                        </th>
-                                        <th>
-                                            <T t={t} k="appointment-date" />
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>{offers}</tbody>
-                            </table>
-                            <Button
-                                waiting={confirming}
-                                onClick={doConfirmOffers}
-                                disabled={
-                                    confirming ||
-                                    Object.keys(toggleOffers.data).length === 0
-                                }
-                                type="success"
-                            >
-                                <T t={t} k="confirm-appointment" />
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </div>
+                <CardContent>
+                    <div className="kip-invitation-details">
+                        <h2>
+                            <T t={t} k="invitation-received.title" />
+                        </h2>
+                        <ProviderDetails data={data.provider} />
+                        <p>
+                            <T t={t} k="appointments-notice" />
+                        </p>
+                        <hr />
+                        <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <T t={t} k="appointment-preference" />
+                                    </th>
+                                    <th>
+                                        <T t={t} k="appointment-date" />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>{offers}</tbody>
+                        </table>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <Button
+                        waiting={confirming}
+                        onClick={doConfirmOffers}
+                        disabled={
+                            confirming ||
+                            Object.keys(toggleOffers.data).length === 0
+                        }
+                        type="success"
+                    >
+                        <T t={t} k="confirm-appointment" />
+                    </Button>
+                </CardFooter>
             </F>
         );
     },

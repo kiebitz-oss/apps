@@ -13,32 +13,6 @@
 	}
 }
 
-.kip-finalize-fields {
-
-	label.kip-control-label {
-		margin-top: map-get($kip-space, md);
-		display: block;
-	}
-
-	.kip-properties {
-
-		.kip-property {
-			margin-bottom: map-get($kip-space, md);
-			display: flex;
-			align-items: center;
-			fieldset {
-				display: inline-block;
-			}
-			label {
-				flex-grow: 1;
-				display: inline-block;
-				padding-left: map-get($kip-space, md);
-			}
-
-		}
-	}	
-}
-
 .kip-finalize-box {
 	width: 100%;
 	background: #eee;

@@ -7,6 +7,8 @@ appointments-overview:
 settings:
   title:
     de: Einstellungen
+log-out:
+  de: Abmelden
 invalid-key:
   de: Ihr Signaturschlüssel ist ungültig. Bitte prüfen Sie die Einstellungen!
 save-and-restore:

@@ -1,27 +1,31 @@
 _t:
   path: apps/user/setup/translations.yml
 store-secrets:
-  secret:
-    de: "Ihr Buchungscode - Bitte notieren!"
-  bookmark-modal:
-    text:
-      de: Nutzen Sie Ihr Browser-Menü um ein Lesezeichen für die aktuelle Seite zu erstellen. Sie können dieses Lesezeichen dann öffnen, um Ihren Buchungscode wiederherzustellen.
+  notice:
+    de: Zur Wiederherstellung Ihrer Daten benötigen Sie eine Datei sowie einen geheimen Schlüssel. Bitte klicken Sie auf "Sicherungsdatei erstellen" um Ihre Daten zu sichern. 
+  secrets-modal:
     title:
-      de: Lesezeichen erstellen
+      de: Datenschlüssel notieren
+  secret:
+    de: "Ihr geheimer Datenschlüssel"
   local:
     title:
       de: Lokal
     text:
-      de: Daten zur Ihrer Impfanmeldung werden in einer Datei gespeichert. Bitte bewahren Sie diese Datei sorgsam auf, ohne Sie können Ihre Daten nicht wiederhergestellt werden!
+      de: Ihre geheimen Daten werden in einer Datei gespeichert. Bitte bewahren Sie diese Datei sorgsam auf, ohne Sie können Ihre Daten nicht wiederhergestellt werden!
   online:
     title:
       de: Online
     text:
-      de: Bitte notieren Sie den vertraulichen Buchungscode sorgfältig! Sie benötigen ihn, um später Daten zu Ihrem Terminangebot einzusehen oder zu ändern.
+      de: Bitte notieren Sie Ihren Datenschlüssel sorgfältig! Sie benötigen ihn, um gegebenenfalls Ihre Daten wieder herstellen zu können.
   bookmark:
     de: Als Bookmark speichern
   copy:
     de: Kopieren
+  copy-failed:
+    de: Fehlgeschlagen
+  copy-succeeded:
+    de: In der Zwischenablage
   download:
     de: Datei speichern
 verify:
@@ -31,10 +35,12 @@ finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
 wizard:
+  store-secrets:
+    de: Sicherungsdatei erstellen
   please-wait:
     de: Bitte warten...
   leave:
-    de: Zur Termin-Übersicht
+    de: Abschließen & zur Terminplanung
   finish:
     de: Fertigstellen
   hi:
@@ -49,26 +55,14 @@ wizard:
     enter-contact-data:
       de: Kontaktdaten eingeben
     store-secrets:
-      de: Buchungscode notieren
+      de: Geheime Schlüssel sichern
     save-contact-data:
       de: Kontakdaten angeben
     finalize:
-      de: Angaben zur Impfung
+      de: Fertigstellung
     verify:
-      de: Kontaktdaten prüfen
+      de: Daten prüfen
 contact-data:
-  location:
-    de: Impfort
-  vaccine-types:
-    de: Impfstofftypen
-  biontech:
-    de: Biontech Pfizer
-  astrazeneca:
-    de: Astra Zeneca
-  accessible:
-    de: Barrierefreier Impfort gewünscht
-  radius:
-    de: Maximale Entfernung zum Impfort
   not-given:
     de: (keine Angabe)
   change:
@@ -93,7 +87,7 @@ contact-data:
   invalid-email:
     de: Bitte geben Sie eine gültige E-Mail Adresse an.
   zip-code:
-    de: Postleitzahl Ihres Wohnorts
+    de: Postleitzahl
   invalid-zip-code:
     de: Bitte geben Sie eine gültige Postleitzahl an.
   city:

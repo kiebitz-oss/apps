@@ -27,7 +27,7 @@ import {
     keyPairs,
     providerData,
     submitProviderData,
-} from './actions';
+} from '../actions';
 import t from './translations.yml';
 import './settings.scss';
 

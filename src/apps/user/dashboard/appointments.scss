@@ -13,10 +13,7 @@
 	.kip-appointment-date {
 		@include fs(large)
 		text-align: center;
-		border: 1px solid #aea;
-		border-radius: 60px;
-		background: #efe;
-		color: #000;
+		font-weight: bolder;
 		padding: map-get($kip-space, lg);
 	}
 }

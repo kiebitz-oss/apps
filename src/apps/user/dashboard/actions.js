@@ -72,40 +72,46 @@ export async function confirmOffers(
     tokenData
 ) {
     const backend = settings.get('backend');
-    const providerData = {
-        signedToken: tokenData.signedToken,
-        userData: tokenData.hashData,
-    };
-    const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
-        JSON.stringify(providerData),
-        invitationData.publicKey
-    );
-    for (const offer of offers) {
-        try {
-            console.log(offer);
-            const result = await backend.appointments.storeData(
-                offer.id,
-                encryptedProviderData,
-                tokenData.signingKeyPair,
-                [],
-                offer.grant
-            );
-            // we store the information about the offer which we've accepted
-            backend.local.set('user::invitation::accepted', {
-                offer: offer,
-                invitationData: invitationData,
-            });
-            return {
-                status: 'succeeded',
-                data: offer,
-            };
-        } catch (e) {
-            continue;
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock();
+        const providerData = {
+            signedToken: tokenData.signedToken,
+            userData: tokenData.hashData,
+        };
+        const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
+            JSON.stringify(providerData),
+            invitationData.publicKey
+        );
+        for (const offer of offers) {
+            try {
+                console.log(offer);
+                const result = await backend.appointments.storeData(
+                    offer.id,
+                    encryptedProviderData,
+                    tokenData.signingKeyPair,
+                    [],
+                    offer.grant
+                );
+                // we store the information about the offer which we've accepted
+                backend.local.set('user::invitation::accepted', {
+                    offer: offer,
+                    invitationData: invitationData,
+                });
+                return {
+                    status: 'succeeded',
+                    data: offer,
+                };
+            } catch (e) {
+                continue;
+            }
         }
+        return {
+            status: 'failed',
+        };
+    } finally {
+        backend.local.unlock();
     }
-    return {
-        status: 'failed',
-    };
 }
 
 confirmOffers.init = () => ({ status: 'initialized' });
@@ -119,28 +125,34 @@ export async function checkInvitationData(
 ) {
     const backend = settings.get('backend');
     try {
-        const data = await e(
-            backend.appointments.getData(
-                tokenData.tokenData.id,
-                tokenData.signingKeyPair
-            )
-        );
-        const decryptedData = await decryptInvitationData(
-            data,
-            keys,
-            tokenData
-        );
-        verifyProviderData(decryptedData.provider);
-        backend.local.set('user::invitationData', data);
-        backend.local.set('user::invitationData::verified', decryptedData);
-        return {
-            status: 'loaded',
-            data: decryptedData,
-        };
-    } catch (e) {
-        return {
-            status: 'failed',
-            error: e.toString(),
-        };
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock();
+        try {
+            const data = await e(
+                backend.appointments.getData(
+                    tokenData.tokenData.id,
+                    tokenData.signingKeyPair
+                )
+            );
+            const decryptedData = await decryptInvitationData(
+                data,
+                keys,
+                tokenData
+            );
+            verifyProviderData(decryptedData.provider);
+            backend.local.set('user::invitationData', data);
+            backend.local.set('user::invitationData::verified', decryptedData);
+            return {
+                status: 'loaded',
+                data: decryptedData,
+            };
+        } catch (e) {
+            return {
+                status: 'failed',
+                error: e.toString(),
+            };
+        }
+    } finally {
+        backend.local.unlock();
     }
 }

@@ -110,7 +110,7 @@ userSecret.init = (keyStore, settings) => {
     const backend = settings.get('backend');
     let data = backend.local.get('user::secret');
     if (data === null || true) {
-        data = buf2base32(b642buf(randomBytes(8)));
+        data = buf2base32(b642buf(randomBytes(10)));
         backend.local.set('user::secret', data);
     }
     return {

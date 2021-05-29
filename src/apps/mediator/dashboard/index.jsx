@@ -15,6 +15,9 @@ import {
     T,
     A,
     Message,
+    CenteredCard,
+    CardHeader,
+    CardContent,
 } from 'components';
 import { keyPairs, validKeyPairs } from './actions';
 import t from './translations.yml';
@@ -71,27 +74,34 @@ const Dashboard = withActions(
             }
 
             return (
-                <F>
-                    <Tabs>
-                        <Tab
-                            active={tab === 'providers'}
-                            href="/mediator/providers"
-                        >
-                            <T t={t} k="providers.title" />
-                        </Tab>
-                        <Tab active={tab === 'queues'} href="/mediator/queues">
-                            <T t={t} k="queues.title" />
-                        </Tab>
-                        <Tab
-                            active={tab === 'settings'}
-                            href="/mediator/settings"
-                        >
-                            <T t={t} k="settings.title" />
-                        </Tab>
-                    </Tabs>
-                    {invalidKeyMessage}
-                    {content}
-                </F>
+                <CenteredCard size="fullwidth" tight>
+                    <CardHeader>
+                        <Tabs>
+                            <Tab
+                                active={tab === 'providers'}
+                                href="/mediator/providers"
+                            >
+                                <T t={t} k="providers.title" />
+                            </Tab>
+                            <Tab
+                                active={tab === 'queues'}
+                                href="/mediator/queues"
+                            >
+                                <T t={t} k="queues.title" />
+                            </Tab>
+                            <Tab
+                                active={tab === 'settings'}
+                                href="/mediator/settings"
+                            >
+                                <T t={t} k="settings.title" />
+                            </Tab>
+                        </Tabs>
+                    </CardHeader>
+                    <CardContent>
+                        {invalidKeyMessage}
+                        {content}
+                    </CardContent>
+                </CenteredCard>
             );
         }
     ),

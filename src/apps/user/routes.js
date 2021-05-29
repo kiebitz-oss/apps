@@ -5,6 +5,7 @@
 import Setup from './setup';
 import Start from './start';
 import Deleted from './deleted';
+import LoggedOut from './logged-out';
 import Dashboard from './dashboard';
 import t from './translations.yml';
 
@@ -23,13 +24,26 @@ const routes = new Map([
         },
     ],
     [
-        'deleted',
+        'userDeleted',
         {
             url: '/user/deleted',
             handler: () => ({
                 t: t,
                 title: 'deleted',
                 component: Deleted,
+                isSimple: true,
+                props: {},
+            }),
+        },
+    ],
+    [
+        'userLoggedOut',
+        {
+            url: '/user/logged-out',
+            handler: () => ({
+                t: t,
+                title: 'logged-out',
+                component: LoggedOut,
                 isSimple: true,
                 props: {},
             }),
@@ -43,6 +57,7 @@ const routes = new Map([
                 t: t,
                 title: 'dashboard',
                 component: Dashboard,
+                isSimple: true,
                 props: { tab: tab, action: action },
             }),
         },

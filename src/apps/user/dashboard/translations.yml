@@ -20,18 +20,24 @@ appointment-date:
 invitation-received:
   title:
     de: Einladung erhalten!
-save-and-restore:
-  de: Nutzer-Daten speichern oder wiederherstellen
-restore:
-  de: Wiederherstellen
-save:
-  de: Speichern
-delete-data:
-  de: Nutzer-Daten löschen
+user-data:
+  title:
+    de: Ihre Daten
+  notice:
+    de: Hier können Sie sich auf diesem Gerät abmelden oder Ihre Daten endgültig löschen.
 delete:
   de: Daten löschen
+log-out:
+  de: Abmelden
 delete-warning:
   de: Vorsicht, nach der Löschung Ihrer Daten können Sie Ihre Termine nicht mehr einsehen. Wir haben generell keine Kenntnis Ihrer Daten und können diese nicht wiederherstellen!
+log-out-modal:
+  logging-out:
+    de: Bitte warten, Sie werden abgemeldet...
+  title:
+    de: Abmelden
+  text:
+    de: Möchten Sie sich wirklich abmelden? Bitte stellen Sie vorher sicher, dass Sie Ihren Buchungscode notiert haben. Mit diesem können Sie sich später gegebenenfalls wieder anmelden.
 delete-modal:
   title:
     de: Nutzer-Daten löschen

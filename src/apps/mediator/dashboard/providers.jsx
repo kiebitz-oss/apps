@@ -29,7 +29,7 @@ import {
     T,
 } from 'components';
 import t from './translations.yml';
-import './settings.scss';
+import './providers.scss';
 
 const Providers = withTimer(
     withRouter(
@@ -215,7 +215,7 @@ const Providers = withTimer(
                     ));
 
                     return (
-                        <F>
+                        <div className="kip-providers">
                             {modal}
                             <DropdownMenu
                                 title={
@@ -251,7 +251,7 @@ const Providers = withTimer(
                                 </ListHeader>
                                 {providerItems}
                             </List>
-                        </F>
+                        </div>
                     );
                 };
                 return (

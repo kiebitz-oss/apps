@@ -7,18 +7,25 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 import Settings from './settings';
 import Appointments from './appointments';
 
-import { keys } from 'apps/provider/dashboard/actions';
+import { keys } from 'apps/provider/actions';
 import { tokenData, invitationData, checkInvitationData } from './actions';
+import { userSecret } from '../setup/actions';
 import {
+    CenteredCard,
+    CardHeader,
+    CardContent,
+    CardFooter,
     withSettings,
     withActions,
     withTimer,
+    Icon,
     Tabs,
     Tab,
     T,
     A,
     Message,
 } from 'components';
+import { StoreOnline } from 'apps/user/setup/store-secrets';
 import t from './translations.yml';
 
 const Dashboard = withTimer(
@@ -33,6 +40,7 @@ const Dashboard = withTimer(
                 settings,
                 timer,
                 keys,
+                userSecret,
                 keysAction,
                 invitationDataAction,
                 checkInvitationData,
@@ -60,7 +68,9 @@ const Dashboard = withTimer(
 
                 switch (tab) {
                     case 'settings':
-                        content = <Settings action={action} />;
+                        content = (
+                            <Settings action={action} userSecret={userSecret} />
+                        );
                         break;
                     case 'appointments':
                         content = <Appointments />;
@@ -68,29 +78,45 @@ const Dashboard = withTimer(
                 }
 
                 return (
-                    <F>
-                        <Tabs>
-                            <Tab
-                                active={tab === 'appointments'}
-                                href="/user/appointments"
-                            >
-                                <T t={t} k="appointments.title" />
-                            </Tab>
-                            <Tab
-                                active={tab === 'settings'}
-                                href="/user/settings"
-                            >
-                                <T t={t} k="settings.title" />
-                            </Tab>
-                        </Tabs>
+                    <CenteredCard tight>
+                        <CardHeader>
+                            <Tabs>
+                                <Tab
+                                    icon={<Icon icon="calendar" />}
+                                    active={tab === 'appointments'}
+                                    href="/user/appointments"
+                                >
+                                    <T t={t} k="appointments.title" />
+                                </Tab>
+                                <Tab
+                                    icon={<Icon icon="cogs" />}
+                                    active={tab === 'settings'}
+                                    href="/user/settings"
+                                >
+                                    <T t={t} k="settings.title" />
+                                </Tab>
+                                <Tab
+                                    last
+                                    icon={<Icon icon="sign-out-alt" />}
+                                    active={tab === 'log-out'}
+                                    href="/user/settings/logout"
+                                >
+                                    <T t={t} k="log-out" />
+                                </Tab>
+                            </Tabs>
+                        </CardHeader>
                         {content}
-                    </F>
+                    </CenteredCard>
                 );
             }
         ),
-        [tokenData, keys, checkInvitationData, invitationData]
+        [tokenData, keys, checkInvitationData, invitationData, userSecret]
     ),
     2000
 );
 
 export default Dashboard;
+
+/*
+
+*/
