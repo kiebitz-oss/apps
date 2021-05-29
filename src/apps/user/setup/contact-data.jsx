@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Form from 'helpers/form';
-import { contactData } from './actions';
+import { contactData } from 'apps/user/actions';
 import {
     withRouter,
     withForm,

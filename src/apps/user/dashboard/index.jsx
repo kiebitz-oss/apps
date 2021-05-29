@@ -8,8 +8,12 @@ import Settings from './settings';
 import Appointments from './appointments';
 
 import { keys } from 'apps/provider/actions';
-import { tokenData, invitationData, checkInvitationData } from './actions';
-import { userSecret } from '../setup/actions';
+import {
+    userSecret,
+    tokenData,
+    invitationData,
+    checkInvitationData,
+} from 'apps/user/actions';
 import {
     CenteredCard,
     CardHeader,

@@ -33,12 +33,22 @@
 
 
     &.kip-is-centered {
+
         @media (min-width: $kip-tablet) {
             width: 700px;
         }
 
         .kip-card-content {
             padding: map-get($kip-space, lg);
+        }
+    }
+
+    &.kip-is-tight {
+        .kip-card-header {
+            padding-bottom: 0;
+        }
+        .kip-card-content {
+            padding-top: 0;
         }
     }
 
@@ -50,6 +60,7 @@
 
     &.kip-is-fullwidth {
         width: 100%;
+        max-width: 1400px;
     }
 
     &.kip-is-fullheight {
@@ -177,15 +188,15 @@
 
         @media (min-width: $kip-tablet) {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .kip-card-sidebar {
-            background: $kip-lightblue;
-            color: #fff;
+            background: #eee;
 
             @media (min-width: $kip-tablet) {
                 flex-grow: 1;
+                min-width: 30%;
                 max-width: 40%;
             }
 

@@ -15,7 +15,7 @@ import {
     A,
 } from 'components';
 import Wizard from './wizard';
-import { contactData } from './actions';
+import { contactData } from 'apps/user/actions';
 
 import t from './translations.yml';
 import './verify.scss';

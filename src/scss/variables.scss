@@ -52,9 +52,9 @@ $kip-fs-tablet: (
 );
 
 $kip-fs: (
-    huge: map-get($kip-fs-tablet, huge) * 0.5,
-    large: map-get($kip-fs-tablet, large) * 0.5,
-    normal: map-get($kip-fs-tablet, normal) * 0.5
+    huge: map-get($kip-fs-tablet, huge) * 0.8,
+    large: map-get($kip-fs-tablet, large) * 0.8,
+    normal: map-get($kip-fs-tablet, normal) * 0.8
 );
 
 @mixin vertical-space($kip-size) {

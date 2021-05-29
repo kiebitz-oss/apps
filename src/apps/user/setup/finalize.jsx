@@ -4,6 +4,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { queues } from 'apps/provider/actions';
+import { submitToQueue, contactData, getToken } from 'apps/user/actions';
 import {
     withSettings,
     withActions,
@@ -22,7 +23,6 @@ import {
 } from 'components';
 import Form from 'helpers/form';
 import Wizard from './wizard';
-import { submitToQueue, contactData, getToken } from './actions';
 import t from './translations.yml';
 import './finalize.scss';
 

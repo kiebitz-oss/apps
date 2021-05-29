@@ -1,4 +1,7 @@
-// generate and return the (local) verified provider data (if it exists)
+// Kiebitz - Privacy-Friendly Appointments
+// Copyright (C) 2021-2021 The Kiebitz Authors
+// README.md contains license information.
+
 export async function verifiedProviderData(state, keyStore, settings) {
     const backend = settings.get('backend');
     try {

@@ -1,3 +1,7 @@
+// Kiebitz - Privacy-Friendly Appointments
+// Copyright (C) 2021-2021 The Kiebitz Authors
+// README.md contains license information.
+
 import { markAsLoading } from 'helpers/actions';
 
 // to do: add keyPair to queue request (as the request needs to be signed)

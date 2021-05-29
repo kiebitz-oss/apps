@@ -11,7 +11,7 @@ import {
     invitationData,
     confirmOffers,
     acceptedInvitation,
-} from './actions';
+} from 'apps/user/actions';
 import {
     withSettings,
     withActions,

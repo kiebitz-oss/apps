@@ -9,6 +9,18 @@
 .bulma-tabs {
     position: relative;
 
+    ul {
+
+        li {
+            &.kip-is-last {
+                margin-left: auto;
+            }
+            a span.kip-icon  {
+                padding-right: map-get($kip-space, sm);
+            }
+        }
+    }
+
     @media (max-width: $kip-tablet - 1px) {
         background: #fff;
         box-shadow: $kip-shadow-sm;

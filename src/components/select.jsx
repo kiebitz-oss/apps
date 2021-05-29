@@ -14,13 +14,13 @@ export const RichSelectItem = ({ onClick, option, selected }) => {
             })}
             onClick={onClick}
         >
-            <h3>{option.title}</h3>
-            <p>{option.description}</p>
+            {option.title && <h3>{option.title}</h3>}
+            {option.description && <p>{option.description}</p>}
         </div>
     );
 };
 
-export const RichSelect = ({ options, onChange, value }) => {
+export const RichSelect = ({ id, options, onChange, value }) => {
     const [active, setActive] = useState(false);
     const items = options.map(option => (
         <RichSelectItem
@@ -32,6 +32,7 @@ export const RichSelect = ({ options, onChange, value }) => {
     ));
     return (
         <div
+            id={id}
             className={classnames('kip-select', { 'kip-is-active': active })}
             onClick={() => setActive(!active)}
         >

@@ -4,6 +4,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'helpers/classnames';
 import { A } from './a';
 
 import './tabs.scss';
@@ -35,10 +36,23 @@ export class Tabs extends React.Component {
     }
 }
 
-export const Tab = ({ active, children, href, icon, params, onClick }) => (
-    <li className={active ? 'bulma-is-active' : ''}>
+export const Tab = ({
+    active,
+    children,
+    href,
+    icon,
+    params,
+    onClick,
+    last,
+}) => (
+    <li
+        className={classnames(
+            { 'bulma-is-active': active },
+            { 'kip-is-last': last }
+        )}
+    >
         <A href={href} params={params} onClick={onClick}>
-            {icon && <span className="icon is-small">{icon}</span>}
+            {icon && <span className="kip-icon is-small">{icon}</span>}
             {children}
         </A>
     </li>

@@ -10,7 +10,7 @@ import LocalBackend from './local';
 export * from './store';
 
 export default class Backend {
-    constructor(settings, store) {
+    constructor(settings, store, temporaryStore) {
         this.settings = settings;
         this.storage = new StorageBackend(
             settings,
@@ -23,6 +23,10 @@ export default class Backend {
         this.local = new LocalBackend(
             settings,
             new PrefixStore(store, 'local')
+        );
+        this.temporary = new LocalBackend(
+            settings,
+            new PrefixStore(temporaryStore, 'temporary')
         );
     }
 }

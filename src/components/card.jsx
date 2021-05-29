@@ -14,6 +14,7 @@ export const Card = ({
     centered,
     size,
     flex,
+    tight,
     className,
     ...props
 }) => (
@@ -22,6 +23,7 @@ export const Card = ({
         className={classnames(
             'kip-card',
             {
+                'kip-is-tight': tight,
                 'kip-is-centered': centered,
                 [`kip-is-${size}`]: size,
                 'kip-is-flex': flex,

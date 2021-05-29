@@ -2,15 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import {
-    hashString,
-    randomBytes,
-    ephemeralECDHEncrypt,
-    generateECDSAKeyPair,
-} from 'helpers/crypto';
-import { buf2base32, b642buf } from 'helpers/conversion';
-
-import { e } from 'helpers/async';
+import { generateECDSAKeyPair, ephemeralECDHEncrypt } from 'helpers/crypto';
 
 async function hashContactData(data) {
     const hashData = {
@@ -21,10 +13,6 @@ async function hashContactData(data) {
     const hashDataJSON = JSON.stringify(hashData);
     const dataHash = await e(hashString(hashDataJSON));
     return [dataHash, hashData];
-}
-
-async function getTokenData(state, keyStore, settings, queue) {
-    const data = {};
 }
 
 export async function submitToQueue(state, keyStore, settings, data, queue) {
@@ -90,46 +78,4 @@ export async function submitToQueue(state, keyStore, settings, data, queue) {
     } catch (e) {
         return { status: 'failed', error: e.toString() };
     }
-}
-
-export async function userSecret(state, keyStore, settings, data) {
-    const backend = settings.get('backend');
-    if (data !== undefined) backend.local.set('user::secret', data);
-    data = backend.local.get('user::secret');
-    if (data === null)
-        return {
-            status: 'failed',
-        };
-    return {
-        status: 'loaded',
-        data: data,
-    };
-}
-
-userSecret.init = (keyStore, settings) => {
-    const backend = settings.get('backend');
-    let data = backend.local.get('user::secret');
-    if (data === null || true) {
-        data = buf2base32(b642buf(randomBytes(10)));
-        backend.local.set('user::secret', data);
-    }
-    return {
-        status: 'loaded',
-        data: data,
-    };
-};
-
-export async function contactData(state, keyStore, settings, data) {
-    const backend = settings.get('backend');
-    // we just store the data...
-    if (data !== undefined) backend.local.set('user::contactData', data);
-    data = backend.local.get('user::contactData');
-    if (data === null)
-        return {
-            status: 'failed',
-        };
-    return {
-        status: 'loaded',
-        data: data,
-    };
 }

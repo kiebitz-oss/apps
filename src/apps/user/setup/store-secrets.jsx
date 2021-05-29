@@ -16,7 +16,7 @@ import {
     T,
     A,
 } from 'components';
-import { userSecret } from './actions';
+import { userSecret } from 'apps/user/actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
