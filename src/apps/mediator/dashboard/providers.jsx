@@ -11,7 +11,7 @@ import {
     queueKeyPair,
     providerDataKeyPair,
     confirmProvider,
-} from './actions';
+} from '../actions';
 import {
     withActions,
     withRouter,

@@ -19,7 +19,7 @@ import {
     CardHeader,
     CardContent,
 } from 'components';
-import { keyPairs, validKeyPairs } from './actions';
+import { keyPairs, validKeyPairs } from '../actions';
 import t from './translations.yml';
 
 const Dashboard = withActions(
