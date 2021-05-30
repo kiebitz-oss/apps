@@ -18,20 +18,13 @@ import {
     Message,
     CardNav,
 } from 'components';
-import ContactData from './contact-data';
+import ProviderData from './provider-data';
 import StoreSecrets from './store-secrets';
 import Verify from './verify';
-import Finalize from './finalize';
 import t from './translations.yml';
 import './wizard.scss';
 
-const pages = [
-    'hi',
-    'enter-contact-data',
-    'verify',
-    'finalize',
-    'store-secrets',
-];
+const pages = ['hi', 'enter-provider-data', 'verify', 'store-secrets'];
 
 const Hi = withSettings(({ settings }) => (
     <React.Fragment>
@@ -53,7 +46,7 @@ const Hi = withSettings(({ settings }) => (
             </p>
         </CardContent>
         <CardFooter>
-            <Button type="success" href={`/provider/setup/enter-contact-data`}>
+            <Button type="success" href={`/provider/setup/enter-provider-data`}>
                 <T t={t} k="wizard.continue" />
             </Button>
         </CardFooter>
@@ -124,10 +117,10 @@ const Wizard = ({ route, router, page, status }) => {
             case 'hi':
                 populate('hi', <Hi key="hiNotice" />);
                 break;
-            case 'enter-contact-data':
+            case 'enter-provider-data':
                 populate(
-                    'enter-contact-data',
-                    <ContactData key="enterContactData" />
+                    'enter-provider-data',
+                    <ProviderData key="enterProviderData" />
                 );
                 break;
             case 'store-secrets':
@@ -138,9 +131,6 @@ const Wizard = ({ route, router, page, status }) => {
                 break;
             case 'verify':
                 populate('verify', <Verify key="verify" />);
-                break;
-            case 'finalize':
-                populate('finalize', <Finalize key="finalize" />);
                 break;
         }
 

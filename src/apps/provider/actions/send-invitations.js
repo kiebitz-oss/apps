@@ -43,10 +43,13 @@ export async function sendInvitations(
             const n = Math.max(0, openAppointments.length - openTokens.length);
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0) {
+                const signedData = await sign(
+                    [{ n: 10 }],
+                    keyPairs.signing.privateKey,
+                    keyPairs.signing.publicKey
+                );
                 const newTokens = await backend.appointments.getQueueTokens(
-                    n,
-                    verifiedProviderData.signedData.json.queues,
-                    keyPairs.signing
+                    signedData
                 );
                 for (const token of newTokens) {
                     token.keyPair = await generateECDHKeyPair();

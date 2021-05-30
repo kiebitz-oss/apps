@@ -12,10 +12,17 @@ async function hashContactData(data) {
 
     const hashDataJSON = JSON.stringify(hashData);
     const dataHash = await e(hashString(hashDataJSON));
-    return [dataHash, hashData];
+    return [dataHash, hashData.nonce];
 }
 
-export async function submitToQueue(state, keyStore, settings, data, queue) {
+export async function submitToQueue(
+    state,
+    keyStore,
+    settings,
+    contactData,
+    queueData,
+    queue
+) {
     const backend = settings.get('backend');
     keyStore.set({ status: 'submitting' });
     let tokenData = backend.local.get('user::tokenData');
@@ -27,6 +34,7 @@ export async function submitToQueue(state, keyStore, settings, data, queue) {
                     tokenData.dataHash,
                     tokenData.encryptedTokenData,
                     queue.id,
+                    queueData,
                     tokenData.signedToken
                 )
             );
@@ -43,33 +51,40 @@ export async function submitToQueue(state, keyStore, settings, data, queue) {
     }
     try {
         // we hash the user data to prove it didn't change later...
-        const [dataHash, hashData] = await e(hashContactData(data));
+        const [dataHash, nonce] = await e(hashContactData(contactData));
         const signingKeyPair = await e(generateECDSAKeyPair());
         const tokenData = {
             publicKey: signingKeyPair.publicKey, // the signing key to control the ID
             id: randomBytes(32), // the ID where we want to receive data
         };
-        const tokenDataJSON = JSON.stringify(tokenData);
         // we encrypt the token data so the provider can decrypt it...
-        const [encryptedTokenData, privateKey] = await e(
-            ephemeralECDHEncrypt(tokenDataJSON, queue.publicKey)
+        const [encryptedTokenData] = await e(
+            ephemeralECDHEncrypt(JSON.stringify(tokenData), queue.publicKey)
+        );
+        // we also encrypt the contact data for the provider...
+        // this won't get sent to the provider immediately though...
+        const [encryptedContactData] = await ephemeralECDHEncrypt(
+            JSON.stringify(contactData),
+            queue.publicKey
         );
 
         const signedToken = await e(
             backend.appointments.getToken(
                 dataHash,
                 encryptedTokenData,
-                queue.id
+                queue.id,
+                queueData
             )
         );
         backend.local.set('user::tokenData', {
             signedToken: signedToken,
             signingKeyPair: signingKeyPair,
-            hashData: hashData,
+            encryptedTokenData: encryptedTokenData,
+            encryptedContactData: encryptedContactData,
+            queueData: queueData,
+            hashNonce: nonce,
             dataHash: dataHash,
             tokenData: tokenData,
-            encryptedTokenData: encryptedTokenData,
-            privateKey: privateKey,
         });
         return {
             data: signedToken,

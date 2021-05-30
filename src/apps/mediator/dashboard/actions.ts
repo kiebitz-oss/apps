@@ -24,16 +24,17 @@ export async function confirmProvider(state, keyStore, settings, providerData, k
         // we only store hashes of the public key values, as the actual keys are
         // always passed to the user, so they never need to be looked up...
         const keyHashesData = {
-            signing: await e(hash(providerData.publicKeys.signing)),
-            encryption: await e(hash(providerData.publicKeys.encryption)),
-            queues: providerData.data.queues,
+            signing: await hash(providerData.publicKeys.signing),
+            encryption: await hash(providerData.publicKeys.encryption),
+            zip_code: providerData.data.zip_code, // so we can calculate distances
+            queues: providerData.data.queues, // so we know which queues the provider can query
         }
 
         const keysJSONData = JSON.stringify(keyHashesData)
         const providerJSONData = JSON.stringify(providerData.data)
 
         // we hash the public key value
-        const publicKeyHash = await e(hash(keyPairs.signing.publicKey))
+        const publicKeyHash = await hash(keyPairs.signing.publicKey)
 
         // this will be published, so we only store the hashed key
         const signedKeyData = await e(

@@ -29,8 +29,9 @@ export default class AppointmentsBackend {
         this.initialize();
     }
 
-    async priorityToken(queueID, n) {
-        return await e(deriveToken(queueID, this.secret, n));
+    async priorityToken() {
+        this.store.set('position', this.position++);
+        return await deriveToken(this.secret, this.position);
     }
 
     async initialized() {
@@ -44,7 +45,6 @@ export default class AppointmentsBackend {
     }
 
     async confirmProvider({ id, key, providerData, keyData }) {
-        console.log(providerData, keyData);
         let found = false;
         const keyDataJSON = JSON.parse(keyData.data);
         const newProviders = [];
@@ -58,7 +58,6 @@ export default class AppointmentsBackend {
             }
         }
         if (!found) newProviders.push(keyData);
-        console.log(this.keys.providers);
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
         // we store the verified provider data
@@ -102,14 +101,14 @@ export default class AppointmentsBackend {
             this.store.set('rootSigningKeyPair', rootSigningKeyPair);
         }
 
-        let positions = this.store.get('queuePositions');
+        let position = this.store.get('position');
 
-        if (positions === null) {
-            positions = {};
-            this.store.set('queuePositions', positions);
+        if (position === null) {
+            position = 0;
+            this.store.set('position', position);
         }
 
-        this.queuePositions = positions;
+        this.position = position;
 
         this.rootSigningKeyPair = rootSigningKeyPair;
 
@@ -231,13 +230,7 @@ export default class AppointmentsBackend {
         await e(this.initialized());
         // we just look at nearest neighbors here...
         return this.queues
-            .filter(
-                q =>
-                    q.zip_code === zipCode ||
-                    q.related.find(
-                        r => r.zip_code === zipCode && r.distance < radius
-                    )
-            )
+            .filter(q => q.zip_area === zipCode.slice(0, 2))
             .map(queue => ({
                 name: queue.name,
                 type: queue.type,
@@ -318,8 +311,8 @@ export default class AppointmentsBackend {
     // user endpoints
 
     // get a token for a given queue
-    async getToken(hash, encryptedData, queueID, signedTokenData) {
-        let queueData;
+    async getToken(hash, encryptedData, queueID, queueData, signedTokenData) {
+        let queueToken;
         if (signedTokenData !== undefined) {
             // to do: validate signature!
             let signedToken = JSON.parse(signedTokenData.data);
@@ -337,7 +330,9 @@ export default class AppointmentsBackend {
                 const newTokensList = [];
                 for (const et of tokens) {
                     if (et.token == signedToken.token) {
-                        queueData = et;
+                        queueToken = et;
+                        // we update the queue data
+                        queueToken.queueData = queueData;
                         continue;
                     }
                     newTokensList.push(et);
@@ -347,15 +342,8 @@ export default class AppointmentsBackend {
             this.tokens = newTokens;
         }
         // seems we haven't found this token in any queue (or no existing token was given)...
-        if (queueData === undefined) {
-            let position = this.queuePositions[queueID];
-
-            if (position === undefined) position = 0;
-
-            this.queuePositions[queueID] = position + 1;
-            this.store.set('queuePositions', this.queuePositions);
-
-            const token = await e(this.priorityToken(queueID, position));
+        if (queueToken === undefined) {
+            const token = await this.priorityToken();
             const tokenData = {
                 token: token,
                 hash: hash,
@@ -364,9 +352,10 @@ export default class AppointmentsBackend {
             signedTokenData = await e(
                 sign(this.tokenSigningKeyPair.privateKey, tokenDataJSON)
             );
-            queueData = {
+            queueToken = {
                 token: token,
-                position: position,
+                position: this.position,
+                queueData: queueData,
                 encryptedData: encryptedData,
             };
         }
@@ -378,7 +367,7 @@ export default class AppointmentsBackend {
             this.tokens[queueID] = queueTokens;
         }
 
-        queueTokens.push(queueData);
+        queueTokens.push(queueToken);
         this.store.set('tokens', this.tokens);
 
         return signedTokenData;
@@ -393,33 +382,91 @@ export default class AppointmentsBackend {
 
     // provider-only endpoints
 
+    async getProviderKeyData(publicKey) {
+        const publicKeyHash = await hash(publicKey);
+        for (const key of this.keys.providers) {
+            const keyData = JSON.parse(key.data);
+            if (keyData.signing === publicKeyHash) {
+                return keyData;
+            }
+        }
+        return null;
+    }
+
+    distance(zipCodeA, zipCodeB) {
+        return 10.0;
+    }
+
     // get n tokens from the given queue IDs
-    async getQueueTokens(n, queueIDs, keyPair) {
+    async getQueueTokens(signedQuery) {
+        // to do: verify signature
+        const queryData = JSON.parse(signedQuery.data);
+
+        const { capacities } = queryData;
+
+        const providerKeyData = await this.getProviderKeyData(
+            signedQuery.publicKey
+        );
+
+        if (providerKeyData === null) return null;
+
+        // to do: verify signature against the official key
+
         // we update the tokens
         this.tokens = this.store.get('tokens', {});
-
-        const tokens = [];
+        const queueIDs = providerKeyData.queues;
+        const zipCode = providerKeyData.zip_code;
+        const allTokens = [];
+        const allTokensFlat = [];
         // we shuffle the queue IDs to avoid starvation of individual queues
         shuffle(queueIDs);
         // we also always remove just one token from every eligible list to
         // avoid starvation of individual lists of tokens...
-        while (tokens.length < n) {
-            let addedTokens = 0;
-            for (const queueID of queueIDs) {
-                const queueTokens = this.tokens[queueID];
-                if (queueTokens === undefined || queueTokens.length === 0)
-                    continue;
-                tokens.push({ token: queueTokens.shift(), queue: queueID });
-                if (tokens.length === n)
-                    // we've got enough tokens
-                    return copy(tokens);
-                addedTokens++;
+        for (const capacity of capacities) {
+            const tokens = [];
+            const { n, properties } = capacity;
+            tokenLoop: while (tokens.length < n) {
+                let addedTokens = 0;
+                queuesLoop: for (const queueID of queueIDs) {
+                    const queueTokens = this.tokens[queueID];
+                    // no tokens in this queue
+                    if (queueTokens === undefined || queueTokens.length === 0)
+                        continue queuesLoop;
+                    // we iterate through the tokens in the queue
+                    candidates: for (let i = 0; i < queueTokens.length; i++) {
+                        const token = queueTokens[i];
+                        if (
+                            distance(token.queueData.zip_code, zipCode) >
+                            token.queueData.distance
+                        )
+                            continue candidates; // the distance between user and provider is too large
+                        for (const [k, v] of properties.entries()) {
+                            if (
+                                token.queueData[k] !== undefined &&
+                                token.queueData[k] !== v
+                            )
+                                continue candidates; // this token doesn't match the given properties
+                        }
+                        // we have found a suitable token
+                        queueTokens = queueTokens.filter((t, j) => i !== j);
+                        this.tokens[queueID] = queueTokens;
+                        tokens.push(token);
+                        addedTokens++;
+                        break candidates;
+                    }
+                    // we've got enough tokens for this capacity specifier
+                    if (tokens.length === n) break tokenLoop;
+                }
+                // there are no more eligible tokens
+                if (addedTokens === 0) break tokenLoop;
             }
-            if (addedTokens === 0) break;
+            allTokens.push(tokens);
+            for (const token of tokens) allTokensFlat.push(token);
         }
+
         const selectedTokens = [
             ...this.store.get('selectedTokens', []),
-            ...tokens,
+            ...allTokensFlat,
         ];
 
         // we persist the changes
@@ -427,7 +474,7 @@ export default class AppointmentsBackend {
         this.store.set('tokens', this.tokens);
 
         // no more tokens left
-        return copy(tokens);
+        return copy(allTokens);
     }
 
     async storeProviderData(id, signedData, code) {

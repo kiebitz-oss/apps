@@ -5,7 +5,7 @@
 	padding-bottom: map-get($kip-space, lg);
 }
 
-.kip-contact-data-links {
+.kip-provider-data-links {
 	margin-top: map-get($kip-space, sm);
 	a {
 		height: 32px;
@@ -13,7 +13,7 @@
 	}
 }
 
-.kip-contact-data-box {
+.kip-provider-data-box {
 	width: 100%;
 	border: 1px solid #aea;
 	border-radius: $kip-border-radius;

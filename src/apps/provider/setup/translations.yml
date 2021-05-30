@@ -52,17 +52,19 @@ wizard:
   steps:
     hi:
       de: Hallo
-    enter-contact-data:
+    enter-provider-data:
       de: Kontaktdaten eingeben
     store-secrets:
-      de: Geheime Schlüssel sichern
-    save-contact-data:
-      de: Kontakdaten angeben
+      de: Sicherungsdatei erstellen
     finalize:
       de: Fertigstellung
     verify:
       de: Daten prüfen
-contact-data:
+provider-data:
+  for-mediator:
+    de: Für die interne Verwendung
+  accessible:
+    de: Barrierefreier Zugang zur Ortschaft
   not-given:
     de: (keine Angabe)
   change:
@@ -79,11 +81,11 @@ contact-data:
   invalid-name:
     de: Bitte geben Sie Ihren vollständigen Namen an.
   phone:
-    de: Telefonnummer
+    de: Telefonnummer (nicht sichtbar für Nutzer)
   invalid-phone:
     de: Bitte geben Sie eine gültige Telefonnummer an.
   email:
-    de: E-Mail Adresse
+    de: E-Mail Adresse (nicht sichtbar für Nutzer)
   invalid-email:
     de: Bitte geben Sie eine gültige E-Mail Adresse an.
   zip-code:

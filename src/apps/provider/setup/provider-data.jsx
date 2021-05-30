@@ -3,9 +3,8 @@
 // README.md contains license information.
 
 import React, { useState, useEffect } from 'react';
-import { QueueSelect } from '../dashboard/queue-select';
 import Form from 'helpers/form';
-import { contactData, queues, keyPairs, providerData } from '../actions';
+import { keyPairs, providerData } from '../actions';
 import {
     withRouter,
     withForm,
@@ -13,6 +12,7 @@ import {
     Form as FormComponent,
     FieldSet,
     RetractingLabelInput,
+    Switch,
     ErrorFor,
     T,
     CardFooter,
@@ -22,26 +22,18 @@ import {
     Button,
 } from 'components';
 import t from './translations.yml';
-import './contact-data.scss';
+import './provider-data.scss';
 
-class ContactDataForm extends Form {
+class ProviderDataForm extends Form {
     validate() {
         const errors = {};
-        const queues = this.data.queues || [];
-        if (queues.length === 0)
-            errors.queues = this.settings.t(
-                t,
-                'provider-data.please-add-one-queue'
-            );
         if (!this.data.name || this.data.name.length < 2)
             errors.name = this.settings.t(t, 'provider-data.invalid-name');
         return errors;
     }
 }
 
-const BaseContactData = ({
-    queues,
-    queuesAction,
+const BaseProviderData = ({
     keyPairs,
     keyPairsAction,
     providerData,
@@ -63,7 +55,6 @@ const BaseContactData = ({
     useEffect(() => {
         if (initialized) return;
         keyPairsAction();
-        queuesAction();
         providerDataAction().then(pd => {
             reset(pd.data.data);
         });
@@ -78,62 +69,9 @@ const BaseContactData = ({
         set(key, value);
     };
 
-    const removeQueue = oldQueue => {
-        const queues = data.queues || [];
-        const newQueues = [];
-        for (const queue of queues) {
-            if (queue === oldQueue.id) continue;
-            newQueues.push(queue);
-        }
-        set('queues', newQueues);
-        setModified(true);
-    };
-
-    const addQueue = newQueue => {
-        const queues = data.queues || [];
-        for (const queue of queues) {
-            if (queue === newQueue.id) return;
-        }
-        queues.push(newQueue.id);
-        set('queues', queues);
-        setModified(true);
-    };
-
-    const controls = (
-        <React.Fragment>
-            <ErrorFor error={error} field="name" />
-            <RetractingLabelInput
-                value={data.name || ''}
-                onChange={value => setAndMarkModified('name', value)}
-                label={<T t={t} k="contact-data.name" />}
-            />
-            <h2>
-                <T t={t} k="contact-data.optional.title" />
-            </h2>
-            <ErrorFor error={error} field="email" />
-            <RetractingLabelInput
-                value={data.email || ''}
-                onChange={value => setAndMarkModified('email', value)}
-                label={<T t={t} k="contact-data.email" />}
-            />
-        </React.Fragment>
-    );
-
-    const redirecting = false;
-
-    console.log(queues);
-
     const render = () => {
         const controls = (
             <React.Fragment>
-                <ErrorFor error={error} field="queues" />
-                <QueueSelect
-                    queues={queues.data}
-                    existingQueues={data.queues || []}
-                    addQueue={addQueue}
-                    key="qs"
-                    removeQueue={removeQueue}
-                />
                 <ErrorFor error={error} field="access_code" />
                 <RetractingLabelInput
                     value={data.access_code || ''}
@@ -149,12 +87,6 @@ const BaseContactData = ({
                     value={data.name || ''}
                     onChange={value => setAndMarkModified('name', value)}
                     label={<T t={t} k="provider-data.name" />}
-                />
-                <ErrorFor error={error} field="phone" />
-                <RetractingLabelInput
-                    value={data.phone || ''}
-                    onChange={value => setAndMarkModified('phone', value)}
-                    label={<T t={t} k="provider-data.phone" />}
                 />
                 <ErrorFor error={error} field="street" />
                 <RetractingLabelInput
@@ -174,12 +106,33 @@ const BaseContactData = ({
                     onChange={value => setAndMarkModified('city', value)}
                     label={<T t={t} k="provider-data.city" />}
                 />
+                <h2>
+                    <T t={t} k="provider-data.for-mediator" />
+                </h2>
+                <ErrorFor error={error} field="phone" />
+                <RetractingLabelInput
+                    value={data.phone || ''}
+                    onChange={value => setAndMarkModified('phone', value)}
+                    label={<T t={t} k="provider-data.phone" />}
+                />
                 <ErrorFor error={error} field="email" />
                 <RetractingLabelInput
                     value={data.email || ''}
                     onChange={value => setAndMarkModified('email', value)}
                     label={<T t={t} k="provider-data.email" />}
                 />
+                <hr />
+                <ul className="kip-properties">
+                    <li className="kip-property">
+                        <Switch id="accessible" onChange={() => false}>
+                            &nbsp;
+                        </Switch>
+
+                        <label htmlFor="accessible">
+                            <T t={t} k="provider-data.accessible" />
+                        </label>
+                    </li>
+                </ul>
             </React.Fragment>
         );
 
@@ -201,7 +154,9 @@ const BaseContactData = ({
                                         ) : (
                                             <T
                                                 t={t}
-                                                k={'provider-data.submit'}
+                                                k={
+                                                    'provider-data.save-and-continue'
+                                                }
                                             />
                                         )
                                     }
@@ -216,15 +171,15 @@ const BaseContactData = ({
 
     return (
         <WithLoader
-            resources={[keyPairs, queues, providerData]}
+            resources={[keyPairs, providerData]}
             renderLoaded={render}
         />
     );
 };
 
-const ContactData = withActions(
-    withForm(withRouter(BaseContactData), ContactDataForm, 'form'),
-    [queues, keyPairs, providerData]
+const ProviderData = withActions(
+    withForm(withRouter(BaseProviderData), ProviderDataForm, 'form'),
+    [keyPairs, providerData]
 );
 
-export default ContactData;
+export default ProviderData;

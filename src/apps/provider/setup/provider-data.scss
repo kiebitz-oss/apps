@@ -2,6 +2,24 @@
 
 .kip-provider-data {
 
+    .kip-properties {
+
+        .kip-property {
+            margin-bottom: map-get($kip-space, md);
+            display: flex;
+            align-items: center;
+            fieldset {
+                display: inline-block;
+            }
+            label {
+                flex-grow: 1;
+                display: inline-block;
+                padding-left: map-get($kip-space, md);
+            }
+
+        }
+    }   
+
     h2 {
         font-size: 20px;
         text-transform: uppercase;
