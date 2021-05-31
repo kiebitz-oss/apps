@@ -21,6 +21,26 @@ delete-modal:
     de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
 schedule:
   appointment:
+    duration:
+      title:
+        de: "Dauer: {duration} Minuten"
+    properties:
+      vaccine-types:
+        title:
+          de: Impfstofftyp
+        values:
+          biontech:
+            de: Biontech Pfizer (Comirnaty)
+            _default: true
+          astrazeneca:
+            de: Astra Zeneca (Vaxzevria)
+            _default: true
+          johnson-johnson:
+            de: Johnson & Johnson
+            _default: true
+          moderna:
+            de: Moderna
+            _default: true
     single:
       de: Einzeltermin
     series:
@@ -73,6 +93,8 @@ day-6:
 day-7:
   de: Sonntag
 new-appointment:
+  slots:
+    de: Anzahl Impfdosen
   title:
     de: Neuen Termin erstellen
   date:

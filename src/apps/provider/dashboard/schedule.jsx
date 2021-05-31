@@ -17,6 +17,7 @@ import {
     DropdownMenuItem,
     Form as FormComponent,
     Message,
+    RichSelect,
     FieldSet,
     Icon,
     RetractingLabelInput,
@@ -26,7 +27,7 @@ import {
     CardContent,
     Button,
 } from 'components';
-import { keys, keyPairs } from '../actions';
+import { keys, keyPairs, createAppointment } from '../actions';
 import t from './translations.yml';
 import './schedule.scss';
 
@@ -204,53 +205,185 @@ class AppointmentForm extends Form {
     }
 }
 
-const NewAppointment = withRouter(
-    withForm(
-        ({ router, form: { valid, error, data, set, reset } }) => {
-            const cancel = () => router.navigateToUrl('/provider/schedule');
-            const save = () => router.navigateToUrl('/provider/schedule');
-            return (
-                <Modal
-                    saveDisabled={!valid}
-                    className="kip-new-appointment"
-                    onSave={save}
-                    onCancel={cancel}
-                    onClose={cancel}
-                    title={<T t={t} k="new-appointment.title" />}
-                >
-                    <FormComponent>
-                        <FieldSet>
-                            <div className="field">
-                                <Label htmlFor="date">
-                                    <T t={t} k="new-appointment.date" />
-                                </Label>
-                                <ErrorFor error={error} field="date" />
-                                <input
-                                    value={data.date || ''}
-                                    type="date"
-                                    onChange={e => set('date', e.target.value)}
+const NewAppointment = withActions(
+    withRouter(
+        withForm(
+            ({
+                createAppointment,
+                createAppointmentAction,
+                router,
+                form: { valid, error, data, set, reset },
+            }) => {
+                const cancel = () => router.navigateToUrl('/provider/schedule');
+                const save = () => {
+                    createAppointmentAction(data).then(() =>
+                        router.navigateToUrl('/provider/schedule')
+                    );
+                };
+
+                const properties = Object.entries(
+                    t.schedule.appointment.properties
+                ).map(([k, v]) => {
+                    const options = Object.entries(v.values).map(
+                        ([kv, vv]) => ({
+                            value: kv,
+                            key: vv,
+                            title: (
+                                <T
+                                    t={t}
+                                    k={`schedule.appointment.properties.${k}.values.${kv}`}
                                 />
-                            </div>
-                            <div className="field">
-                                <Label htmlFor="time">
-                                    <T t={t} k="new-appointment.time" />
-                                </Label>
-                                <ErrorFor error={error} field="time" />
-                                <input
-                                    type="time"
-                                    value={data.time || ''}
-                                    onChange={e => set('time', e.target.value)}
-                                    step={60}
+                            ),
+                        })
+                    );
+
+                    let currentOption;
+
+                    for (const [k, v] of Object.entries(data)) {
+                        for (const option of options) {
+                            if (k === option.value) currentOption = k;
+                        }
+                    }
+
+                    let initialize;
+                    if (currentOption === undefined) {
+                        currentOption = options[0].value;
+                        initialize = true;
+                    }
+
+                    useEffect(() => {
+                        if (initialize) set(currentOption, true);
+                    });
+
+                    const changeTo = option => {
+                        const newData = { ...data };
+                        for (const option of options)
+                            delete newData[option.value];
+                        newData[option.value] = true;
+                        reset(newData);
+                    };
+
+                    return (
+                        <F key={k}>
+                            <h2>
+                                <T
+                                    t={t}
+                                    k={`schedule.appointment.properties.${k}.title`}
                                 />
-                            </div>
-                        </FieldSet>
-                    </FormComponent>
-                </Modal>
-            );
-        },
-        AppointmentForm,
-        'form'
-    )
+                            </h2>
+                            <RichSelect
+                                options={options}
+                                value={currentOption}
+                                onChange={option => changeTo(option)}
+                            />
+                        </F>
+                    );
+                });
+
+                const durations = [
+                    10,
+                    20,
+                    30,
+                    45,
+                    60,
+                    90,
+                    120,
+                    150,
+                    180,
+                    210,
+                    240,
+                ].map(v => ({
+                    value: v,
+                    title: (
+                        <T
+                            t={t}
+                            k={`schedule.appointment.duration.title`}
+                            duration={v}
+                        />
+                    ),
+                }));
+
+                return (
+                    <Modal
+                        saveDisabled={!valid}
+                        className="kip-new-appointment"
+                        onSave={save}
+                        onCancel={cancel}
+                        onClose={cancel}
+                        title={<T t={t} k="new-appointment.title" />}
+                    >
+                        <FormComponent>
+                            <FieldSet>
+                                <div className="kip-field">
+                                    <Label htmlFor="date">
+                                        <T t={t} k="new-appointment.date" />
+                                    </Label>
+                                    <ErrorFor error={error} field="date" />
+                                    <input
+                                        value={data.date || ''}
+                                        type="date"
+                                        className="bulma-input"
+                                        onChange={e =>
+                                            set('date', e.target.value)
+                                        }
+                                    />
+                                </div>
+                                <div className="kip-field">
+                                    <Label htmlFor="time">
+                                        <T t={t} k="new-appointment.time" />
+                                    </Label>
+                                    <ErrorFor error={error} field="time" />
+                                    <input
+                                        type="time"
+                                        className="bulma-input"
+                                        value={data.time || ''}
+                                        onChange={e =>
+                                            set('time', e.target.value)
+                                        }
+                                        step={60}
+                                    />
+                                </div>
+                                <div className="kip-field kip-slider">
+                                    <Label htmlFor="slots">
+                                        <T t={t} k="new-appointment.slots" />
+                                    </Label>
+                                    <ErrorFor error={error} field="slots" />
+                                    <input
+                                        type="range"
+                                        value={data.slots || 1}
+                                        onChange={e =>
+                                            set('slots', e.target.value)
+                                        }
+                                        step={1}
+                                        min={1}
+                                        max={100}
+                                    />
+                                    <span>{data.slots || 1}</span>
+                                </div>
+                                <div className="kip-field kip-is-fullwidth">
+                                    <RichSelect
+                                        id="duration"
+                                        value={data.duration || 30}
+                                        onChange={value =>
+                                            set('duration', value.value)
+                                        }
+                                        options={durations}
+                                    />
+                                </div>
+
+                                <div className="kip-field kip-is-fullwidth">
+                                    {properties}
+                                </div>
+                            </FieldSet>
+                        </FormComponent>
+                    </Modal>
+                );
+            },
+            AppointmentForm,
+            'form'
+        )
+    ),
+    [createAppointment]
 );
 
 // https://stackoverflow.com/questions/4156434/javascript-get-the-first-day-of-the-week-from-current-date
@@ -359,15 +492,6 @@ const Invitations = withTimer(
                                                 k="schedule.appointment.single"
                                             />
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            icon="list"
-                                            onClick={() => console.log('foo')}
-                                        >
-                                            <T
-                                                t={t}
-                                                k="schedule.appointment.series"
-                                            />
-                                        </DropdownMenuItem>
                                     </DropdownMenu>
                                     <WeekCalendar
                                         startDate={startDate}
@@ -404,3 +528,16 @@ const Invitations = withTimer(
 );
 
 export default Invitations;
+
+/*
+                                        <DropdownMenuItem
+                                            icon="list"
+                                            onClick={() => console.log('foo')}
+                                        >
+                                            <T
+                                                t={t}
+                                                k="schedule.appointment.series"
+                                            />
+                                        </DropdownMenuItem>
+
+*/

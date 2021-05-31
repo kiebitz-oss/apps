@@ -59,23 +59,23 @@ wizard:
     verify:
       de: Optionale Kontaktdaten prüfen
 contact-data:
-  properties:
-    vaccine-types:
-      title:
-        de: Impfstofftypen
-      values:
-        biontech:
-          de: Biontech Pfizer (Comirnaty)
-          _default: true
-        astrazeneca:
-          de: Astra Zeneca (Vaxzevria)
-          _default: true
-        johnson-johnson:
-          de: Johnson & Johnson
-          _default: true
-        moderna:
-          de: Moderna
-          _default: true
+  properties: #if you change the vaccine types here you need to change them in 'apps/provider/dashboard/translations.ym' as well (to be migrated to settings)
+#    vaccine-types:
+#      title:
+#        de: Impfstofftypen
+#      values:
+#        biontech:
+#          de: Biontech Pfizer (Comirnaty)
+#          _default: true
+#        astrazeneca:
+#          de: Astra Zeneca (Vaxzevria)
+#          _default: true
+#        johnson-johnson:
+#          de: Johnson & Johnson
+#          _default: true
+#        moderna:
+#          de: Moderna
+#          _default: true
     location:
       title:
         de: Impfort

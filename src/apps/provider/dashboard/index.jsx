@@ -13,7 +13,7 @@ import {
     validKeyPairs,
     providerData,
     sendInvitations,
-    updateAppointments,
+    openAppointments,
     checkInvitations,
     verifiedProviderData,
     checkVerifiedProviderData,
@@ -47,6 +47,8 @@ const Dashboard = withRouter(
                     },
                     router,
                     settings,
+                    openAppointments,
+                    openAppointmentsAction,
                     providerData,
                     providerDataAction,
                     checkInvitations,
@@ -55,8 +57,6 @@ const Dashboard = withRouter(
                     verifiedProviderDataAction,
                     checkVerifiedProviderData,
                     checkVerifiedProviderDataAction,
-                    updateAppointments,
-                    updateAppointmentsAction,
                     timer,
                     keys,
                     keysAction,
@@ -110,14 +110,14 @@ const Dashboard = withRouter(
                             verifiedProviderData.status !== 'loaded'
                         )
                             return;
-                        updateAppointmentsAction().then(d => {
+                        openAppointmentsAction().then(d =>
                             sendInvitationsAction(
                                 keyPairs.data,
                                 verifiedProviderData.data
                             ).then(() =>
                                 checkInvitationsAction(keyPairs, d.data)
-                            );
-                        });
+                            )
+                        );
                     });
 
                     let content;
@@ -189,13 +189,13 @@ const Dashboard = withRouter(
         ),
         [
             verifiedProviderData,
-            updateAppointments,
             sendInvitations,
             keyPairs,
             keys,
             validKeyPairs,
             providerData,
             checkInvitations,
+            openAppointments,
             checkVerifiedProviderData,
         ]
     )

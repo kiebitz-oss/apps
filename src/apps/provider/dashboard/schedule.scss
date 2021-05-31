@@ -3,11 +3,55 @@
 .kip-new-appointment {
 	fieldset {
 		display: flex;
+		flex-wrap: wrap;
 		flex-direction: columns;
-		.field {
+
+		h2 {
+			@include fs(large);
+			margin-top: 0;
+		}
+		.kip-field {
 			flex-grow: 0;
 			margin-right: map-get($kip-space, lg);
+			&.kip-is-fullwidth {
+				margin-top: map-get($kip-space, md);
+				flex-grow: 1;
+				min-width: 100%;
+			}
+			&.kip-slider {
+				input {
+					width: 120px;
+				}
+				> span {
+					margin-left: map-get($kip-space, md);
+					padding-top: 10px;
+					display: inline-block;
+				}
+			}
+
+			.kip-select {
+				margin-bottom: map-get($kip-space, md);
+			}
 		}
+
+		ul.kip-properties {
+
+			li {
+				margin-bottom: map-get($kip-space, md);
+				display: flex;
+				align-items: center;
+				fieldset {
+					display: inline-block;
+				}
+				label {
+					flex-grow: 1;
+					display: inline-block;
+					padding-left: map-get($kip-space, md);
+				}
+
+			}
+		}	
+
 	}
 }
 
