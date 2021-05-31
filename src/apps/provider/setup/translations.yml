@@ -61,6 +61,16 @@ wizard:
     verify:
       de: Daten prüfen
 provider-data:
+  not-verified-yet:
+    de: Ihre Daten wurden noch nicht verifiziert, bitte haben Sie noch etwas Geduld...
+  description:
+    de:
+      Informationen für Nutzer (z.B. Hinweise zu benötigten Dokumenten)
+  access-code:
+    label:
+      de: Zugangscode (falls vorhanden)
+    description:
+      de: Falls Sie einen spezifischen Zugangscode erhalten haben geben Sie diesen bitte hier ein.
   for-mediator:
     de: Für die interne Verwendung
   accessible:

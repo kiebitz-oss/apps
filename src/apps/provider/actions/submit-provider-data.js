@@ -44,10 +44,16 @@ export async function submitProviderData(
         );
 
         try {
-            return await backend.appointments.storeProviderData(
+            const result = await backend.appointments.storeProviderData(
                 data.id,
                 signedData
             );
+
+            const providerData = backend.local.get('provider::data', {});
+            providerData.submitted = true;
+            backend.local.set('provider::data', providerData);
+
+            return result;
         } catch (e) {
             return { status: 'failed', error: e.toString() };
         }

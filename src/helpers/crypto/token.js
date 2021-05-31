@@ -10,16 +10,11 @@ const salt = b642buf(
     '352b73ebd067e1c17996ee2180dbd8a339de2ed97c3604a346ca07917a71091193003f56465a097c98aa572373969057'
 );
 
-export async function deriveToken(key, secret, n) {
-    const keyBytes = b642buf(key);
+export async function deriveToken(secret, n) {
     const secretBytes = b642buf(secret);
 
-    const fullKeyBytes = new Int8Array(keyBytes.length + secretBytes.length);
-    fullKeyBytes.set(keyBytes);
-    fullKeyBytes.set(secretBytes, keyBytes.length);
-
     const secretKey = await e(
-        crypto.subtle.importKey('raw', fullKeyBytes, 'HKDF', false, [
+        crypto.subtle.importKey('raw', secretBytes, 'HKDF', false, [
             'deriveBits',
         ])
     );

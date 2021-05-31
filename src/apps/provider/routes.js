@@ -3,10 +3,26 @@
 // README.md contains license information.
 
 import Dashboard from './dashboard';
+import Start from './start';
+import Deleted from './deleted';
+import LoggedOut from './logged-out';
 import Setup from './setup';
 import t from './translations.yml';
 
 const routes = new Map([
+    [
+        'providerIndex',
+        {
+            url: '/provider/?',
+            handler: () => ({
+                t: t,
+                title: 'welcome',
+                component: Start,
+                isSimple: true,
+                props: {},
+            }),
+        },
+    ],
     [
         'providerDashboard',
         {
@@ -19,6 +35,32 @@ const routes = new Map([
                 isSimple: true,
                 authentication: 'provider',
                 props: { tab: tab || 'schedule', action: action, id: id },
+            }),
+        },
+    ],
+    [
+        'providerDeleted',
+        {
+            url: '/provider/deleted',
+            handler: () => ({
+                t: t,
+                title: 'deleted',
+                component: Deleted,
+                isSimple: true,
+                props: {},
+            }),
+        },
+    ],
+    [
+        'providerLoggedOut',
+        {
+            url: '/provider/logged-out',
+            handler: () => ({
+                t: t,
+                title: 'logged-out',
+                component: LoggedOut,
+                isSimple: true,
+                props: {},
             }),
         },
     ],

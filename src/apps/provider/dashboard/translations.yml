@@ -1,16 +1,57 @@
+backup-modal:
+  backing-up-test:
+    de: Bitte warten, Datenbackup wird erstellt...
+  title:
+    de: Datenbackup anfertigen
+  text:
+    de: Klicken Sie auf "Datenbackup anfertigen" um eine verschlüsselte Datei mit Ihren Einstellungen und Termindaten zu erzeugen. Bitte denken Sie daran, den Datenschlüssel zu notieren, ohne diesen sind die Daten nicht wiederherstellbar.
+log-out-modal:
+  logging-out:
+    de: Bitte warten, Sie werden abgemeldet...
+  title:
+    de: Abmelden
+  text:
+    de: Möchten Sie sich wirklich abmelden? Bitte stellen Sie vorher sicher, dass Sie Ihren Datenschlüssel notiert haben. Mit diesem können Sie sich später gegebenenfalls wieder anmelden.
+delete-modal:
+  title:
+    de: Nutzer-Daten löschen
+  text:
+    de: Möchten Sie Ihre Daten wirklich unwiderruflich löschen?
+  deleting-text:
+    de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
 schedule:
+  appointment:
+    single:
+      de: Einzeltermin
+    series:
+      de: Terminserie
+  view:
+    calendar:
+      de: Kalenderansicht
+    list:
+      de: Listenansicht
+  updating:
+    de: "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}" 
   title:
     de: Terminplan
 appointments-overview:
   title:
     de: Terminübersicht
+backup:
+  de: Datenbackup anfertigen
 settings:
+  verified:
+    de: Verifizierte Daten
+  local:
+    de: Lokale Daten
   title:
     de: Einstellungen
 log-out:
   de: Abmelden
+delete:
+  de: Konto löschen
 invalid-key:
-  de: Ihr Signaturschlüssel ist ungültig. Bitte prüfen Sie die Einstellungen!
+  de: Ihre Daten wurden noch nicht verifiziert. Sie können bereits Termine anlegen aber noch keine Einladungen verschicken.
 save-and-restore:
   de: Speichern & Wiederherstellen
 save:

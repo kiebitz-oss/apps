@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, Fragment as F } from 'react';
 import Form from 'helpers/form';
 import {
     withRouter,
@@ -12,7 +12,11 @@ import {
     WithLoader,
     Form as FormComponent,
     FieldSet,
+    Modal,
     RetractingLabelInput,
+    DropdownMenu,
+    DropdownMenuItem,
+    Icon,
     ErrorFor,
     T,
     CardFooter,
@@ -20,278 +24,251 @@ import {
     SubmitField,
     Button,
 } from 'components';
-import { QueueSelect } from './queue-select';
+import { ProviderData } from '../setup/verify';
+import { DataSecret } from '../setup/store-secrets';
 import {
-    queues,
     keys,
     keyPairs,
     providerData,
-    submitProviderData,
+    providerSecret,
+    verifiedProviderData,
 } from '../actions';
 import t from './translations.yml';
 import './settings.scss';
 
-class SettingsForm extends Form {
-    validate() {
-        const errors = {};
-        const queues = this.data.queues || [];
-        if (queues.length === 0)
-            errors.queues = this.settings.t(
-                t,
-                'provider-data.please-add-one-queue'
-            );
-        if (!this.data.name || this.data.name.length < 2)
-            errors.name = this.settings.t(t, 'provider-data.invalid-name');
-        return errors;
-    }
-}
-
 const Settings = withActions(
-    withForm(
-        withRouter(
-            withSettings(
-                ({
-                    type,
-                    settings,
-                    keys,
-                    keysAction,
-                    keyPairs,
-                    keyPairsAction,
-                    providerData,
-                    providerDataAction,
-                    submitProviderData,
-                    submitProviderDataAction,
-                    queues,
-                    queuesAction,
-                    form: { set, data, error, valid, reset },
-                    router,
-                }) => {
-                    const [modified, setModified] = useState(false);
-                    const [submitting, setSubmitting] = useState(false);
-                    const [initialized, setInitialized] = useState(false);
+    withRouter(
+        withSettings(
+            ({
+                action,
+                type,
+                settings,
+                keys,
+                keysAction,
+                keyPairs,
+                keyPairsAction,
+                providerSecret,
+                providerSecretAction,
+                providerData,
+                providerDataAction,
+                verifiedProviderData,
+                verifiedProviderDataAction,
+                router,
+            }) => {
+                const [deleting, setDeleting] = useState(false);
+                const [backingUp, setBackingUp] = useState(false);
+                const [loggingOut, setLoggingOut] = useState(false);
+                const [initialized, setInitialized] = useState(false);
+                const [view, setView] = useState('verified');
 
-                    const onSubmit = () => {
-                        if (!valid || submitting) return;
+                // we load all the resources we need
+                useEffect(() => {
+                    if (initialized) return;
 
-                        setSubmitting(true);
+                    keyPairsAction();
+                    keysAction();
+                    verifiedProviderDataAction();
+                    providerDataAction();
 
-                        providerDataAction(data).then(pd => {
-                            submitProviderDataAction(
-                                pd.data,
-                                keyPairs.data,
-                                keys.data
-                            ).then(() => {
-                                setModified(false);
-                                setSubmitting(false);
-                            });
-                        });
-                    };
+                    setInitialized(true);
+                });
 
-                    // we load all the resources we need
-                    useEffect(() => {
-                        if (initialized) return;
+                let modal;
 
-                        keyPairsAction();
-                        keysAction();
-                        queuesAction();
-                        providerDataAction().then(pd => {
-                            reset(pd.data.data);
-                        });
+                const backupData = () => {
+                    router.navigateToUrl('/provider/settings');
+                };
 
-                        setInitialized(true);
-                        setModified(false);
-                    });
+                const cancel = () => {
+                    router.navigateToUrl('/provider/settings');
+                };
 
-                    const setAndMarkModified = (key, value) => {
-                        setModified(true);
-                        set(key, value);
-                    };
+                const deleteData = () => {
+                    setDeleting(true);
+                    const backend = settings.get('backend');
+                    backend.local.deleteAll('provider::');
+                    setTimeout(() => {
+                        setDeleting(false);
+                        router.navigateToUrl('/provider/deleted');
+                    }, 3000);
+                };
 
-                    const removeQueue = oldQueue => {
-                        const queues = data.queues || [];
-                        const newQueues = [];
-                        for (const queue of queues) {
-                            if (queue === oldQueue.id) continue;
-                            newQueues.push(queue);
-                        }
-                        set('queues', newQueues);
-                        setModified(true);
-                    };
-
-                    const addQueue = newQueue => {
-                        const queues = data.queues || [];
-                        for (const queue of queues) {
-                            if (queue === newQueue.id) return;
-                        }
-                        queues.push(newQueue.id);
-                        set('queues', queues);
-                        setModified(true);
-                    };
-
-                    const render = () => {
-                        const controls = (
-                            <React.Fragment>
-                                <ErrorFor error={error} field="queues" />
-                                <QueueSelect
-                                    queues={queues.data}
-                                    existingQueues={data.queues || []}
-                                    addQueue={addQueue}
-                                    key="qs"
-                                    removeQueue={removeQueue}
-                                />
-                                <ErrorFor error={error} field="access_code" />
-                                <RetractingLabelInput
-                                    value={data.access_code || ''}
-                                    onChange={value =>
-                                        setAndMarkModified('access_code', value)
-                                    }
-                                    description={
-                                        <T
-                                            t={t}
-                                            k="provider-data.access-code.description"
-                                        />
-                                    }
-                                    label={
-                                        <T
-                                            t={t}
-                                            k="provider-data.access-code.label"
-                                        />
+                const logOut = () => {
+                    setLoggingOut(true);
+                    const backend = settings.get('backend');
+                    backend.local.deleteAll('provider::');
+                    setTimeout(() => {
+                        setLoggingOut(false);
+                        router.navigateToUrl('/provider/logged-out');
+                    }, 3000);
+                };
+                if (action === 'backup') {
+                    modal = (
+                        <Modal
+                            onClose={cancel}
+                            save={<T t={t} k="backup" />}
+                            disabled={backingUp}
+                            waiting={backingUp}
+                            title={<T t={t} k="backup-modal.title" />}
+                            onCancel={cancel}
+                            onSave={backupData}
+                            saveType="success"
+                        >
+                            <p>
+                                <T
+                                    t={t}
+                                    k={
+                                        backingUp
+                                            ? 'backup-modal.backing-up-text'
+                                            : 'backup-modal.text'
                                     }
                                 />
-                                <hr />
-                                <ErrorFor error={error} field="name" />
-                                <RetractingLabelInput
-                                    value={data.name || ''}
-                                    onChange={value =>
-                                        setAndMarkModified('name', value)
-                                    }
-                                    label={<T t={t} k="provider-data.name" />}
-                                />
-                                <ErrorFor error={error} field="phone" />
-                                <RetractingLabelInput
-                                    value={data.phone || ''}
-                                    onChange={value =>
-                                        setAndMarkModified('phone', value)
-                                    }
-                                    label={<T t={t} k="provider-data.phone" />}
-                                />
-                                <ErrorFor error={error} field="street" />
-                                <RetractingLabelInput
-                                    value={data.street || ''}
-                                    onChange={value =>
-                                        setAndMarkModified('street', value)
-                                    }
-                                    label={<T t={t} k="provider-data.street" />}
-                                />
-                                <ErrorFor error={error} field="zip_code" />
-                                <RetractingLabelInput
-                                    value={data.zip_code || ''}
-                                    onChange={value =>
-                                        setAndMarkModified('zip_code', value)
-                                    }
-                                    label={
-                                        <T t={t} k="provider-data.zip-code" />
+                            </p>
+                            <hr />
+                            <DataSecret
+                                secret={providerSecret.data}
+                                embedded={true}
+                                hideNotice={true}
+                            />
+                        </Modal>
+                    );
+                } else if (action === 'delete') {
+                    modal = (
+                        <Modal
+                            onClose={cancel}
+                            save={<T t={t} k="delete" />}
+                            disabled={deleting}
+                            waiting={deleting}
+                            title={<T t={t} k="delete-modal.title" />}
+                            onCancel={cancel}
+                            onSave={deleteData}
+                            saveType="danger"
+                        >
+                            <p>
+                                <T
+                                    t={t}
+                                    k={
+                                        deleting
+                                            ? 'delete-modal.deleting-text'
+                                            : 'delete-modal.text'
                                     }
                                 />
-                                <ErrorFor error={error} field="city" />
-                                <RetractingLabelInput
-                                    value={data.city || ''}
-                                    onChange={value =>
-                                        setAndMarkModified('city', value)
+                            </p>
+                        </Modal>
+                    );
+                } else if (action === 'logout') {
+                    modal = (
+                        <Modal
+                            onClose={cancel}
+                            save={<T t={t} k="log-out" />}
+                            disabled={loggingOut}
+                            waiting={loggingOut}
+                            title={<T t={t} k="log-out-modal.title" />}
+                            onCancel={cancel}
+                            onSave={logOut}
+                            saveType="warning"
+                        >
+                            <p>
+                                <T
+                                    t={t}
+                                    k={
+                                        loggingOut
+                                            ? 'log-out-modal.logging-out'
+                                            : 'log-out-modal.text'
                                     }
-                                    label={<T t={t} k="provider-data.city" />}
                                 />
-                                <ErrorFor error={error} field="email" />
-                                <RetractingLabelInput
-                                    value={data.email || ''}
-                                    onChange={value =>
-                                        setAndMarkModified('email', value)
-                                    }
-                                    label={<T t={t} k="provider-data.email" />}
-                                />
-                            </React.Fragment>
-                        );
-
-                        return (
-                            <React.Fragment>
-                                <div className="kip-provider-data">
-                                    <FormComponent onSubmit={onSubmit}>
-                                        <FieldSet disabled={submitting}>
-                                            {
-                                                <React.Fragment>
-                                                    <h2>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.title"
-                                                        />
-                                                    </h2>
-                                                    <p>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.description"
-                                                        />
-                                                    </p>
-                                                    {controls}
-                                                    <SubmitField
-                                                        disabled={
-                                                            !valid || !modified
-                                                        }
-                                                        type={'success'}
-                                                        onClick={onSubmit}
-                                                        waiting={submitting}
-                                                        title={
-                                                            submitting ? (
-                                                                <T
-                                                                    t={t}
-                                                                    k="provider-data.saving"
-                                                                />
-                                                            ) : (
-                                                                <T
-                                                                    t={t}
-                                                                    k={
-                                                                        'provider-data.submit'
-                                                                    }
-                                                                />
-                                                            )
-                                                        }
-                                                    />
-                                                    <hr />
-                                                    <h2>
-                                                        <T
-                                                            t={t}
-                                                            k="save-and-restore"
-                                                        />
-                                                    </h2>
-                                                    <Button type="warning">
-                                                        <T t={t} k="restore" />
-                                                    </Button>
-                                                    &nbsp;
-                                                    <Button type="sucess">
-                                                        <T t={t} k="save" />
-                                                    </Button>
-                                                </React.Fragment>
-                                            }
-                                        </FieldSet>
-                                    </FormComponent>
-                                </div>
-                            </React.Fragment>
-                        );
-                    };
-
-                    // we wait until all resources have been loaded before we display the form
-                    return (
-                        <WithLoader
-                            resources={[keys, keyPairs, queues, providerData]}
-                            renderLoaded={render}
-                        />
+                            </p>
+                            <hr />
+                            <DataSecret
+                                secret={providerSecret.data}
+                                embedded={true}
+                                hideNotice={true}
+                            />
+                        </Modal>
                     );
                 }
-            )
-        ),
-        SettingsForm,
-        'form'
+
+                const render = () => {
+                    return (
+                        <div className="kip-provider-settings">
+                            {modal}
+                            <CardContent>
+                                <h2>
+                                    <T t={t} k="provider-data.title" />
+                                </h2>
+
+                                <DropdownMenu
+                                    title={
+                                        <F>
+                                            <Icon icon="calendar" />{' '}
+                                            <T t={t} k={`settings.${view}`} />
+                                        </F>
+                                    }
+                                >
+                                    <DropdownMenuItem
+                                        icon="calendar"
+                                        onClick={() => setView('verified')}
+                                    >
+                                        <T t={t} k={`settings.verified`} />
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        icon="list"
+                                        onClick={() => setView('local')}
+                                    >
+                                        <T t={t} k={`settings.local`} />
+                                    </DropdownMenuItem>
+                                </DropdownMenu>
+                                <ProviderData
+                                    providerData={
+                                        view === 'verified'
+                                            ? verifiedProviderData
+                                            : providerData
+                                    }
+                                    verified={view === 'verified'}
+                                />
+                            </CardContent>
+                            <CardFooter>
+                                <div className="kip-buttons">
+                                    <Button
+                                        type="success"
+                                        href="/provider/settings/backup"
+                                    >
+                                        <T t={t} k="backup" />
+                                    </Button>
+                                    <Button
+                                        type="warning"
+                                        href="/provider/settings/logout"
+                                    >
+                                        <T t={t} k="log-out" />
+                                    </Button>
+                                    <Button
+                                        type="danger"
+                                        href="/provider/settings/delete"
+                                    >
+                                        <T t={t} k="delete" />
+                                    </Button>
+                                </div>
+                            </CardFooter>
+                        </div>
+                    );
+                };
+
+                // we wait until all resources have been loaded before we display the form
+                return (
+                    <WithLoader
+                        resources={[
+                            keys,
+                            keyPairs,
+                            providerData,
+                            verifiedProviderData,
+                        ]}
+                        renderLoaded={render}
+                    />
+                );
+            }
+        )
     ),
-    [keys, queues, providerData, keyPairs, submitProviderData]
+    [keys, providerData, keyPairs, verifiedProviderData, providerSecret]
 );
 
 export default Settings;

@@ -62,13 +62,7 @@ const Verify = withSettings(
                             <ul>
                                 <li>
                                     <span>
-                                        <T t={t} k="contact-data.name" />
-                                    </span>{' '}
-                                    {contactData.data.name}
-                                </li>
-                                <li>
-                                    <span>
-                                        <T t={t} k="contact-data.email" />
+                                        <T t={t} k="contact-data.email.label" />
                                     </span>{' '}
                                     {contactData.data.email || (
                                         <T t={t} k="contact-data.not-given" />

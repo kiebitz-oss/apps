@@ -1,6 +1,10 @@
 @import "scss/variables";
 
-.kip-provider-data {
+.kip-provider-settings {
+
+	.kip-dropdown {
+		margin-bottom: map-get($kip-space, md);
+	}
 
 	form {
 		max-width: 640px;

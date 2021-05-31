@@ -4,4 +4,13 @@ dashboard:
   en: Dashboard
 title:
   _ignore_unused: true
-  en: Health Department App
+  en: Provider App
+data-deleted:
+  de: Daten erfolgreich gelöscht
+thanks-for-using-us:
+  de: Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie {service} genutzt haben!
+logged-out:
+  title:
+    de: Erfolgreich abgemeldet.
+  notice:
+    de: Sie wurden erfolgreich abgemeldet.

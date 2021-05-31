@@ -45,7 +45,7 @@ function copyToClipboard(text) {
     }
 }
 
-export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
+export const DataSecret = ({ settings, secret, embedded, hideNotice }) => {
     const [succeeded, setSucceeded] = useState(false);
     const [failed, setFailed] = useState(false);
 
@@ -150,7 +150,7 @@ export default withRouter(
                         onCancel={hideSecrets}
                         saveType="success"
                     >
-                        <StoreOnline
+                        <DataSecret
                             settings={settings}
                             secret={providerSecret.data}
                         />

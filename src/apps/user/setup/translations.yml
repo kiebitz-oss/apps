@@ -57,18 +57,37 @@ wizard:
     verify:
       de: Kontaktdaten prüfen
 contact-data:
-  location:
-    de: Impfort
-  vaccine-types:
-    de: Impfstofftypen
-  biontech:
-    de: Biontech Pfizer
-  astrazeneca:
-    de: Astra Zeneca
-  accessible:
-    de: Barrierefreier Impfort gewünscht
-  radius:
-    de: Maximale Entfernung zum Impfort
+  properties:
+    vaccine-types:
+      title:
+        de: Impfstofftypen
+      values:
+        biontech:
+          de: Biontech Pfizer (Comirnaty)
+          _default: true
+        astrazeneca:
+          de: Astra Zeneca (Vaxzevria)
+          _default: true
+        johnson-johnson:
+          de: Johnson & Johnson
+          _default: true
+        moderna:
+          de: Moderna
+          _default: true
+    location:
+      title:
+        de: Impfort
+      values:
+        accessible:
+          de: Barrierefreier Impfort gewünscht
+          _default: false
+  distance:
+    label:
+      de: "Maximale Entfernung zum Impfort in Kilometern (km)"
+    notice:
+      de: "Hinweis: Die Schätzung der Entfernung basiert auf der mittleren Entfernung zwischen Postleitzahlgebieten. Die tatsächliche Entfernung kann hiervon in Einzelfällen stark abweichen."
+    option:
+      de: "{distance} km"
   not-given:
     de: (keine Angabe)
   change:
@@ -89,7 +108,10 @@ contact-data:
   invalid-phone:
     de: Bitte geben Sie eine gültige Telefonnummer an.
   email:
-    de: E-Mail Adresse
+    label:
+      de: E-Mail Adresse
+    description:
+      de: Sie können optional Ihre E-Mail Adresse angeben. Diese wird verschlüsselt gespeichert und dazu genutzt, Ihnen Mitteilungen über Ihre Termine zu schicken.
   invalid-email:
     de: Bitte geben Sie eine gültige E-Mail Adresse an.
   zip-code:
@@ -104,3 +126,5 @@ contact-data:
     de: Straße & Hausnummer
   invalid-street:
     de: Bitte geben Sie einen gültigen Straßennamen (inkl. Hausnummer) an.
+no-queue:
+  de: Im gewählten Postleitzahlgebiet ist der Dienst noch nicht verfügar. Sorry!

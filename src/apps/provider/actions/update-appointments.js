@@ -15,7 +15,7 @@ export async function updateAppointments(state, keyStore, settings, schedule) {
             []
         );
         if (openAppointments.length >= 10) return { data: openAppointments };
-        let d = new Date('2021-05-28T10:00:00+02:00');
+        let d = new Date('2021-05-31T10:00:00+02:00');
         for (let i = 0; i < 10 - openAppointments.length; i++) {
             const dt = new Date(d.getTime() + 30 * 1000 * 60 * i);
             openAppointments.push({
@@ -27,6 +27,7 @@ export async function updateAppointments(state, keyStore, settings, schedule) {
                 cancelable_until: '2021-05-27T10:00:00Z',
             });
         }
+        console.log(openAppointments);
         backend.local.set('provider::appointments::open', openAppointments);
         return {
             status: 'loaded',

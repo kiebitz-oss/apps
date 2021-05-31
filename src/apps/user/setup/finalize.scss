@@ -20,9 +20,16 @@
 		display: block;
 	}
 
-	.kip-properties {
+	span.kip-control-notice {
+		margin-top: map-get($kip-space, md);
+		display: block;
+		font-size: 14px;
+		color: #666;
+	}
 
-		.kip-property {
+	ul.kip-properties {
+
+		li {
 			margin-bottom: map-get($kip-space, md);
 			display: flex;
 			align-items: center;

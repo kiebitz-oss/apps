@@ -22,6 +22,7 @@ import {
     withSettings,
     withActions,
     withTimer,
+    withRouter,
     CenteredCard,
     CardHeader,
     Icon,
@@ -34,154 +35,170 @@ import {
 } from 'components';
 import t from './translations.yml';
 
-const Dashboard = withActions(
-    withSettings(
-        withTimer(
-            ({
-                route: {
-                    handler: {
-                        props: { tab, action, id },
+const Dashboard = withRouter(
+    withActions(
+        withSettings(
+            withTimer(
+                ({
+                    route: {
+                        handler: {
+                            props: { tab, action, id },
+                        },
                     },
-                },
-                settings,
-                providerData,
-                providerDataAction,
-                checkInvitations,
-                checkInvitationsAction,
-                verifiedProviderData,
-                verifiedProviderDataAction,
-                checkVerifiedProviderData,
-                checkVerifiedProviderDataAction,
-                updateAppointments,
-                updateAppointmentsAction,
-                timer,
-                keys,
-                keysAction,
-                sendInvitations,
-                sendInvitationsAction,
-                keyPairs,
-                keyPairsAction,
-                validKeyPairs,
-                validKeyPairsAction,
-            }) => {
-                const [initialized, setInitialized] = useState(false);
-                const [tv, setTv] = useState(-1);
+                    router,
+                    settings,
+                    providerData,
+                    providerDataAction,
+                    checkInvitations,
+                    checkInvitationsAction,
+                    verifiedProviderData,
+                    verifiedProviderDataAction,
+                    checkVerifiedProviderData,
+                    checkVerifiedProviderDataAction,
+                    updateAppointments,
+                    updateAppointmentsAction,
+                    timer,
+                    keys,
+                    keysAction,
+                    sendInvitations,
+                    sendInvitationsAction,
+                    keyPairs,
+                    keyPairsAction,
+                    validKeyPairs,
+                    validKeyPairsAction,
+                }) => {
+                    const [initialized, setInitialized] = useState(false);
+                    const [lastUpdated, setLastUpdated] = useState('');
+                    const [tv, setTv] = useState(-1);
 
-                useEffect(() => {
-                    if (initialized) return;
-                    setInitialized(true);
-                    keysAction().then(ks =>
-                        keyPairsAction().then(kp =>
-                            validKeyPairsAction(kp.data, ks.data)
-                        )
-                    );
-                });
-
-                useEffect(() => {
-                    // we do this only once per timer interval...
-                    if (timer === tv) return;
-                    setTv(timer);
-                    verifiedProviderDataAction();
-                    providerDataAction().then(pd => {
-                        if (pd.data === null) return;
-                        // we check whether the data is verified already...
-                        if (pd.data.verified) return;
-                        checkVerifiedProviderDataAction(pd.data).then(() =>
-                            keysAction().then(ks =>
-                                keyPairsAction().then(kp =>
-                                    validKeyPairsAction(kp.data, ks.data)
-                                )
+                    useEffect(() => {
+                        if (initialized) return;
+                        setInitialized(true);
+                        keysAction().then(ks =>
+                            keyPairsAction().then(kp =>
+                                validKeyPairsAction(kp.data, ks.data)
                             )
                         );
                     });
-                    if (
-                        keyPairs === undefined ||
-                        verifiedProviderData === undefined ||
-                        keyPairs.status !== 'loaded' ||
-                        verifiedProviderData.status !== 'loaded'
-                    )
-                        return;
-                    updateAppointmentsAction().then(d => {
-                        sendInvitationsAction(
-                            keyPairs.data,
-                            verifiedProviderData.data
-                        ).then(() => checkInvitationsAction(keyPairs, d.data));
+
+                    useEffect(() => {
+                        // we do this only once per timer interval...
+                        if (timer === tv) return;
+                        setTv(timer);
+                        setLastUpdated(new Date().toLocaleTimeString());
+                        verifiedProviderDataAction();
+                        providerDataAction().then(pd => {
+                            if (
+                                pd.data === null ||
+                                pd.data.submitted === undefined
+                            )
+                                router.navigateToUrl('/provider/setup');
+                            // we check whether the data is verified already...
+                            if (pd.data.verified) return;
+                            checkVerifiedProviderDataAction(pd.data).then(() =>
+                                keysAction().then(ks =>
+                                    keyPairsAction().then(kp =>
+                                        validKeyPairsAction(kp.data, ks.data)
+                                    )
+                                )
+                            );
+                        });
+                        if (
+                            keyPairs === undefined ||
+                            verifiedProviderData === undefined ||
+                            keyPairs.status !== 'loaded' ||
+                            verifiedProviderData.status !== 'loaded'
+                        )
+                            return;
+                        updateAppointmentsAction().then(d => {
+                            sendInvitationsAction(
+                                keyPairs.data,
+                                verifiedProviderData.data
+                            ).then(() =>
+                                checkInvitationsAction(keyPairs, d.data)
+                            );
+                        });
                     });
-                });
 
-                let content;
+                    let content;
 
-                switch (tab) {
-                    case 'settings':
-                        content = <Settings key="settings" />;
-                        break;
-                    case 'schedule':
-                        content = (
-                            <Schedule action={action} id={id} key="schedule" />
+                    switch (tab) {
+                        case 'settings':
+                            content = (
+                                <Settings key="settings" action={action} />
+                            );
+                            break;
+                        case 'schedule':
+                            content = (
+                                <Schedule
+                                    action={action}
+                                    id={id}
+                                    key="schedule"
+                                    lastUpdated={lastUpdated}
+                                />
+                            );
+                            break;
+                    }
+
+                    let invalidKeyMessage;
+
+                    if (
+                        validKeyPairs !== undefined &&
+                        validKeyPairs.valid === false
+                    ) {
+                        invalidKeyMessage = (
+                            <Message waiting type="warning">
+                                <T t={t} k="invalid-key" />
+                            </Message>
                         );
-                        break;
-                }
+                    }
 
-                let invalidKeyMessage;
-
-                if (
-                    validKeyPairs !== undefined &&
-                    validKeyPairs.valid === false
-                ) {
-                    invalidKeyMessage = (
-                        <Message type="danger">
-                            <T t={t} k="invalid-key" />
-                        </Message>
-                    );
-                }
-
-                return (
-                    <CenteredCard size="fullwidth" tight>
-                        <CardHeader>
-                            <Tabs>
-                                <Tab
-                                    active={tab === 'schedule'}
-                                    href="/provider/schedule"
-                                >
-                                    <T t={t} k="schedule.title" />
-                                </Tab>
-                                <Tab
-                                    active={tab === 'settings'}
-                                    href="/provider/settings"
-                                >
-                                    <T t={t} k="settings.title" />
-                                </Tab>
-                                <Tab
-                                    last
-                                    icon={<Icon icon="sign-out-alt" />}
-                                    active={tab === 'log-out'}
-                                    href="/user/settings/logout"
-                                >
-                                    <T t={t} k="log-out" />
-                                </Tab>
-                            </Tabs>
-                        </CardHeader>
-                        <CardContent>
+                    return (
+                        <CenteredCard size="fullwidth" tight>
+                            <CardHeader>
+                                <Tabs>
+                                    <Tab
+                                        active={tab === 'schedule'}
+                                        href="/provider/schedule"
+                                    >
+                                        <T t={t} k="schedule.title" />
+                                    </Tab>
+                                    <Tab
+                                        active={tab === 'settings'}
+                                        href="/provider/settings"
+                                    >
+                                        <T t={t} k="settings.title" />
+                                    </Tab>
+                                    <Tab
+                                        last
+                                        icon={<Icon icon="sign-out-alt" />}
+                                        active={tab === 'log-out'}
+                                        href="/provider/settings/logout"
+                                    >
+                                        <T t={t} k="log-out" />
+                                    </Tab>
+                                </Tabs>
+                            </CardHeader>
                             {invalidKeyMessage}
                             {content}
-                        </CardContent>
-                    </CenteredCard>
-                );
-            },
-            2000
-        )
-    ),
-    [
-        verifiedProviderData,
-        updateAppointments,
-        sendInvitations,
-        keyPairs,
-        keys,
-        validKeyPairs,
-        providerData,
-        checkInvitations,
-        checkVerifiedProviderData,
-    ]
+                        </CenteredCard>
+                    );
+                },
+                10000
+            )
+        ),
+        [
+            verifiedProviderData,
+            updateAppointments,
+            sendInvitations,
+            keyPairs,
+            keys,
+            validKeyPairs,
+            providerData,
+            checkInvitations,
+            checkVerifiedProviderData,
+        ]
+    )
 );
 
 export default Dashboard;

@@ -2,7 +2,12 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { generateECDSAKeyPair, ephemeralECDHEncrypt } from 'helpers/crypto';
+import {
+    generateECDSAKeyPair,
+    ephemeralECDHEncrypt,
+    randomBytes,
+    hashString,
+} from 'helpers/crypto';
 
 async function hashContactData(data) {
     const hashData = {
@@ -11,7 +16,7 @@ async function hashContactData(data) {
     };
 
     const hashDataJSON = JSON.stringify(hashData);
-    const dataHash = await e(hashString(hashDataJSON));
+    const dataHash = await hashString(hashDataJSON);
     return [dataHash, hashData.nonce];
 }
 
@@ -29,14 +34,12 @@ export async function submitToQueue(
     if (tokenData !== null) {
         try {
             // we already have a token, we just submit to another queue
-            const signedToken = await e(
-                backend.appointments.getToken(
-                    tokenData.dataHash,
-                    tokenData.encryptedTokenData,
-                    queue.id,
-                    queueData,
-                    tokenData.signedToken
-                )
+            const signedToken = await backend.appointments.getToken(
+                tokenData.dataHash,
+                tokenData.encryptedTokenData,
+                queue.id,
+                queueData,
+                tokenData.signedToken
             );
             return {
                 data: signedToken,
@@ -51,15 +54,16 @@ export async function submitToQueue(
     }
     try {
         // we hash the user data to prove it didn't change later...
-        const [dataHash, nonce] = await e(hashContactData(contactData));
-        const signingKeyPair = await e(generateECDSAKeyPair());
+        const [dataHash, nonce] = await hashContactData(contactData);
+        const signingKeyPair = await generateECDSAKeyPair();
         const tokenData = {
             publicKey: signingKeyPair.publicKey, // the signing key to control the ID
             id: randomBytes(32), // the ID where we want to receive data
         };
         // we encrypt the token data so the provider can decrypt it...
-        const [encryptedTokenData] = await e(
-            ephemeralECDHEncrypt(JSON.stringify(tokenData), queue.publicKey)
+        const [encryptedTokenData, privateKey] = await ephemeralECDHEncrypt(
+            JSON.stringify(tokenData),
+            queue.publicKey
         );
         // we also encrypt the contact data for the provider...
         // this won't get sent to the provider immediately though...
@@ -68,20 +72,20 @@ export async function submitToQueue(
             queue.publicKey
         );
 
-        const signedToken = await e(
-            backend.appointments.getToken(
-                dataHash,
-                encryptedTokenData,
-                queue.id,
-                queueData
-            )
+        const signedToken = await backend.appointments.getToken(
+            dataHash,
+            encryptedTokenData,
+            queue.id,
+            queueData
         );
+
         backend.local.set('user::tokenData', {
             signedToken: signedToken,
             signingKeyPair: signingKeyPair,
             encryptedTokenData: encryptedTokenData,
             encryptedContactData: encryptedContactData,
             queueData: queueData,
+            privateKey: privateKey,
             hashNonce: nonce,
             dataHash: dataHash,
             tokenData: tokenData,
@@ -91,6 +95,7 @@ export async function submitToQueue(
             status: 'succeeded',
         };
     } catch (e) {
+        console.log(e.toString());
         return { status: 'failed', error: e.toString() };
     }
 }

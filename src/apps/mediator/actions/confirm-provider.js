@@ -26,6 +26,8 @@ export async function confirmProvider(
             queues: providerData.data.queues, // so we know which queues the provider can query
         };
 
+        console.log(providerData);
+
         const keysJSONData = JSON.stringify(keyHashesData);
         const providerJSONData = JSON.stringify(providerData.data);
 

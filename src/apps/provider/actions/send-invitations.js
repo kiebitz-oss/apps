@@ -33,6 +33,7 @@ export async function sendInvitations(
             'provider::appointments::open',
             []
         );
+
         let openTokens = backend.local.get('provider::tokens::open', []);
         if (openAppointments.length === 0)
             // we don't have any new appointments to give out
@@ -44,17 +45,18 @@ export async function sendInvitations(
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0) {
                 const signedData = await sign(
-                    [{ n: 10 }],
                     keyPairs.signing.privateKey,
+                    JSON.stringify({ capacities: [{ n: 10, properties: {} }] }),
                     keyPairs.signing.publicKey
                 );
                 const newTokens = await backend.appointments.getQueueTokens(
                     signedData
                 );
-                for (const token of newTokens) {
-                    token.keyPair = await generateECDHKeyPair();
+                for (const tokenList of newTokens) {
+                    for (const token of tokenList)
+                        token.keyPair = await generateECDHKeyPair();
+                    openTokens = [...openTokens, ...tokenList];
                 }
-                openTokens = [...openTokens, ...newTokens];
                 // we update the list of open tokens
                 backend.local.set('provider::tokens::open', openTokens);
             }
@@ -65,14 +67,17 @@ export async function sendInvitations(
                     token.queue,
                     verifiedProviderData
                 );
+                console.log(token);
                 try {
+                    console.log(token);
                     const decryptedTokenJSONData = await ecdhDecrypt(
-                        token.token.encryptedData,
+                        token.encryptedData,
                         privateKey
                     );
                     const decryptedTokenData = JSON.parse(
                         decryptedTokenJSONData
                     );
+                    console.log(decryptedTokenJSONData);
                     // we generate grants for all appointments IDs
                     const grantsData = await Promise.all(
                         openAppointments.map(
@@ -112,7 +117,7 @@ export async function sendInvitations(
                     const encryptedUserData = await ecdhEncrypt(
                         JSON.stringify(userData),
                         token.keyPair,
-                        token.token.encryptedData.publicKey
+                        token.encryptedData.publicKey
                     );
                     // we sign the data with our private key
                     const signedEncryptedUserData = await sign(
@@ -120,6 +125,7 @@ export async function sendInvitations(
                         JSON.stringify(encryptedUserData),
                         keyPairs.signing.publicKey
                     );
+                    console.log(decryptedTokenData);
                     dataToSubmit.push({
                         id: decryptedTokenData.id,
                         data: signedEncryptedUserData,
@@ -131,7 +137,7 @@ export async function sendInvitations(
                         ],
                     });
                 } catch (e) {
-                    console.log(e.toString());
+                    console.log(e.toString(), e.stack);
                     continue;
                 }
             }
@@ -144,7 +150,7 @@ export async function sendInvitations(
 
             return { status: 'succeeded' };
         } catch (e) {
-            console.log(e.toString());
+            console.log(e.toString(), e.stack);
             return { status: 'failed', error: e.toString() };
         }
     } finally {

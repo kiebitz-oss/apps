@@ -46,6 +46,7 @@ export default class AppointmentsBackend {
 
     async confirmProvider({ id, key, providerData, keyData }) {
         let found = false;
+        console.log(keyData);
         const keyDataJSON = JSON.parse(keyData.data);
         const newProviders = [];
         for (const existingKey of this.keys.providers) {
@@ -230,7 +231,7 @@ export default class AppointmentsBackend {
         await e(this.initialized());
         // we just look at nearest neighbors here...
         return this.queues
-            .filter(q => q.zip_area === zipCode.slice(0, 2))
+            .filter(q => q.zip_code === zipCode.slice(0, 2))
             .map(queue => ({
                 name: queue.name,
                 type: queue.type,
@@ -349,8 +350,9 @@ export default class AppointmentsBackend {
                 hash: hash,
             };
             const tokenDataJSON = JSON.stringify(tokenData);
-            signedTokenData = await e(
-                sign(this.tokenSigningKeyPair.privateKey, tokenDataJSON)
+            signedTokenData = await sign(
+                this.tokenSigningKeyPair.privateKey,
+                tokenDataJSON
             );
             queueToken = {
                 token: token,
@@ -359,6 +361,8 @@ export default class AppointmentsBackend {
                 encryptedData: encryptedData,
             };
         }
+
+        console.log(queueToken);
 
         let queueTokens = this.tokens[queueID];
 
@@ -428,7 +432,7 @@ export default class AppointmentsBackend {
             tokenLoop: while (tokens.length < n) {
                 let addedTokens = 0;
                 queuesLoop: for (const queueID of queueIDs) {
-                    const queueTokens = this.tokens[queueID];
+                    let queueTokens = this.tokens[queueID];
                     // no tokens in this queue
                     if (queueTokens === undefined || queueTokens.length === 0)
                         continue queuesLoop;
@@ -436,11 +440,11 @@ export default class AppointmentsBackend {
                     candidates: for (let i = 0; i < queueTokens.length; i++) {
                         const token = queueTokens[i];
                         if (
-                            distance(token.queueData.zip_code, zipCode) >
+                            this.distance(token.queueData.zip_code, zipCode) >
                             token.queueData.distance
                         )
                             continue candidates; // the distance between user and provider is too large
-                        for (const [k, v] of properties.entries()) {
+                        for (let [k, v] of Object.entries(properties)) {
                             if (
                                 token.queueData[k] !== undefined &&
                                 token.queueData[k] !== v
@@ -450,7 +454,9 @@ export default class AppointmentsBackend {
                         // we have found a suitable token
                         queueTokens = queueTokens.filter((t, j) => i !== j);
                         this.tokens[queueID] = queueTokens;
-                        tokens.push(token);
+                        const tokenCopy = copy(token);
+                        tokenCopy.queue = queueID;
+                        tokens.push(tokenCopy);
                         addedTokens++;
                         break candidates;
                     }

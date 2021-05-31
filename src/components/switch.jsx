@@ -47,8 +47,7 @@ export class Switch extends React.Component {
                         type="checkbox"
                         checked={checked}
                         onChange={e => {
-                            e.preventDefault;
-                            onChange(!checked);
+                            if (onChange !== undefined) onChange(!checked);
                         }}
                     />
                     <span className="kip-slider kip-round">

@@ -11,7 +11,7 @@ import t from './translations.yml';
 
 const routes = new Map([
     [
-        'index',
+        'userIndex',
         {
             url: '/user/?',
             handler: () => ({

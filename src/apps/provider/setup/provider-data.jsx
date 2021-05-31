@@ -69,19 +69,11 @@ const BaseProviderData = ({
         set(key, value);
     };
 
+    console.log(data);
+
     const render = () => {
         const controls = (
             <React.Fragment>
-                <ErrorFor error={error} field="access_code" />
-                <RetractingLabelInput
-                    value={data.access_code || ''}
-                    onChange={value => setAndMarkModified('access_code', value)}
-                    description={
-                        <T t={t} k="provider-data.access-code.description" />
-                    }
-                    label={<T t={t} k="provider-data.access-code.label" />}
-                />
-                <hr />
                 <ErrorFor error={error} field="name" />
                 <RetractingLabelInput
                     value={data.name || ''}
@@ -106,6 +98,18 @@ const BaseProviderData = ({
                     onChange={value => setAndMarkModified('city', value)}
                     label={<T t={t} k="provider-data.city" />}
                 />
+                <ErrorFor error={error} field="description" />
+                <label htmlFor="description">
+                    <T t={t} k="provider-data.description" />
+                </label>
+                <textarea
+                    id="description"
+                    className="bulma-textarea"
+                    value={data.description || ''}
+                    onChange={e =>
+                        setAndMarkModified('description', e.target.value)
+                    }
+                />
                 <h2>
                     <T t={t} k="provider-data.for-mediator" />
                 </h2>
@@ -122,9 +126,29 @@ const BaseProviderData = ({
                     label={<T t={t} k="provider-data.email" />}
                 />
                 <hr />
+                <ErrorFor error={error} field="access_code" />
+                <RetractingLabelInput
+                    value={data.access_code || ''}
+                    onChange={value => setAndMarkModified('access_code', value)}
+                    description={
+                        <T t={t} k="provider-data.access-code.description" />
+                    }
+                    label={<T t={t} k="provider-data.access-code.label" />}
+                />
+                <hr />
                 <ul className="kip-properties">
                     <li className="kip-property">
-                        <Switch id="accessible" onChange={() => false}>
+                        <Switch
+                            id="accessible"
+                            checked={
+                                data.accessible !== undefined
+                                    ? data.accessible
+                                    : false
+                            }
+                            onChange={value =>
+                                setAndMarkModified('accessible', value)
+                            }
+                        >
                             &nbsp;
                         </Switch>
 

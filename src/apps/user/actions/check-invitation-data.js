@@ -39,17 +39,22 @@ export async function checkInvitationData(
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
         try {
-            const data = await e(
-                backend.appointments.getData(
-                    tokenData.tokenData.id,
-                    tokenData.signingKeyPair
-                )
+            console.log('Checking invitation data...');
+            const data = await backend.appointments.getData(
+                tokenData.tokenData.id,
+                tokenData.signingKeyPair
             );
+            if (data === null)
+                return {
+                    status: 'not-found',
+                };
+
             const decryptedData = await decryptInvitationData(
                 data,
                 keys,
                 tokenData
             );
+
             verifyProviderData(decryptedData.provider);
             backend.local.set('user::invitationData', data);
             backend.local.set('user::invitationData::verified', decryptedData);

@@ -9,7 +9,7 @@ export async function verifiedProviderData(state, keyStore, settings) {
         await backend.local.lock();
         let providerData = backend.local.get('provider::data::verified');
         return {
-            status: providerData !== null ? 'loaded' : 'failed',
+            status: 'loaded',
             data: providerData,
         };
     } finally {

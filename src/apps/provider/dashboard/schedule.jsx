@@ -16,6 +16,7 @@ import {
     DropdownMenu,
     DropdownMenuItem,
     Form as FormComponent,
+    Message,
     FieldSet,
     Icon,
     RetractingLabelInput,
@@ -25,7 +26,7 @@ import {
     CardContent,
     Button,
 } from 'components';
-import { queues, keys, keyPairs, verifiedProviderData } from '../actions';
+import { keys, keyPairs } from '../actions';
 import t from './translations.yml';
 import './schedule.scss';
 
@@ -269,17 +270,17 @@ const Invitations = withTimer(
                     id,
                     keys,
                     keysAction,
+                    lastUpdated,
                     keyPairs,
                     timer,
                     settings,
                     keyPairsAction,
-                    verifiedProviderData,
-                    verifiedProviderDataAction,
                     invitationQueues,
                     invitationQueuesAction,
                     router,
                 }) => {
                     const [initialized, setInitialized] = useState(false);
+                    const [view, setView] = useState('calendar');
 
                     const backend = settings.get('backend');
                     const acceptedAppointments = backend.local.get(
@@ -295,12 +296,6 @@ const Invitations = withTimer(
                         if (initialized) return;
                         setInitialized(true);
                         // we load all the necessary data
-                        verifiedProviderDataAction().then(pd => {
-                            if (pd.data === null) return;
-                            invitationQueuesAction(
-                                pd.data.signedData.json.queues
-                            );
-                        });
                         keyPairsAction();
                         keysAction();
                     });
@@ -315,59 +310,80 @@ const Invitations = withTimer(
                     const render = () => {
                         return (
                             <div className="kip-schedule">
-                                {newAppointmentModal}
-                                <DropdownMenu
-                                    title={
-                                        <F>
-                                            <Icon icon="calendar" />{' '}
-                                            Kalenderansicht
-                                        </F>
-                                    }
-                                >
-                                    <DropdownMenuItem
-                                        icon="calendar"
-                                        onClick={() => console.log('foo')}
-                                    >
-                                        Kalenderansicht
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        icon="list"
-                                        onClick={() => console.log('foo')}
-                                    >
-                                        Listenansicht
-                                    </DropdownMenuItem>
-                                </DropdownMenu>
-                                <DropdownMenu
-                                    title={
-                                        <F>
-                                            <Icon icon="calendar-plus" />
-                                        </F>
-                                    }
-                                >
-                                    <DropdownMenuItem
-                                        icon="clock"
-                                        onClick={() =>
-                                            router.navigateToUrl(
-                                                '/provider/schedule/new-appointment'
-                                            )
+                                <CardContent>
+                                    {newAppointmentModal}
+                                    <DropdownMenu
+                                        title={
+                                            <F>
+                                                <Icon icon={view} />{' '}
+                                                <T
+                                                    t={t}
+                                                    k={`schedule.view.${view}`}
+                                                />
+                                            </F>
                                         }
                                     >
-                                        Einzeltermin
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        icon="list"
-                                        onClick={() => console.log('foo')}
+                                        <DropdownMenuItem
+                                            icon="calendar"
+                                            onClick={() => setView('calendar')}
+                                        >
+                                            <T
+                                                t={t}
+                                                k="schedule.view.calendar"
+                                            />
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            icon="list"
+                                            onClick={() => setView('list')}
+                                        >
+                                            <T t={t} k="schedule.view.list" />
+                                        </DropdownMenuItem>
+                                    </DropdownMenu>
+                                    <DropdownMenu
+                                        title={
+                                            <F>
+                                                <Icon icon="calendar-plus" />
+                                            </F>
+                                        }
                                     >
-                                        Terminserie
-                                    </DropdownMenuItem>
-                                </DropdownMenu>
-                                <WeekCalendar
-                                    startDate={startDate}
-                                    appointments={{
-                                        open: openAppointments,
-                                        accepted: acceptedAppointments,
-                                    }}
-                                />
+                                        <DropdownMenuItem
+                                            icon="clock"
+                                            onClick={() =>
+                                                router.navigateToUrl(
+                                                    '/provider/schedule/new-appointment'
+                                                )
+                                            }
+                                        >
+                                            <T
+                                                t={t}
+                                                k="schedule.appointment.single"
+                                            />
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            icon="list"
+                                            onClick={() => console.log('foo')}
+                                        >
+                                            <T
+                                                t={t}
+                                                k="schedule.appointment.series"
+                                            />
+                                        </DropdownMenuItem>
+                                    </DropdownMenu>
+                                    <WeekCalendar
+                                        startDate={startDate}
+                                        appointments={{
+                                            open: openAppointments,
+                                            accepted: acceptedAppointments,
+                                        }}
+                                    />
+                                </CardContent>
+                                <Message type="info" waiting>
+                                    <T
+                                        t={t}
+                                        k="schedule.updating"
+                                        lastUpdated={lastUpdated}
+                                    />
+                                </Message>
                             </div>
                         );
                     };
@@ -375,22 +391,12 @@ const Invitations = withTimer(
                     // we wait until all resources have been loaded before we display the form
                     return (
                         <WithLoader
-                            resources={[
-                                keys,
-                                keyPairs,
-                                invitationQueues,
-                                verifiedProviderData,
-                            ]}
+                            resources={[keys, keyPairs]}
                             renderLoaded={render}
                         />
                     );
                 },
-                new Map([
-                    [verifiedProviderData],
-                    [queues, 'invitationQueues'],
-                    [keys],
-                    [keyPairs],
-                ])
+                [keys, keyPairs]
             )
         )
     ),

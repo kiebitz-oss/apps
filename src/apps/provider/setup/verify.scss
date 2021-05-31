@@ -13,23 +13,27 @@
 	}
 }
 
-.kip-provider-data-box {
+.kip-provider-data.kip-is-box {
 	width: 100%;
 	border: 1px solid #aea;
 	border-radius: $kip-border-radius;
-	background: #efe;
+	background: #fee;
 	padding: map-get($kip-space, md);
 	padding-top: 0;
+
+	&.kip-is-verified {
+		background: #efe;
+	}
 
 	ul {
 		li {
 			font-weight: bolder;
-			span {
+			> span {
 				display: block;
 				font-weight: lighter;
 				color: #888;
-				padding-top: map-get($kip-space, sm);
 			}
+			padding-top: map-get($kip-space, sm);
 		}
 	}
 

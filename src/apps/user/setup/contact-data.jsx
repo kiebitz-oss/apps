@@ -26,8 +26,6 @@ import './contact-data.scss';
 class ContactDataForm extends Form {
     validate() {
         const errors = {};
-        if (!this.data.name || this.data.name.length < 2)
-            errors.name = this.settings.t(t, 'contact-data.invalid-name');
         return errors;
     }
 }
@@ -64,20 +62,12 @@ const BaseContactData = ({
 
     const controls = (
         <React.Fragment>
-            <ErrorFor error={error} field="name" />
-            <RetractingLabelInput
-                value={data.name || ''}
-                onChange={value => setAndMarkModified('name', value)}
-                label={<T t={t} k="contact-data.name" />}
-            />
-            <h2>
-                <T t={t} k="contact-data.optional.title" />
-            </h2>
             <ErrorFor error={error} field="email" />
             <RetractingLabelInput
+                description={<T t={t} k="contact-data.email.description" />}
                 value={data.email || ''}
                 onChange={value => setAndMarkModified('email', value)}
-                label={<T t={t} k="contact-data.email" />}
+                label={<T t={t} k="contact-data.email.label" />}
             />
         </React.Fragment>
     );
@@ -135,3 +125,16 @@ const ContactData = withActions(
 );
 
 export default ContactData;
+
+/*
+            <h2>
+                <T t={t} k="contact-data.optional.title" />
+            </h2>
+            <ErrorFor error={error} field="name" />
+            <RetractingLabelInput
+                value={data.name || ''}
+                onChange={value => setAndMarkModified('name', value)}
+                label={<T t={t} k="contact-data.name" />}
+            />
+
+*/

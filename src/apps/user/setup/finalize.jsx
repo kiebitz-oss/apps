@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Fragment as F } from 'react';
 import { queues } from 'apps/provider/actions';
 import {
     submitToQueue,
@@ -18,6 +18,7 @@ import {
     CardContent,
     CardFooter,
     ErrorFor,
+    Message,
     RetractingLabelInput,
     RichSelect,
     WithLoader,
@@ -66,6 +67,7 @@ const Finalize = withForm(
                     form: { set, data, error, valid, reset },
                 }) => {
                     const [initialized, setInitialized] = useState(false);
+                    const [noQueue, setNoQueue] = useState(false);
                     const [modified, setModified] = useState(false);
                     const [submitting, setSubmitting] = useState(false);
                     const [tv, setTV] = useState(0);
@@ -74,16 +76,35 @@ const Finalize = withForm(
                         setInitialized(true);
                         contactDataAction();
                         queueDataAction().then(qd => {
-                            reset(qd.data || {});
+                            const initialData = {
+                                distance: 50,
+                            };
+                            for (const [k, v] of Object.entries(
+                                t['contact-data'].properties
+                            )) {
+                                for (const [kv, vv] of Object.entries(
+                                    v.values
+                                )) {
+                                    initialData[kv] = vv._default;
+                                }
+                            }
+                            reset(qd.data || initialData);
                         });
                     });
 
                     const submit = () => {
                         setSubmitting(true);
-                        queuesAction(data.zip_code, data.radius).then(qd => {
-                            if (qd.status === 'loaded' && qd.data.length > 0) {
+                        queueDataAction(data).then(({ data: sd }) => {
+                            const qa = queuesAction(sd.zip_code, sd.distance);
+                            qa.then(qd => {
+                                if (qd.data.length === 0) {
+                                    setNoQueue(true);
+                                    setSubmitting(false);
+                                    return;
+                                }
                                 submitToQueueAction(
                                     contactData.data,
+                                    sd,
                                     qd.data[0]
                                 ).then(hd => {
                                     setSubmitting(false);
@@ -91,20 +112,69 @@ const Finalize = withForm(
                                         '/user/setup/store-secrets'
                                     );
                                 });
-                            }
+                            });
                         });
-                        reset({ radius: 10 });
                     };
 
                     const setAndMarkModified = (key, value) => {
+                        setNoQueue(false);
                         setModified(true);
-                        set(key, value);
+                        queueDataAction(set(key, value));
                     };
 
+                    const properties = Object.entries(
+                        t['contact-data'].properties
+                    ).map(([k, v]) => {
+                        const items = Object.entries(v.values).map(
+                            ([kv, vv]) => (
+                                <li key={kv}>
+                                    <Switch
+                                        id={kv}
+                                        checked={data[kv] || false}
+                                        onChange={value =>
+                                            setAndMarkModified(kv, value)
+                                        }
+                                    >
+                                        &nbsp;
+                                    </Switch>
+
+                                    <label htmlFor={kv}>
+                                        <T
+                                            t={t}
+                                            k={`contact-data.properties.${k}.values.${kv}`}
+                                        />
+                                    </label>
+                                </li>
+                            )
+                        );
+
+                        return (
+                            <F key={k}>
+                                <h2>
+                                    <T
+                                        t={t}
+                                        k={`contact-data.properties.${k}.title`}
+                                    />
+                                </h2>
+                                <ul className="kip-properties">{items}</ul>
+                            </F>
+                        );
+                    });
+
                     const render = () => {
+                        let noQueueMessage;
+
+                        if (noQueue)
+                            noQueueMessage = (
+                                <Message type="danger">
+                                    <T t={t} k="no-queue" />
+                                </Message>
+                            );
+
                         return (
                             <React.Fragment>
                                 <CardContent>
+                                    {noQueueMessage}
                                     <div className="kip-finalize-fields">
                                         <ErrorFor
                                             error={error}
@@ -127,95 +197,86 @@ const Finalize = withForm(
                                         />
                                         <label
                                             className="kip-control-label"
-                                            htmlFor="radius"
+                                            htmlFor="distance"
                                         >
-                                            <T t={t} k="contact-data.radius" />
+                                            <T
+                                                t={t}
+                                                k="contact-data.distance.label"
+                                            />
+                                            <span className="kip-control-notice">
+                                                <T
+                                                    t={t}
+                                                    k="contact-data.distance.notice"
+                                                />
+                                            </span>
                                         </label>
                                         <ErrorFor
                                             error={error}
-                                            field="radius"
+                                            field="distance"
                                         />
                                         <RichSelect
-                                            id="radius"
-                                            value={data.radius || 10}
+                                            id="distance"
+                                            value={data.distance || 10}
                                             onChange={value =>
                                                 setAndMarkModified(
-                                                    'radius',
+                                                    'distance',
                                                     value.value
                                                 )
                                             }
                                             options={[
                                                 {
                                                     value: 10,
-                                                    description: '10 Kilometer',
+                                                    description: (
+                                                        <T
+                                                            t={t}
+                                                            k="contact-data.distance.option"
+                                                            distance={10}
+                                                        />
+                                                    ),
                                                 },
                                                 {
                                                     value: 20,
-                                                    description: '20 Kilometer',
+                                                    description: (
+                                                        <T
+                                                            t={t}
+                                                            k="contact-data.distance.option"
+                                                            distance={20}
+                                                        />
+                                                    ),
+                                                },
+                                                {
+                                                    value: 30,
+                                                    description: (
+                                                        <T
+                                                            t={t}
+                                                            k="contact-data.distance.option"
+                                                            distance={30}
+                                                        />
+                                                    ),
+                                                },
+                                                {
+                                                    value: 40,
+                                                    description: (
+                                                        <T
+                                                            t={t}
+                                                            k="contact-data.distance.option"
+                                                            distance={40}
+                                                        />
+                                                    ),
+                                                },
+                                                {
+                                                    value: 50,
+                                                    description: (
+                                                        <T
+                                                            t={t}
+                                                            k="contact-data.distance.option"
+                                                            distance={50}
+                                                        />
+                                                    ),
                                                 },
                                             ]}
                                         />
-                                        <h2>
-                                            <T
-                                                t={t}
-                                                k="contact-data.vaccine-types"
-                                            />
-                                        </h2>
-                                        <ul className="kip-properties">
-                                            <li className="kip-property">
-                                                <Switch
-                                                    id="az"
-                                                    onChange={() => false}
-                                                >
-                                                    &nbsp;
-                                                </Switch>
-
-                                                <label htmlFor="az">
-                                                    <T
-                                                        t={t}
-                                                        k="contact-data.astrazeneca"
-                                                    />
-                                                </label>
-                                            </li>
-                                            <li className="kip-property">
-                                                <Switch
-                                                    id="az"
-                                                    onChange={() => false}
-                                                >
-                                                    &nbsp;
-                                                </Switch>
-
-                                                <label htmlFor="az">
-                                                    <T
-                                                        t={t}
-                                                        k="contact-data.biontech"
-                                                    />
-                                                </label>
-                                            </li>
-                                        </ul>
-                                        <h2>
-                                            <T
-                                                t={t}
-                                                k="contact-data.location"
-                                            />
-                                        </h2>
-                                        <ul className="kip-properties">
-                                            <li className="kip-property">
-                                                <Switch
-                                                    id="az"
-                                                    onChange={() => false}
-                                                >
-                                                    &nbsp;
-                                                </Switch>
-
-                                                <label htmlFor="az">
-                                                    <T
-                                                        t={t}
-                                                        k="contact-data.accessible"
-                                                    />
-                                                </label>
-                                            </li>
-                                        </ul>
+                                        {properties}
                                     </div>
                                 </CardContent>
                                 <CardFooter>
