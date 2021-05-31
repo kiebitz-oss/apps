@@ -5,12 +5,12 @@
 export const queues = [
     {
         name: '66',
-        type: 'zip_area',
-        zip_code: '66',
+        type: 'zipArea',
+        zipCode: '66',
     },
     {
         name: '10',
-        type: 'zip_area',
-        zip_code: '10',
+        type: 'zipArea',
+        zipCode: '10',
     },
 ];

@@ -80,17 +80,12 @@ export async function checkInvitations(
             );
             backend.local.set('provider::appointments::open', openAppointments);
 
-            console.log(openTokens);
-            console.log(acceptedInvitations);
-
             // we remove the tokens corresponding to the accepted invitations from
             // the list of open tokens...
             openTokens = openTokens.filter(
                 ot =>
                     !acceptedInvitations.find(ai => ai.token.token === ot.token)
             );
-
-            console.log(openTokens);
 
             backend.local.set('provider::tokens::open', openTokens);
 

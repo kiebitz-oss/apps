@@ -61,7 +61,7 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                             <T t={t} k="provider-data.zip-code" /> &
                             <T t={t} k="provider-data.city" />
                         </span>{' '}
-                        {data.zip_code} - &nbsp;
+                        {data.zipCode} - &nbsp;
                         {data.city}
                     </li>
                     <li>

@@ -86,10 +86,10 @@ const BaseProviderData = ({
                     onChange={value => setAndMarkModified('street', value)}
                     label={<T t={t} k="provider-data.street" />}
                 />
-                <ErrorFor error={error} field="zip_code" />
+                <ErrorFor error={error} field="zipCode" />
                 <RetractingLabelInput
-                    value={data.zip_code || ''}
-                    onChange={value => setAndMarkModified('zip_code', value)}
+                    value={data.zipCode || ''}
+                    onChange={value => setAndMarkModified('zipCode', value)}
                     label={<T t={t} k="provider-data.zip-code" />}
                 />
                 <ErrorFor error={error} field="city" />
@@ -126,10 +126,10 @@ const BaseProviderData = ({
                     label={<T t={t} k="provider-data.email" />}
                 />
                 <hr />
-                <ErrorFor error={error} field="access_code" />
+                <ErrorFor error={error} field="code" />
                 <RetractingLabelInput
-                    value={data.access_code || ''}
-                    onChange={value => setAndMarkModified('access_code', value)}
+                    value={data.code || ''}
+                    onChange={value => setAndMarkModified('code', value)}
                     description={
                         <T t={t} k="provider-data.access-code.description" />
                     }

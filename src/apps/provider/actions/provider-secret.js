@@ -27,7 +27,7 @@ export async function providerSecret(state, keyStore, settings, data) {
 providerSecret.init = (keyStore, settings) => {
     const backend = settings.get('backend');
     let data = backend.local.get('provider::secret');
-    if (data === null || true) {
+    if (data === null) {
         data = buf2base32(b642buf(randomBytes(10)));
         backend.local.set('provider::secret', data);
     }

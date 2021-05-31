@@ -44,7 +44,7 @@ export default class AppointmentsBackend {
         }
     }
 
-    async confirmProvider({ id, key, providerData, keyData }, keyPair) {
+    async confirmProvider({ id, providerData, keyData }, keyPair) {
         // this will be stored for the provider, so we add the public key data
         const signedProviderData = await sign(
             keyPair.privateKey,
@@ -240,7 +240,7 @@ export default class AppointmentsBackend {
         await e(this.initialized());
         // we just look at nearest neighbors here...
         return this.queues
-            .filter(q => q.zip_code === zipCode.slice(0, 2))
+            .filter(q => q.zipCode === zipCode.slice(0, 2))
             .map(queue => ({
                 name: queue.name,
                 type: queue.type,
@@ -303,6 +303,7 @@ export default class AppointmentsBackend {
                             id: data.id,
                             data: data.data,
                             permissions: data.permissions,
+                            grant: data.grant,
                         },
                         keyPair
                     )
@@ -422,7 +423,7 @@ export default class AppointmentsBackend {
         // we update the tokens
         this.tokens = this.store.get('tokens', {});
         const queueIDs = providerKeyData.queues;
-        const zipCode = providerKeyData.zip_code;
+        const zipCode = providerKeyData.zipCode;
         const allTokens = [];
         const allTokensFlat = [];
         // we shuffle the queue IDs to avoid starvation of individual queues
@@ -443,7 +444,7 @@ export default class AppointmentsBackend {
                     candidates: for (let i = 0; i < queueTokens.length; i++) {
                         const token = queueTokens[i];
                         if (
-                            this._distance(token.queueData.zip_code, zipCode) >
+                            this._distance(token.queueData.zipCode, zipCode) >
                             token.queueData.distance
                         )
                             continue candidates; // the distance between user and provider is too large

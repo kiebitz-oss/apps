@@ -36,8 +36,8 @@ import './finalize.scss';
 class FinalizeForm extends Form {
     validate() {
         const errors = {};
-        if (!this.data.zip_code || this.data.zip_code.length != 5)
-            errors.zip_code = this.settings.t(
+        if (!this.data.zipCode || this.data.zipCode.length != 5)
+            errors.zipCode = this.settings.t(
                 t,
                 'contact-data.invalid-zip-code'
             );
@@ -99,7 +99,7 @@ const Finalize = withForm(
                     const submit = () => {
                         setSubmitting(true);
                         queueDataAction(data).then(({ data: sd }) => {
-                            const qa = queuesAction(sd.zip_code, sd.distance);
+                            const qa = queuesAction(sd.zipCode, sd.distance);
                             qa.then(qd => {
                                 if (qd.data.length === 0) {
                                     setNoQueue(true);
@@ -183,13 +183,13 @@ const Finalize = withForm(
                                     <div className="kip-finalize-fields">
                                         <ErrorFor
                                             error={error}
-                                            field="zip_code"
+                                            field="zipCode"
                                         />
                                         <RetractingLabelInput
-                                            value={data.zip_code || ''}
+                                            value={data.zipCode || ''}
                                             onChange={value =>
                                                 setAndMarkModified(
-                                                    'zip_code',
+                                                    'zipCode',
                                                     value
                                                 )
                                             }

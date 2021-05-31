@@ -24,7 +24,7 @@ provider-data:
     de: Straße
   city:
     de: Stadt
-  zip_code:
+  zipCode:
     de: Postleitzahl
   email:
     de: E-Mail

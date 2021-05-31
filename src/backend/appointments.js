@@ -64,7 +64,7 @@ export default class AppointmentsBackend {
     async storeProviderData({ id, encryptedData, code }, keyPair) {}
 
     // mark a given token as used using its secret
-    markTokenAsUsed({ token, secret }, keyPair) {}
+    async markTokenAsUsed({ token, secret }, keyPair) {}
 
     // mediator-only endpoint
 

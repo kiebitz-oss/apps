@@ -83,7 +83,7 @@ export async function sendInvitations(
                                     keyPairs.signing.privateKey,
                                     JSON.stringify({
                                         rights: ['write', 'read', 'delete'],
-                                        single_use: true,
+                                        singleUse: true,
                                         id: oa.id,
                                         permissions: [
                                             {

@@ -162,11 +162,11 @@ const Providers = withTimer(
                                                     <td>
                                                         <T
                                                             t={t}
-                                                            k="provider-data.zip_code"
+                                                            k="provider-data.zipCode"
                                                         />
                                                     </td>
                                                     <td>
-                                                        {provider.data.zip_code}
+                                                        {provider.data.zipCode}
                                                     </td>
                                                 </tr>
                                                 <tr>

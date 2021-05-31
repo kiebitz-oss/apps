@@ -35,7 +35,7 @@ const ProviderDetails = ({ data }) => {
             <ul>
                 <li>{data.json.name}</li>
                 <li>{data.json.street}</li>
-                <li>{data.json.zip_code}</li>
+                <li>{data.json.zipCode}</li>
                 <li>{data.json.city}</li>
             </ul>
         </div>
