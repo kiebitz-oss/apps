@@ -39,9 +39,8 @@ export async function checkInvitationData(
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
         try {
-            console.log('Checking invitation data...');
             const data = await backend.appointments.getData(
-                tokenData.tokenData.id,
+                { id: tokenData.tokenData.id },
                 tokenData.signingKeyPair
             );
             if (data === null)

@@ -26,7 +26,8 @@ export async function submitToQueue(
     settings,
     contactData,
     queueData,
-    queue
+    queue,
+    userSecret
 ) {
     const backend = settings.get('backend');
     keyStore.set({ status: 'submitting' });
@@ -34,13 +35,13 @@ export async function submitToQueue(
     if (tokenData !== null) {
         try {
             // we already have a token, we just submit to another queue
-            const signedToken = await backend.appointments.getToken(
-                tokenData.dataHash,
-                tokenData.encryptedTokenData,
-                queue.id,
-                queueData,
-                tokenData.signedToken
-            );
+            const signedToken = await backend.appointments.getToken({
+                hash: tokenData.dataHash,
+                encryptedData: tokenData.encryptedTokenData,
+                queueID: queue.id,
+                queueData: queueData,
+                signedTokenData: tokenData.signedToken,
+            });
             return {
                 data: signedToken,
                 status: 'suceeded',
@@ -57,6 +58,10 @@ export async function submitToQueue(
         const [dataHash, nonce] = await hashContactData(contactData);
         const signingKeyPair = await generateECDSAKeyPair();
         const tokenData = {
+            // we use the user secrets first 4 digits as a code
+            // this weakens the key a bit but the provider has access to all
+            // of the user's appointment data anyway...
+            code: userSecret.slice(0, 4),
             publicKey: signingKeyPair.publicKey, // the signing key to control the ID
             id: randomBytes(32), // the ID where we want to receive data
         };
@@ -71,13 +76,12 @@ export async function submitToQueue(
             JSON.stringify(contactData),
             queue.publicKey
         );
-
-        const signedToken = await backend.appointments.getToken(
-            dataHash,
-            encryptedTokenData,
-            queue.id,
-            queueData
-        );
+        const signedToken = await backend.appointments.getToken({
+            hash: dataHash,
+            encryptedData: encryptedTokenData,
+            queueID: queue.id,
+            queueData: queueData,
+        });
 
         backend.local.set('user::tokenData', {
             signedToken: signedToken,

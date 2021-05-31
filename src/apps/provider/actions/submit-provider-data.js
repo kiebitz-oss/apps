@@ -32,21 +32,13 @@ export async function submitProviderData(
             providerDataKey
         );
 
-        const encryptedJSONData = JSON.stringify(encryptedData);
-
         // we store the provider data key so we can decrypt the data later
         backend.local.set('provider::data::encryptionKey', privateKey);
 
-        const signedData = await sign(
-            keyPairs.signing.privateKey,
-            encryptedJSONData,
-            keyPairs.signing.publicKey
-        );
-
         try {
             const result = await backend.appointments.storeProviderData(
-                data.id,
-                signedData
+                { id: data.id, encryptedData: encryptedData },
+                keyPairs.signing
             );
 
             const providerData = backend.local.get('provider::data', {});

@@ -16,8 +16,8 @@ export async function providers(
     markAsLoading(state, keyStore);
     try {
         const providersList = await backend.appointments.getPendingProviderData(
-            keyPairs,
-            10
+            { n: 10 },
+            keyPairs.signing
         );
         const invalidEntries = [];
         const decryptedProviderList = [];

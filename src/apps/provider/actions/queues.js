@@ -15,10 +15,10 @@ export async function queues(state, keyStore, settings, zipCode, radius, to) {
         const backend = settings.get('backend');
         if (!markAsLoading(state, keyStore)) return; // we're already loading queues
         try {
-            const queues = await backend.appointments.getQueues(
+            const queues = await backend.appointments.getQueues({
                 zipCode,
-                radius
-            );
+                radius,
+            });
             return { status: 'loaded', data: queues };
         } catch (e) {
             return { status: 'failed', error: e.toString() };

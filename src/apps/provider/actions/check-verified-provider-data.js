@@ -8,14 +8,16 @@ export async function checkVerifiedProviderData(
     state,
     keyStore,
     settings,
-    data
+    data,
+    keyPairs
 ) {
     const backend = settings.get('backend');
     try {
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
         const verifiedData = await backend.appointments.getData(
-            data.verifiedID
+            { id: data.verifiedID },
+            keyPairs.signing
         );
         if (verifiedData === null) return { status: 'not-found' };
         const encryptionKey = backend.local.get(
@@ -23,7 +25,7 @@ export async function checkVerifiedProviderData(
         );
         try {
             const decryptedJSONData = await ecdhDecrypt(
-                verifiedData.data,
+                JSON.parse(verifiedData.data),
                 encryptionKey
             );
             if (decryptedJSONData === null) {

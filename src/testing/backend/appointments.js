@@ -29,7 +29,7 @@ export default class AppointmentsBackend {
         this.initialize();
     }
 
-    async priorityToken() {
+    async _priorityToken() {
         this.store.set('position', ++this.position);
         return await deriveToken(this.secret, this.position);
     }
@@ -44,9 +44,15 @@ export default class AppointmentsBackend {
         }
     }
 
-    async confirmProvider({ id, key, providerData, keyData }) {
+    async confirmProvider({ id, key, providerData, keyData }, keyPair) {
+        // this will be stored for the provider, so we add the public key data
+        const signedProviderData = await sign(
+            keyPair.privateKey,
+            JSON.stringify(providerData),
+            keyPair.publicKey
+        );
+
         let found = false;
-        console.log(keyData);
         const keyDataJSON = JSON.parse(keyData.data);
         const newProviders = [];
         for (const existingKey of this.keys.providers) {
@@ -62,13 +68,16 @@ export default class AppointmentsBackend {
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
         // we store the verified provider data
-        const result = await this.storeData(id, providerData);
+        const result = await this.storeData(
+            { id, data: signedProviderData },
+            keyPair
+        );
         if (!result) return;
         return {};
     }
 
     // add the mediator key to the list of keys (only for testing)
-    async addMediatorPublicKeys(keys) {
+    async addMediatorPublicKeys({ keys }, keyPair) {
         await e(this.initialized());
         const keyData = {
             encryption: keys.encryption.publicKey,
@@ -227,7 +236,7 @@ export default class AppointmentsBackend {
 
     // public endpoints
 
-    async getQueues(zipCode, radius) {
+    async getQueues({ zipCode, radius }) {
         await e(this.initialized());
         // we just look at nearest neighbors here...
         return this.queues
@@ -267,33 +276,35 @@ export default class AppointmentsBackend {
 
     // data endpoints
 
-    async deleteData(id, keyPair) {
+    async deleteData({ id }, keyPair) {
         return this.store.remove(`data::${id}`);
     }
 
-    async getData(id, keyPair) {
+    async getData({ id }, keyPair) {
         // to do: implement access control (not really relevant though for the demo)
         return this.store.get(`data::${id}`);
     }
 
-    async bulkGetData(ids, keyPair) {
+    async bulkGetData({ ids }, keyPair) {
         const results = [];
         for (const id of ids) {
-            results.push(await this.getData(id, keyPair));
+            results.push(await this.getData({ id }, keyPair));
         }
         return results;
     }
 
-    async bulkStoreData(keyPair, dataList) {
+    async bulkStoreData({ dataList }, keyPair) {
         const results = [];
         for (const data of dataList) {
             try {
                 const result = await e(
                     this.storeData(
-                        data.id,
-                        data.data,
-                        keyPair,
-                        data.permissions
+                        {
+                            id: data.id,
+                            data: data.data,
+                            permissions: data.permissions,
+                        },
+                        keyPair
                     )
                 );
                 results.push(result);
@@ -304,7 +315,7 @@ export default class AppointmentsBackend {
     }
 
     // store provider data for verification
-    async storeData(id, data, keyPair, permissions, grant) {
+    async storeData({ id, data, permissions, grant }, keyPair) {
         this.store.set(`data::${id}`, data);
         return true;
     }
@@ -312,7 +323,13 @@ export default class AppointmentsBackend {
     // user endpoints
 
     // get a token for a given queue
-    async getToken(hash, encryptedData, queueID, queueData, signedTokenData) {
+    async getToken({
+        hash,
+        encryptedData,
+        queueID,
+        queueData,
+        signedTokenData,
+    }) {
         let queueToken;
         if (signedTokenData !== undefined) {
             // to do: validate signature!
@@ -344,7 +361,7 @@ export default class AppointmentsBackend {
         }
         // seems we haven't found this token in any queue (or no existing token was given)...
         if (queueToken === undefined) {
-            const token = await this.priorityToken();
+            const token = await this._priorityToken();
             const tokenData = {
                 token: token,
                 hash: hash,
@@ -362,8 +379,6 @@ export default class AppointmentsBackend {
             };
         }
 
-        console.log(queueToken);
-
         let queueTokens = this.tokens[queueID];
 
         if (queueTokens === undefined) {
@@ -377,16 +392,9 @@ export default class AppointmentsBackend {
         return signedTokenData;
     }
 
-    // retract a token from a given queue
-    async retractToken(token) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
     // provider-only endpoints
 
-    async getProviderKeyData(publicKey) {
+    async _getProviderKeyData(publicKey) {
         const publicKeyHash = await hash(publicKey);
         for (const key of this.keys.providers) {
             const keyData = JSON.parse(key.data);
@@ -397,19 +405,14 @@ export default class AppointmentsBackend {
         return null;
     }
 
-    distance(zipCodeA, zipCodeB) {
+    _distance(zipCodeA, zipCodeB) {
         return 10.0;
     }
 
     // get n tokens from the given queue IDs
-    async getQueueTokens(signedQuery) {
-        // to do: verify signature
-        const queryData = JSON.parse(signedQuery.data);
-
-        const { capacities } = queryData;
-
-        const providerKeyData = await this.getProviderKeyData(
-            signedQuery.publicKey
+    async getQueueTokens({ capacities }, keyPair) {
+        const providerKeyData = await this._getProviderKeyData(
+            keyPair.publicKey
         );
 
         if (providerKeyData === null) return null;
@@ -440,7 +443,7 @@ export default class AppointmentsBackend {
                     candidates: for (let i = 0; i < queueTokens.length; i++) {
                         const token = queueTokens[i];
                         if (
-                            this.distance(token.queueData.zip_code, zipCode) >
+                            this._distance(token.queueData.zip_code, zipCode) >
                             token.queueData.distance
                         )
                             continue candidates; // the distance between user and provider is too large
@@ -483,8 +486,17 @@ export default class AppointmentsBackend {
         return copy(allTokens);
     }
 
-    async storeProviderData(id, signedData, code) {
-        const result = await this.storeData(id, signedData);
+    async storeProviderData({ id, encryptedData, code }, keyPair) {
+        const signedData = await sign(
+            keyPair.privateKey,
+            JSON.stringify(encryptedData),
+            keyPair.publicKey
+        );
+
+        const result = await this.storeData(
+            { id: id, data: signedData },
+            keyPair
+        );
         if (!result) return;
         let providerDataList = this.store.get('providers::list');
         if (providerDataList === null) providerDataList = [];
@@ -496,15 +508,8 @@ export default class AppointmentsBackend {
         this.store.set('providers::list', providerDataList);
     }
 
-    // delete provider data stored for verification
-    deleteProviderData(id) {
-        return new Promise((resolve, reject) => {
-            resolve();
-        });
-    }
-
     // mark a given token as used using its secret
-    markTokenAsUsed(token, secret) {
+    markTokenAsUsed({ token, secret }, keyPair) {
         return new Promise((resolve, reject) => {
             resolve();
         });
@@ -512,7 +517,7 @@ export default class AppointmentsBackend {
 
     // mediator-only endpoint
 
-    async getQueuesForProvider(queueIDs) {
+    async getQueuesForProvider({ queueIDs }, keyPair) {
         queueIDs = new Set(queueIDs);
         await e(this.initialized());
         return this.queues
@@ -526,7 +531,7 @@ export default class AppointmentsBackend {
             }));
     }
 
-    async getPendingProviderData(keyPairs, limit) {
+    async getPendingProviderData({ limit }, keyPair) {
         const providersList = this.store.get('providers::list');
         if (providersList === null) return [];
         const providers = [];

@@ -9,6 +9,7 @@ import {
     contactData,
     queueData,
     getToken,
+    userSecret,
 } from 'apps/user/actions';
 import {
     withSettings,
@@ -64,6 +65,8 @@ const Finalize = withForm(
                     contactDataAction,
                     submitToQueue,
                     submitToQueueAction,
+                    userSecret,
+                    userSecretAction,
                     form: { set, data, error, valid, reset },
                 }) => {
                     const [initialized, setInitialized] = useState(false);
@@ -75,6 +78,7 @@ const Finalize = withForm(
                         if (initialized) return;
                         setInitialized(true);
                         contactDataAction();
+                        userSecretAction();
                         queueDataAction().then(qd => {
                             const initialData = {
                                 distance: 50,
@@ -105,7 +109,8 @@ const Finalize = withForm(
                                 submitToQueueAction(
                                     contactData.data,
                                     sd,
-                                    qd.data[0]
+                                    qd.data[0],
+                                    userSecret.data
                                 ).then(hd => {
                                     setSubmitting(false);
                                     router.navigateToUrl(
@@ -303,7 +308,7 @@ const Finalize = withForm(
                     };
                     return <WithLoader resources={[]} renderLoaded={render} />;
                 },
-                [queues, submitToQueue, queueData, contactData]
+                [queues, submitToQueue, queueData, contactData, userSecret]
             )
         )
     ),

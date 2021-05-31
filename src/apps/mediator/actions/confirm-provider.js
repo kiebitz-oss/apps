@@ -42,7 +42,8 @@ export async function confirmProvider(
         );
 
         const queues = await backend.appointments.getQueuesForProvider(
-            providerData.data.queues
+            { queueIDs: providerData.data.queues },
+            keyPairs.signing
         );
 
         const queuePrivateKeys = [];
@@ -78,19 +79,15 @@ export async function confirmProvider(
             entryData.publicKey
         );
 
-        // this will be stored for the provider, so we add the public key data
-        const signedEncryptedData = await sign(
-            keyPairs.signing.privateKey,
-            encryptedData,
-            keyPairs.signing.publicKey
+        const result = await backend.appointments.confirmProvider(
+            {
+                id: providerData.verifiedID, // the ID to store the data under
+                key: providerData.entry.publicKey, // for access control
+                providerData: encryptedData,
+                keyData: signedKeyData,
+            },
+            keyPairs.signing
         );
-
-        const result = await backend.appointments.confirmProvider({
-            id: providerData.verifiedID, // the ID to store the data under
-            key: providerData.entry.publicKey, // for access control
-            providerData: signedEncryptedData,
-            keyData: signedKeyData,
-        });
 
         return {
             status: 'suceeded',

@@ -22,7 +22,7 @@ export async function userSecret(state, keyStore, settings, data) {
 userSecret.init = (keyStore, settings) => {
     const backend = settings.get('backend');
     let data = backend.local.get('user::secret');
-    if (data === null || true) {
+    if (data === null) {
         data = buf2base32(b642buf(randomBytes(10)));
         backend.local.set('user::secret', data);
     }

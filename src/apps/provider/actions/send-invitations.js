@@ -34,32 +34,38 @@ export async function sendInvitations(
             []
         );
 
-        let openTokens = backend.local.get('provider::tokens::open', []);
         if (openAppointments.length === 0)
             // we don't have any new appointments to give out
             return {
                 status: 'succeeded',
             };
+
+        let openTokens = backend.local.get('provider::tokens::open', []);
+
         try {
             const n = Math.max(0, openAppointments.length - openTokens.length);
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0) {
                 // to do: get appointments by type
-                const signedData = await sign(
-                    keyPairs.signing.privateKey,
-                    JSON.stringify({ capacities: [{ n: 10, properties: {} }] }),
-                    keyPairs.signing.publicKey
-                );
                 const newTokens = await backend.appointments.getQueueTokens(
-                    signedData
+                    { capacities: [{ n: 10, properties: {} }] },
+                    keyPairs.signing
                 );
                 if (newTokens === null)
                     return {
                         status: 'failed',
                     };
                 for (const tokenList of newTokens) {
-                    for (const token of tokenList)
+                    for (const token of tokenList) {
+                        const privateKey = getQueuePrivateKey(
+                            token.queue,
+                            verifiedProviderData
+                        );
+                        token.data = JSON.parse(
+                            await ecdhDecrypt(token.encryptedData, privateKey)
+                        );
                         token.keyPair = await generateECDHKeyPair();
+                    }
                     openTokens = [...openTokens, ...tokenList];
                 }
                 // we update the list of open tokens
@@ -68,18 +74,7 @@ export async function sendInvitations(
             const dataToSubmit = [];
             // we make sure all token holders can initialize all appointment data IDs
             for (const token of openTokens) {
-                const privateKey = getQueuePrivateKey(
-                    token.queue,
-                    verifiedProviderData
-                );
                 try {
-                    const decryptedTokenJSONData = await ecdhDecrypt(
-                        token.encryptedData,
-                        privateKey
-                    );
-                    const decryptedTokenData = JSON.parse(
-                        decryptedTokenJSONData
-                    );
                     // we generate grants for all appointments IDs
                     const grantsData = await Promise.all(
                         openAppointments.map(
@@ -128,12 +123,12 @@ export async function sendInvitations(
                         keyPairs.signing.publicKey
                     );
                     dataToSubmit.push({
-                        id: decryptedTokenData.id,
+                        id: token.data.id,
                         data: signedEncryptedUserData,
                         permissions: [
                             {
                                 rights: ['read'],
-                                keys: [decryptedTokenData.publicKey],
+                                keys: [token.data.publicKey],
                             },
                         ],
                     });
@@ -144,12 +139,13 @@ export async function sendInvitations(
             backend.local.set('provider::tokens::open', openTokens);
             // we send the signed, encrypted data to the backend
             await backend.appointments.bulkStoreData(
-                keyPairs.signing,
-                dataToSubmit
+                { dataList: dataToSubmit },
+                keyPairs.signing
             );
 
             return { status: 'succeeded' };
         } catch (e) {
+            console.log(e.toString());
             return { status: 'failed', error: e.toString() };
         }
     } finally {

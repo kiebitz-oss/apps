@@ -24,7 +24,7 @@ export async function checkInvitations(
         );
         try {
             const results = await backend.appointments.bulkGetData(
-                invitations.map(i => i.id),
+                { ids: invitations.map(i => i.id) },
                 keyPairs.signing
             );
             for (const [i, result] of results.entries()) {

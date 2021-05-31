@@ -91,16 +91,20 @@ const Dashboard = withRouter(
                             if (
                                 pd.data === null ||
                                 pd.data.submitted === undefined
-                            )
+                            ) {
                                 router.navigateToUrl('/provider/setup');
+                                return;
+                            }
                             // we check whether the data is verified already...
                             if (pd.data.verified) return;
-                            checkVerifiedProviderDataAction(pd.data).then(() =>
-                                keysAction().then(ks =>
-                                    keyPairsAction().then(kp =>
-                                        validKeyPairsAction(kp.data, ks.data)
-                                    )
-                                )
+                            keysAction().then(ks =>
+                                keyPairsAction().then(kp => {
+                                    validKeyPairsAction(kp.data, ks.data);
+                                    checkVerifiedProviderDataAction(
+                                        pd.data,
+                                        kp.data
+                                    );
+                                })
                             );
                         });
                         if (

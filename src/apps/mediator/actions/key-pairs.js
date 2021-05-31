@@ -25,7 +25,9 @@ export async function keyPairs(state, keyStore, settings) {
     // the public key list and sign them with the root key so that they're
     // accepted as valid keys...
     if (settings.get('test')) {
-        await backend.appointments.addMediatorPublicKeys(providerKeyPairs);
+        await backend.appointments.addMediatorPublicKeys({
+            keys: providerKeyPairs,
+        });
     }
 
     return { status: 'loaded', data: providerKeyPairs };

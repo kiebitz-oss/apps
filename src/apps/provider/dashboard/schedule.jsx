@@ -39,7 +39,7 @@ Date.prototype.addHours = function(h) {
 const AppointmentsOverview = ({ open, accepted, ...props }) => {
     const acceptedItems = accepted
         .filter(ai => ai.data !== null)
-        .map(ai => <li key={ai.invitation.id}>{ai.data.userData.name}</li>);
+        .map(ai => <li key={ai.invitation.id}>{ai.token.data.code}</li>);
     return (
         <Modal {...props} title={<T t={t} k="appointments-overview.title" />}>
             <ul>{acceptedItems}</ul>
