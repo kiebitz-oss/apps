@@ -30,7 +30,7 @@ export default class AppointmentsBackend {
     }
 
     async priorityToken() {
-        this.store.set('position', this.position++);
+        this.store.set('position', ++this.position);
         return await deriveToken(this.secret, this.position);
     }
 

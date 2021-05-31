@@ -31,6 +31,8 @@ finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
 wizard:
+  no-queue:
+    de: Die gewählte Region ist nicht verfügbar :/
   please-wait:
     de: Bitte warten...
   leave:
@@ -45,17 +47,17 @@ wizard:
     de: Weiter
   steps:
     hi:
-      de: Hallo
+      de: Los geht's!
     enter-contact-data:
-      de: Kontaktdaten eingeben
+      de: Optionale Kontaktdaten eingeben
     store-secrets:
       de: Buchungscode notieren
     save-contact-data:
       de: Kontakdaten angeben
     finalize:
-      de: Angaben zur Impfung
+      de: Angaben zur Impfung machen
     verify:
-      de: Kontaktdaten prüfen
+      de: Optionale Kontaktdaten prüfen
 contact-data:
   properties:
     vaccine-types:

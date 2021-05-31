@@ -44,6 +44,7 @@ export async function sendInvitations(
             const n = Math.max(0, openAppointments.length - openTokens.length);
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0) {
+                // to do: get appointments by type
                 const signedData = await sign(
                     keyPairs.signing.privateKey,
                     JSON.stringify({ capacities: [{ n: 10, properties: {} }] }),
@@ -52,6 +53,10 @@ export async function sendInvitations(
                 const newTokens = await backend.appointments.getQueueTokens(
                     signedData
                 );
+                if (newTokens === null)
+                    return {
+                        status: 'failed',
+                    };
                 for (const tokenList of newTokens) {
                     for (const token of tokenList)
                         token.keyPair = await generateECDHKeyPair();
@@ -67,9 +72,7 @@ export async function sendInvitations(
                     token.queue,
                     verifiedProviderData
                 );
-                console.log(token);
                 try {
-                    console.log(token);
                     const decryptedTokenJSONData = await ecdhDecrypt(
                         token.encryptedData,
                         privateKey
@@ -77,7 +80,6 @@ export async function sendInvitations(
                     const decryptedTokenData = JSON.parse(
                         decryptedTokenJSONData
                     );
-                    console.log(decryptedTokenJSONData);
                     // we generate grants for all appointments IDs
                     const grantsData = await Promise.all(
                         openAppointments.map(
@@ -125,7 +127,6 @@ export async function sendInvitations(
                         JSON.stringify(encryptedUserData),
                         keyPairs.signing.publicKey
                     );
-                    console.log(decryptedTokenData);
                     dataToSubmit.push({
                         id: decryptedTokenData.id,
                         data: signedEncryptedUserData,
@@ -137,7 +138,6 @@ export async function sendInvitations(
                         ],
                     });
                 } catch (e) {
-                    console.log(e.toString(), e.stack);
                     continue;
                 }
             }
@@ -150,7 +150,6 @@ export async function sendInvitations(
 
             return { status: 'succeeded' };
         } catch (e) {
-            console.log(e.toString(), e.stack);
             return { status: 'failed', error: e.toString() };
         }
     } finally {

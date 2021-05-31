@@ -282,14 +282,16 @@ const Finalize = withForm(
                                 <CardFooter>
                                     <Button
                                         waiting={submitting}
-                                        type="success"
+                                        type={noQueue ? 'danger' : 'success'}
                                         onClick={submit}
                                         disabled={submitting || !valid}
                                     >
                                         <T
                                             t={t}
                                             k={
-                                                submitting
+                                                noQueue
+                                                    ? 'wizard.no-queue'
+                                                    : submitting
                                                     ? 'wizard.please-wait'
                                                     : 'wizard.continue'
                                             }

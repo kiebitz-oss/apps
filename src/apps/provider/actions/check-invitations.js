@@ -38,14 +38,20 @@ export async function checkInvitations(
                                 openToken.keyPair.privateKey
                             )
                         );
+                        if (decryptedData === null) continue; // not the right token....
+
+                        const signedData = JSON.parse(
+                            decryptedData.signedToken.data
+                        );
+
                         if (
                             acceptedInvitations.find(
-                                ai =>
-                                    ai.token.token.token ===
-                                    openToken.token.token
+                                ai => ai.token.token === signedData.token
                             )
                         )
-                            continue;
+                            continue; // we already have this token
+
+                        // this token belongs to the given invitation
                         acceptedInvitations.push({
                             token: openToken,
                             data: decryptedData,
@@ -74,14 +80,18 @@ export async function checkInvitations(
             );
             backend.local.set('provider::appointments::open', openAppointments);
 
+            console.log(openTokens);
+            console.log(acceptedInvitations);
+
             // we remove the tokens corresponding to the accepted invitations from
             // the list of open tokens...
             openTokens = openTokens.filter(
                 ot =>
-                    !acceptedInvitations.find(
-                        ai => ai.token.token.token === ot.token.token
-                    )
+                    !acceptedInvitations.find(ai => ai.token.token === ot.token)
             );
+
+            console.log(openTokens);
+
             backend.local.set('provider::tokens::open', openTokens);
 
             return {
