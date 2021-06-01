@@ -25,7 +25,6 @@ test-apps:
     - apt purge -yq nodejs npm
     # we update the path to ensure the new NodeJS version is being used
     - PATH=$PATH
-    - cd app
     - npm ci
   script:
     # we build the production app
@@ -44,7 +43,6 @@ deploy-apps:
     - apt purge -yq nodejs npm
     # we update the path to ensure the new NodeJS version is being used
     - PATH=$PATH
-    - cd app
     - npm ci
   script:
     # we build the production app
