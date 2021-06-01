@@ -18,6 +18,18 @@ function urlEncode(data) {
     return null;
 }
 
+function hash(str) {
+    let hash = 0,
+        i,
+        chr;
+    for (i = 0; i < str.length; i++) {
+        chr = str.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}
+
 class JSONRPCBackend {
     constructor(settings, urlKey) {
         this.settings = settings;
@@ -54,7 +66,7 @@ class JSONRPCBackend {
                     });
                 const data = normalize(JSON.parse(xhr.response));
                 data.status = xhr.status;
-                // this is a non-cryptogaphic hash, just used to e.g. decide whether we should
+                // this is a non-cryptogaphic (!) hash, just used to e.g. decide whether we should
                 // rerender a given graph...
                 data.hash = hash(xhr.response);
                 if (xhr.status >= 200 && xhr.status < 300) {
@@ -96,7 +108,7 @@ class JSONRPCBackend {
     }
 
     async call(method, params, keyPair, id) {
-        return await this.request({
+        const result = await this.request({
             url: `${this.apiUrl}`,
             method: 'POST',
             json: {
@@ -106,6 +118,12 @@ class JSONRPCBackend {
                 id: id,
             },
         });
+
+        if (result.error !== undefined) {
+            throw result.error.message;
+        }
+
+        return result.result;
     }
 }
 

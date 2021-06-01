@@ -27,6 +27,7 @@ export async function submitProviderData(
 
         // we convert the data to JSON
         const jsonData = JSON.stringify(dataToEncrypt);
+
         const [encryptedData, privateKey] = await ephemeralECDHEncrypt(
             jsonData,
             providerDataKey
