@@ -49,10 +49,10 @@ class ExtSettings extends React.Component {
         const updateSettings = () => {
             if (!this.mounted) return;
             externalSettingsActions.loadSettings(settings);
-            setTimeout(updateSettings, 1000);
+            setTimeout(updateSettings, 60000);
         };
 
-        setTimeout(updateSettings, 1000);
+        setTimeout(updateSettings, 60000);
 
         this.mounted = true;
     }

@@ -65,10 +65,10 @@ class App extends React.Component {
             if (!this.mounted) return;
             if (settings.get('commitSHA') !== this.commitSHA)
                 this.setState({ outdated: true });
-            else setTimeout(checkSettings, 1000);
+            else setTimeout(checkSettings, 60000);
         };
 
-        setTimeout(checkSettings, 1000);
+        setTimeout(checkSettings, 60000);
     }
 
     componentWillUnmount() {
