@@ -20,7 +20,7 @@ deploy-apps:
   before_script:
     - apt update && apt install -yq nodejs npm curl rsync ssh
     - npm install -g n
-    - n latest
+    - n 15
     # we purge the old NodeJS version
     - apt purge -yq nodejs npm
     # we update the path to ensure the new NodeJS version is being used
