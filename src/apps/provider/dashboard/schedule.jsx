@@ -90,9 +90,9 @@ const HourRow = ({ appointments, date, day, hour }) => {
     ]) {
         for (const oa of app) {
             let oad;
-            if (inner) oad = new Date(oa.invitation.date);
-            else oad = new Date(oa.date);
-            if (ota <= oad && ote >= oad) target.push(oa);
+            if (inner) oad = new Date(`${oa.invitation.timestamp}`);
+            else oad = new Date(`${oa.timestamp}`);
+            if (ota <= oad && ote > oad) target.push(oa);
         }
     }
     let hasAppointments = false;
@@ -196,11 +196,17 @@ class AppointmentForm extends Form {
                 t,
                 'new-appointment.please-enter-date'
             );
-        if (this.data.time === undefined)
+        else if (this.data.time === undefined)
             errors.time = this.settings.t(
                 t,
                 'new-appointment.please-enter-time'
             );
+        else {
+            this.data.timestamp = new Date(
+                `${this.data.date} ${this.data.time}`
+            );
+            console.log(this.data.timestamp);
+        }
         return errors;
     }
 }
@@ -214,12 +220,23 @@ const NewAppointment = withActions(
                 router,
                 form: { valid, error, data, set, reset },
             }) => {
+                const [initialized, setInitialized] = useState(false);
                 const cancel = () => router.navigateToUrl('/provider/schedule');
                 const save = () => {
                     createAppointmentAction(data).then(() =>
                         router.navigateToUrl('/provider/schedule')
                     );
                 };
+
+                useEffect(() => {
+                    if (initialized) return;
+                    setInitialized(true);
+                    reset({
+                        duration: 30,
+                        slots: 1,
+                        biontech: true,
+                    });
+                });
 
                 const properties = Object.entries(
                     t.schedule.appointment.properties
@@ -244,16 +261,6 @@ const NewAppointment = withActions(
                             if (k === option.value) currentOption = k;
                         }
                     }
-
-                    let initialize;
-                    if (currentOption === undefined) {
-                        currentOption = options[0].value;
-                        initialize = true;
-                    }
-
-                    useEffect(() => {
-                        if (initialize) set(currentOption, true);
-                    });
 
                     const changeTo = option => {
                         const newData = { ...data };
@@ -352,7 +359,10 @@ const NewAppointment = withActions(
                                         type="range"
                                         value={data.slots || 1}
                                         onChange={e =>
-                                            set('slots', e.target.value)
+                                            set(
+                                                'slots',
+                                                parseInt(e.target.value)
+                                            )
                                         }
                                         step={1}
                                         min={1}

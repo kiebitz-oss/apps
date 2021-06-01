@@ -75,7 +75,7 @@ $border: 1px dashed #ccc;
 
 		.kip-hour-row {
 			height: 60px;
-			padding: 10px;
+			padding: 0;
 			background: #fff;
 
 			&.kip-has-appointments {
@@ -102,7 +102,6 @@ $border: 1px dashed #ccc;
 			.kip-appointments {
 				box-shadow: $kip-box-shadow;
 				padding: 4px;
-				border-radius: $kip-border-radius;
 				background: $kip-green;
 				color: #fff;
 				cursor: pointer;

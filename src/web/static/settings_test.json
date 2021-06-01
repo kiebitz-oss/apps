@@ -1,5 +1,5 @@
 {
-    "commitSHA" : "COMMIT_SHA",
+    "commitSHA" : "ddd",
     "apiUrl" : "http://localhost:8000",
     "supportEmail": "help@kiebitz.eu",
     "termsUrl" : "http://localhost:8111/resources/terms.html",

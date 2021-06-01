@@ -81,7 +81,7 @@ class App extends React.Component {
 
     render() {
         const { settings, route, router, user } = this.props;
-        const { outdated} = this.state;
+        const { outdated } = this.state;
         const RouteComponent = route.handler.component;
 
         let notice;

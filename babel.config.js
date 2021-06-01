@@ -14,7 +14,8 @@ module.exports = {
         "@babel/preset-typescript"
     ],
     plugins: [
-        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-proposal-class-static-block",
+	"@babel/plugin-proposal-class-properties",
         "@babel/plugin-transform-async-to-generator",
         "@babel/plugin-proposal-object-rest-spread"
     ]
