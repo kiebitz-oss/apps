@@ -465,12 +465,6 @@ const Invitations = withTimer(
                                                 k="schedule.view.calendar"
                                             />
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            icon="list"
-                                            onClick={() => setView('list')}
-                                        >
-                                            <T t={t} k="schedule.view.list" />
-                                        </DropdownMenuItem>
                                     </DropdownMenu>
                                     <DropdownMenu
                                         title={
@@ -538,6 +532,14 @@ export default Invitations;
                                                 t={t}
                                                 k="schedule.appointment.series"
                                             />
+                                        </DropdownMenuItem>
+
+
+                                        <DropdownMenuItem
+                                            icon="list"
+                                            onClick={() => setView('list')}
+                                        >
+                                            <T t={t} k="schedule.view.list" />
                                         </DropdownMenuItem>
 
 */

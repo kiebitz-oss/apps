@@ -14,6 +14,6 @@ export async function keys(state, keyStore, settings) {
             data: keys,
         };
     } catch (e) {
-        return { status: 'failed', error: e.toString() };
+        return { status: 'failed', error: e };
     }
 }

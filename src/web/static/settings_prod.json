@@ -1,6 +1,7 @@
 {
     "commitSHA" : "COMMIT_SHA",
-    "apiUrl" : "https://api.kiebitz.eu",
+    "storageApi" : "https://storage.kiebitz.eu/jsonrpc",
+    "appointmentsApi" : "https://appointments.kiebitz.eu/jsonrpc",
     "termsUrl" : "https://kiebitz.eu/demo/resources/terms",
     "privacyUrl" : "https://kiebitz.eu/demo/resources/privacy"
 }
