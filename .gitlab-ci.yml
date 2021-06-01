@@ -28,6 +28,8 @@ deploy-apps:
     - cd app
     - npm ci
   script:
+    # we build the production app
+    - npm run-script make
     # we move in the production settings...
     - rm build/web/settings.json && mv build/web/settings_prod.json build/web/settings.json
     # we store the commit SHA (so that the frontend can ask for a reload)
