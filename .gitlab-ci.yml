@@ -1,6 +1,7 @@
 image: ubuntu:20.04
 
 stages:
+  - test
   - deploy
 
 variables:
@@ -12,6 +13,24 @@ cache:
     paths:
       - node_modules
     policy: pull-push
+
+
+test-apps:
+  stage: test
+  before_script:
+    - apt update && apt install -yq nodejs npm curl rsync ssh
+    - npm install -g n
+    - n 15
+    # we purge the old NodeJS version
+    - apt purge -yq nodejs npm
+    # we update the path to ensure the new NodeJS version is being used
+    - PATH=$PATH
+    - cd app
+    - npm ci
+  script:
+    # we build the production app
+    - npm run-script make
+
 
 deploy-apps:
   only:
