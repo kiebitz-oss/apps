@@ -213,15 +213,6 @@ export default class AppointmentsBackend {
                         queueKeyEncryptionKeyPair.publicKey
                     )
                 );
-                const decrypted = await e(
-                    ecdhDecrypt(
-                        queue.encryptedPrivateKey,
-                        queueKeyEncryptionKeyPair.privateKey
-                    )
-                );
-
-                // we make sure the encryption & decryption works
-                if (decrypted !== queue.keyPair.privateKey) throw 'uh oh';
 
                 queues.push(queue);
             }

@@ -69,19 +69,14 @@ export function hex2buf(hex) {
     return buffer;
 }
 
-// https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
 export function str2ab(str) {
-    const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-    const bufView = new Uint16Array(buf);
-    for (let i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
-    }
-    return buf;
+    const uint8array = new TextEncoder('utf-8').encode(str);
+    return uint8array.buffer;
 }
 
 // https://gist.github.com/skratchdot/e095036fad80597f1c1a
 export function ab2str(buf) {
-    return String.fromCharCode.apply(null, new Uint16Array(buf));
+    return new TextDecoder().decode(new Uint8Array(buf));
 }
 
 // https://stackoverflow.com/questions/421419/good-choice-for-a-lightweight-checksum-algorithm

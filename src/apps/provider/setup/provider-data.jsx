@@ -69,8 +69,6 @@ const BaseProviderData = ({
         set(key, value);
     };
 
-    console.log(data);
-
     const render = () => {
         const controls = (
             <React.Fragment>

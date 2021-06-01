@@ -9,14 +9,14 @@ export default class StorageBackend {
         this.store = store;
     }
 
-    storeSettings(id, data) {
+    storeSettings({ id, data }) {
         return new Promise((resolve, reject) => {
             this.store.set(`settings:${id}`, data);
             resolve();
         });
     }
 
-    getSettings(id) {
+    getSettings({ id }) {
         return new Promise((resolve, reject) => {
             resolve(this.store.get(`settings:${id}`));
         });

@@ -12,8 +12,8 @@ export async function keyPairs(state, keyStore, settings) {
     markAsLoading(state, keyStore);
 
     if (providerKeyPairs === null) {
-        const encryptionKeyPair = await generateECDSAKeyPair();
-        const signingKeyPair = await generateECDHKeyPair();
+        const signingKeyPair = await generateECDSAKeyPair();
+        const encryptionKeyPair = await generateECDHKeyPair();
         let providerKeyPairs = {
             signing: signingKeyPair,
             encryption: encryptionKeyPair,

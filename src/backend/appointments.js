@@ -14,23 +14,40 @@ import {
     randomBytes,
 } from 'helpers/crypto';
 
+import JSONRPCBackend from './jsonrpc';
+
 // The appointments backend
-export default class AppointmentsBackend {
+export default class AppointmentsBackend extends JSONRPCBackend {
     constructor(settings) {
+        super(settings, 'appointmentsApi');
         this.settings = settings;
     }
 
-    async confirmProvider({ id, key, providerData, keyData }, keyPair) {}
+    async confirmProvider({ id, key, providerData, keyData }, keyPair) {
+        return await this.call(
+            'confirmProvider',
+            { id, key, providerData, keyData },
+            keyPair
+        );
+    }
 
     // add the mediator key to the list of keys (only for testing)
     async addMediatorPublicKeys({ keys }, keyPair) {}
 
     // public endpoints
 
-    async getQueues({ zipCode, radius }) {}
+    async getQueues({ zipCode, radius }) {
+        try {
+            return await this.call('getQueues', { zipCode, radius });
+        } catch (e) {
+            console.log(e.toString());
+        }
+    }
 
     // return all public keys present in the system
-    async getKeys() {}
+    async getKeys() {
+        return await this.call('getKeys', {});
+    }
 
     // data endpoints
 
@@ -54,7 +71,15 @@ export default class AppointmentsBackend {
         queueID,
         queueData,
         signedTokenData,
-    }) {}
+    }) {
+        return await this.call('getToken', {
+            hash: hash,
+            encryptedData: encryptedData,
+            queueID: queueID,
+            queueData: queueData,
+            signedTokenData: signedTokenData,
+        });
+    }
 
     // provider-only endpoints
 

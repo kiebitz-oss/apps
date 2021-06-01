@@ -3,11 +3,9 @@
 // README.md contains license information.
 
 import AppointmentsBackend from './appointments';
-import { PrefixStore } from './store';
 import StorageBackend from './storage';
-import LocalBackend from './local';
-
-export * from './store';
+import { PrefixStore } from 'backend/store';
+import LocalBackend from 'backend/local';
 
 export default class Backend {
     constructor(settings, store, temporaryStore) {

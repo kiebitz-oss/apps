@@ -19,10 +19,11 @@ export async function ecdhEncrypt(rawData, keyPair, publicKeyData) {
                 []
             )
         );
+
         const privateKey = await e(
             crypto.subtle.importKey(
-                'pkcs8',
-                b642buf(keyPair.privateKey),
+                'jwk',
+                keyPair.privateKey,
                 { name: 'ECDH', namedCurve: 'P-256' },
                 false,
                 ['deriveKey']
@@ -87,8 +88,8 @@ export async function ephemeralECDHEncrypt(rawData, publicKeyData) {
         );
         const privateKey = await e(
             crypto.subtle.importKey(
-                'pkcs8',
-                b642buf(ephemeralKeyPair.privateKey),
+                'jwk',
+                ephemeralKeyPair.privateKey,
                 { name: 'ECDH', namedCurve: 'P-256' },
                 false,
                 ['deriveKey']
@@ -144,13 +145,14 @@ export async function ecdhDecrypt(data, privateKeyData) {
     try {
         const privateKey = await e(
             crypto.subtle.importKey(
-                'pkcs8',
-                b642buf(privateKeyData),
+                'jwk',
+                privateKeyData,
                 { name: 'ECDH', namedCurve: 'P-256' },
                 false,
                 ['deriveKey']
             )
         );
+
         const publicKey = await e(
             crypto.subtle.importKey(
                 'spki',

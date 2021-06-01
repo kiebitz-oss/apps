@@ -15,11 +15,11 @@ export async function generateECDSAKeyPair() {
             )
         );
         const pubKey = await e(crypto.subtle.exportKey('spki', key.publicKey));
-        const privKey = await e(
-            crypto.subtle.exportKey('pkcs8', key.privateKey)
-        );
-        return { publicKey: buf2b64(pubKey), privateKey: buf2b64(privKey) };
+        const privKey = await crypto.subtle.exportKey('jwk', key.privateKey);
+
+        return { publicKey: buf2b64(pubKey), privateKey: privKey };
     } catch (e) {
+        throw e;
         console.log(e);
     }
     return null;
@@ -35,10 +35,8 @@ export async function generateECDHKeyPair() {
             )
         );
         const pubKey = await e(crypto.subtle.exportKey('spki', key.publicKey));
-        const privKey = await e(
-            crypto.subtle.exportKey('pkcs8', key.privateKey)
-        );
-        return { publicKey: buf2b64(pubKey), privateKey: buf2b64(privKey) };
+        const privKey = await e(crypto.subtle.exportKey('jwk', key.privateKey));
+        return { publicKey: buf2b64(pubKey), privateKey: privKey };
     } catch (e) {
         console.log(e);
     }

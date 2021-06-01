@@ -19,8 +19,8 @@ export async function keyPairs(state, keyStore, settings) {
 
         if (providerKeyPairs === null) {
             try {
-                const encryptionKeyPair = await generateECDSAKeyPair();
-                const signingKeyPair = await generateECDHKeyPair();
+                const signingKeyPair = await generateECDSAKeyPair();
+                const encryptionKeyPair = await generateECDHKeyPair();
                 const keyPairs = {
                     signing: signingKeyPair,
                     encryption: encryptionKeyPair,

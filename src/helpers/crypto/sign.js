@@ -7,19 +7,18 @@ import { e } from 'helpers/async';
 
 export async function sign(keyData, rawData, publicKeyData) {
     const data = str2ab(rawData);
-    const ab = b642buf(keyData);
-
     try {
         // we import the key data
         const key = await e(
             crypto.subtle.importKey(
-                'pkcs8',
-                ab,
+                'jwk',
+                keyData,
                 { name: 'ECDSA', namedCurve: 'P-256' },
                 false,
                 ['sign']
             )
         );
+
         const result = await e(
             crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, data)
         );
