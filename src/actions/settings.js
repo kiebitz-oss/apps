@@ -24,12 +24,20 @@ export default class Settings extends BaseActions {
     }
 
     loadSettings(settings) {
-        const loadSettings = data => {
+        const loadSettings = ({ data, response }) => {
+            const { response: oldResponse } = this.get();
+            if (oldResponse !== undefined && response === oldResponse) {
+                return;
+            }
             const dataMap = new Map(Object.entries(data));
             // we update the settings with the external ones
             settings.updateWithMap(dataMap);
             settings.set('external', true);
-            this.set({ settings: dataMap, status: 'loaded' });
+            this.set({
+                settings: dataMap,
+                status: 'loaded',
+                response: response,
+            });
         };
 
         const xhr = new XMLHttpRequest();
@@ -49,7 +57,8 @@ export default class Settings extends BaseActions {
 
                 const data = JSON.parse(xhr.response);
 
-                if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+                if (xhr.status >= 200 && xhr.status < 300)
+                    resolve({ data, response: xhr.response });
                 else {
                     reject(data);
                 }
@@ -63,7 +72,7 @@ export default class Settings extends BaseActions {
             };
         });
         promise
-            .then(data => loadSettings(data))
+            .then(({ data, response }) => loadSettings({ data, response }))
             .catch(error => this.set({ status: 'failed', error: error }));
         xhr.send();
     }

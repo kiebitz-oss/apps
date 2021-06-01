@@ -12,6 +12,8 @@ import {
     withRouter,
     withSettings,
     withRoute,
+    Message,
+    Button,
     TopNavbar,
     Sidebar,
     T,
@@ -28,10 +30,14 @@ import './app.scss';
 class App extends React.Component {
     constructor(props) {
         super(props);
+        const { settings } = props;
         this.state = {
             sidebarActive: false,
+            outdated: false,
         };
         this.checkRoute(true);
+        this.mounted = false;
+        this.commitSHA = settings.get('commitSHA');
     }
 
     handleSidebarToggle = () => {
@@ -52,13 +58,47 @@ class App extends React.Component {
         return true;
     }
 
+    componentDidMount() {
+        this.mounted = true;
+        const { settings } = this.props;
+        const checkSettings = () => {
+            if (!this.mounted) return;
+            if (settings.get('commitSHA') !== this.commitSHA)
+                this.setState({ outdated: true });
+            else setTimeout(checkSettings, 1000);
+        };
+
+        setTimeout(checkSettings, 1000);
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+    }
+
     componentDidUpdate() {
         this.checkRoute(true);
     }
 
     render() {
-        const { route, router, user } = this.props;
+        const { settings, route, router, user } = this.props;
+        const { outdated} = this.state;
         const RouteComponent = route.handler.component;
+
+        let notice;
+
+        if (outdated) {
+            notice = (
+                <Message className="kip-outdated-notice" type="warning">
+                    <p>
+                        <T t={t} k="outdated" />
+                    </p>
+                    <Button type="info" onClick={() => location.reload()}>
+                        <T t={t} k="reload" />
+                    </Button>
+                </Message>
+            );
+        }
+
         if (!this.checkRoute())
             return (
                 <CenteredCard>
@@ -68,10 +108,17 @@ class App extends React.Component {
                 </CenteredCard>
             );
 
+        let content;
         if (route.handler.isSimple)
-            return this.renderSimple(RouteComponent, route.handler.props);
+            content = this.renderSimple(RouteComponent, route.handler.props);
+        else content = this.renderFull(RouteComponent, route.handler.props);
 
-        return this.renderFull(RouteComponent, route.handler.props);
+        return (
+            <Fragment>
+                {notice}
+                {content}
+            </Fragment>
+        );
     }
 
     renderFull(Component, props) {

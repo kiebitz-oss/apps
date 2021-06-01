@@ -32,6 +32,7 @@ class ExtSettings extends React.Component {
     constructor(props) {
         super(props);
         const { settings } = props;
+        this.mounted = false;
         props.externalSettingsActions.loadSettings(settings);
     }
 
@@ -42,6 +43,23 @@ class ExtSettings extends React.Component {
         }
     }
 
+    componentDidMount() {
+        const { externalSettingsActions, settings } = this.props;
+
+        const updateSettings = () => {
+            if (!this.mounted) return;
+            externalSettingsActions.loadSettings(settings);
+            setTimeout(updateSettings, 1000);
+        };
+
+        setTimeout(updateSettings, 1000);
+
+        this.mounted = true;
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+    }
     render() {
         const { externalSettings } = this.props;
         if (externalSettings.status !== 'loaded') return <div />;
