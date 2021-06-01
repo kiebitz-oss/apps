@@ -31,8 +31,16 @@ finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
 wizard:
+  failed:
+    title:
+      de: Laden fehlgeschlagen
+    notice:
+      de: Das Laden von Daten ist fehlgeschlagen. Bitte versuchen Sie es später erneut.
   no-queue:
-    de: Die gewählte Region ist nicht verfügbar :/
+    title:
+      de: Nicht verfügbar
+    notice:
+      de: Im gewählten Postleitzahlgebiet ist der Dienst noch nicht verfügar. Sorry!
   please-wait:
     de: Bitte warten...
   leave:
@@ -128,5 +136,3 @@ contact-data:
     de: Straße & Hausnummer
   invalid-street:
     de: Bitte geben Sie einen gültigen Straßennamen (inkl. Hausnummer) an.
-no-queue:
-  de: Im gewählten Postleitzahlgebiet ist der Dienst noch nicht verfügar. Sorry!

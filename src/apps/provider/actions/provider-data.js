@@ -20,11 +20,6 @@ export async function providerData(state, keyStore, settings, data) {
         }
         if (data !== undefined) {
             providerData.data = data;
-            const queues = await backend.appointments.getQueues({
-                zipCode: providerData.data.zipCode,
-                radius: 50,
-            });
-            providerData.data.queues = queues.map(q => q.id);
         }
         backend.local.set('provider::data', providerData);
         return {

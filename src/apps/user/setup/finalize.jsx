@@ -71,6 +71,7 @@ const Finalize = withForm(
                 }) => {
                     const [initialized, setInitialized] = useState(false);
                     const [noQueue, setNoQueue] = useState(false);
+                    const [failed, setFailed] = useState(false);
                     const [modified, setModified] = useState(false);
                     const [submitting, setSubmitting] = useState(false);
                     const [tv, setTV] = useState(0);
@@ -101,6 +102,11 @@ const Finalize = withForm(
                         queueDataAction(data).then(({ data: sd }) => {
                             const qa = queuesAction(sd.zipCode, sd.distance);
                             qa.then(qd => {
+                                if (qd.status === 'failed') {
+                                    setFailed(true);
+                                    setSubmitting(false);
+                                    return;
+                                }
                                 if (qd.data.length === 0) {
                                     setNoQueue(true);
                                     setSubmitting(false);
@@ -168,11 +174,19 @@ const Finalize = withForm(
 
                     const render = () => {
                         let noQueueMessage;
+                        let failedMessage;
 
                         if (noQueue)
                             noQueueMessage = (
                                 <Message type="danger">
-                                    <T t={t} k="no-queue" />
+                                    <T t={t} k="wizard.no-queue.notice" />
+                                </Message>
+                            );
+
+                        if (failed)
+                            failedMessage = (
+                                <Message type="danger">
+                                    <T t={t} k="wizard.failed.notice" />
                                 </Message>
                             );
 
@@ -180,6 +194,7 @@ const Finalize = withForm(
                             <React.Fragment>
                                 <CardContent>
                                     {noQueueMessage}
+                                    {failedMessage}
                                     <div className="kip-finalize-fields">
                                         <ErrorFor
                                             error={error}
@@ -287,7 +302,11 @@ const Finalize = withForm(
                                 <CardFooter>
                                     <Button
                                         waiting={submitting}
-                                        type={noQueue ? 'danger' : 'success'}
+                                        type={
+                                            noQueue || failed
+                                                ? 'danger'
+                                                : 'success'
+                                        }
                                         onClick={submit}
                                         disabled={submitting || !valid}
                                     >
@@ -295,7 +314,9 @@ const Finalize = withForm(
                                             t={t}
                                             k={
                                                 noQueue
-                                                    ? 'wizard.no-queue'
+                                                    ? 'wizard.no-queue.title'
+                                                    : failed
+                                                    ? 'wizard.failed.title'
                                                     : submitting
                                                     ? 'wizard.please-wait'
                                                     : 'wizard.continue'

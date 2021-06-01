@@ -32,16 +32,14 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     // add the mediator key to the list of keys (only for testing)
-    async addMediatorPublicKeys({ keys }, keyPair) {}
+    async addMediatorPublicKeys({ keys }, keyPair) {
+        return await this.call('addMediatorPublicKeys', { keys }, keyPair);
+    }
 
     // public endpoints
 
     async getQueues({ zipCode, radius }) {
-        try {
-            return await this.call('getQueues', { zipCode, radius });
-        } catch (e) {
-            console.log(e.toString());
-        }
+        return await this.call('getQueues', { zipCode, radius });
     }
 
     // return all public keys present in the system
@@ -51,16 +49,30 @@ export default class AppointmentsBackend extends JSONRPCBackend {
 
     // data endpoints
 
-    async deleteData({ id }, keyPair) {}
+    async deleteData({ id }, keyPair) {
+        return await this.call('deleteData', { id }, keyPair);
+    }
 
-    async getData({ id }, keyPair) {}
+    async getData({ id }, keyPair) {
+        return await this.call('getData', { id }, keyPair);
+    }
 
-    async bulkGetData({ ids }, keyPair) {}
+    async bulkGetData({ ids }, keyPair) {
+        return await this.call('bulkGetData', { ids }, keyPair);
+    }
 
-    async bulkStoreData({ dataList }, keyPair) {}
+    async bulkStoreData({ dataList }, keyPair) {
+        return await this.call('bulkStoreData', { dataList }, keyPair);
+    }
 
     // store provider data for verification
-    async storeData({ id, data, permissions, grant }, keyPair) {}
+    async storeData({ id, data, permissions, grant }, keyPair) {
+        return await this.call(
+            'storeData',
+            { id, data, permissions, grant },
+            keyPair
+        );
+    }
 
     // user endpoints
 
@@ -69,11 +81,13 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         hash,
         encryptedData,
         queueID,
+        code,
         queueData,
         signedTokenData,
     }) {
         return await this.call('getToken', {
             hash: hash,
+            code: code,
             encryptedData: encryptedData,
             queueID: queueID,
             queueData: queueData,
@@ -84,14 +98,26 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     // provider-only endpoints
 
     // get n tokens from the given queue IDs
-    async getQueueTokens({ capacities }, keyPair) {}
+    async getQueueTokens({ capacities }, keyPair) {
+        return await this.call('getQueueTokens', { capacities }, keyPair);
+    }
 
-    async storeProviderData({ id, encryptedData, code }, keyPair) {}
+    async storeProviderData({ id, encryptedData, code }, keyPair) {
+        return await this.call(
+            'storeProviderData',
+            { id, encryptedData, code },
+            keyPair
+        );
+    }
 
     // mark a given token as used using its secret
-    async markTokenAsUsed({ token, secret }, keyPair) {}
+    async markTokenAsUsed({ token, secret }, keyPair) {
+        return await this.call('markTokenAsUsed', { token, secret }, keyPair);
+    }
 
     // mediator-only endpoint
 
-    async getPendingProviderData({ limit }, keyPair) {}
+    async getPendingProviderData({ limit }, keyPair) {
+        return await this.call('getPendingProviderData', { limit }, keyPair);
+    }
 }

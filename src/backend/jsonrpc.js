@@ -73,14 +73,13 @@ class JSONRPCBackend {
                     // setTimeout( () => resolve(data), 1000); // uncomment to add a delay for debugging
                     resolve(data);
                 } else {
-                    reject(data);
+                    reject(data.error);
                 }
             };
             xhr.onerror = () => {
                 reject({
                     status: xhr.status,
-                    message:
-                        xhr.statusText || this.settings.t(t, 'requestFailed'),
+                    message: xhr.statusText || 'request failed',
                     errors: {},
                 });
             };
@@ -108,20 +107,32 @@ class JSONRPCBackend {
     }
 
     async call(method, params, keyPair, id) {
+        let callParams;
+        if (keyPair !== undefined) {
+            const dataToSign = {
+                ...params,
+                timestamp: new Date().toISOString(),
+            };
+            const signedData = await sign(
+                keyPair.privateKey,
+                JSON.stringify(dataToSign),
+                keyPair.publicKey
+            );
+            callParams = signedData;
+        } else {
+            callParams = params;
+        }
+
         const result = await this.request({
             url: `${this.apiUrl}`,
             method: 'POST',
             json: {
                 jsonrpc: '2.0',
                 method: method,
-                params: params,
+                params: callParams,
                 id: id,
             },
         });
-
-        if (result.error !== undefined) {
-            throw result.error.message;
-        }
 
         return result.result;
     }

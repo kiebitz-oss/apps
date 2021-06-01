@@ -18,9 +18,9 @@ export default withRouter(
     withSettings(({ router, settings }) => {
         useEffect(() => {
             const backend = settings.get('backend');
-            console.log(backend.local.get('user::tokenData'));
-            if (backend.local.get('user::tokenData') !== null)
-                router.navigateToUrl('/user/appointments');
+            if (backend.local.get('provider::data') !== null)
+                router.navigateToUrl('/provider/schedule');
+            else router.navigateToUrl('/provider/setup');
         });
         return (
             <CenteredCard className="kip-cm-welcome">
@@ -30,18 +30,8 @@ export default withRouter(
                     </h1>
                     <ul className="kip-cm-selector">
                         <li>
-                            <A href="/user/setup">
+                            <A href="/provide/setup">
                                 <T t={t} k="setup" />
-                            </A>
-                        </li>
-                        <li>
-                            <A href="/user/restore">
-                                <T t={t} k="restore" />
-                            </A>
-                        </li>
-                        <li>
-                            <A href="/user/help">
-                                <T t={t} k="show-help" />
                             </A>
                         </li>
                     </ul>

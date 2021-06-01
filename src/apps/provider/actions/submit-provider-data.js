@@ -18,6 +18,17 @@ export async function submitProviderData(
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
         const dataToEncrypt = Object.assign({}, data);
+
+        try {
+            const queues = await backend.appointments.getQueues({
+                zipCode: data.data.zipCode,
+                radius: 50,
+            });
+            data.data.queues = queues.map(q => q.id);
+        } catch (e) {
+            return { status: 'failed', error: e };
+        }
+
         dataToEncrypt.publicKeys = {
             signing: keyPairs.signing.publicKey,
             encryption: keyPairs.encryption.publicKey,

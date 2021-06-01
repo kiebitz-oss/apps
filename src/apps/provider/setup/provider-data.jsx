@@ -47,6 +47,7 @@ const BaseProviderData = ({
 
     const onSubmit = () => {
         if (!valid) return;
+        console.log(data);
         providerDataAction(data);
         // we redirect to the 'verify' step
         router.navigateToUrl(`/provider/setup/verify`);

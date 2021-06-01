@@ -154,7 +154,7 @@ const Verify = withRouter(
                         providerData.data,
                         keyPairs.data,
                         keys.data
-                    ).then(() => {
+                    ).then(pd => {
                         setSubmitting(false);
                         router.navigateToUrl('/provider/setup/store-secrets');
                     });

@@ -21,6 +21,7 @@ export default withRouter(
             console.log(backend.local.get('user::tokenData'));
             if (backend.local.get('user::tokenData') !== null)
                 router.navigateToUrl('/user/appointments');
+            else router.navigateToUrl('/user/setup');
         });
         return (
             <CenteredCard className="kip-cm-welcome">

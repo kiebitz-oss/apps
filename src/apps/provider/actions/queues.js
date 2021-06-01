@@ -21,7 +21,6 @@ export async function queues(state, keyStore, settings, zipCode, radius, to) {
             });
             return { status: 'loaded', data: queues };
         } catch (e) {
-            console.log(e.toString());
             return { status: 'failed', error: e.toString() };
         }
     };

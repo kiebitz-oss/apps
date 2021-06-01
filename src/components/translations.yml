@@ -16,14 +16,17 @@ leave:
   leave:
     en: Leave page
   text:
-    en:
+    en: |
       There is unsaved data on the page you are about to leave. Are you sure you
       want to navigate away?
+    de: |
+      Es gibt ungespeicherte Änderungen auf der aktuellen Seite. Wollen Sie diese wirklich verlassen?
   title:
     en: Do you really want to leave this page?
 loader:
   failed:
     en: We are sorry but we could not load the required resources.
+    de: Das Laden von Ressourcen ist leider fehlgeschlagen.
   please-wait:
     en: Please wait, we are loading required resources...
   updating:

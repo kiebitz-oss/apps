@@ -15,6 +15,7 @@ import {
     sendInvitations,
     openAppointments,
     checkInvitations,
+    submitProviderData,
     verifiedProviderData,
     checkVerifiedProviderData,
 } from '../actions';
@@ -53,6 +54,8 @@ const Dashboard = withRouter(
                     providerDataAction,
                     checkInvitations,
                     checkInvitationsAction,
+                    submitProviderData,
+                    submitProviderDataAction,
                     verifiedProviderData,
                     verifiedProviderDataAction,
                     checkVerifiedProviderData,
@@ -87,33 +90,38 @@ const Dashboard = withRouter(
                         setTv(timer);
                         setLastUpdated(new Date().toLocaleTimeString());
                         verifiedProviderDataAction();
-                        providerDataAction().then(pd => {
-                            if (
-                                pd.data === null ||
-                                pd.data.submitted === undefined
-                            ) {
-                                router.navigateToUrl('/provider/setup');
-                                return;
-                            }
-                            // we check whether the data is verified already...
-                            if (pd.data.verified) return;
-                            keysAction().then(ks =>
-                                keyPairsAction().then(kp => {
-                                    validKeyPairsAction(kp.data, ks.data);
-                                    checkVerifiedProviderDataAction(
-                                        pd.data,
-                                        kp.data
-                                    );
-                                })
-                            );
-                        });
+                        keysAction().then(ks =>
+                            keyPairsAction().then(kp => {
+                                validKeyPairsAction(kp.data, ks.data);
+                                providerDataAction().then(pd => {
+                                    if (pd.data === null) {
+                                        router.navigateToUrl('/provider/setup');
+                                        return;
+                                    } else if (pd.data.submitted !== true) {
+                                        // we try to submit the data...
+                                        submitProviderDataAction(
+                                            pd.data,
+                                            kp.data,
+                                            ks.data
+                                        );
+                                    } else if (!pd.data.verified) {
+                                        checkVerifiedProviderDataAction(
+                                            pd.data,
+                                            kp.data
+                                        );
+                                    }
+                                });
+                            })
+                        );
                         if (
                             keyPairs === undefined ||
-                            verifiedProviderData === undefined ||
                             keyPairs.status !== 'loaded' ||
-                            verifiedProviderData.status !== 'loaded'
+                            verifiedProviderData === undefined ||
+                            verifiedProviderData.status !== 'loaded' ||
+                            verifiedProviderData.data === null
                         )
                             return;
+
                         openAppointmentsAction().then(d =>
                             sendInvitationsAction(
                                 keyPairs.data,
@@ -198,6 +206,7 @@ const Dashboard = withRouter(
             keys,
             validKeyPairs,
             providerData,
+            submitProviderData,
             checkInvitations,
             openAppointments,
             checkVerifiedProviderData,

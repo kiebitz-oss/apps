@@ -59,7 +59,6 @@ class App extends React.Component {
     render() {
         const { route, router, user } = this.props;
         const RouteComponent = route.handler.component;
-
         if (!this.checkRoute())
             return (
                 <CenteredCard>
