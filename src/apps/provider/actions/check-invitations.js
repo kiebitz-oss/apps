@@ -94,7 +94,7 @@ export async function checkInvitations(
                 data: acceptedInvitations,
             };
         } catch (e) {
-            console.log(e.toString());
+            console.log(e);
         }
     } finally {
         backend.local.unlock();

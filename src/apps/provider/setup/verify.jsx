@@ -182,7 +182,7 @@ const Verify = withRouter(
                                     }
                                 />
                             </p>
-                            <ProviderData providerData={providerData} />
+                            <ProviderData providerData={providerData || {}} />
                         </CardContent>
                         <CardFooter>
                             <Button

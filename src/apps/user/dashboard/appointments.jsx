@@ -38,6 +38,9 @@ const ProviderDetails = ({ data }) => {
                 <li>{data.json.zipCode}</li>
                 <li>{data.json.city}</li>
             </ul>
+            {data.json.description && (
+                <Message type="info">{data.json.description}</Message>
+            )}
         </div>
     );
 };

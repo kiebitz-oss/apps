@@ -209,7 +209,7 @@ export default class AppointmentsBackend {
                 // to which all mediators have access...
                 [queue.encryptedPrivateKey] = await e(
                     ephemeralECDHEncrypt(
-                        queue.keyPair.privateKey,
+                        JSON.stringify(queue.keyPair.privateKey),
                         queueKeyEncryptionKeyPair.publicKey
                     )
                 );

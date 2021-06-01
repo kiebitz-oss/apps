@@ -11,7 +11,7 @@ import {
 
 function getQueuePrivateKey(queueID, verifiedProviderData) {
     for (const queueKeys of verifiedProviderData.queuePrivateKeys) {
-        if (queueKeys.id === queueID) return queueKeys.privateKey;
+        if (queueKeys.id === queueID) return JSON.parse(queueKeys.privateKey);
     }
     return null;
 }
@@ -102,6 +102,7 @@ export async function sendInvitations(
                                 )
                         )
                     );
+                    console.log(verifiedProviderData);
                     const userData = {
                         provider: verifiedProviderData.signedData,
                         offers: openAppointments.map((oa, i) => {

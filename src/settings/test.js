@@ -17,6 +17,4 @@ settings.update(
     ])
 );
 
-settings.set('backend', backend);
-
 export default settings;

@@ -61,6 +61,11 @@
 	}
 }
 .kip-provider-details {
+
+	.bulma-message {
+		margin-top: map-get($kip-space, md);
+	}
+
 	ul {
 		list-style: none;
 		border-bottom: 1px solid #eee;

@@ -94,10 +94,16 @@ const Dashboard = withRouter(
                             keyPairsAction().then(kp => {
                                 validKeyPairsAction(kp.data, ks.data);
                                 providerDataAction().then(pd => {
-                                    if (pd.data === null) {
+                                    console.log(pd);
+                                    if (
+                                        pd === undefined ||
+                                        pd.data === undefined ||
+                                        Object.keys(pd.data.data).length === 0
+                                    ) {
                                         router.navigateToUrl('/provider/setup');
                                         return;
                                     } else if (pd.data.submitted !== true) {
+                                        console.log('Submitting data...');
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,
@@ -113,6 +119,7 @@ const Dashboard = withRouter(
                                 });
                             })
                         );
+                        console.log(keyPairs, verifiedProviderData);
                         if (
                             keyPairs === undefined ||
                             keyPairs.status !== 'loaded' ||
