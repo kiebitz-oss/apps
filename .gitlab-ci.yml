@@ -18,15 +18,18 @@ deploy-apps:
     - /^v(\d+)\.(\d+)\.(\d+)(\.[a-z]+)?$/
   stage: deploy
   before_script:
-    - apt-get update -qy
-    - apt-get install -y curl locales rsync nodejs npm openssh-client expect
+    - apt update && apt install -yq nodejs npm curl rsync ssh
     - npm install -g n
-    - n 15
-    - echo "en_US UTF-8" > /etc/locale.gen
-    - locale-gen en_US.UTF-8
-    - export LANG=en_US.UTF-8
-    - export LANGUAGE=en_US:en
-    - export LC_ALL=en_US.UTF-8
+    - n latest
+    # we purge the old NodeJS version
+    - apt purge -yq nodejs npm
+    # we update the path to ensure the new NodeJS version is being used
+    - PATH=$PATH
+    - cd app
+    - npm ci
   script:
-    - npm run-script lint
-    - npm run-script lint-scss
+    # we move in the production settings...
+    - rm build/web/settings.json && mv build/web/settings_prod.json build/web/settings.json
+    # we store the commit SHA (so that the frontend can ask for a reload)
+    - sed -i -e "s/COMMIT_SHA/${CI_COMMIT_SHA}/g" build/web/settings.json
+    # now deploy everything in the "build/web" directory to the CDN
