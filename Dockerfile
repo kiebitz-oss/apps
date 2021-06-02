@@ -16,7 +16,8 @@ RUN rm /etc/nginx/sites-enabled/default
 RUN nginx -t 
 RUN npm ci
 # build files will be in /apps/build/web after this command
+RUN npm run-script make
+RUN rm /apps/build/web/settings.json
 RUN mv /apps/build/web/settings_prod.json /apps/build/web/settings.json
 RUN sed -i -e "s/COMMIT_SHA/${CI_COMMIT_SHA}/g" build/web/settings.json
-RUN npm run-script make
 CMD ["nginx", "-g", "daemon off;"]
