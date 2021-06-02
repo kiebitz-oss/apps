@@ -18,7 +18,7 @@ build-frontend-production:
     - echo $LOGIN_PASSPHRASE | docker login --username gitlab+deploy-token-6 --password-stdin $REGISTRY
   script:
     - rm -rf .git
-    - docker build -t "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_SPACE}/sofort-impfen-apps:latest" .
+    - docker build --build-arg CI_COMMIT_SHA=${CI_COMMIT_SHA} -t "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_SPACE}/sofort-impfen-apps:latest" .
     - docker push "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}"
     - docker push "${IMAGE_SPACE}/sofort-impfen-apps:latest"
 
