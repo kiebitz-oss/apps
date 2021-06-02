@@ -11,12 +11,13 @@ RUN apt-get purge -yq nodejs npm
 RUN export PATH=$PATH
 COPY . /apps/
 WORKDIR /apps
-RUN rm build/web/settings.json && mv build/web/settings_prod.json build/web/settings.json
-RUN sed -i -e "s/COMMIT_SHA/${CI_COMMIT_SHA}/g" build/web/settings.json
 RUN cp config/app.conf /etc/nginx/sites-enabled/app.conf
 RUN rm /etc/nginx/sites-enabled/default
 RUN nginx -t 
 RUN npm ci
 # build files will be in /apps/build/web after this command
+RUN rm /apps/build/web/settings.json
+RUN mv /apps/build/web/settings_prod.json /apps/build/web/settings.json
+RUN sed -i -e "s/COMMIT_SHA/${CI_COMMIT_SHA}/g" build/web/settings.json
 RUN npm run-script make
 CMD ["nginx", "-g", "daemon off;"]
