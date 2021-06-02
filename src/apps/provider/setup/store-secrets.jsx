@@ -53,9 +53,13 @@ export const DataSecret = ({ settings, secret, embedded, hideNotice }) => {
 
     let fragments = [];
     for (let i = 0; i < chunks.length; i++) {
-        fragments.push(<F>{chunks[i]}</F>);
+        fragments.push(<F key={`${i}-main`}>{chunks[i]}</F>);
         if (i < chunks.length - 1)
-            fragments.push(<strong style={{ userSelect: 'none' }}>·</strong>);
+            fragments.push(
+                <strong key={`${i}-dot`} style={{ userSelect: 'none' }}>
+                    ·
+                </strong>
+            );
     }
 
     const copy = () => {
