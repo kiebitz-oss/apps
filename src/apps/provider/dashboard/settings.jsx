@@ -231,7 +231,7 @@ const Settings = withActions(
                                 <div className="kip-buttons">
                                     <Button
                                         type="success"
-                                        href="/provider/settings/backup"
+                                        href="/provider/setup/store-secrets"
                                     >
                                         <T t={t} k="backup" />
                                     </Button>
