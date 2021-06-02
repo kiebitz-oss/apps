@@ -19,6 +19,8 @@ export async function submitProviderData(
         await backend.local.lock();
         const dataToEncrypt = Object.assign({}, data);
 
+        console.log(data);
+
         try {
             const queues = await backend.appointments.getQueues({
                 zipCode: data.data.zipCode,
@@ -49,7 +51,7 @@ export async function submitProviderData(
 
         try {
             const result = await backend.appointments.storeProviderData(
-                { id: data.id, encryptedData: encryptedData },
+                { id: data.id, encryptedData: encryptedData, code: data.code },
                 keyPairs.signing
             );
 

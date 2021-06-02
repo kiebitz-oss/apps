@@ -4,8 +4,50 @@
 
 import { generateECDHKeyPair } from './generate-key';
 import { b642buf, buf2b64, str2ab, ab2str } from 'helpers/conversion';
+import { salt } from './token';
 import { e } from 'helpers/async';
 
+export async function aesEncrypt(rawData, secret) {
+    const data = str2ab(rawData);
+
+    try {
+        const secretKey = await e(
+            crypto.subtle.importKey('raw', secret, 'PBKDF2', false, [
+                'deriveKey',
+            ])
+        );
+
+        const symmetricKey = await crypto.subtle.deriveKey(
+            { name: 'PBKDF2', hash: 'SHA-256', salt: salt, iterations: 100000 },
+            secretKey,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
+
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+
+        const encryptedData = await e(
+            crypto.subtle.encrypt(
+                {
+                    name: 'AES-GCM',
+                    tagLength: 128,
+                    iv: iv,
+                },
+                symmetricKey,
+                data
+            )
+        );
+
+        return {
+            iv: buf2b64(iv),
+            data: buf2b64(encryptedData),
+        };
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
 export async function ecdhEncrypt(rawData, keyPair, publicKeyData) {
     const data = str2ab(rawData);
 
@@ -52,7 +94,7 @@ export async function ecdhEncrypt(rawData, keyPair, publicKeyData) {
             crypto.subtle.encrypt(
                 {
                     name: 'AES-GCM',
-                    tagLength: 32, // to do: validate that 32 is acceptable
+                    tagLength: 128,
                     iv: iv,
                 },
                 symmetricKey,
@@ -118,7 +160,7 @@ export async function ephemeralECDHEncrypt(rawData, publicKeyData) {
             crypto.subtle.encrypt(
                 {
                     name: 'AES-GCM',
-                    tagLength: 32, // to do: validate that 32 is acceptable
+                    tagLength: 128,
                     iv: iv,
                 },
                 symmetricKey,
@@ -183,7 +225,7 @@ export async function ecdhDecrypt(data, privateKeyData) {
             crypto.subtle.decrypt(
                 {
                     name: 'AES-GCM',
-                    tagLength: 32, // to do: validate that 32 is acceptable
+                    tagLength: 128,
                     iv: b642buf(data.iv),
                 },
                 symmetricKey,
