@@ -8,6 +8,7 @@ import Settings from './settings';
 import { keys } from 'apps/provider/actions';
 import {
     tokenData,
+    userSecret,
     invitationData,
     confirmOffers,
     acceptedInvitation,
@@ -45,30 +46,43 @@ const ProviderDetails = ({ data }) => {
     );
 };
 
-const AcceptedInvitation = ({ data }) => {
-    const d = new Date(data.offer.date);
-    return (
-        <F>
-            <CardContent>
-                <div className="kip-accepted-invitation">
-                    <h2>
-                        <T t={t} k="invitation-accepted.title" />
-                    </h2>
-                    <ProviderDetails data={data.invitationData.provider} />
-                    <p className="kip-appointment-date">
-                        {d.toLocaleDateString()} ·{' '}
-                        <u>{d.toLocaleTimeString()}</u>
-                    </p>
-                </div>
-            </CardContent>
-            <CardFooter>
-                <Button type="warning">
-                    <T t={t} k="cancel-appointment" />
-                </Button>
-            </CardFooter>
-        </F>
-    );
-};
+const AcceptedInvitation = withActions(
+    ({ data, userSecret }) => {
+        const d = new Date(data.offer.timestamp);
+        console.log(userSecret);
+        return (
+            <F>
+                <CardContent>
+                    <div className="kip-accepted-invitation">
+                        <h2>
+                            <T t={t} k="invitation-accepted.title" />
+                        </h2>
+                        <ProviderDetails data={data.invitationData.provider} />
+                        <p className="kip-appointment-date">
+                            {d.toLocaleDateString()} ·{' '}
+                            <u>{d.toLocaleTimeString()}</u>
+                        </p>
+                        <p className="kip-booking-code">
+                            <span>
+                                <T
+                                    t={t}
+                                    k={'invitation-accepted.booking-code'}
+                                />
+                            </span>
+                            {userSecret.data.slice(0, 4)}
+                        </p>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <Button type="warning">
+                        <T t={t} k="cancel-appointment" />
+                    </Button>
+                </CardFooter>
+            </F>
+        );
+    },
+    [userSecret]
+);
 
 const NoInvitations = ({ tokenData }) => {
     return (
@@ -151,7 +165,7 @@ const InvitationDetails = withActions(
             return <NoInvitations data={tokenData} />;
 
         const offers = data.offers.map(offer => {
-            const d = new Date(offer.date);
+            const d = new Date(offer.timestamp);
             const selected = toggleOffers.data.includes(offer.id);
             let pref;
             if (selected) pref = toggleOffers.data.indexOf(offer.id) + 1;

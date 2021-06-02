@@ -8,6 +8,8 @@ appointment-preference:
   de:
     Präferenz
 invitation-accepted:
+  booking-code:
+    de: "Buchungscode zur Vorlage: Bitte notieren!"
   title:
     de: Termin angenommen!
 appointments-notice:

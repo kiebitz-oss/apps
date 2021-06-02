@@ -6,6 +6,24 @@
 		margin: 0 auto;
 	}
 
+	.kip-booking-code {
+		@include fs(large);
+		text-align: center;
+		text-transform: uppercase;
+		background: #efa;
+		font-weight: bolder;
+		letter-spacing: 2px;
+		padding: map-get($kip-space, md);
+		border-radius: $kip-border-radius;
+
+		span {
+			font-size: 12px;
+			letter-spacing: normal;
+			text-transform: none;
+			display: block;
+		}
+	}
+
 	.kip-no-invitations-text {
 		font-weight: bolder;
 	}
