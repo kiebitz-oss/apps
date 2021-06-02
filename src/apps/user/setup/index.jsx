@@ -4,13 +4,13 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { withActions } from 'components';
-import { contactData } from 'apps/user/actions';
+import { contactData, queueData } from 'apps/user/actions';
 import Wizard from './wizard';
 
 import './index.scss';
 
 const Setup = withActions(
-    ({ contactDataAction, route }) => {
+    ({ contactDataAction, queueDataAction, route }) => {
         const [initialized, setInitialized] = useState(false);
 
         useEffect(() => {
@@ -18,6 +18,8 @@ const Setup = withActions(
             setInitialized(true);
             if (Object.keys(route.hashParams).length > 0) {
                 contactDataAction(route.hashParams);
+                if (route.hashParams.zipCode !== undefined)
+                    queueDataAction({zipCode: route.hashParams.zipCode})
             }
         });
 
@@ -31,7 +33,7 @@ const Setup = withActions(
             </React.Fragment>
         );
     },
-    [contactData]
+    [contactData, queueData]
 );
 
 export default Setup;
