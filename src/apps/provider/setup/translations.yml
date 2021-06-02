@@ -35,8 +35,10 @@ finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
 wizard:
-  store-secrets:
-    de: Sicherungsdatei erstellen
+  generating-backup-data:
+    de: Bitte warten, erstelle Backup-Daten...
+  download-backup-data:
+    de: Backup-Daten herunterladen
   please-wait:
     de: Bitte warten...
   leave:
