@@ -26,5 +26,4 @@ const settings = new Settings([
     ['commitSHA', COMMIT_SHA],
 ]);
 
-
 export default settings;

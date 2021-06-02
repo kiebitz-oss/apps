@@ -216,7 +216,7 @@ const Verify = withRouter(
                 );
                 return (
                     <WithLoader
-                        resources={[providerData, keyPairs, keys]}
+                        resources={[providerData, keyPairs]}
                         renderLoaded={render}
                     />
                 );

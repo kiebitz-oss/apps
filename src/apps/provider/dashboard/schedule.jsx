@@ -518,7 +518,7 @@ const Invitations = withTimer(
                     // we wait until all resources have been loaded before we display the form
                     return (
                         <WithLoader
-                            resources={[keys, keyPairs]}
+                            resources={[keyPairs]}
                             renderLoaded={render}
                         />
                     );

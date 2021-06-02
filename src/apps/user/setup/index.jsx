@@ -19,7 +19,7 @@ const Setup = withActions(
             if (Object.keys(route.hashParams).length > 0) {
                 contactDataAction(route.hashParams);
                 if (route.hashParams.zipCode !== undefined)
-                    queueDataAction({zipCode: route.hashParams.zipCode})
+                    queueDataAction({ zipCode: route.hashParams.zipCode });
             }
         });
 
