@@ -257,7 +257,6 @@ const Settings = withActions(
                 return (
                     <WithLoader
                         resources={[
-                            keys,
                             keyPairs,
                             providerData,
                             verifiedProviderData,
