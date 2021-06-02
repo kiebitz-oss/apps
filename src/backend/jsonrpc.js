@@ -37,6 +37,7 @@ class JSONRPCBackend {
     }
 
     get apiUrl() {
+        console.log(this.settings);
         return this.settings.get(this.urlKey);
     }
 

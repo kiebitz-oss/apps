@@ -49,7 +49,6 @@ const ProviderDetails = ({ data }) => {
 const AcceptedInvitation = withActions(
     ({ data, userSecret }) => {
         const d = new Date(data.offer.timestamp);
-        console.log(userSecret);
         return (
             <F>
                 <CardContent>

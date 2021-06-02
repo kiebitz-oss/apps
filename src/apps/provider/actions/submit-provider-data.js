@@ -19,8 +19,6 @@ export async function submitProviderData(
         await backend.local.lock();
         const dataToEncrypt = Object.assign({}, data);
 
-        console.log(data);
-
         try {
             const queues = await backend.appointments.getQueues({
                 zipCode: data.data.zipCode,

@@ -18,7 +18,6 @@ export default withRouter(
     withSettings(({ router, settings }) => {
         useEffect(() => {
             const backend = settings.get('backend');
-            console.log(backend.local.get('user::tokenData'));
             if (backend.local.get('user::tokenData') !== null)
                 router.navigateToUrl('/user/appointments');
             else router.navigateToUrl('/user/setup');

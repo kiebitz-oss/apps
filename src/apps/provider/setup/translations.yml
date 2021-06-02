@@ -63,6 +63,8 @@ wizard:
     verify:
       de: Daten prüfen
 provider-data:
+  website:
+    de: Webseite
   not-verified-yet:
     de: Ihre Daten wurden noch nicht verifiziert, bitte haben Sie noch etwas Geduld...
   description:
