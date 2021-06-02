@@ -36,3 +36,5 @@ providerSecret.init = (keyStore, settings) => {
         data: data,
     };
 };
+
+providerSecret.actionName = 'providerSecret';

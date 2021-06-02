@@ -34,3 +34,5 @@ export async function createAppointment(
         backend.local.unlock();
     }
 }
+
+createAppointment.actionName = 'createAppointment';

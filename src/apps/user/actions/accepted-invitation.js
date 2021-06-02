@@ -14,3 +14,5 @@ acceptedInvitation.init = (ks, settings) => ({
     status: 'loaded',
     data: settings.get('backend').local.get('user::invitation::accepted'),
 });
+
+acceptedInvitation.actionName = 'acceptedInvitation';

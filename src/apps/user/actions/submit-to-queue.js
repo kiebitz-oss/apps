@@ -111,3 +111,5 @@ export async function submitToQueue(
         return { status: 'failed', error: e.toString() };
     }
 }
+
+submitToQueue.actionName = 'submitToQueue';

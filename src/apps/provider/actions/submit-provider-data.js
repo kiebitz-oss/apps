@@ -67,3 +67,5 @@ export async function submitProviderData(
         backend.local.unlock();
     }
 }
+
+submitProviderData.actionName = 'submitProviderData';

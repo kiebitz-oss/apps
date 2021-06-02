@@ -45,3 +45,5 @@ export async function checkVerifiedProviderData(
         backend.local.unlock();
     }
 }
+
+checkVerifiedProviderData.actionName = 'checkVerifiedProviderData';

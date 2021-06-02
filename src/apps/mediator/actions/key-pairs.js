@@ -32,3 +32,5 @@ export async function keyPairs(state, keyStore, settings) {
 
     return { status: 'loaded', data: providerKeyPairs };
 }
+
+keyPairs.actionName = 'keyPairs';

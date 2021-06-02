@@ -71,3 +71,5 @@ export async function checkInvitationData(
         backend.local.unlock();
     }
 }
+
+checkInvitationData.actionName = 'checkInvitationData';

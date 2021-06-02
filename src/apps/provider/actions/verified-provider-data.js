@@ -16,3 +16,5 @@ export async function verifiedProviderData(state, keyStore, settings) {
         backend.local.unlock();
     }
 }
+
+verifiedProviderData.actionName = 'verifiedProviderData';

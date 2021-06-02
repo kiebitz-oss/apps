@@ -9,3 +9,5 @@ export async function invitationData(state, keyStore, settings) {
         data: backend.local.get('user::invitationData::verified'),
     };
 }
+
+invitationData.actionName = 'invitationData';

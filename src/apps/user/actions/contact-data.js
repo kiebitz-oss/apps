@@ -16,3 +16,5 @@ export async function contactData(state, keyStore, settings, data) {
         data: data,
     };
 }
+
+contactData.actionName = 'contactData';

@@ -33,3 +33,5 @@ export async function queues(state, keyStore, settings, zipCode, radius, to) {
         return await q();
     }
 }
+
+queues.actionName = 'queues';

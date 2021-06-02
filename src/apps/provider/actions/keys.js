@@ -17,3 +17,5 @@ export async function keys(state, keyStore, settings) {
         return { status: 'failed', error: e };
     }
 }
+
+keys.actionName = 'keys';

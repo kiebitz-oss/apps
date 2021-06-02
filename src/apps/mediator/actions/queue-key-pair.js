@@ -16,3 +16,5 @@ export async function queueKeyPair(state, keyStore, settings, data) {
         status: 'failed',
     };
 }
+
+queueKeyPair.actionName = 'queueKeyPair';

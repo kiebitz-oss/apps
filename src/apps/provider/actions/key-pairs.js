@@ -46,3 +46,5 @@ export async function keyPairs(state, keyStore, settings) {
         backend.local.unlock();
     }
 }
+
+keyPairs.actionName = 'keyPairs';

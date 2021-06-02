@@ -54,3 +54,5 @@ export async function providers(
         return { status: 'failed', error: e.toString() };
     }
 }
+
+providers.actionName = 'providers';
