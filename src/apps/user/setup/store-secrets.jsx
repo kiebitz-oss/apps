@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment as F } from 'react';
 import { b642buf } from 'helpers/conversion';
 import {
     Modal,
@@ -51,10 +51,20 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
         );
 
     const chunks = secret.match(/.{1,4}/g);
-    const readableSecret = chunks.join('·');
+
+    let fragments = [];
+    for (let i = 0; i < chunks.length; i++) {
+        fragments.push(<F key={`${i}-main`}>{chunks[i]}</F>);
+        if (i < chunks.length - 1)
+            fragments.push(
+                <strong key={`${i}-dot`} style={{ userSelect: 'none' }}>
+                    ·
+                </strong>
+            );
+    }
 
     return (
-        <React.Fragment>
+        <F>
             {modal}
             {!embedded && (
                 <p className="kip-secrets-notice">
@@ -67,16 +77,16 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
                 }
             >
                 {
-                    <React.Fragment>
+                    <F>
                         <div className="kip-uid">
                             {!hideNotice && (
                                 <span>
                                     <T t={t} k="store-secrets.secret" />
                                 </span>
                             )}
-                            <code>{readableSecret}</code>
+                            <code>{fragments}</code>
                         </div>
-                    </React.Fragment>
+                    </F>
                 }
             </div>
             {!embedded && (
@@ -89,7 +99,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
                     </A>
                 </div>
             )}
-        </React.Fragment>
+        </F>
     );
 };
 
@@ -99,7 +109,7 @@ const StoreLocal = ({ data }) => {
     });
     const date = new Date().toLocaleDateString();
     return (
-        <React.Fragment>
+        <F>
             <p className="kip-secrets-notice">
                 <T t={t} k="store-secrets.local.text" />
             </p>
@@ -110,7 +120,7 @@ const StoreLocal = ({ data }) => {
             >
                 <T t={t} k="store-secrets.download" />
             </a>
-        </React.Fragment>
+        </F>
     );
 };
 
@@ -133,14 +143,14 @@ export default withActions(
         }
 
         return (
-            <React.Fragment>
+            <F>
                 <CardContent className="kip-secrets">{content}</CardContent>
                 <CardFooter>
                     <Button type="success" href={`/user/appointments`}>
                         <T t={t} k="wizard.leave" />
                     </Button>
                 </CardFooter>
-            </React.Fragment>
+            </F>
         );
     }),
     [userSecret]
