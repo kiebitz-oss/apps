@@ -119,6 +119,8 @@ toggleOffers.init = function() {
     return { data: [] };
 };
 
+toggleOffers.actionName = 'toggleOffers';
+
 const InvitationDetails = withActions(
     ({
         data,
