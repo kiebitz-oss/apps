@@ -3,18 +3,24 @@ _t:
 errorBoundary:
   contactUs:
     en: contact us by e-mail
+    de: kontaktieren Sie uns zur Behebung
   somethingWentWrong:
-    en:
+    en: |
       We're terribly sorry, but something went unexpectedly wrong. You can try to
       reload this page to see if that helps. If the problem persists, please {contactUs}.
+    de: |
+      Es tut uns schrecklich leid aber es ist ein unerwarteter Fehler passiert. Bitte {contactUs}.
 search-select:
   no-candidates:
+    en: No candidates found
     de: Keine Kandidaten gefunden
 leave:
   cancel:
     en: Go back
+    de: Zurück
   leave:
     en: Leave page
+    de: Seite verlassen
   text:
     en: |
       There is unsaved data on the page you are about to leave. Are you sure you
@@ -23,14 +29,17 @@ leave:
       Es gibt ungespeicherte Änderungen auf der aktuellen Seite. Wollen Sie diese wirklich verlassen?
   title:
     en: Do you really want to leave this page?
+    de: Möchten Sie diese Seite wirklich verlassen?
 loader:
   failed:
     en: We are sorry but we could not load the required resources.
     de: Das Laden von Ressourcen ist leider fehlgeschlagen.
   please-wait:
     en: Please wait, we are loading required resources...
+    de: Bitte warten, lade Daten...
   updating:
     en: Updating resources...
+    de: Aktualisiere Daten...
 modal:
   cancel:
     en: Cancel

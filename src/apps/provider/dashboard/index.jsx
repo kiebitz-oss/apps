@@ -160,7 +160,7 @@ const Dashboard = withRouter(
 
                     if (
                         validKeyPairs !== undefined &&
-                        validKeyPairs.valid === false
+                        validKeyPairs.valid !== true
                     ) {
                         invalidKeyMessage = (
                             <Message waiting type="warning">
