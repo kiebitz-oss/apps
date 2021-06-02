@@ -1,54 +1,34 @@
-image: ubuntu:20.04
-
 stages:
-  - test
+  - build
   - deploy
+image: docker:19.03.0
+services:
+  - docker:19.03.0-dind
 
 variables:
-  GIT_SUBMODULE_STRATEGY: recursive # required for submodules
-  DEBIAN_FRONTEND: noninteractive
+  DOCKER_DRIVER: "overlay2"
+  DOCKER_TLS_CERTDIR: ""
+  REGISTRY: "registry.sofort-impfen.de"
+  IMAGE_SPACE: "registry.sofort-impfen.de/si/apps"
 
-cache: 
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - node_modules
-    policy: pull-push
-
-
-test-apps:
-  stage: test
+## Production
+build-frontend-production:
+  stage: build
   before_script:
-    - apt update && apt install -yq nodejs npm curl rsync ssh
-    - npm install -g n
-    - n 15
-    # we purge the old NodeJS version
-    - apt purge -yq nodejs npm
-    # we update the path to ensure the new NodeJS version is being used
-    - PATH=$PATH
-    - npm ci
+    - echo $LOGIN_PASSPHRASE | docker login --username gitlab+deploy-token-6 --password-stdin $REGISTRY
   script:
-    # we build the production app
-    - npm run-script make
+    - rm -rf .git
+    - docker build -t "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_SPACE}/sofort-impfen-apps:latest" .
+    - docker push "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}"
+    - docker push "${IMAGE_SPACE}/sofort-impfen-apps:latest"
 
-
-deploy-apps:
-  only:
-    - /^v(\d+)\.(\d+)\.(\d+)(\.[a-z]+)?$/
+deploy-frontend-production:
+  image: alpine:latest
   stage: deploy
   before_script:
-    - apt update && apt install -yq nodejs npm curl rsync ssh
-    - npm install -g n
-    - n 15
-    # we purge the old NodeJS version
-    - apt purge -yq nodejs npm
-    # we update the path to ensure the new NodeJS version is being used
-    - PATH=$PATH
-    - npm ci
+    - apk add curl
   script:
-    # we build the production app
-    - npm run-script make
-    # we move in the production settings...
-    - rm build/web/settings.json && mv build/web/settings_prod.json build/web/settings.json
-    # we store the commit SHA (so that the frontend can ask for a reload)
-    - sed -i -e "s/COMMIT_SHA/${CI_COMMIT_SHA}/g" build/web/settings.json
-    # now deploy everything in the "build/web" directory to the CDN
+    - curl -X POST "https://rundeck.sofort-impfen.de/api/19/job/d96f307f-f974-4504-9bdf-65094a0bdc66/run?authtoken=${RUNDECK_TOKEN}" --header "Content-Type:text/xml"
+  variables:
+    GIT_STRATEGY: none
+
