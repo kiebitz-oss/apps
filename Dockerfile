@@ -20,5 +20,5 @@ RUN npm run-script make
 RUN rm /apps/build/web/settings.json
 RUN mv /apps/build/web/settings_prod.json /apps/build/web/settings.json
 RUN sed -i -e "s/COMMIT_SHA/${CI_COMMIT_SHA}/g" build/web/settings.json
-EXPOSE 8080
-CMD ["npm", "--prefix", "/apps/", "run", "make-dev"]
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]
