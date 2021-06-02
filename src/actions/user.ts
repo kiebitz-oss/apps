@@ -9,3 +9,5 @@ export async function user(state, keyStore, settings, signedData){
 		status: LoggedIn
 	}
 }
+
+user.actionName = 'user'

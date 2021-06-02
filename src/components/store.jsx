@@ -52,6 +52,8 @@ export function withActions(Component, actionNames, keyList, noStore) {
                         if (functional) value = key.actionName;
                         else value = key.defaultKey;
                     }
+                    if (value === undefined)
+                        throw "can't determine value"
                     newActionNames.push(key);
                     newKeyList.push(value);
                 }
@@ -90,6 +92,11 @@ export function withActions(Component, actionNames, keyList, noStore) {
                 if (key === undefined) {
                     if (functional) key = ActionProvider.actionName;
                     else key = ActionProvider.defaultKey;
+                }
+
+                if (key === undefined){
+                    console.log(ActionProvider)
+                    throw "can't determine key"
                 }
 
                 const actionKey = actionName + ':' + key;
