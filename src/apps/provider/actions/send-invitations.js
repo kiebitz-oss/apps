@@ -153,3 +153,5 @@ export async function sendInvitations(
         backend.local.unlock();
     }
 }
+
+sendInvitations.actionName = 'sendInvitations';

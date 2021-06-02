@@ -5,3 +5,5 @@
 export async function validKeyPairs(state, keyStore, settings, key) {
     return { valid: true };
 }
+
+validKeyPairs.actionName = 'validKeyPairs';

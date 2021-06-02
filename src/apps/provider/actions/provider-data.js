@@ -30,3 +30,5 @@ export async function providerData(state, keyStore, settings, data) {
         backend.local.unlock();
     }
 }
+
+providerData.actionName = 'providerData';

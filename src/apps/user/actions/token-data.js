@@ -9,3 +9,5 @@ export async function tokenData(state, keyStore, settings) {
         data: backend.local.get('user::tokenData'),
     };
 }
+
+tokenData.actionName = 'tokenData';

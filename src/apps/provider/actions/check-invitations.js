@@ -100,3 +100,5 @@ export async function checkInvitations(
         backend.local.unlock();
     }
 }
+
+checkInvitations.actionName = 'checkInvitations';

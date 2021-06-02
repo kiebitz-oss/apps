@@ -49,7 +49,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
                 for (let [key, value] of actionNames) {
                     if (value === undefined) {
                         let functional = !(key.prototype instanceof Base);
-                        if (functional) value = key.name;
+                        if (functional) value = key.actionName;
                         else value = key.defaultKey;
                     }
                     newActionNames.push(key);
@@ -88,7 +88,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
                 }
 
                 if (key === undefined) {
-                    if (functional) key = ActionProvider.name;
+                    if (functional) key = ActionProvider.actionName;
                     else key = ActionProvider.defaultKey;
                 }
 

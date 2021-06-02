@@ -16,3 +16,5 @@ export async function queueData(state, keyStore, settings, data) {
         data: data,
     };
 }
+
+queueData.actionName = 'queueData';

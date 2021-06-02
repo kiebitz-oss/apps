@@ -14,3 +14,5 @@ export async function schedule(state, keyStore, settings, data) {
         data: schedule,
     };
 }
+
+schedule.actionName = 'schedule';

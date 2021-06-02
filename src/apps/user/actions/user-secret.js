@@ -31,3 +31,5 @@ userSecret.init = (keyStore, settings) => {
         data: data,
     };
 };
+
+userSecret.actionName = 'userSecret';

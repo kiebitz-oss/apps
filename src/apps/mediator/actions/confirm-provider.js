@@ -94,3 +94,5 @@ export async function confirmProvider(
         backend.local.unlock();
     }
 }
+
+confirmProvider.actionName = 'confirmProvider';

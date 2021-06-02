@@ -12,3 +12,5 @@ export async function openAppointments(state, keyStore, settings) {
         data: backend.local.get('provider::appointments::open'),
     };
 }
+
+openAppointments.actionName = 'openAppointments';

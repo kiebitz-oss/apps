@@ -39,6 +39,8 @@ const BaseContactData = ({
     const [modified, setModified] = useState(false);
     const [initialized, setInitialized] = useState(false);
 
+    console.log(contactDataAction, contactData);
+
     const onSubmit = () => {
         if (!valid) return;
         contactDataAction(data);

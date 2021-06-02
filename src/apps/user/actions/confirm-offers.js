@@ -57,3 +57,5 @@ export async function confirmOffers(
 }
 
 confirmOffers.init = () => ({ status: 'initialized' });
+
+confirmOffers.actionName = 'confirmOffers';

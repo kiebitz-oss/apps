@@ -16,3 +16,5 @@ export async function providerDataKeyPair(state, keyStore, settings, data) {
         status: 'failed',
     };
 }
+
+providerDataKeyPair.actionName = 'providerDataKeyPair';
