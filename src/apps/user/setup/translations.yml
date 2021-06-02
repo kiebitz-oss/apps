@@ -91,6 +91,11 @@ contact-data:
         accessible:
           de: Barrierefreier Impfort gewünscht
           _default: false
+  access-code:
+    label:
+      de: Zugangscode
+    description:
+      de: Der in Ihrer Anmelde E-Mail enthaltene Zugangscode (dieser sollte bereits ausgefüllt sein)
   distance:
     label:
       de: "Maximale Entfernung zum Impfort in Kilometern (km)"

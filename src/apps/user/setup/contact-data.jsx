@@ -69,6 +69,15 @@ const BaseContactData = ({
                 onChange={value => setAndMarkModified('email', value)}
                 label={<T t={t} k="contact-data.email.label" />}
             />
+            <ErrorFor error={error} field="code" />
+            <RetractingLabelInput
+                value={data.code || ''}
+                onChange={value => setAndMarkModified('code', value)}
+                description={
+                    <T t={t} k="contact-data.access-code.description" />
+                }
+                label={<T t={t} k="contact-data.access-code.label" />}
+            />
         </React.Fragment>
     );
 
