@@ -38,6 +38,7 @@ export async function providers(
                 decryptedData.entry = entry;
                 decryptedProviderList.push(decryptedData);
             } catch (e) {
+                console.log(e);
                 invalidEntries.push({
                     entry: entry,
                     error: e.toString(),
