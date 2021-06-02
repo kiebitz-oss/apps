@@ -66,6 +66,12 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                     </li>
                     <li>
                         <span>
+                            <T t={t} k="provider-data.website" />
+                        </span>{' '}
+                        {data.website}
+                    </li>
+                    <li>
+                        <span>
                             <T t={t} k="provider-data.description" />
                         </span>{' '}
                         {data.description || (
@@ -83,6 +89,12 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                             <T t={t} k="provider-data.email" />
                         </span>{' '}
                         {data.email || <T t={t} k="provider-data.not-given" />}
+                    </li>
+                    <li>
+                        <span>
+                            <T t={t} k="provider-data.access-code.label" />
+                        </span>{' '}
+                        {data.code || <T t={t} k="provider-data.not-given" />}
                     </li>
                 </ul>
                 <hr />

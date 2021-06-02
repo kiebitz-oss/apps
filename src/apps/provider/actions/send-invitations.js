@@ -102,7 +102,6 @@ export async function sendInvitations(
                                 )
                         )
                     );
-                    console.log(verifiedProviderData);
                     const userData = {
                         provider: verifiedProviderData.signedData,
                         offers: openAppointments.map((oa, i) => {

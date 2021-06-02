@@ -25,6 +25,7 @@ export const render = settings => {
             new LocalStorageStore(),
             new SessionStorageStore()
         );
+
         settings.set('backend', backend);
     }
 

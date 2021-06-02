@@ -205,7 +205,6 @@ class AppointmentForm extends Form {
             this.data.timestamp = new Date(
                 `${this.data.date} ${this.data.time}`
             );
-            console.log(this.data.timestamp);
         }
         return errors;
     }

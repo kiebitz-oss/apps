@@ -47,7 +47,6 @@ const BaseProviderData = ({
 
     const onSubmit = () => {
         if (!valid) return;
-        console.log(data);
         providerDataAction(data);
         // we redirect to the 'verify' step
         router.navigateToUrl(`/provider/setup/verify`);
@@ -96,6 +95,12 @@ const BaseProviderData = ({
                     value={data.city || ''}
                     onChange={value => setAndMarkModified('city', value)}
                     label={<T t={t} k="provider-data.city" />}
+                />
+                <ErrorFor error={error} field="website" />
+                <RetractingLabelInput
+                    value={data.website || ''}
+                    onChange={value => setAndMarkModified('website', value)}
+                    label={<T t={t} k="provider-data.website" />}
                 />
                 <ErrorFor error={error} field="description" />
                 <label htmlFor="description">
