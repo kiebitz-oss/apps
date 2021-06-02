@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -yq nodejs npm curl rsync ssh
+RUN apt-get update && apt-get install -yq nodejs npm curl rsync ssh nginx
 RUN npm install -g n
 RUN n 15
 # we purge the old NodeJS version
@@ -9,6 +9,10 @@ RUN apt-get purge -yq nodejs npm
 RUN export PATH=$PATH
 COPY . /apps/
 WORKDIR /apps
+RUN cp config/app.conf /etc/nginx/sites-enabled/app.conf
+RUN rm /etc/nginx/sites-enabled/default
+RUN nginx -t 
 RUN npm ci
 # build files will be in /apps/build/web after this command
 RUN npm run-script make
+CMD ["nginx", "-g", "daemon off;"]
