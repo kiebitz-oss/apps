@@ -37,6 +37,7 @@ export async function submitToQueue(
             // we already have a token, we just submit to another queue
             const signedToken = await backend.appointments.getToken({
                 hash: tokenData.dataHash,
+                code: contactData.code,
                 encryptedData: tokenData.encryptedTokenData,
                 queueID: queue.id,
                 queueData: queueData,
@@ -73,10 +74,13 @@ export async function submitToQueue(
             queue.publicKey
         );
 
+        // currently we don't give the provider any infos...
+        const contactDataForProvider = {};
+
         // we also encrypt the contact data for the provider...
         // this won't get sent to the provider immediately though...
         const [encryptedContactData] = await ephemeralECDHEncrypt(
-            JSON.stringify(contactData),
+            JSON.stringify(contactDataForProvider),
             queue.publicKey
         );
 

@@ -13,7 +13,7 @@ const routes = new Map([
     [
         'userIndex',
         {
-            url: '/user/?',
+            url: '/?(?:user/)?',
             handler: () => ({
                 t: t,
                 title: 'welcome',

@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import React, { useEffect, useState, Fragment as F } from 'react';
-import { b642buf } from 'helpers/conversion';
+import { str2ab } from 'helpers/conversion';
 import {
     Modal,
     withRouter,
@@ -17,7 +17,7 @@ import {
     T,
     A,
 } from 'components';
-import { providerSecret } from '../actions';
+import { providerSecret, keyPairs, encryptBackupData } from '../actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
@@ -115,71 +115,111 @@ export const DataSecret = ({ settings, secret, embedded, hideNotice }) => {
 
 export default withRouter(
     withActions(
-        withSettings(({ settings, router, providerSecret, status }) => {
-            const [url, setUrl] = useState(null);
+        withSettings(
+            ({
+                settings,
+                keyPairs,
+                keyPairsAction,
+                router,
+                providerSecret,
+                providerSecretAction,
+                encryptBackupData,
+                encryptBackupDataAction,
+                status,
+            }) => {
+                const [url, setUrl] = useState(null);
+                const [initialized, setInitialized] = useState(false);
 
-            const date = new Date().toLocaleDateString();
-            const data = 'data';
-            const blob = new Blob([b642buf(data)], {
-                type: 'application/octet-stream',
-            });
+                useEffect(() => {
+                    if (initialized) return;
+                    setInitialized(true);
+                    keyPairsAction().then(kp =>
+                        providerSecretAction().then(ps =>
+                            encryptBackupDataAction(kp.data, ps.data)
+                        )
+                    );
+                });
 
-            const showSecrets = () => {
-                router.navigateToUrl('/provider/setup/store-secrets/show');
-            };
+                let blob;
 
-            const hideSecrets = () => {
-                router.navigateToUrl('/provider/setup/store-secrets');
-            };
-
-            const goToDashboard = () => {
-                router.navigateToUrl('/provider');
-            };
-
-            let modal;
-
-            if (status === 'show')
-                modal = (
-                    <Modal
-                        title={
-                            <T t={t} k="store-secrets.secrets-modal.title" />
+                if (
+                    encryptBackupData !== undefined &&
+                    encryptBackupData.status === 'succeeded'
+                ) {
+                    blob = new Blob(
+                        [str2ab(JSON.stringify(encryptBackupData.data))],
+                        {
+                            type: 'application/octet-stream',
                         }
-                        onClose={hideSecrets}
-                        save={<T t={t} k="wizard.leave" />}
-                        onSave={goToDashboard}
-                        onCancel={hideSecrets}
-                        saveType="success"
-                    >
-                        <DataSecret
-                            settings={settings}
-                            secret={providerSecret.data}
-                        />
-                    </Modal>
-                );
+                    );
+                }
 
-            return (
-                <React.Fragment>
-                    {modal}
-                    <CardContent className="kip-secrets">
-                        <p>
-                            <T t={t} k="store-secrets.notice" />
-                        </p>
-                    </CardContent>
-                    <CardFooter>
-                        <a
-                            onClick={showSecrets}
-                            className="bulma-button bulma-is-success"
-                            download="geheime-daten.kiebitz"
-                            href={URL.createObjectURL(blob)}
-                            type="success"
+                const showSecrets = () => {
+                    router.navigateToUrl('/provider/setup/store-secrets/show');
+                };
+
+                const hideSecrets = () => {
+                    router.navigateToUrl('/provider/setup/store-secrets');
+                };
+
+                const goToDashboard = () => {
+                    router.navigateToUrl('/provider');
+                };
+
+                let modal;
+
+                if (status === 'show')
+                    modal = (
+                        <Modal
+                            title={
+                                <T
+                                    t={t}
+                                    k="store-secrets.secrets-modal.title"
+                                />
+                            }
+                            onClose={hideSecrets}
+                            save={<T t={t} k="wizard.leave" />}
+                            onSave={goToDashboard}
+                            onCancel={hideSecrets}
+                            saveType="success"
                         >
-                            <T t={t} k="wizard.store-secrets" />
-                        </a>
-                    </CardFooter>
-                </React.Fragment>
-            );
-        }),
-        [providerSecret]
+                            <DataSecret
+                                settings={settings}
+                                secret={providerSecret.data}
+                            />
+                        </Modal>
+                    );
+
+                return (
+                    <React.Fragment>
+                        {modal}
+                        <CardContent className="kip-secrets">
+                            <p>
+                                <T t={t} k="store-secrets.notice" />
+                            </p>
+                        </CardContent>
+                        {(blob !== undefined && (
+                            <CardFooter>
+                                <a
+                                    onClick={showSecrets}
+                                    className="bulma-button bulma-is-success"
+                                    download="kiebitz-backup-data.enc"
+                                    href={URL.createObjectURL(blob)}
+                                    type="success"
+                                >
+                                    <T t={t} k="wizard.download-backup-data" />
+                                </a>
+                            </CardFooter>
+                        )) || (
+                            <Message waiting type="warning">
+                                <T t={t} k="wizard.generating-backup-data" />
+                            </Message>
+                        )}
+                    </React.Fragment>
+                );
+            }
+        ),
+        [providerSecret, encryptBackupData, keyPairs]
     )
 );
 
