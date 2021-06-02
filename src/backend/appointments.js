@@ -23,10 +23,13 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         this.settings = settings;
     }
 
-    async confirmProvider({ id, key, providerData, keyData }, keyPair) {
+    async confirmProvider(
+        { id, key, encryptedProviderData, signedKeyData },
+        keyPair
+    ) {
         return await this.call(
             'confirmProvider',
-            { id, key, providerData, keyData },
+            { id, key, encryptedProviderData, signedKeyData },
             keyPair
         );
     }
@@ -116,6 +119,10 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     // mediator-only endpoint
+
+    async getQueuesForProvider({ queueIDs }, keyPair) {
+        return await this.call('getQueuesForProvider', { queueIDs }, keyPair);
+    }
 
     async getPendingProviderData({ limit }, keyPair) {
         return await this.call('getPendingProviderData', { limit }, keyPair);

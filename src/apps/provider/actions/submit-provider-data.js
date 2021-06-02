@@ -36,6 +36,8 @@ export async function submitProviderData(
 
         const providerDataKey = keys.providerData;
 
+        console.log(providerDataKey);
+
         // we convert the data to JSON
         const jsonData = JSON.stringify(dataToEncrypt);
 

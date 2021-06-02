@@ -15,12 +15,72 @@ import {
     T,
     A,
     Message,
+    FieldSet,
+    Form,
+    Input,
+    Modal,
     CenteredCard,
     CardHeader,
     CardContent,
 } from 'components';
 import { keyPairs, validKeyPairs } from '../actions';
 import t from './translations.yml';
+
+function readTextFile(file) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.open('GET', file, false);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4) {
+            if (rawFile.status === 200 || rawFile.status == 0) {
+                var allText = rawFile.responseText;
+                alert(allText);
+            }
+        }
+    };
+    rawFile.send(null);
+}
+
+function doSomething() {
+    var file = document.getElementById('idexample');
+
+    if (file.files.length) {
+    }
+}
+
+const UploadKeyPairsModal = ({ keyPairsAction }) => {
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const readFile = () => {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            const json = JSON.parse(e.target.result);
+            keyPairsAction(json);
+        };
+
+        reader.readAsBinaryString(selectedFile);
+    };
+
+    return (
+        <Modal
+            save={<T t={t} k="upload-key-pairs.upload" />}
+            onSave={readFile}
+            saveDisabled={selectedFile === null}
+            title={<T t={t} k="upload-key-pairs.title" />}
+        >
+            <T t={t} k="upload-key-pairs.notice" />
+            <Form>
+                <FieldSet>
+                    <input
+                        className="bulma-input"
+                        type="file"
+                        onChange={e => setSelectedFile(e.target.files[0])}
+                    />
+                </FieldSet>
+            </Form>
+        </Modal>
+    );
+};
 
 const Dashboard = withActions(
     withSettings(
@@ -50,7 +110,13 @@ const Dashboard = withActions(
                 }
             });
 
-            let content;
+            let content, modal;
+
+            if (keyPairs !== undefined && keyPairs.data === null) {
+                modal = <UploadKeyPairsModal keyPairsAction={keyPairsAction} />;
+            }
+
+            console.log(keyPairs);
 
             if (keyPairs !== undefined) {
                 switch (tab) {
@@ -98,7 +164,7 @@ const Dashboard = withActions(
                         </Tabs>
                     </CardHeader>
                     <CardContent>
-                        {invalidKeyMessage}
+                        {modal}
                         {content}
                     </CardContent>
                 </CenteredCard>

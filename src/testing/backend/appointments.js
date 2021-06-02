@@ -44,32 +44,28 @@ export default class AppointmentsBackend {
         }
     }
 
-    async confirmProvider({ id, providerData, keyData }, keyPair) {
-        // this will be stored for the provider, so we add the public key data
-        const signedProviderData = await sign(
-            keyPair.privateKey,
-            JSON.stringify(providerData),
-            keyPair.publicKey
-        );
-
+    async confirmProvider(
+        { id, encryptedProviderData, signedKeyData },
+        keyPair
+    ) {
         let found = false;
-        const keyDataJSON = JSON.parse(keyData.data);
+        const keyDataJSON = JSON.parse(signedKeyData.data);
         const newProviders = [];
         for (const existingKey of this.keys.providers) {
             const existingKeyDataJSON = JSON.parse(existingKey.data);
             if (existingKeyDataJSON.signing === keyDataJSON.signing) {
                 found = true;
-                newProviders.push(keyData);
+                newProviders.push(signedKeyData);
             } else {
                 newProviders.push(existingKey);
             }
         }
-        if (!found) newProviders.push(keyData);
+        if (!found) newProviders.push(signedKeyData);
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
         // we store the verified provider data
         const result = await this.storeData(
-            { id, data: signedProviderData },
+            { id, data: encryptedProviderData },
             keyPair
         );
         if (!result) return;
