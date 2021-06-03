@@ -35,4 +35,15 @@ settings:
     de: Einstellungen
 queues:
   title:
-    de: Warteschlangen  
+    de: Warteschlangen
+upload-key-pairs:
+  invalid-file:
+    de: Die von Ihnen gewählte Datei ist ungültig.
+  input:
+    de: Datei auswählen
+  title:
+    de: Geheime Schlüssel laden
+  notice:
+    de: Bitte laden Sie die Datei mit ihren geheimen Vermittlerschlüsseln.
+  upload:
+    de: Datei laden

@@ -7,11 +7,15 @@ import JSONRPCBackend from './jsonrpc';
 // The storage backend
 export default class StorageBackend extends JSONRPCBackend {
     constructor(settings) {
-        super(settings, 'appointmentsApi');
+        super(settings, 'storageApi');
         this.settings = settings;
     }
 
-    storeSettings({ id, data }) {}
+    async storeSettings({ id, data }) {
+        return await this.call('storeSettings', { id, data });
+    }
 
-    getSettings({ id }) {}
+    async getSettings({ id }) {
+        return await this.call('getSettings', { id });
+    }
 }

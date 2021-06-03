@@ -10,6 +10,7 @@ import {
     queueData,
     getToken,
     userSecret,
+    backupData,
 } from 'apps/user/actions';
 import {
     withSettings,
@@ -61,6 +62,8 @@ const Finalize = withForm(
                     queuesAction,
                     queueData,
                     queueDataAction,
+                    backupData,
+                    backupDataAction,
                     contactData,
                     contactDataAction,
                     submitToQueue,
@@ -118,6 +121,8 @@ const Finalize = withForm(
                                     qd.data[0],
                                     userSecret.data
                                 ).then(hd => {
+                                    console.log(hd);
+                                    backupDataAction(hd.data, userSecret.data);
                                     setSubmitting(false);
                                     router.navigateToUrl(
                                         '/user/setup/store-secrets'
@@ -329,7 +334,14 @@ const Finalize = withForm(
                     };
                     return <WithLoader resources={[]} renderLoaded={render} />;
                 },
-                [queues, submitToQueue, queueData, contactData, userSecret]
+                [
+                    queues,
+                    submitToQueue,
+                    queueData,
+                    contactData,
+                    userSecret,
+                    backupData,
+                ]
             )
         )
     ),
