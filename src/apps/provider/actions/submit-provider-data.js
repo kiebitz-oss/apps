@@ -48,7 +48,11 @@ export async function submitProviderData(
 
         try {
             const result = await backend.appointments.storeProviderData(
-                { id: data.id, encryptedData: encryptedData, code: data.code },
+                {
+                    id: data.id,
+                    encryptedData: encryptedData,
+                    code: data.data.code,
+                },
                 keyPairs.signing
             );
 
@@ -58,7 +62,7 @@ export async function submitProviderData(
 
             return result;
         } catch (e) {
-            return { status: 'failed', error: e.toString() };
+            return { status: 'failed', error: e };
         }
     } finally {
         backend.local.unlock();

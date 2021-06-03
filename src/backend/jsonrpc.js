@@ -30,6 +30,11 @@ function hash(str) {
     return hash;
 }
 
+function RPCException(result) {
+    this.error = result.error;
+    this.name = 'RPCException';
+}
+
 class JSONRPCBackend {
     constructor(settings, urlKey) {
         this.settings = settings;
@@ -73,14 +78,18 @@ class JSONRPCBackend {
                     // setTimeout( () => resolve(data), 1000); // uncomment to add a delay for debugging
                     resolve(data);
                 } else {
-                    reject(data.error);
+                    reject(data);
                 }
             };
             xhr.onerror = () => {
                 reject({
-                    status: xhr.status,
-                    message: xhr.statusText || 'request failed',
-                    errors: {},
+                    jsonrpc: "2.0",
+                    id: "-1",
+                    error: {
+                        code: -1,
+                        message: "request failed",
+                        data: {},
+                    }
                 });
             };
             if (opts.headers) {
@@ -123,18 +132,21 @@ class JSONRPCBackend {
             callParams = params;
         }
 
-        const result = await this.request({
-            url: `${this.apiUrl}`,
-            method: 'POST',
-            json: {
-                jsonrpc: '2.0',
-                method: method,
-                params: callParams,
-                id: id,
-            },
-        });
-
-        return result.result;
+        try {
+            const result = await this.request({
+                url: `${this.apiUrl}`,
+                method: 'POST',
+                json: {
+                    jsonrpc: '2.0',
+                    method: method,
+                    params: callParams,
+                    id: id,
+                },
+            });
+            return result.result;
+        } catch (result) {
+            throw new RPCException(result);
+        }
     }
 }
 

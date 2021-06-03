@@ -74,7 +74,6 @@ const Finalize = withForm(
                 }) => {
                     const [initialized, setInitialized] = useState(false);
                     const [noQueue, setNoQueue] = useState(false);
-                    const [failed, setFailed] = useState(false);
                     const [modified, setModified] = useState(false);
                     const [submitting, setSubmitting] = useState(false);
                     const [tv, setTV] = useState(0);
@@ -83,6 +82,8 @@ const Finalize = withForm(
                         setInitialized(true);
                         contactDataAction();
                         userSecretAction();
+                        queuesAction.reset();
+                        submitToQueueAction.reset();
                         queueDataAction().then(qd => {
                             const initialData = {
                                 distance: 50,
@@ -106,7 +107,6 @@ const Finalize = withForm(
                             const qa = queuesAction(sd.zipCode, sd.distance);
                             qa.then(qd => {
                                 if (qd.status === 'failed') {
-                                    setFailed(true);
                                     setSubmitting(false);
                                     return;
                                 }
@@ -121,9 +121,9 @@ const Finalize = withForm(
                                     qd.data[0],
                                     userSecret.data
                                 ).then(hd => {
-                                    console.log(hd);
-                                    backupDataAction(hd.data, userSecret.data);
                                     setSubmitting(false);
+                                    if (hd.status === 'failed') return;
+                                    backupDataAction(hd.data, userSecret.data);
                                     router.navigateToUrl(
                                         '/user/setup/store-secrets'
                                     );
@@ -180,6 +180,7 @@ const Finalize = withForm(
                     const render = () => {
                         let noQueueMessage;
                         let failedMessage;
+                        let failed;
 
                         if (noQueue)
                             noQueueMessage = (
@@ -188,7 +189,29 @@ const Finalize = withForm(
                                 </Message>
                             );
 
-                        if (failed)
+                        if (
+                            submitToQueue !== undefined &&
+                            submitToQueue.status === 'failed'
+                        ) {
+                            failed = true;
+                            if (submitToQueue.error.error.code === 401) {
+                                failedMessage = (
+                                    <Message type="danger">
+                                        <T
+                                            t={t}
+                                            k="wizard.failed.invalid-code"
+                                        />
+                                    </Message>
+                                );
+                            }
+                        } else if (
+                            queues !== undefined &&
+                            queues.status === 'failed'
+                        ) {
+                            failed = true;
+                        }
+
+                        if (failed && !failedMessage)
                             failedMessage = (
                                 <Message type="danger">
                                     <T t={t} k="wizard.failed.notice" />

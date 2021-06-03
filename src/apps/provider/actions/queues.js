@@ -21,7 +21,7 @@ export async function queues(state, keyStore, settings, zipCode, radius, to) {
             });
             return { status: 'loaded', data: queues };
         } catch (e) {
-            return { status: 'failed', error: e.toString() };
+            return { status: 'failed', error: e };
         }
     };
     if (to !== undefined) {
@@ -33,5 +33,7 @@ export async function queues(state, keyStore, settings, zipCode, radius, to) {
         return await q();
     }
 }
+
+queues.reset = () => ({ status: 'initialized' });
 
 queues.actionName = 'queues';
