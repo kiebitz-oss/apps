@@ -4,7 +4,5 @@
 
 export * from './confirm-provider';
 export * from './key-pairs';
-export * from './provider-data-key-pair';
 export * from './providers';
-export * from './queue-key-pair';
 export * from './valid-key-pairs';

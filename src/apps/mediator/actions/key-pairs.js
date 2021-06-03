@@ -6,19 +6,27 @@ import { generateECDHKeyPair, generateECDSAKeyPair } from 'helpers/crypto';
 import { markAsLoading } from 'helpers/actions';
 
 // make sure the signing and encryption key pairs exist
-export async function keyPairs(state, keyStore, settings) {
+export async function keyPairs(state, keyStore, settings, data) {
     const backend = settings.get('backend');
-    let providerKeyPairs = backend.local.get('mediator::keyPairs');
+
     markAsLoading(state, keyStore);
 
-    if (providerKeyPairs === null) {
+    if (data !== undefined) backend.local.set('mediator::keyPairs', data);
+
+    let mediatorKeyPairs = backend.local.get('mediator::keyPairs');
+
+    if (mediatorKeyPairs === null && settings.get('test') === true) {
         const signingKeyPair = await generateECDSAKeyPair();
         const encryptionKeyPair = await generateECDHKeyPair();
-        let providerKeyPairs = {
+        await backend.appointments.initialized();
+
+        let mediatorKeyPairs = {
             signing: signingKeyPair,
             encryption: encryptionKeyPair,
+            provider: backend.appointments.providerDataEncryptionKeyPair,
+            queue: backend.appointments.queueKeyEncryptionKeyPair,
         };
-        backend.local.set('mediator::keyPairs', providerKeyPairs);
+        backend.local.set('mediator::keyPairs', mediatorKeyPairs);
     }
 
     // in the test environment we automatically add the mediator keys to
@@ -26,11 +34,11 @@ export async function keyPairs(state, keyStore, settings) {
     // accepted as valid keys...
     if (settings.get('test')) {
         await backend.appointments.addMediatorPublicKeys({
-            keys: providerKeyPairs,
+            keys: mediatorKeyPairs,
         });
     }
 
-    return { status: 'loaded', data: providerKeyPairs };
+    return { status: 'loaded', data: mediatorKeyPairs };
 }
 
 keyPairs.actionName = 'keyPairs';

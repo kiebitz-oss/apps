@@ -5,13 +5,7 @@
 import React, { useState, useEffect, Fragment as F } from 'react';
 import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
 import Form from 'helpers/form';
-import {
-    providers,
-    keyPairs,
-    queueKeyPair,
-    providerDataKeyPair,
-    confirmProvider,
-} from '../actions';
+import { providers, keyPairs, confirmProvider } from '../actions';
 import {
     withActions,
     withRouter,
@@ -36,15 +30,11 @@ const Providers = withTimer(
         withActions(
             ({
                 router,
-                providerDataKeyPair,
-                providerDataKeyPairAction,
                 action,
                 id,
                 timer,
                 confirmProvider,
                 confirmProviderAction,
-                queueKeyPair,
-                queueKeyPairAction,
                 keyPairs,
                 keyPairsAction,
                 providers,
@@ -54,12 +44,8 @@ const Providers = withTimer(
 
                 const getData = t => {
                     setLastRun(t);
-                    providerDataKeyPairAction().then(kp =>
-                        queueKeyPairAction().then(qk =>
-                            keyPairsAction().then(keyPairs =>
-                                providersAction(keyPairs.data, kp.data)
-                            )
-                        )
+                    keyPairsAction().then(keyPairs =>
+                        providersAction(keyPairs.data)
                     );
                 };
 
@@ -85,14 +71,12 @@ const Providers = withTimer(
                         );
 
                         const doConfirmProvider = () => {
-                            confirmProviderAction(
-                                provider,
-                                keyPairs.data,
-                                queueKeyPair.data
-                            ).then(() => {
-                                getData();
-                                router.navigateToUrl('/mediator/providers');
-                            });
+                            confirmProviderAction(provider, keyPairs.data).then(
+                                () => {
+                                    getData();
+                                    router.navigateToUrl('/mediator/providers');
+                                }
+                            );
                         };
 
                         if (provider !== undefined)
@@ -256,23 +240,12 @@ const Providers = withTimer(
                 };
                 return (
                     <WithLoader
-                        resources={[
-                            providers,
-                            keyPairs,
-                            queueKeyPair,
-                            providerDataKeyPair,
-                        ]}
+                        resources={[providers, keyPairs]}
                         renderLoaded={render}
                     />
                 );
             },
-            [
-                providers,
-                keyPairs,
-                providerDataKeyPair,
-                queueKeyPair,
-                confirmProvider,
-            ]
+            [providers, keyPairs, confirmProvider]
         )
     ),
     10000

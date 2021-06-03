@@ -9,7 +9,7 @@ export async function openAppointments(state, keyStore, settings) {
     const backend = settings.get('backend');
     return {
         status: 'loaded',
-        data: backend.local.get('provider::appointments::open'),
+        data: backend.local.get('provider::appointments::open', []),
     };
 }
 

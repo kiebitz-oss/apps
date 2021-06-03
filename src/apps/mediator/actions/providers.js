@@ -5,13 +5,7 @@
 import { verify, ecdhDecrypt } from 'helpers/crypto';
 import { markAsLoading } from 'helpers/actions';
 
-export async function providers(
-    state,
-    keyStore,
-    settings,
-    keyPairs,
-    dataKeyPair
-) {
+export async function providers(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
     markAsLoading(state, keyStore);
     try {
@@ -23,16 +17,9 @@ export async function providers(
         const decryptedProviderList = [];
         for (const entry of providersList) {
             try {
-                const result = await verify([entry.publicKey], entry);
-                if (!result) {
-                    // signature is invalid... Actually this is not really
-                    // required here as the public key isn't verifiable
-                    throw 'invalid signature';
-                }
-                const encryptedData = JSON.parse(entry.data);
                 const decryptedJSONData = await ecdhDecrypt(
-                    encryptedData,
-                    dataKeyPair.privateKey
+                    entry.encryptedData,
+                    keyPairs.provider.privateKey
                 );
                 const decryptedData = JSON.parse(decryptedJSONData);
                 decryptedData.entry = entry;

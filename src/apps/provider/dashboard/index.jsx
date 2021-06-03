@@ -131,7 +131,7 @@ const Dashboard = withRouter(
                                 keyPairs.data,
                                 verifiedProviderData.data
                             ).then(() =>
-                                checkInvitationsAction(keyPairs, d.data)
+                                checkInvitationsAction(keyPairs.data, d.data)
                             )
                         );
                     });

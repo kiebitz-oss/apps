@@ -2,26 +2,23 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { hash, sign, ecdhDecrypt, ephemeralECDHEncrypt } from 'helpers/crypto';
+import { sign, ecdhDecrypt, ephemeralECDHEncrypt } from 'helpers/crypto';
 
 export async function confirmProvider(
     state,
     keyStore,
     settings,
     providerData,
-    keyPairs,
-    queueKeyPair
+    keyPairs
 ) {
     const backend = settings.get('backend');
     try {
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
 
-        // we only store hashes of the public key values, as the actual keys are
-        // always passed to the user, so they never need to be looked up...
         const keyHashesData = {
-            signing: await hash(providerData.publicKeys.signing),
-            encryption: await hash(providerData.publicKeys.encryption),
+            signing: providerData.publicKeys.signing,
+            encryption: providerData.publicKeys.encryption,
             zipCode: providerData.data.zipCode, // so we can calculate distances
             queues: providerData.data.queues, // so we know which queues the provider can query
         };
@@ -29,14 +26,10 @@ export async function confirmProvider(
         const keysJSONData = JSON.stringify(keyHashesData);
         const providerJSONData = JSON.stringify(providerData.data);
 
-        // we hash the public key value
-        const publicKeyHash = await hash(keyPairs.signing.publicKey);
-
-        // this will be published, so we only store the hashed key
         const signedKeyData = await sign(
             keyPairs.signing.privateKey,
             keysJSONData,
-            publicKeyHash
+            keyPairs.signing.publicKey
         );
 
         const queues = await backend.appointments.getQueuesForProvider(
@@ -48,7 +41,7 @@ export async function confirmProvider(
         for (const queue of queues) {
             const queuePrivateKey = await ecdhDecrypt(
                 queue.encryptedPrivateKey,
-                queueKeyPair.privateKey
+                keyPairs.queue.privateKey
             );
             queuePrivateKeys.push({
                 privateKey: queuePrivateKey,
@@ -68,20 +61,17 @@ export async function confirmProvider(
             signedData: signedProviderData,
         };
 
-        const entryData = JSON.parse(providerData.entry.data);
-        const signedJSONData = JSON.stringify(fullData);
-
         // we encrypt the data with the public key supplied by the provider
-        const [encryptedData, _] = await ephemeralECDHEncrypt(
-            signedJSONData,
-            entryData.publicKey
+        const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
+            JSON.stringify(fullData),
+            providerData.entry.encryptedData.publicKey
         );
 
         const result = await backend.appointments.confirmProvider(
             {
                 id: providerData.verifiedID, // the ID to store the data under
-                providerData: encryptedData,
-                keyData: signedKeyData,
+                encryptedProviderData: encryptedProviderData,
+                signedKeyData: signedKeyData,
             },
             keyPairs.signing
         );
