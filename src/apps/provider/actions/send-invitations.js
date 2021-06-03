@@ -48,7 +48,7 @@ export async function sendInvitations(
             if (n > 0) {
                 // to do: get appointments by type
                 const newTokens = await backend.appointments.getQueueTokens(
-                    { capacities: [{ n: 10, properties: {} }] },
+                    { capacities: [{ n: n, properties: {} }] },
                     keyPairs.signing
                 );
                 if (newTokens === null)
