@@ -25,59 +25,62 @@ import {
 } from 'components';
 import { keyPairs, validKeyPairs } from '../actions';
 import t from './translations.yml';
-
-function readTextFile(file) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.open('GET', file, false);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4) {
-            if (rawFile.status === 200 || rawFile.status == 0) {
-                var allText = rawFile.responseText;
-                alert(allText);
-            }
-        }
-    };
-    rawFile.send(null);
-}
-
-function doSomething() {
-    var file = document.getElementById('idexample');
-
-    if (file.files.length) {
-    }
-}
+import './index.scss';
 
 const UploadKeyPairsModal = ({ keyPairsAction }) => {
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [invalidFile, setInvalidFile] = useState(false);
 
-    const readFile = () => {
+    const readFile = e => {
+        const file = e.target.files[0];
         var reader = new FileReader();
 
         reader.onload = function(e) {
             const json = JSON.parse(e.target.result);
-            keyPairsAction(json);
+            if (
+                json.signing === undefined ||
+                json.encryption === undefined ||
+                json.provider === undefined ||
+                json.queue === undefined
+            )
+                setInvalidFile(true);
+            else keyPairsAction(json);
         };
 
-        reader.readAsBinaryString(selectedFile);
+        reader.readAsBinaryString(file);
     };
 
-    return (
-        <Modal
-            save={<T t={t} k="upload-key-pairs.upload" />}
-            onSave={readFile}
-            saveDisabled={selectedFile === null}
-            title={<T t={t} k="upload-key-pairs.title" />}
-        >
-            <T t={t} k="upload-key-pairs.notice" />
-            <Form>
-                <FieldSet>
+    let notice;
+
+    if (invalidFile)
+        notice = (
+            <Message type="danger">
+                <T t={t} k="upload-key-pairs.invalid-file" />
+            </Message>
+        );
+
+    const footer = (
+        <Form>
+            <FieldSet>
+                <label htmlFor="file-upload" class="custom-file-upload">
+                    <T t={t} k="upload-key-pairs.input" />
                     <input
+                        id="file-upload"
                         className="bulma-input"
                         type="file"
-                        onChange={e => setSelectedFile(e.target.files[0])}
+                        onChange={e => readFile(e)}
                     />
-                </FieldSet>
-            </Form>
+                </label>
+            </FieldSet>
+        </Form>
+    );
+    return (
+        <Modal
+            footer={footer}
+            className="kip-upload-key-pairs"
+            title={<T t={t} k="upload-key-pairs.title" />}
+        >
+            {notice}
+            <T t={t} k="upload-key-pairs.notice" />
         </Modal>
     );
 };

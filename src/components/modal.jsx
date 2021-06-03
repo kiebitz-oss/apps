@@ -22,6 +22,7 @@ export class Modal extends React.Component {
             cancelDisabled,
             closeDisabled,
             save,
+            footer,
             cancel,
             onSave,
             onCancel,
@@ -57,8 +58,9 @@ export class Modal extends React.Component {
                     <section className="bulma-modal-card-body">
                         {children}
                     </section>
-                    {(onSave || onCancel) && (
+                    {(onSave || onCancel || footer) && (
                         <footer className="bulma-modal-card-foot">
+                            {footer}
                             {onSave && (
                                 <Button
                                     type={saveType}

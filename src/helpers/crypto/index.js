@@ -9,3 +9,4 @@ export * from './sign';
 export * from './hash';
 export * from './random';
 export * from './token';
+export * from './derive';
