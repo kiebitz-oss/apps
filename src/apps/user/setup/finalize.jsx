@@ -82,6 +82,7 @@ const Finalize = withForm(
                         setInitialized(true);
                         contactDataAction();
                         userSecretAction();
+                        queuesAction.reset();
                         submitToQueueAction.reset();
                         queueDataAction().then(qd => {
                             const initialData = {
@@ -204,16 +205,18 @@ const Finalize = withForm(
                                 );
                             }
                         } else if (
-                            queueData !== undefined &&
-                            queueData.status === 'failed'
+                            queues !== undefined &&
+                            queues.status === 'failed'
                         ) {
                             failed = true;
+                        }
+
+                        if (failed && !failedMessage)
                             failedMessage = (
                                 <Message type="danger">
                                     <T t={t} k="wizard.failed.notice" />
                                 </Message>
                             );
-                        }
 
                         return (
                             <React.Fragment>

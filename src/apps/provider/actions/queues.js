@@ -34,4 +34,6 @@ export async function queues(state, keyStore, settings, zipCode, radius, to) {
     }
 }
 
+queues.reset = () => ({ status: 'initialized' });
+
 queues.actionName = 'queues';
