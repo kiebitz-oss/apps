@@ -251,13 +251,6 @@ export default class AppointmentsBackend {
             tokenKey: this.tokenSigningKeyPair.publicKey,
         });
 
-        for (const providerKeys of keys.lists.providers) {
-            providerKeys.json = JSON.parse(providerKeys.data);
-        }
-        for (const mediatorKeys of keys.lists.mediators) {
-            mediatorKeys.json = JSON.parse(mediatorKeys.data);
-        }
-
         return keys;
     }
 
@@ -382,11 +375,10 @@ export default class AppointmentsBackend {
 
     // provider-only endpoints
 
-    async _getProviderKeyData(publicKey) {
-        const publicKeyHash = await hash(publicKey);
+    _getProviderKeyData(publicKey) {
         for (const key of this.keys.providers) {
             const keyData = JSON.parse(key.data);
-            if (keyData.signing === publicKeyHash) {
+            if (keyData.signing === publicKey) {
                 return keyData;
             }
         }
@@ -399,14 +391,12 @@ export default class AppointmentsBackend {
 
     // get n tokens from the given queue IDs
     async getQueueTokens({ capacities }, keyPair) {
-        const providerKeyData = await this._getProviderKeyData(
-            keyPair.publicKey
-        );
+        const providerKeyData = this._getProviderKeyData(keyPair.publicKey);
 
         if (providerKeyData === null) return null;
 
         // to do: verify signature against the official key
-
+        console.log(providerKeyData);
         // we update the tokens
         this.tokens = this.store.get('tokens', {});
         const queueIDs = providerKeyData.queues;
@@ -475,14 +465,8 @@ export default class AppointmentsBackend {
     }
 
     async storeProviderData({ id, encryptedData, code }, keyPair) {
-        const signedData = await sign(
-            keyPair.privateKey,
-            JSON.stringify(encryptedData),
-            keyPair.publicKey
-        );
-
         const result = await this.storeData(
-            { id: id, data: signedData },
+            { id: id, data: { encryptedData: encryptedData } },
             keyPair
         );
         if (!result) return;

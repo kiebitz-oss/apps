@@ -9,9 +9,8 @@ async function verifyProviderData(providerData, keys) {}
 
 async function decryptInvitationData(signedData, keys, tokenData) {
     let found = false;
-    const keyHash = await hash(signedData.publicKey);
     for (const providerKeys of keys.lists.providers) {
-        if (providerKeys.json.signing === keyHash) {
+        if (providerKeys.json.signing === signedData.publicKey) {
             found = true;
             break;
         }

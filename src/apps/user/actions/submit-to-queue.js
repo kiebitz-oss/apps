@@ -107,8 +107,8 @@ export async function submitToQueue(
             status: 'succeeded',
         };
     } catch (e) {
-        console.log(e.toString());
-        return { status: 'failed', error: e.toString() };
+        console.log(e);
+        return { status: 'failed', error: e };
     }
 }
 

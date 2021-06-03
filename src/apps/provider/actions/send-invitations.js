@@ -145,7 +145,7 @@ export async function sendInvitations(
 
             return { status: 'succeeded' };
         } catch (e) {
-            console.log(e.toString());
+            console.log(e);
             return { status: 'failed', error: e.toString() };
         }
     } finally {

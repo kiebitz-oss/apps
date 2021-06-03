@@ -18,6 +18,8 @@ export async function keyPairs(state, keyStore, settings, data) {
     if (mediatorKeyPairs === null && settings.get('test') === true) {
         const signingKeyPair = await generateECDSAKeyPair();
         const encryptionKeyPair = await generateECDHKeyPair();
+        await backend.appointments.initialized();
+
         let mediatorKeyPairs = {
             signing: signingKeyPair,
             encryption: encryptionKeyPair,

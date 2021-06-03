@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { hash, sign, ecdhDecrypt, ephemeralECDHEncrypt } from 'helpers/crypto';
+import { sign, ecdhDecrypt, ephemeralECDHEncrypt } from 'helpers/crypto';
 
 export async function confirmProvider(
     state,
@@ -16,11 +16,9 @@ export async function confirmProvider(
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
 
-        // we only store hashes of the public key values, as the actual keys are
-        // always passed to the user, so they never need to be looked up...
         const keyHashesData = {
-            signing: await hash(providerData.publicKeys.signing),
-            encryption: await hash(providerData.publicKeys.encryption),
+            signing: providerData.publicKeys.signing,
+            encryption: providerData.publicKeys.encryption,
             zipCode: providerData.data.zipCode, // so we can calculate distances
             queues: providerData.data.queues, // so we know which queues the provider can query
         };
@@ -28,14 +26,10 @@ export async function confirmProvider(
         const keysJSONData = JSON.stringify(keyHashesData);
         const providerJSONData = JSON.stringify(providerData.data);
 
-        // we hash the public key value
-        const publicKeyHash = await hash(keyPairs.signing.publicKey);
-
-        // this will be published, so we only store the hashed key
         const signedKeyData = await sign(
             keyPairs.signing.privateKey,
             keysJSONData,
-            publicKeyHash
+            keyPairs.signing.publicKey
         );
 
         const queues = await backend.appointments.getQueuesForProvider(

@@ -116,8 +116,6 @@ const Dashboard = withActions(
                 modal = <UploadKeyPairsModal keyPairsAction={keyPairsAction} />;
             }
 
-            console.log(keyPairs);
-
             if (keyPairs !== undefined) {
                 switch (tab) {
                     case 'settings':
