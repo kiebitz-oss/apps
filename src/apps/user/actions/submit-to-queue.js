@@ -50,7 +50,7 @@ export async function submitToQueue(
         } catch (e) {
             return {
                 status: 'failed',
-                error: e.toString(),
+                error: e,
             };
         }
     }
@@ -107,9 +107,10 @@ export async function submitToQueue(
             status: 'succeeded',
         };
     } catch (e) {
-        console.log(e);
         return { status: 'failed', error: e };
     }
 }
+
+submitToQueue.reset = () => ({ status: 'initialized' });
 
 submitToQueue.actionName = 'submitToQueue';

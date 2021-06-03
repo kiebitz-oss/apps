@@ -32,10 +32,12 @@ finalize:
     de: Bitte warten, Initialisierung wird abgeschlossen...
 wizard:
   failed:
+    invalid-code:
+      de: Ihr Zugangscode ist ungültig oder wurde bereits benutzt. Sie können sich nicht mehrfach registrieren.
     title:
-      de: Laden fehlgeschlagen
+      de: Fehlgeschlagen :/
     notice:
-      de: Das Laden von Daten ist fehlgeschlagen. Bitte versuchen Sie es später erneut.
+      de: Das Versenden von Daten ist fehlgeschlagen. Bitte versuchen Sie es später erneut. Wir entschuldigen uns für die Unannehmlichkeiten.
   no-queue:
     title:
       de: Nicht verfügbar

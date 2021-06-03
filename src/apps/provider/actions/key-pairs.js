@@ -33,7 +33,7 @@ export async function keyPairs(state, keyStore, settings) {
             } catch (e) {
                 return {
                     status: 'failed',
-                    error: e.toString(),
+                    error: e,
                 };
             }
         } else {

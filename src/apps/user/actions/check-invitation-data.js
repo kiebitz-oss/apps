@@ -63,7 +63,7 @@ export async function checkInvitationData(
         } catch (e) {
             return {
                 status: 'failed',
-                error: e.toString(),
+                error: e,
             };
         }
     } finally {

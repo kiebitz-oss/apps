@@ -145,6 +145,17 @@ export function withActions(Component, actionNames, keyList, noStore) {
                             }
                         };
                         actionProvider = wrapper;
+
+                        // we add the reset function
+                        if (ActionProvider.reset !== undefined) {
+                            actionProvider.reset = () => {
+                                const result = ActionProvider.reset(
+                                    keyStore,
+                                    settings
+                                );
+                                if (result !== undefined) keyStore.set(result);
+                            };
+                        }
                     } else {
                         actionProvider = new ActionProvider(
                             store,

@@ -145,8 +145,7 @@ export async function sendInvitations(
 
             return { status: 'succeeded' };
         } catch (e) {
-            console.log(e);
-            return { status: 'failed', error: e.toString() };
+            return { status: 'failed', error: e };
         }
     } finally {
         backend.local.unlock();

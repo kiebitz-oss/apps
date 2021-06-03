@@ -25,10 +25,9 @@ export async function providers(state, keyStore, settings, keyPairs) {
                 decryptedData.entry = entry;
                 decryptedProviderList.push(decryptedData);
             } catch (e) {
-                console.log(e);
                 invalidEntries.push({
                     entry: entry,
-                    error: e.toString(),
+                    error: e,
                 });
             }
         }
@@ -38,7 +37,7 @@ export async function providers(state, keyStore, settings, keyPairs) {
             status: 'loaded',
         };
     } catch (e) {
-        return { status: 'failed', error: e.toString() };
+        return { status: 'failed', error: e };
     }
 }
 
