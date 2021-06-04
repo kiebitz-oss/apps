@@ -86,6 +86,7 @@ export async function submitToQueue(
 
         const signedToken = await backend.appointments.getToken({
             hash: dataHash,
+            code: contactData.code,
             encryptedData: encryptedTokenData,
             queueID: queue.id,
             queueData: queueData,
