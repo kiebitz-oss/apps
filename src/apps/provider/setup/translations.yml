@@ -2,7 +2,7 @@ _t:
   path: apps/user/setup/translations.yml
 store-secrets:
   notice:
-    de: Zur Wiederherstellung Ihrer Daten benötigen Sie eine Datei sowie einen geheimen Schlüssel. Bitte klicken Sie auf "Sicherungsdatei erstellen" um Ihre Daten zu sichern. 
+    de: Um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre eingestellten Termine zugreifen zu können benötigen Sie eine Sicherungsdatei und einen geheimen Schlüssel. Bitte erstellen Sie jetzt Ihre Sicherungsdatei.
   secrets-modal:
     title:
       de: Datenschlüssel notieren
@@ -48,12 +48,12 @@ wizard:
   hi:
     de: |
       Willkommen.
-      Dieser Assistent führt Sie durch den Prozess der Impfanmeldung. Keine Angst, es dauert nur eine Minute! 
+      Dieser Assistent führt Sie Schritt für Schritt zur Terminverwaltung.
   continue:
     de: Weiter
   steps:
     hi:
-      de: Hallo
+      de: Jetzt starten
     enter-provider-data:
       de: Kontaktdaten eingeben
     store-secrets:
@@ -69,14 +69,14 @@ provider-data:
     de: Ihre Daten wurden noch nicht verifiziert, bitte haben Sie noch etwas Geduld...
   description:
     de:
-      Informationen für Nutzer (z.B. Hinweise zu benötigten Dokumenten)
+      Informationen für Impfwillige (z.B. wenn Sie spezielle Impfstoffe nur bestimmten Gruppen empfehlen)
   access-code:
     label:
       de: Zugangscode (falls vorhanden)
     description:
       de: Falls Sie einen spezifischen Zugangscode erhalten haben geben Sie diesen bitte hier ein.
   for-mediator:
-    de: Für die interne Verwendung
+    de: Die folgenden Kontaktdaten dienen ausschließlich zur Kommunikation mit dem sofort-impfen Team.
   accessible:
     de: Barrierefreier Zugang zur Ortschaft
   not-given:
@@ -93,7 +93,7 @@ provider-data:
   name:
     de: Vollständiger Name
   invalid-name:
-    de: Bitte geben Sie Ihren vollständigen Namen an.
+    de: Bitte geben Sie den Namen Ihrer Praxis oder Ihres Impfzentrums an.
   phone:
     de: Telefonnummer (nicht sichtbar für Nutzer)
   invalid-phone:
