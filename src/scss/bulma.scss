@@ -21,7 +21,7 @@ $bulma-button-border-color: $kip-green;
 $bulma-button-hover-color: darken($kip-blue, 20%);
 $bulma-button-hover-border-color: darken($kip-green, 20%);
 
-
+@import 'bulma-si';
 @import '~assets/bulma/bulma.sass';
 
 a.bulma-dropdown-item {
