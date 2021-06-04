@@ -11,9 +11,9 @@ invitation-accepted:
   booking-code:
     de: "Buchungscode zur Vorlage: Bitte notieren!"
   title:
-    de: Termin angenommen!
+    de: Termin bestätigt!
 appointments-notice:
-  de: Bitte wählen Sie alle für Sie passenden Termine und bestätigen Sie anschließend Ihre Auswahl durch Klicken auf "Terminauswahl bestätigen". 
+  de: Bitte wähle einen für Dich passenden Termin aus und bestätige anschließend Deine Auswahl.
 confirm-appointment:
   de: Terminauswahl bestätigen
 appointment-date:
@@ -21,12 +21,12 @@ appointment-date:
     Datum
 invitation-received:
   title:
-    de: Einladung erhalten!
+    de: "Verfügbare Termine:"
 user-data:
   title:
-    de: Ihre Daten
+    de: Deine Daten
   notice:
-    de: Hier können Sie sich auf diesem Gerät abmelden oder Ihre Daten endgültig löschen.
+    de: Du kannst Dich hier abmelden oder Deine Daten endgültig löschen
 delete:
   de: Daten löschen
 log-out:
@@ -39,20 +39,20 @@ log-out-modal:
   title:
     de: Abmelden
   text:
-    de: Möchten Sie sich wirklich abmelden? Bitte stellen Sie vorher sicher, dass Sie Ihren Buchungscode notiert haben. Mit diesem können Sie sich später gegebenenfalls wieder anmelden.
+    de: Möchtest Du Dich wirklich abmelden? Bitte stelle vorher sicher, dass Du Deinen Sicherheitscode notiert hast. Nur mit diesem Code kannst Du Dich später wieder anmelden.
 delete-modal:
   title:
     de: Nutzer-Daten löschen
   text:
-    de: Möchten Sie Ihre Daten wirklich unwiderruflich löschen?
+    de: Möchtest Du Deine Daten wirklich unwiderruflich löschen?
   deleting-text:
     de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
 cancel-appointment:
   de: Termin absagen
 no-invitations:
   title:
-    de: Keine Einladungen
+    de: Keine Terminangebote
   notice:
-    de: Bisher sind keine Einladungen eingegangen.
+    de: Bisher sind noch keine Termine in Deiner Umgebung verfügbar
   update-notice:
     de: Diese Seite wird automatisch aktualisiert...

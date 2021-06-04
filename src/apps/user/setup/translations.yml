@@ -2,7 +2,7 @@ _t:
   path: apps/user/setup/translations.yml
 store-secrets:
   secret:
-    de: "Ihr Buchungscode - Bitte notieren!"
+    de: "Dein Sicherheitscode - Bitte notieren!"
   bookmark-modal:
     text:
       de: Nutzen Sie Ihr Browser-Menü um ein Lesezeichen für die aktuelle Seite zu erstellen. Sie können dieses Lesezeichen dann öffnen, um Ihren Buchungscode wiederherzustellen.
@@ -17,16 +17,16 @@ store-secrets:
     title:
       de: Online
     text:
-      de: Bitte notieren Sie den vertraulichen Buchungscode sorgfältig! Sie benötigen ihn, um später Daten zu Ihrem Terminangebot einzusehen oder zu ändern.
+      de: "Bitte notiere Dir Deinen vertraulichen Sicherheitscode. Alternativ kannst Du auch ein Bildschirmfoto machen. Bitte beachte, dass Dir der Code NICHT per E-Mail geschickt wird und er von uns auch NICHT wiederhergestellt werden kann.<br/><br/><b>Du benötigst den Code um später Deine Daten zu Deinem Termin einzusehen oder zu ändern.</b>"
   bookmark:
-    de: Als Bookmark speichern
+    de: Als Lesezeichen speichern
   copy:
     de: Kopieren
   download:
     de: Datei speichern
 verify:
   text:
-    de: Bitte prüfen Sie nochmals Ihre Daten, bevor Sie die Einrichtung abschließen.
+    de: Bitte überprüfe Deine Daten.
 finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
@@ -37,7 +37,7 @@ wizard:
     title:
       de: Fehlgeschlagen :/
     notice:
-      de: Das Versenden von Daten ist fehlgeschlagen. Bitte versuchen Sie es später erneut. Wir entschuldigen uns für die Unannehmlichkeiten.
+      de: Sorry, hier ist etwas schief gelaufen. Bitte versuche es später erneut.
   no-queue:
     title:
       de: Nicht verfügbar
@@ -46,28 +46,28 @@ wizard:
   please-wait:
     de: Bitte warten...
   leave:
-    de: Zur Termin-Übersicht
+    de: Zu den verfügbaren Terminen
   finish:
     de: Fertigstellen
   hi:
     de: |
       Willkommen.
-      Dieser Assistent führt Sie durch den Prozess der Impfanmeldung. Keine Angst, es dauert nur eine Minute! 
+      Dieser Assistent hilft Dir bei der Impfanmeldung.
   continue:
     de: Weiter
   steps:
     hi:
       de: Los geht's!
     enter-contact-data:
-      de: Optionale Kontaktdaten eingeben
+      de: Kontaktdaten eingeben
     store-secrets:
-      de: Buchungscode notieren
+      de: Sicherheitscode notieren
     save-contact-data:
       de: Kontakdaten angeben
     finalize:
-      de: Angaben zur Impfung machen
+      de: Weitere Angaben
     verify:
-      de: Optionale Kontaktdaten prüfen
+      de: Kontaktdaten prüfen
 contact-data:
   properties: #if you change the vaccine types here you need to change them in 'apps/provider/dashboard/translations.ym' as well (to be migrated to settings)
 #    vaccine-types:
@@ -97,12 +97,12 @@ contact-data:
     label:
       de: Zugangscode
     description:
-      de: Der in Ihrer Anmelde E-Mail enthaltene Zugangscode (dieser sollte bereits ausgefüllt sein)
+      de: Der in Deiner Anmelde E-Mail enthaltene Zugangscode (dieser sollte bereits ausgefüllt sein)
   distance:
     label:
       de: "Maximale Entfernung zum Impfort in Kilometern (km)"
     notice:
-      de: "Hinweis: Die Schätzung der Entfernung basiert auf der mittleren Entfernung zwischen Postleitzahlgebieten. Die tatsächliche Entfernung kann hiervon in Einzelfällen stark abweichen."
+      de: " "
     option:
       de: "{distance} km"
   not-given:
@@ -128,13 +128,13 @@ contact-data:
     label:
       de: E-Mail Adresse
     description:
-      de: Sie können optional Ihre E-Mail Adresse angeben. Diese wird verschlüsselt gespeichert und dazu genutzt, Ihnen Mitteilungen über Ihre Termine zu schicken.
+      de: " "
   invalid-email:
     de: Bitte geben Sie eine gültige E-Mail Adresse an.
   zip-code:
-    de: Postleitzahl Ihres Wohnorts
+    de: Postleitzahl Deines Wohnorts
   invalid-zip-code:
-    de: Bitte geben Sie eine gültige Postleitzahl an.
+    de: Bitte trage eine gültige Postleitzahl ein.
   city:
     de: Ort
   invalid-city:

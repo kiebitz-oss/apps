@@ -1,4 +1,5 @@
 {
+    "title":"sofort-impfen",
     "commitSHA" : "COMMIT_SHA",
     "storageApi" : "https://storage.sofort-impfen.de/jsonrpc",
     "appointmentsApi" : "https://appointments.sofort-impfen.de/jsonrpc",
