@@ -126,14 +126,13 @@ const Dashboard = withRouter(
                         )
                             return;
 
-                        openAppointmentsAction().then(d =>
-                            sendInvitationsAction(
-                                keyPairs.data,
-                                verifiedProviderData.data
-                            ).then(() =>
-                                checkInvitationsAction(keyPairs.data, d.data)
-                            )
-                        );
+                        console.log(verifiedProviderData);
+
+                        // we send invitations and then check invitation data
+                        sendInvitationsAction(
+                            keyPairs.data,
+                            verifiedProviderData.data
+                        ).finally(() => checkInvitationsAction(keyPairs.data));
                     });
 
                     let content;

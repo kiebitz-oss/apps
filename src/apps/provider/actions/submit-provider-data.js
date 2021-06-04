@@ -56,10 +56,8 @@ export async function submitProviderData(
                 keyPairs.signing
             );
 
-            const providerData = backend.local.get('provider::data', {});
-            providerData.submitted = true;
-            backend.local.set('provider::data', providerData);
-
+            data.data.submitted = true;
+            backend.local.set('provider::data', data);
             return result;
         } catch (e) {
             return { status: 'failed', error: e };

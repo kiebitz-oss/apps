@@ -83,13 +83,13 @@ class JSONRPCBackend {
             };
             xhr.onerror = () => {
                 reject({
-                    jsonrpc: "2.0",
-                    id: "-1",
+                    jsonrpc: '2.0',
+                    id: '-1',
                     error: {
                         code: -1,
-                        message: "request failed",
+                        message: 'request failed',
                         data: {},
-                    }
+                    },
                 });
             };
             if (opts.headers) {

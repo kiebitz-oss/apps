@@ -41,9 +41,12 @@ export async function sendInvitations(
             };
 
         let openTokens = backend.local.get('provider::tokens::open', []);
-
+        let openSlots = 0;
+        openAppointments.forEach(ap => {
+            openSlots += ap.slotData.filter(sl => sl.open).length;
+        });
         try {
-            const n = Math.max(0, openAppointments.length - openTokens.length);
+            const n = Math.max(0, openSlots - openTokens.length);
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0) {
                 // to do: get appointments by type
@@ -55,60 +58,94 @@ export async function sendInvitations(
                     return {
                         status: 'failed',
                     };
+                const validTokens = [];
                 for (const tokenList of newTokens) {
                     for (const token of tokenList) {
                         const privateKey = getQueuePrivateKey(
                             token.queue,
                             verifiedProviderData
                         );
-                        token.data = JSON.parse(
-                            await ecdhDecrypt(token.encryptedData, privateKey)
-                        );
+                        try {
+                            token.data = JSON.parse(
+                                await ecdhDecrypt(
+                                    token.encryptedData,
+                                    privateKey
+                                )
+                            );
+                        } catch (e) {
+                            console.error(e);
+                            continue;
+                        }
                         token.keyPair = await generateECDHKeyPair();
+                        validTokens.push(token);
                     }
-                    openTokens = [...openTokens, ...tokenList];
+                    openTokens = [...openTokens, ...validTokens];
                 }
                 // we update the list of open tokens
                 backend.local.set('provider::tokens::open', openTokens);
             }
             const dataToSubmit = [];
             // we make sure all token holders can initialize all appointment data IDs
-            for (const token of openTokens) {
+            for (const [i, token] of openTokens.entries()) {
                 try {
-                    // we generate grants for all appointments IDs
+                    // we generate grants for all appointments IDs.
                     const grantsData = await Promise.all(
-                        openAppointments.map(
-                            async oa =>
-                                await sign(
-                                    keyPairs.signing.privateKey,
-                                    JSON.stringify({
-                                        rights: ['write', 'read', 'delete'],
-                                        singleUse: true,
-                                        id: oa.id,
-                                        permissions: [
-                                            {
-                                                rights: [
-                                                    'write',
-                                                    'read',
-                                                    'delete',
-                                                ],
-                                                keys: [
-                                                    keyPairs.signing.publicKey,
-                                                ],
-                                            },
-                                        ],
-                                    }),
-                                    keyPairs.signing.publicKey
-                                )
-                        )
+                        openAppointments
+                            .filter(
+                                oa =>
+                                    oa.slotData.filter(sl => sl.open).length > 0
+                            )
+                            .map(async oa =>
+                                oa.slotData
+                                    .filter(sl => sl.open)
+                                    .map(
+                                        async sl =>
+                                            await sign(
+                                                keyPairs.signing.privateKey,
+                                                JSON.stringify({
+                                                    rights: [
+                                                        'write',
+                                                        'read',
+                                                        'delete',
+                                                    ],
+                                                    singleUse: true,
+                                                    id: sl.id,
+                                                    permissions: [
+                                                        {
+                                                            rights: [
+                                                                'write',
+                                                                'read',
+                                                                'delete',
+                                                            ],
+                                                            keys: [
+                                                                keyPairs.signing
+                                                                    .publicKey,
+                                                            ],
+                                                        },
+                                                    ],
+                                                }),
+                                                keyPairs.signing.publicKey
+                                            )
+                                    )
+                            )
                     );
                     const userData = {
                         provider: verifiedProviderData.signedData,
-                        offers: openAppointments.map((oa, i) => {
-                            const on = { ...oa };
-                            on.grant = grantsData[i];
-                            return on;
-                        }),
+                        offers: openAppointments
+                            .filter(
+                                oa =>
+                                    oa.slotData.filter(sl => sl.open).length > 0
+                            )
+                            .map((oa, i) => {
+                                // to do: we should maybe not send all fields to the
+                                // user by default
+                                const on = { ...oa };
+                                // we only send information about the open slots to
+                                // the user...
+                                on.slotData = on.slotData.filter(sl => sl.open);
+                                on.grants = grantsData[i];
+                                return on;
+                            }),
                     };
                     // we first encrypt the data
                     const encryptedUserData = await ecdhEncrypt(
@@ -133,10 +170,12 @@ export async function sendInvitations(
                         ],
                     });
                 } catch (e) {
+                    console.error(e);
                     continue;
                 }
             }
             backend.local.set('provider::tokens::open', openTokens);
+
             // we send the signed, encrypted data to the backend
             await backend.appointments.bulkStoreData(
                 { dataList: dataToSubmit },
@@ -145,6 +184,7 @@ export async function sendInvitations(
 
             return { status: 'succeeded' };
         } catch (e) {
+            console.error(e);
             return { status: 'failed', error: e };
         }
     } finally {

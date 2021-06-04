@@ -165,14 +165,15 @@ const InvitationDetails = withActions(
         if (data === null || data.offers === null)
             return <NoInvitations data={tokenData} />;
 
-        const offers = data.offers.map(offer => {
+        // to do: use something better than the index i for the key?
+        const offers = data.offers.map((offer, i) => {
             const d = new Date(offer.timestamp);
             const selected = toggleOffers.data.includes(offer.id);
             let pref;
             if (selected) pref = toggleOffers.data.indexOf(offer.id) + 1;
             return (
                 <tr
-                    key={offer.id}
+                    key={i}
                     className={selected ? `kip-selected kip-pref-${pref}` : ''}
                     onClick={() => toggle(offer)}
                 >

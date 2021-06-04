@@ -19,10 +19,17 @@ export async function createAppointment(
             'provider::appointments::open',
             []
         );
+        const slotData = [];
+        for (let i = 0; i < appointment.slots; i++) {
+            slotData.push({
+                open: true,
+                id: randomBytes(32), // where the user can submit his confirmation
+                status: randomBytes(32), // where the user can get the appointment status
+                cancel: randomBytes(32), // where the user can cancel his confirmation
+            });
+        }
         openAppointments.push({
-            id: randomBytes(32), // where the user can submit his confirmation
-            status: randomBytes(32), // where the user can get the appointment status
-            cancel: randomBytes(32), // where the user can cancel his confirmation
+            slotData: slotData,
             ...appointment,
         });
         backend.local.set('provider::appointments::open', openAppointments);
