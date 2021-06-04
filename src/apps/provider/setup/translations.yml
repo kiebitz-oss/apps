@@ -17,7 +17,7 @@ store-secrets:
     title:
       de: Online
     text:
-      de: Bitte notieren Sie Ihren Datenschlüssel sorgfältig! Sie benötigen ihn, um gegebenenfalls Ihre Daten wieder herstellen zu können.
+      de: Bitte notieren Sie Ihren Datenschlüssel sorgfältig! Sie benötigen ihn, um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre eingestellten Termine zugreifen zu können.
   bookmark:
     de: Als Bookmark speichern
   copy:
