@@ -24,6 +24,8 @@ export async function checkVerifiedProviderData(
             'provider::data::encryptionKey'
         );
         try {
+
+
             const decryptedJSONData = await ecdhDecrypt(
                 verifiedData,
                 encryptionKey

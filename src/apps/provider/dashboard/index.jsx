@@ -101,14 +101,14 @@ const Dashboard = withRouter(
                                     ) {
                                         router.navigateToUrl('/provider/setup');
                                         return;
-                                    } else if (pd.data.submitted !== true) {
+                                    } else if (pd.data.data.submitted !== true) {
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,
                                             kp.data,
                                             ks.data
                                         );
-                                    } else if (!pd.data.verified) {
+                                    } else if (!pd.data.data.verified) {
                                         checkVerifiedProviderDataAction(
                                             pd.data,
                                             kp.data
