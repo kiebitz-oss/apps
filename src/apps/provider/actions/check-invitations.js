@@ -5,29 +5,37 @@
 import { ecdhDecrypt } from 'helpers/crypto';
 
 // checks invitations
-export async function checkInvitations(
-    state,
-    keyStore,
-    settings,
-    keyPairs,
-    invitations
-) {
+export async function checkInvitations(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
     try {
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
 
         let openTokens = backend.local.get('provider::tokens::open', []);
-        let acceptedInvitations = backend.local.get(
-            'provider::appointments::accepted',
+        let openAppointments = backend.local.get(
+            'provider::appointments::open',
             []
         );
         try {
+            const ids = [];
+            const cancelIds = [];
+            const appointments = [];
+            const usedTokens = [];
+            for (const appointment of openAppointments) {
+                for (const slotData of appointment.slotData) {
+                    if (!slotData.open) continue;
+                    ids.push(slotData.id);
+                    cancelIds.push(slotData.cancel);
+                    appointments.push(appointment);
+                }
+            }
+            const allIds = [...ids];
             const results = await backend.appointments.bulkGetData(
-                { ids: invitations.map(i => i.id) },
+                { ids: allIds },
                 keyPairs.signing
             );
             for (const [i, result] of results.entries()) {
+                const appointment = appointments[i];
                 if (result === null) continue;
                 // we try to decrypt this data with the private key of each token
                 for (const openToken of openTokens) {
@@ -45,53 +53,45 @@ export async function checkInvitations(
                         );
 
                         if (
-                            acceptedInvitations.find(
-                                ai => ai.token.token === signedData.token
+                            openAppointments.find(oa =>
+                                oa.slotData.some(
+                                    sl =>
+                                        sl.token !== undefined &&
+                                        sl.token.token === signedData.token
+                                )
                             )
-                        )
-                            continue; // we already have this token
+                        ) {
+                            continue; // we already stored this token
+                        }
 
-                        // this token belongs to the given invitation
-                        acceptedInvitations.push({
-                            token: openToken,
-                            data: decryptedData,
-                            invitation: invitations[i],
-                        });
+                        // we get the slot data for the token
+                        const slotData = appointment.slotData.find(
+                            sl => sl.id === allIds[i]
+                        );
+                        slotData.open = false;
+                        slotData.token = openToken;
+                        slotData.userData = decryptedData;
+
+                        usedTokens.push(openToken);
                     } catch (e) {
+                        console.error(e);
                         continue;
                     }
                 }
             }
-
-            // we update the list of accepted appointments
-            backend.local.set(
-                'provider::appointments::accepted',
-                acceptedInvitations
-            );
-
-            // we remove the accepted appointments from the list of open appointments
-            let openAppointments = backend.local.get(
-                'provider::appointments::open',
-                []
-            );
-            openAppointments = openAppointments.filter(
-                oa =>
-                    !acceptedInvitations.find(ai => ai.invitation.id === oa.id)
-            );
             backend.local.set('provider::appointments::open', openAppointments);
 
-            // we remove the tokens corresponding to the accepted invitations from
+            // we remove the tokens corresponding to the accepted slots from
             // the list of open tokens...
             openTokens = openTokens.filter(
-                ot =>
-                    !acceptedInvitations.find(ai => ai.token.token === ot.token)
+                ot => !usedTokens.some(ut => ut.token === ot.token)
             );
 
             backend.local.set('provider::tokens::open', openTokens);
 
             return {
                 status: 'loaded',
-                data: acceptedInvitations,
+                data: openAppointments,
             };
         } catch (e) {
             console.log(e);

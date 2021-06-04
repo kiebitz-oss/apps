@@ -39,10 +39,12 @@ export async function confirmProvider(
 
         const queuePrivateKeys = [];
         for (const queue of queues) {
+            console.log(keyPairs);
             const queuePrivateKey = await ecdhDecrypt(
                 queue.encryptedPrivateKey,
                 keyPairs.queue.privateKey
             );
+            console.log(queuePrivateKey);
             queuePrivateKeys.push({
                 privateKey: queuePrivateKey,
                 id: queue.id,

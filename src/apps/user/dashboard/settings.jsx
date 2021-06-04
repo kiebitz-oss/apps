@@ -37,7 +37,7 @@ const Settings = withSettings(
             setTimeout(() => {
                 setDeleting(false);
                 router.navigateToUrl('/user/deleted');
-            }, 3000);
+            }, 100);
         };
 
         const logOut = () => {
@@ -47,7 +47,7 @@ const Settings = withSettings(
             setTimeout(() => {
                 setLoggingOut(false);
                 router.navigateToUrl('/user/logged-out');
-            }, 3000);
+            }, 100);
         };
 
         if (action === 'delete') {

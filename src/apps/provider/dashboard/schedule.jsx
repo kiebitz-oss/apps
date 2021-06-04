@@ -27,7 +27,12 @@ import {
     CardContent,
     Button,
 } from 'components';
-import { keys, keyPairs, createAppointment } from '../actions';
+import {
+    keys,
+    keyPairs,
+    createAppointment,
+    openAppointments,
+} from '../actions';
 import t from './translations.yml';
 import './schedule.scss';
 
@@ -36,10 +41,8 @@ Date.prototype.addHours = function(h) {
     return this;
 };
 
-const AppointmentsOverview = ({ open, accepted, ...props }) => {
-    const acceptedItems = accepted
-        .filter(ai => ai.data !== null)
-        .map(ai => <li key={ai.invitation.id}>{ai.token.data.code}</li>);
+const AppointmentsOverview = ({ appointments, ...props }) => {
+    let acceptedItems;
     return (
         <Modal {...props} title={<T t={t} k="appointments-overview.title" />}>
             <ul>{acceptedItems}</ul>
@@ -47,7 +50,7 @@ const AppointmentsOverview = ({ open, accepted, ...props }) => {
     );
 };
 
-const CalendarAppointments = ({ open, accepted }) => {
+const CalendarAppointments = ({ appointments }) => {
     const [showModal, setShowModal] = useState(false);
     let modal;
     const close = () => setShowModal(false);
@@ -56,8 +59,7 @@ const CalendarAppointments = ({ open, accepted }) => {
             <AppointmentsOverview
                 onCancel={close}
                 onClose={close}
-                open={open}
-                accepted={accepted}
+                appointments={appointments}
             />
         );
     return (
@@ -67,37 +69,43 @@ const CalendarAppointments = ({ open, accepted }) => {
                 className="kip-appointments"
                 onClick={() => setShowModal(true)}
             >
-                {open.length} - {accepted.length}
+                {appointments.length}
             </div>
         </F>
     );
 };
 
 const HourRow = ({ appointments, date, day, hour }) => {
-    const ota = new Date(
+    const ots = new Date(
         date.toLocaleDateString() +
             ' ' +
             hour.toLocaleString('en-US', { minimumIntegerDigits: 2 }) +
             ':00:00'
     );
-    const ote = new Date(ota);
+    const ote = new Date(ots);
     ote.addHours(1);
-    const openAppointments = [];
-    const acceptedAppointments = [];
-    for (const [target, app, inner] of [
-        [openAppointments, appointments.open, false],
-        [acceptedAppointments, appointments.accepted, true],
-    ]) {
-        for (const oa of app) {
-            let oad;
-            if (inner) oad = new Date(`${oa.invitation.timestamp}`);
-            else oad = new Date(`${oa.timestamp}`);
-            if (ota <= oad && ote > oad) target.push(oa);
+    const relevantAppointments = [];
+    for (const oa of appointments) {
+        // beginning of appointment
+        const oas = new Date(`${oa.timestamp}`);
+        // end of appointment
+        const oae = new Date(oas.getTime() + 1000 * 60 * oa.duration);
+        let startsHere = false;
+        let relevant = false;
+        // starts in interval
+        if (oas >= ots && oas < ote) {
+            startsHere = true;
+            relevant = true;
         }
+        // ends in interval
+        if (oae > ots && oae <= ote) relevant = true;
+        if (relevant)
+            relevantAppointments.push({
+                startsHere: startsHere,
+                appointment: oa,
+            });
     }
-    let hasAppointments = false;
-    if (openAppointments.length > 0 || acceptedAppointments.length > 0)
-        hasAppointments = true;
+    let hasAppointments = relevantAppointments.length > 0;
     return (
         <div
             className={
@@ -107,8 +115,9 @@ const HourRow = ({ appointments, date, day, hour }) => {
         >
             {hasAppointments && (
                 <CalendarAppointments
-                    open={openAppointments}
-                    accepted={acceptedAppointments}
+                    ots={ots}
+                    ote={ote}
+                    appointments={relevantAppointments}
                 />
             )}
         </div>
@@ -419,26 +428,19 @@ const Invitations = withTimer(
                     keyPairsAction,
                     invitationQueues,
                     invitationQueuesAction,
+                    openAppointments,
+                    openAppointmentsAction,
                     router,
                 }) => {
                     const [initialized, setInitialized] = useState(false);
                     const [view, setView] = useState('calendar');
-
-                    const backend = settings.get('backend');
-                    const acceptedAppointments = backend.local.get(
-                        'provider::appointments::accepted',
-                        []
-                    );
-                    const openAppointments = backend.local.get(
-                        'provider::appointments::open',
-                        []
-                    );
 
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
                         // we load all the necessary data
                         keyPairsAction();
+                        openAppointmentsAction();
                         keysAction();
                     });
 
@@ -498,10 +500,7 @@ const Invitations = withTimer(
                                     </DropdownMenu>
                                     <WeekCalendar
                                         startDate={startDate}
-                                        appointments={{
-                                            open: openAppointments,
-                                            accepted: acceptedAppointments,
-                                        }}
+                                        appointments={openAppointments.data}
                                     />
                                 </CardContent>
                                 <Message type="info" waiting>
@@ -518,12 +517,12 @@ const Invitations = withTimer(
                     // we wait until all resources have been loaded before we display the form
                     return (
                         <WithLoader
-                            resources={[keyPairs]}
+                            resources={[keyPairs, openAppointments]}
                             renderLoaded={render}
                         />
                     );
                 },
-                [keys, keyPairs]
+                [keys, keyPairs, openAppointments]
             )
         )
     ),

@@ -26,25 +26,35 @@ export async function confirmOffers(
         );
         for (const offer of offers) {
             try {
-                const result = await backend.appointments.storeData(
-                    {
-                        id: offer.id,
-                        data: encryptedProviderData,
-                        permissions: [],
-                        grant: offer.grant,
-                    },
-                    tokenData.signingKeyPair
-                );
-                // we store the information about the offer which we've accepted
-                backend.local.set('user::invitation::accepted', {
-                    offer: offer,
-                    invitationData: invitationData,
-                });
-                return {
-                    status: 'succeeded',
-                    data: offer,
-                };
+                for (let i = 0; i < offer.slotData.length; i++) {
+                    const slotData = offer.slotData[i];
+                    const grant = offer.grants[i];
+                    const result = await backend.appointments.storeData(
+                        {
+                            id: slotData.id,
+                            data: encryptedProviderData,
+                            permissions: [],
+                            grant: grant,
+                        },
+                        tokenData.signingKeyPair
+                    );
+                    // we store the information about the offer which we've accepted
+                    backend.local.set('user::invitation::accepted', {
+                        offer: offer,
+                        invitationData: invitationData,
+                        slotData: slotData,
+                        grant: grant,
+                    });
+                    return {
+                        status: 'succeeded',
+                        data: {
+                            offer: offer,
+                            slotData: slotData,
+                        },
+                    };
+                }
             } catch (e) {
+                console.error(e);
                 continue;
             }
         }
