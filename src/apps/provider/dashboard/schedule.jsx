@@ -77,7 +77,7 @@ const CalendarAppointments = ({ appointments }) => {
 
 const HourRow = ({ appointments, date, day, hour }) => {
     const ots = new Date(
-        date.toLocaleDateString() +
+        date.toLocaleDateString('en-US') +
             ' ' +
             hour.toLocaleString('en-US', { minimumIntegerDigits: 2 }) +
             ':00:00'
