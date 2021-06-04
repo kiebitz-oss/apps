@@ -90,6 +90,7 @@ const Dashboard = withRouter(
                         setTv(timer);
                         setLastUpdated(new Date().toLocaleTimeString());
                         verifiedProviderDataAction();
+                        openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
                                 validKeyPairsAction(kp.data, ks.data);

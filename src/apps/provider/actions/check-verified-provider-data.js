@@ -24,13 +24,10 @@ export async function checkVerifiedProviderData(
             'provider::data::encryptionKey'
         );
         try {
-
-
             const decryptedJSONData = await ecdhDecrypt(
                 verifiedData,
                 encryptionKey
             );
-
             if (decryptedJSONData === null) {
                 // can't decrypt
                 return { status: 'failed' };
