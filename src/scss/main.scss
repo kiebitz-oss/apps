@@ -69,4 +69,9 @@ div.kip {
         margin-top: map-get($kip-space, md);
     }
 
+    h3 {
+        @include fs(normal);
+        margin-top: map-get($kip-space, lg);
+        margin-bottom: map-get($kip-space, md);
+    }
 }
