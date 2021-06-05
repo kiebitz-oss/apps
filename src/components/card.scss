@@ -97,10 +97,10 @@
         width: 100%;
         cursor: pointer;
         user-select: none;
+        font-weight:600;
 
         &.kip-card-nav-active {
             background: #fafafa;
-            font-weight: 400;
         }
 
         &.kip-card-nav-disabled {
