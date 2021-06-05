@@ -68,7 +68,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
             {modal}
             {!embedded && (
                 <p className="kip-secrets-notice">
-                    <T t={t} k="store-secrets.online.text" />
+                    <T t={t} k="store-secrets.online.text" safe />
                 </p>
             )}
             <div
