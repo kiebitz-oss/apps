@@ -114,9 +114,9 @@ const BaseProviderData = ({
                         setAndMarkModified('description', e.target.value)
                     }
                 />
-                <h2>
+                <h3>
                     <T t={t} k="provider-data.for-mediator" />
-                </h2>
+                </h3>
                 <ErrorFor error={error} field="phone" />
                 <RetractingLabelInput
                     value={data.phone || ''}
