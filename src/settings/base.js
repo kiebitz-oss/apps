@@ -12,12 +12,13 @@ import whiteLogo from 'assets/images/logo-white.png';
 import smallWhiteLogo from 'assets/images/logo-small-white.png';
 import routes from 'routes';
 import baseSettings from './base';
+import siLogo from 'assets/images/si-logo.png';
 
 const settings = new Settings([
     ['title', 'Kiebitz'],
-    ['logo', logo],
-    ['whiteLogo', whiteLogo],
-    ['smallWhiteLogo', smallWhiteLogo],
+    ['logo', siLogo],
+    ['whiteLogo', siLogo],
+    ['smallWhiteLogo', siLogo],
     ['apps', new Map([])],
     ['menu', new Map([])],
     ['routes', routes],

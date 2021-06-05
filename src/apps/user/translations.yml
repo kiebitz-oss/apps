@@ -11,7 +11,7 @@ show-help:
 data-deleted:
   de: Daten erfolgreich gelöscht
 thanks-for-using-us:
-  de: Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie {service} genutzt haben!
+  de: Deine Daten wurden erfolgreich gelöscht. Vielen Dank, dass Du {service} genutzt hast!
 logged-out:
   title:
     de: Erfolgreich abgemeldet.
