@@ -20,7 +20,11 @@ export default class Form {
     ) {
         this.data = data || {};
         this.settings = settings;
-        this._errors = this.validate();
+        const r = this.validate()
+        if (r instanceof Array)
+            [this._errors, this._errorMessage] = r;
+        else
+            this._errors = r;
         this._valid = Object.keys(this._errors).length === 0;
         if (error !== undefined) {
             this._errorMessage = error.message;
