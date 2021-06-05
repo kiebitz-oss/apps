@@ -36,6 +36,8 @@ import {
 import t from './translations.yml';
 import './schedule.scss';
 
+const appointmentProperties = t.schedule.appointment.properties;
+
 Date.prototype.addHours = function(h) {
     this.setHours(this.getHours() + h);
     return this;
@@ -50,10 +52,68 @@ const AppointmentsOverview = ({ appointments, ...props }) => {
     );
 };
 
+const PropertyTags = ({ appointment }) => {
+    const props = Object.entries(appointment)
+        .filter(([k, v]) => v === true)
+        .map(([k, v]) => <PropertyTag key={k} property={k} />)
+        .filter(p => p !== undefined);
+    return <F>{props}</F>;
+};
+
+const PropertyTag = withSettings(({ settings, property }) => {
+    const lang = settings.get('lang');
+    for (const [category, values] of Object.entries(appointmentProperties)) {
+        const prop = values.values[property];
+        if (prop !== undefined) {
+            return (
+                <span key={property} className={`kip-tag kip-is-${property}`}>
+                    {prop.tag[lang]}
+                </span>
+            );
+        }
+    }
+});
+
+const AppointmentCard = ({ appointment, n }) => {
+    const p = Math.floor((appointment.duration / 60) * 100);
+    const w = Math.floor(97.5 / (1 + appointment.maxOverlap) - 2.5);
+    const i = appointment.overlapsWith.filter(
+        oa => oa.index < appointment.index
+    ).length;
+    const l = Math.floor(2.5 + i * (w + 2.5));
+    return (
+        <div
+            style={{
+                height: `calc(${p}% - 8px)`,
+                width: `${w}%`,
+                left: `${l}%`,
+            }}
+            className="kip-appointment-card"
+        >
+            <span className="kip-tag kip-is-booked">
+                {appointment.slotData.filter(sl => !sl.open).length}
+            </span>
+            <span className="kip-tag kip-is-open">
+                {appointment.slotData.filter(sl => sl.open).length}
+            </span>
+            <PropertyTags appointment={appointment} />
+        </div>
+    );
+};
+
 const CalendarAppointments = ({ appointments }) => {
     const [showModal, setShowModal] = useState(false);
     let modal;
     const close = () => setShowModal(false);
+    const appointmentsItems = appointments
+        .filter(ap => ap.startsHere)
+        .map(({ appointment }) => (
+            <AppointmentCard
+                key={appointment.slotData[0].id}
+                appointment={appointment}
+                n={appointments.length}
+            />
+        ));
     if (showModal)
         modal = (
             <AppointmentsOverview
@@ -69,7 +129,7 @@ const CalendarAppointments = ({ appointments }) => {
                 className="kip-appointments"
                 onClick={() => setShowModal(true)}
             >
-                {appointments.length}
+                {appointmentsItems}
             </div>
         </F>
     );
@@ -99,6 +159,10 @@ const HourRow = ({ appointments, date, day, hour }) => {
         }
         // ends in interval
         if (oae > ots && oae <= ote) relevant = true;
+
+        // is in interval
+        if (oas <= ots && oae >= ote) relevant = true;
+
         if (relevant)
             relevantAppointments.push({
                 startsHere: startsHere,
@@ -214,6 +278,23 @@ class AppointmentForm extends Form {
             this.data.timestamp = new Date(
                 `${this.data.date} ${this.data.time}`
             );
+            if (this.data.timestamp < new Date())
+                errors.date = this.settings.t(t, 'new-appointment.in-the-past');
+            // we allow appointments max. 30 days in the future
+            if (
+                this.data.timestamp >
+                new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+            )
+                errors.date = this.settings.t(
+                    t,
+                    'new-appointment.too-far-in-the-future'
+                );
+        }
+        if (this.data.slots > 50) {
+            errors.slots = this.settings.t(t, 'new-appointment.too-many-slots');
+        }
+        if (this.data.slots < 1) {
+            errors.slots = this.settings.t(t, 'new-appointment.too-few-slots');
         }
         return errors;
     }
@@ -225,15 +306,19 @@ const NewAppointment = withActions(
             ({
                 createAppointment,
                 createAppointmentAction,
+                openAppointmentsAction,
                 router,
                 form: { valid, error, data, set, reset },
             }) => {
                 const [initialized, setInitialized] = useState(false);
                 const cancel = () => router.navigateToUrl('/provider/schedule');
                 const save = () => {
-                    createAppointmentAction(data).then(() =>
-                        router.navigateToUrl('/provider/schedule')
-                    );
+                    createAppointmentAction(data).then(() => {
+                        // we reload the appointments
+                        openAppointmentsAction();
+                        // and we go back to the schedule view
+                        router.navigateToUrl('/provider/schedule');
+                    });
                 };
 
                 useEffect(() => {
@@ -246,54 +331,54 @@ const NewAppointment = withActions(
                     });
                 });
 
-                const properties = Object.entries(
-                    t.schedule.appointment.properties
-                ).map(([k, v]) => {
-                    const options = Object.entries(v.values).map(
-                        ([kv, vv]) => ({
-                            value: kv,
-                            key: vv,
-                            title: (
-                                <T
-                                    t={t}
-                                    k={`schedule.appointment.properties.${k}.values.${kv}`}
-                                />
-                            ),
-                        })
-                    );
+                const properties = Object.entries(appointmentProperties).map(
+                    ([k, v]) => {
+                        const options = Object.entries(v.values).map(
+                            ([kv, vv]) => ({
+                                value: kv,
+                                key: vv,
+                                title: (
+                                    <T
+                                        t={t}
+                                        k={`schedule.appointment.properties.${k}.values.${kv}`}
+                                    />
+                                ),
+                            })
+                        );
 
-                    let currentOption;
+                        let currentOption;
 
-                    for (const [k, v] of Object.entries(data)) {
-                        for (const option of options) {
-                            if (k === option.value) currentOption = k;
+                        for (const [k, v] of Object.entries(data)) {
+                            for (const option of options) {
+                                if (k === option.value) currentOption = k;
+                            }
                         }
-                    }
 
-                    const changeTo = option => {
-                        const newData = { ...data };
-                        for (const option of options)
-                            delete newData[option.value];
-                        newData[option.value] = true;
-                        reset(newData);
-                    };
+                        const changeTo = option => {
+                            const newData = { ...data };
+                            for (const option of options)
+                                delete newData[option.value];
+                            newData[option.value] = true;
+                            reset(newData);
+                        };
 
-                    return (
-                        <F key={k}>
-                            <h2>
-                                <T
-                                    t={t}
-                                    k={`schedule.appointment.properties.${k}.title`}
+                        return (
+                            <F key={k}>
+                                <h2>
+                                    <T
+                                        t={t}
+                                        k={`schedule.appointment.properties.${k}.title`}
+                                    />
+                                </h2>
+                                <RichSelect
+                                    options={options}
+                                    value={currentOption}
+                                    onChange={option => changeTo(option)}
                                 />
-                            </h2>
-                            <RichSelect
-                                options={options}
-                                value={currentOption}
-                                onChange={option => changeTo(option)}
-                            />
-                        </F>
-                    );
-                });
+                            </F>
+                        );
+                    }
+                );
 
                 const durations = [
                     10,
@@ -358,13 +443,14 @@ const NewAppointment = withActions(
                                         step={60}
                                     />
                                 </div>
-                                <div className="kip-field kip-slider">
+                                <div className="kip-field kip-is-fullwidth kip-slider">
                                     <Label htmlFor="slots">
                                         <T t={t} k="new-appointment.slots" />
                                     </Label>
                                     <ErrorFor error={error} field="slots" />
                                     <input
-                                        type="range"
+                                        type="number"
+                                        className="bulma-input"
                                         value={data.slots || 1}
                                         onChange={e =>
                                             set(
@@ -374,9 +460,8 @@ const NewAppointment = withActions(
                                         }
                                         step={1}
                                         min={1}
-                                        max={100}
+                                        max={50}
                                     />
-                                    <span>{data.slots || 1}</span>
                                 </div>
                                 <div className="kip-field kip-is-fullwidth">
                                     <RichSelect
@@ -401,7 +486,7 @@ const NewAppointment = withActions(
             'form'
         )
     ),
-    [createAppointment]
+    [createAppointment, openAppointments]
 );
 
 // https://stackoverflow.com/questions/4156434/javascript-get-the-first-day-of-the-week-from-current-date
@@ -500,7 +585,9 @@ const Invitations = withTimer(
                                     </DropdownMenu>
                                     <WeekCalendar
                                         startDate={startDate}
-                                        appointments={openAppointments.data}
+                                        appointments={
+                                            openAppointments.enrichedData
+                                        }
                                     />
                                 </CardContent>
                                 <Message type="info" waiting>

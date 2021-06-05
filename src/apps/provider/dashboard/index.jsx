@@ -102,7 +102,9 @@ const Dashboard = withRouter(
                                     ) {
                                         router.navigateToUrl('/provider/setup');
                                         return;
-                                    } else if (pd.data.data.submitted !== true) {
+                                    } else if (
+                                        pd.data.data.submitted !== true
+                                    ) {
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,

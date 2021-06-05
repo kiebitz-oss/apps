@@ -30,15 +30,23 @@ schedule:
           de: Impfstofftyp
         values:
           biontech:
+            tag:
+              de: BT
             de: Biontech Pfizer (Comirnaty)
             _default: true
           astrazeneca:
+            tag:
+              de: AZ
             de: Astra Zeneca (Vaxzevria)
             _default: true
           johnson-johnson:
+            tag:
+              de: JJ
             de: Johnson & Johnson
             _default: true
           moderna:
+            tag:
+              de: MD
             de: Moderna
             _default: true
     single:
@@ -93,6 +101,14 @@ day-6:
 day-7:
   de: Sonntag
 new-appointment:
+  too-many-slots:
+    de: Bitte wählen Sie maximal 50 Terminslots
+  too-few-slots:
+    de: Bitte wählen Sie mindestens einen Terminslot
+  in-the-past:
+    de: Bitte wählen Sie ein Datum in der Zukunft
+  too-far-in-the-future:
+    de: Bitte wählen Sie Termine die maximal 30 Tage in der Zukunft liegen
   slots:
     de: Anzahl Impfdosen
   title:
