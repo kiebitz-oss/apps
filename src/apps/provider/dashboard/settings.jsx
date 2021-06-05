@@ -184,6 +184,12 @@ const Settings = withActions(
                                 embedded={true}
                                 hideNotice={true}
                             />
+                            <Button
+                                type="success"
+                                href="/provider/setup/store-secrets"
+                            >
+                                <T t={t} k="backup" />
+                            </Button>
                         </Modal>
                     );
                 }
