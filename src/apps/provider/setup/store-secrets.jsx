@@ -71,7 +71,7 @@ export const DataSecret = ({ settings, secret, embedded, hideNotice }) => {
         <React.Fragment>
             {!embedded && (
                 <p className="kip-secrets-notice">
-                    <T t={t} k="store-secrets.online.text" />
+                    <T t={t} k="store-secrets.online.text" safe />
                 </p>
             )}
             <div
