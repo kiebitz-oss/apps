@@ -2,7 +2,7 @@ _t:
   path: apps/user/setup/translations.yml
 store-secrets:
   notice:
-    de: Um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre eingestellten Termine zugreifen zu können benötigen Sie eine Sicherungsdatei und einen geheimen Schlüssel. Bitte erstellen Sie jetzt Ihre Sicherungsdatei.
+    de: Um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre eingestellten Termine zugreifen zu können benötigen Sie eine Sicherungsdatei und einen geheimen Schlüssel. Bitte erstellen Sie jetzt Ihre Sicherungsdatei und notieren Sie sich Ihren geheimen Datenschlüssel.
   secrets-modal:
     title:
       de: Datenschlüssel notieren
@@ -30,7 +30,7 @@ store-secrets:
     de: Datei speichern
 verify:
   text:
-    de: Bitte prüfen Sie nochmals Ihre Daten, bevor Sie die Einrichtung abschließen.
+    de: Bitte überprüfen Sie Ihre Daten, bevor Sie den Vorgang abschließen.
 finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
@@ -38,7 +38,7 @@ wizard:
   generating-backup-data:
     de: Bitte warten, erstelle Backup-Daten...
   download-backup-data:
-    de: Backup-Daten herunterladen
+    de: Sicherungsdatei herunterladen und Datenschlüssel notieren
   please-wait:
     de: Bitte warten...
   leave:
@@ -66,7 +66,7 @@ provider-data:
   website:
     de: Webseite
   not-verified-yet:
-    de: Ihre Daten wurden noch nicht verifiziert, bitte haben Sie noch etwas Geduld...
+    de: Ihre Daten wurden noch nicht verifiziert.  Bitte haben Sie Verständnis, dass die Verifizierung bis zu 48h dauern kann.
   description:
     de:
       Informationen für Impfwillige (z.B. wenn Sie spezielle Impfstoffe nur bestimmten Gruppen empfehlen)
@@ -78,7 +78,7 @@ provider-data:
   for-mediator:
     de: Die folgenden Kontaktdaten dienen ausschließlich zur Kommunikation mit dem sofort-impfen Team.
   accessible:
-    de: Barrierefreier Zugang zur Ortschaft
+    de: Barrierefreier Zugang zur Praxis/zum Impfzentrum
   not-given:
     de: (keine Angabe)
   change:
