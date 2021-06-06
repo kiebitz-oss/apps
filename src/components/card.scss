@@ -34,6 +34,8 @@
 
     &.kip-is-centered {
 
+        margin-top: map-get($kip-space, lg);
+
         @media (min-width: $kip-tablet) {
             width: 700px;
         }

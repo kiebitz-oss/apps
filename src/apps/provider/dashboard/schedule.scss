@@ -1,5 +1,7 @@
 @import "scss/variables";
 
+$kip-appt-background: #efa;
+
 .kip-new-appointment {
 	fieldset {
 		display: flex;
@@ -107,16 +109,47 @@ $border: 1px dashed #ccc;
 
 			.kip-appointment-card {
 
+				&.kip-is-active {
+					z-index: 3;
+					opacity: 1.0;
+				}
+
+				.kip-appointment-overview {
+
+					.kip-card-header {
+						button {
+							float: right;
+						}
+					}
+					.kip-card-content {
+						padding-top: map-get($kip-space, lg);
+					}
+
+					.bulma-message {
+						margin-top: map-get($kip-space, md);
+					}
+
+					ul.kip-appointment-details, ul.kip-booking-codes {
+						margin-top: map-get($kip-space, md);
+						li {
+							display: inline-block;
+							margin-right: map-get($kip-space, md);
+							background: $kip-appt-background;
+							padding: map-get($kip-space, sm);
+						}
+					}
+				}
+
 				overflow: hidden;
 
 				.kip-tag {
 					display: inline-block;
 					color: #000;
-					background: #efa;
+					background: $kip-appt-background;
 					opacity: 1;
-					margin-right: 4px;
-					margin-bottom: 4px;
-					padding: 2px;
+					margin-right: map-get($kip-space, xs);
+					margin-bottom: map-get($kip-space, xs);
+					padding: map-get($kip-space, xs);
 					border-radius: $kip-border-radius;
 					&.kip-is-open {
 						background: #f56;
@@ -136,12 +169,15 @@ $border: 1px dashed #ccc;
 				left: 2.5%;
 				position: absolute;
 				box-shadow: $kip-box-shadow;
-				z-index: 4;
+				z-index: 2;
 				padding: 4px;
-				background: #afa;
+				background: $kip-appt-background;
 				opacity: 0.8;
-				color: #fff;
 				cursor: pointer;
+
+				span {
+					color: #fff;
+				}
 			}
 
 		}

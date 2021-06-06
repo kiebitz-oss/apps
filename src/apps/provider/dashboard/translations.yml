@@ -19,6 +19,20 @@ delete-modal:
     de: Möchten Sie Ihre Daten wirklich unwiderruflich löschen?
   deleting-text:
     de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
+appointment-overview:
+  details:
+    booking-codes:
+      de: Buchungscodes
+    date:
+      de: Datum
+    slots:
+      de: Slots
+    booked:
+      de: Gebucht
+    no-booked-slots:
+      de: Keine gebuchten Slots bisher. Sobald Buchungen vorhanden sind werden hier die Buchungscodes angezeigt.
+  title:
+    de: Terminübersicht
 schedule:
   appointment:
     duration:

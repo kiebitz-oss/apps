@@ -17,6 +17,7 @@ export class Modal extends React.Component {
             className,
             title,
             waiting,
+            bare,
             disabled,
             saveDisabled,
             cancelDisabled,
@@ -29,8 +30,23 @@ export class Modal extends React.Component {
             onClose,
             saveType,
         } = this.props;
-
         const close = () => !closeDisabled && !disabled && onClose();
+        if (bare)
+            return (
+                <div
+                    className={classnames(
+                        'bulma-modal',
+                        'bulma-is-active',
+                        className
+                    )}
+                >
+                    <div
+                        className="bulma-modal-background"
+                        onClick={close}
+                    ></div>
+                    <div className="bulma-modal-card">{children}</div>
+                </div>
+            );
         return (
             <div
                 className={classnames(
@@ -99,6 +115,7 @@ Modal.defaultProps = {
     cancelDisabled: false,
     closeDisabled: false,
     waiting: false,
+    bare: false,
     disabled: false,
     saveDisabled: false,
     save: undefined,
@@ -108,6 +125,7 @@ Modal.defaultProps = {
 
 Modal.propTypes = {
     cancel: PropTypes.node,
+    bare: PropTypes.bool,
     cancelDisabled: PropTypes.bool,
     waiting: PropTypes.bool,
     children: PropTypes.node,
