@@ -38,6 +38,11 @@ const ProviderDetails = ({ data }) => {
                 <li>{data.json.street}</li>
                 <li>{data.json.zipCode}</li>
                 <li>{data.json.city}</li>
+                {data.json.accessible && (
+                    <li>
+                        <T t={t} k="provider-details.accessible" />
+                    </li>
+                )}
             </ul>
             {data.json.description && (
                 <Message type="info">{data.json.description}</Message>

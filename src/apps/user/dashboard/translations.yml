@@ -19,6 +19,9 @@ confirm-appointment:
 appointment-date:
   de:
     Datum
+provider-details:
+  accessible:
+    de: (barrierefreier Zugang)
 invitation-received:
   title:
     de: "Verfügbare Termine:"

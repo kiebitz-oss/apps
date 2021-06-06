@@ -58,8 +58,12 @@ export async function submitProviderData(
 
             data.data.submitted = true;
             backend.local.set('provider::data', data);
-            return result;
+            return {
+                status: 'succeeded',
+                data: result,
+            };
         } catch (e) {
+            console.error(e);
             return { status: 'failed', error: e };
         }
     } finally {
@@ -68,3 +72,4 @@ export async function submitProviderData(
 }
 
 submitProviderData.actionName = 'submitProviderData';
+submitProviderData.reset = () => ({ status: 'initialized' });
