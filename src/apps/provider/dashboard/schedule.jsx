@@ -614,48 +614,14 @@ const Invitations = withTimer(
                             <div className="kip-schedule">
                                 <CardContent>
                                     {newAppointmentModal}
-                                    <DropdownMenu
-                                        title={
-                                            <F>
-                                                <Icon icon={view} />{' '}
-                                                <T
-                                                    t={t}
-                                                    k={`schedule.view.${view}`}
-                                                />
-                                            </F>
-                                        }
+                                    <Button
+                                        href="/provider/schedule/new-appointment"
                                     >
-                                        <DropdownMenuItem
-                                            icon="calendar"
-                                            onClick={() => setView('calendar')}
-                                        >
-                                            <T
-                                                t={t}
-                                                k="schedule.view.calendar"
-                                            />
-                                        </DropdownMenuItem>
-                                    </DropdownMenu>
-                                    <DropdownMenu
-                                        title={
-                                            <F>
-                                                <Icon icon="calendar-plus" />
-                                            </F>
-                                        }
-                                    >
-                                        <DropdownMenuItem
-                                            icon="clock"
-                                            onClick={() =>
-                                                router.navigateToUrl(
-                                                    '/provider/schedule/new-appointment'
-                                                )
-                                            }
-                                        >
-                                            <T
-                                                t={t}
-                                                k="schedule.appointment.single"
-                                            />
-                                        </DropdownMenuItem>
-                                    </DropdownMenu>
+                                        <T
+                                            t={t}
+                                            k="schedule.appointment.add"
+                                        />
+                                    </Button>
                                     <WeekCalendar
                                         startDate={startDate}
                                         appointments={

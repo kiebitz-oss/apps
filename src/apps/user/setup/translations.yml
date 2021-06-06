@@ -5,7 +5,7 @@ store-secrets:
     de: "Dein Sicherheitscode - Bitte notieren!"
   bookmark-modal:
     text:
-      de: Nutzen Sie Ihr Browser-Menü um ein Lesezeichen für die aktuelle Seite zu erstellen. Sie können dieses Lesezeichen dann öffnen, um Ihren Buchungscode wiederherzustellen.
+      de: Nutze Dein Browser-Menü um ein Lesezeichen für diese Seite zu erstellen. Du kannst dieses Lesezeichen öffnen, um Deinen Sicherheitscode wiederherzustellen.
     title:
       de: Lesezeichen erstellen
   local:
@@ -17,7 +17,7 @@ store-secrets:
     title:
       de: Online
     text:
-      de: "Bitte notiere Dir Deinen vertraulichen Sicherheitscode. Alternativ kannst Du auch ein Bildschirmfoto machen. Bitte beachte, dass Dir der Code NICHT per E-Mail geschickt wird und er von uns auch NICHT wiederhergestellt werden kann.<br/><br/><b>Du benötigst den Code um später Deine Daten zu Deinem Termin einzusehen oder zu ändern.</b>"
+      de: "Bitte notiere Dir Deinen vertraulichen Sicherheitscode. Alternativ kannst Du auch ein Bildschirmfoto machen. Bitte beachte, dass Dir der Code NICHT per E-Mail geschickt wird und er von uns auch NICHT wiederhergestellt werden kann.<br/><br/><b>Du benötigst den Code, wenn Du Dich auf einem anderen Endgerät (Tablet, Smartphone, Laptop etc.) einloggen und Deinen gebuchten Termin einsehen oder ändern willst.</b>"
   bookmark:
     de: Als Lesezeichen speichern
   copy:
