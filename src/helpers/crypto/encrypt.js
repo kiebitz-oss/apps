@@ -44,7 +44,7 @@ export async function aesEncrypt(rawData, secret) {
             data: buf2b64(encryptedData),
         };
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return null;
     }
 }

@@ -9,11 +9,11 @@ export default class StorageBackend {
         this.store = store;
     }
 
-    async storeSettings({ id, data }) {
+    async storeSettings({ id, data }, keyPair) {
         return this.store.set(`settings:${id}`, data);
     }
 
-    async getSettings({ id }) {
+    async getSettings({ id }, keyPair) {
         return this.store.get(`settings:${id}`);
     }
 }

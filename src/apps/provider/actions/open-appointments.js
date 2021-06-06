@@ -39,17 +39,37 @@ function enrichAppointments(appointments) {
     }
     return sortedAppointments;
 }
+
 export async function openAppointments(state, keyStore, settings) {
     const backend = settings.get('backend');
-    const appointments = backend.local.get('provider::appointments::open', []);
+
     try {
-        return {
-            status: 'loaded',
-            data: appointments,
-            enrichedData: enrichAppointments(appointments),
-        };
-    } catch (e) {
-        console.error(e);
+        const appointments = backend.local.get(
+            'provider::appointments::open',
+            []
+        );
+        let changed = false;
+
+        for (const appointment of appointments) {
+            if (appointment.id === undefined) {
+                appointment.id = randomBytes(32);
+                changed = true;
+            }
+        }
+
+        if (changed) backend.local.set('provider::appointments::open', []);
+
+        try {
+            return {
+                status: 'loaded',
+                data: appointments,
+                enrichedData: enrichAppointments(appointments),
+            };
+        } catch (e) {
+            console.error(e);
+        }
+    } finally {
+        backend.local.unlock();
     }
 }
 

@@ -26,7 +26,7 @@ export async function sign(keyData, rawData, publicKeyData) {
         if (publicKeyData !== undefined) d.publicKey = publicKeyData;
         return d;
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
     return null;
 }

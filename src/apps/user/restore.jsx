@@ -14,13 +14,14 @@ import {
     RetractingLabelInput,
     Message,
     CardContent,
+    CardHeader,
     CardFooter,
     Form as FormComponent,
     FieldSet,
     A,
     T,
 } from 'components';
-import { restoreFromBackup } from 'apps/provider/actions';
+import { restoreFromBackup } from 'apps/user/actions';
 import t from './translations.yml';
 import Form from 'helpers/form';
 import './restore.scss';
@@ -28,16 +29,10 @@ import './restore.scss';
 class LoadBackupForm extends Form {
     validate() {
         const errors = {};
-        const { data } = this;
-        if (!data.file)
-            errors.file = this.settings.t(t, 'load-backup.missing-file');
-        else if (data.file.data === undefined || data.file.iv === undefined)
-            errors.file = this.settings.t(t, 'load-backup.invalid-file', {
-                title: this.settings.get('title'),
-            });
-        if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(data.secret))
+        if (
+            !/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(this.data.secret)
+        )
             errors.secret = this.settings.t(t, 'load-backup.invalid-secret');
-
         return errors;
     }
 }
@@ -55,26 +50,19 @@ export default withForm(
                 }) => {
                     const [initialized, setInitialized] = useState(false);
                     const [restoring, setRestoring] = useState(false);
-                    const fileInput = useRef(null);
+
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
                     });
 
-                    const keyDown = e => {
-                        if (e.which === 13 || e.which === 23)
-                            fileInput.current.click();
-                    };
-
                     const restore = () => {
                         setRestoring(true);
-                        restoreFromBackupAction(data.secret, data.file).then(
-                            data => {
-                                setRestoring(false);
-                                if (data.status === 'succeeded')
-                                    router.navigateToUrl('/provider/schedule');
-                            }
-                        );
+                        restoreFromBackupAction(data.secret).then(data => {
+                            setRestoring(false);
+                            if (data.status === 'succeeded')
+                                router.navigateToUrl('/user/appointments');
+                        });
                     };
 
                     let notice;
@@ -88,30 +76,14 @@ export default withForm(
                             </Message>
                         );
 
-                    const readFile = e => {
-                        const file = e.target.files[0];
-                        var reader = new FileReader();
-
-                        set('filename', file.name);
-
-                        reader.onload = function(e) {
-                            try {
-                                const json = JSON.parse(e.target.result);
-                                set('file', json);
-                            } catch (e) {
-                                set('file', undefined);
-                            }
-                        };
-
-                        reader.readAsBinaryString(file);
-                    };
-
                     return (
                         <CenteredCard className="kip-restore-from-backup">
-                            <CardContent>
+                            <CardHeader>
                                 <h1 className="bulma-subtitle">
                                     <T t={t} k="load-backup.title" />
                                 </h1>
+                            </CardHeader>
+                            <CardContent>
                                 {notice}
                                 <FormComponent>
                                     <FieldSet>
@@ -137,41 +109,6 @@ export default withForm(
                                                 />
                                             }
                                         />
-                                        <h2>
-                                            <T
-                                                t={t}
-                                                k="load-backup.input.label"
-                                            />
-                                        </h2>
-                                        <ErrorFor error={error} field="file" />
-                                        <label
-                                            role="button"
-                                            onKeyDown={keyDown}
-                                            tabIndex="0"
-                                            htmlFor="file-upload"
-                                            className="kip-custom-file-upload"
-                                        >
-                                            <input
-                                                ref={fileInput}
-                                                id="file-upload"
-                                                className="bulma-input"
-                                                type="file"
-                                                role="button"
-                                                onChange={e => readFile(e)}
-                                            />
-                                            {(data.file !== undefined && (
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.input.change"
-                                                    filename={data.filename}
-                                                />
-                                            )) || (
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.input"
-                                                />
-                                            )}
-                                        </label>
                                     </FieldSet>
                                 </FormComponent>
                             </CardContent>

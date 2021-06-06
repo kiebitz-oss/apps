@@ -12,7 +12,8 @@ import {
     T,
 } from 'components';
 import t from './translations.yml';
-import './start.scss';
+
+// styles are in 'apps/provider/start.scss'
 
 export default withRouter(
     withSettings(({ router, settings }) => {
@@ -20,7 +21,6 @@ export default withRouter(
             const backend = settings.get('backend');
             if (backend.local.get('user::tokenData') !== null)
                 router.navigateToUrl('/user/appointments');
-            else router.navigateToUrl('/user/setup');
         });
         return (
             <CenteredCard className="kip-cm-welcome">
@@ -37,11 +37,6 @@ export default withRouter(
                         <li>
                             <A href="/user/restore">
                                 <T t={t} k="restore" />
-                            </A>
-                        </li>
-                        <li>
-                            <A href="/user/help">
-                                <T t={t} k="show-help" />
                             </A>
                         </li>
                     </ul>

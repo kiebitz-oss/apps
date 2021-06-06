@@ -42,9 +42,10 @@ export async function encryptBackupData(
             data: encryptedData,
         };
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return {
             status: 'failed',
+            error: e,
         };
     } finally {
         backend.local.unlock();

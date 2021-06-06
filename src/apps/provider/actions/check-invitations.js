@@ -99,7 +99,11 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 data: openAppointments,
             };
         } catch (e) {
-            console.log(e);
+            console.error(e);
+            return {
+                status: 'failed',
+                error: e,
+            };
         }
     } finally {
         backend.local.unlock();

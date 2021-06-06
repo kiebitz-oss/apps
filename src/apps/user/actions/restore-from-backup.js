@@ -2,29 +2,25 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { aesEncrypt, deriveSecrets } from 'helpers/crypto';
+import { aesDecrypt, deriveSecrets } from 'helpers/crypto';
 import { base322buf, b642buf } from 'helpers/conversion';
 
 // make sure the signing and encryption key pairs exist
-export async function backupData(state, keyStore, settings, tokenData, secret) {
+export async function restoreFromBackup(state, keyStore, settings, secret) {
     const backend = settings.get('backend');
     try {
-        const data = {
-            tokenData: tokenData,
-        };
+        await backend.local.lock();
 
         const [id, key] = await deriveSecrets(base322buf(secret), 32, 2);
+        const data = await backend.storage.getSettings({ id: id });
+        const dd = JSON.parse(await aesDecrypt(data, b642buf(key)));
 
-        const encryptedData = await aesEncrypt(
-            JSON.stringify(data),
-            b642buf(key)
-        );
-
-        await backend.storage.storeSettings({ id: id, data: encryptedData });
+        // we restore the token data
+        backend.local.set('user::tokenData', dd.tokenData);
 
         return {
             status: 'succeeded',
-            data: encryptedData,
+            data: dd,
         };
     } catch (e) {
         console.error(e);
@@ -32,7 +28,9 @@ export async function backupData(state, keyStore, settings, tokenData, secret) {
             status: 'failed',
             error: e,
         };
+    } finally {
+        backend.local.unlock();
     }
 }
 
-backupData.actionName = 'backupData';
+restoreFromBackup.actionName = 'restoreFromBackup';

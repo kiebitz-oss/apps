@@ -8,6 +8,9 @@ import {
     Message,
     CenteredCard,
     CardHeader,
+    CardContent,
+    CardFooter,
+    Button,
     A,
     T,
 } from 'components';
@@ -21,12 +24,21 @@ export default withSettings(({ settings }) => (
                 <T t={t} k="logged-out.title" />
             </h1>
         </CardHeader>
-        <Message type="success">
-            <T
-                t={t}
-                k="logged-out.notice"
-                service={<strong key="service">{settings.get('title')}</strong>}
-            />
-        </Message>
+        <CardContent>
+            <Message type="success">
+                <T
+                    t={t}
+                    k="logged-out.notice"
+                    service={
+                        <strong key="service">{settings.get('title')}</strong>
+                    }
+                />
+            </Message>
+        </CardContent>
+        <CardFooter>
+            <Button href="/user/restore">
+                <T t={t} k="logged-out.log-in-again" />
+            </Button>
+        </CardFooter>
     </CenteredCard>
 ));

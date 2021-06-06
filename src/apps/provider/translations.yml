@@ -12,6 +12,8 @@ setup:
 restore:
   de: Daten wiederherstellen
 load-backup:
+  failed:
+    de: Das Laden Ihrer Daten ist leider fehlgeschlagen. Bitte prüfen Sie Ihren Datenschlüssel sowie die angegebene Datei.
   invalid-secret:
     de: Ungültiger Datenschlüssel (12-16 Zeichen im Bereich A-Z ohne O & I sowie Ziffern zwischen 2-9)
   missing-file:
@@ -40,7 +42,9 @@ data-deleted:
 thanks-for-using-us:
   de: Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie {service} genutzt haben!
 logged-out:
+  log-in-again:
+    de: Daten wiederherstellen
   title:
     de: Erfolgreich abgemeldet.
   notice:
-    de: Sie wurden erfolgreich abgemeldet.
+    de: Sie wurden erfolgreich abgemeldet. Sie können Ihre Daten jederzeit mit Ihrem Datenschlüssel und Ihrer Backup-Datei wiederherstellen.

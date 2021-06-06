@@ -32,7 +32,7 @@ export async function deriveSecrets(key, len, n) {
         }
         return secrets;
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return null;
     }
 }

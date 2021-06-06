@@ -13,6 +13,7 @@
     background: #fff;
     box-shadow: $kip-shadow-sm;
     border-radius: $kip-border-radius;
+    overflow: auto;
 
     .kip-card-content {
         width: 100%;

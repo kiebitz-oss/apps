@@ -34,9 +34,10 @@ export async function syncData(state, keyStore, settings, keyPairs) {
             data: encryptedData,
         };
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return {
             status: 'failed',
+            error: e,
         };
     } finally {
         backend.local.unlock();
