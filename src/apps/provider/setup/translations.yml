@@ -2,12 +2,12 @@ _t:
   path: apps/user/setup/translations.yml
 store-secrets:
   notice:
-    de: Um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre eingestellten Termine zugreifen zu können benötigen Sie eine Sicherungsdatei und einen geheimen Schlüssel. Bitte erstellen Sie jetzt Ihre Sicherungsdatei und notieren Sie sich Ihren geheimen Datenschlüssel.
+    de: Um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre Termine zugreifen zu können, benötigen Sie Ihre Sicherungsdatei und Ihren Datenschlüssel. Bitte erstellen Sie jetzt Ihre Sicherungsdatei und notieren Sie sich im Anschluss den Datenschlüssel.
   secrets-modal:
     title:
-      de: Datenschlüssel notieren
+      de: Bitte Datenschlüssel notieren!
   secret:
-    de: "Ihr geheimer Datenschlüssel"
+    de: "Ihr Datenschlüssel"
   local:
     title:
       de: Lokal
@@ -17,7 +17,7 @@ store-secrets:
     title:
       de: Online
     text:
-      de: Bitte notieren Sie Ihren Datenschlüssel sorgfältig! Sie benötigen ihn, um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre eingestellten Termine zugreifen zu können.
+      de: Bitte notieren Sie Ihren Datenschlüssel sorgfältig! Sie benötigen ihn, um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre Termine zugreifen zu können.
   bookmark:
     de: Als Bookmark speichern
   copy:
@@ -57,7 +57,7 @@ wizard:
     enter-provider-data:
       de: Kontaktdaten eingeben
     store-secrets:
-      de: Sicherungsdatei erstellen
+      de: Sicherungsdatei & Datenschlüssel
     finalize:
       de: Fertigstellung
     verify:
@@ -95,11 +95,11 @@ provider-data:
   invalid-name:
     de: Bitte geben Sie den Namen Ihrer Praxis oder Ihres Impfzentrums an.
   phone:
-    de: Telefonnummer (nicht sichtbar für Nutzer)
+    de: Telefonnummer (nicht sichtbar für Impfinteressierte)
   invalid-phone:
     de: Bitte geben Sie eine gültige Telefonnummer an.
   email:
-    de: E-Mail Adresse (nicht sichtbar für Nutzer)
+    de: E-Mail Adresse (nicht sichtbar für Impfinteressierte)
   invalid-email:
     de: Bitte geben Sie eine gültige E-Mail Adresse an.
   zip-code:
