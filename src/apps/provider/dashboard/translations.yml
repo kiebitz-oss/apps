@@ -11,7 +11,7 @@ log-out-modal:
   title:
     de: Abmelden
   text:
-    de: Möchten Sie sich wirklich abmelden? Bitte stellen Sie vorher sicher, dass Sie Ihren Datenschlüssel notiert haben. Mit diesem können Sie sich später gegebenenfalls wieder anmelden.
+    de: Möchten Sie sich wirklich abmelden? Bitte stellen Sie sicher, dass Sie Ihren Datenschlüssel notiert und Ihre Sicherungsdatei heruntergeladen haben . Nur damit können Sie sich erneut einloggen.
 delete-modal:
   title:
     de: Nutzer-Daten löschen
@@ -93,7 +93,7 @@ log-out:
 delete:
   de: Konto löschen
 invalid-key:
-  de: Ihre Daten wurden noch nicht verifiziert. Sie können bereits Termine anlegen aber noch keine Einladungen verschicken.
+  de: Ihre Daten wurden noch nicht verifiziert. Sie können bereits Termine anlegen, allerdings werden Impfwillige noch nicht über Ihre eingestellten Termine benachrichtigt.
 save-and-restore:
   de: Speichern & Wiederherstellen
 save:
