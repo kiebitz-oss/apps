@@ -106,10 +106,10 @@ const NoInvitations = ({ tokenData }) => {
 
 async function toggleOffers(state, keyStore, settings, offer) {
     if (offer === null) return { data: [] };
-    if (state.data.find(i => i === offer.id) !== undefined) {
-        state.data = state.data.filter(i => i !== offer.id);
+    if (state.data.find(i => i === offer.slotData[0].id) !== undefined) {
+        state.data = state.data.filter(i => i !== offer.slotData[0].id);
     } else {
-        state.data.push(offer.id);
+        state.data.push(offer.slotData[0].id);
     }
     return { data: state.data };
 }
@@ -148,7 +148,9 @@ const InvitationDetails = withActions(
             const selectedOffers = [];
             // we add the selected offers in the order the user chose
             for (const offerID of toggleOffers.data) {
-                const offer = data.offers.find(offer => offer.id === offerID);
+                const offer = data.offers.find(
+                    offer => offer.slotData[0].id === offerID
+                );
                 selectedOffers.push(offer);
             }
             setConfirming(true);
@@ -168,12 +170,13 @@ const InvitationDetails = withActions(
         // to do: use something better than the index i for the key?
         const offers = data.offers.map((offer, i) => {
             const d = new Date(offer.timestamp);
-            const selected = toggleOffers.data.includes(offer.id);
+            const selected = toggleOffers.data.includes(offer.slotData[0].id);
             let pref;
-            if (selected) pref = toggleOffers.data.indexOf(offer.id) + 1;
+            if (selected)
+                pref = toggleOffers.data.indexOf(offer.slotData[0].id) + 1;
             return (
                 <tr
-                    key={i}
+                    key={offer.slotData[0].id}
                     className={selected ? `kip-selected kip-pref-${pref}` : ''}
                     onClick={() => toggle(offer)}
                 >

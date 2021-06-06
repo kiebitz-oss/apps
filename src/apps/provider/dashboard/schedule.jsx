@@ -3,6 +3,7 @@
 // README.md contains license information.
 
 import React, { useState, useEffect, Fragment as F } from 'react';
+import classNames from 'helpers/classnames';
 import Form from 'helpers/form';
 import {
     withRouter,
@@ -11,6 +12,10 @@ import {
     withActions,
     WithLoader,
     withTimer,
+    Card,
+    CardHeader,
+    CardContent,
+    CardFooter,
     Modal,
     Label,
     DropdownMenu,
@@ -23,8 +28,6 @@ import {
     RetractingLabelInput,
     ErrorFor,
     T,
-    CardFooter,
-    CardContent,
     Button,
 } from 'components';
 import {
@@ -43,11 +46,77 @@ Date.prototype.addHours = function(h) {
     return this;
 };
 
-const AppointmentsOverview = ({ appointments, ...props }) => {
-    let acceptedItems;
+const AppointmentOverview = ({ appointment, onClose, ...props }) => {
+    let acceptedItems = appointment.slotData
+        .map(sl => {
+            if (sl.open) return;
+            console.log(sl);
+            return <li key={sl.id}>{sl.token.data.code}</li>;
+        })
+        .filter(it => it);
     return (
-        <Modal {...props} title={<T t={t} k="appointments-overview.title" />}>
-            <ul>{acceptedItems}</ul>
+        <Modal
+            bare
+            onClose={onClose}
+            {...props}
+            className="kip-appointment-overview"
+        >
+            <Card>
+                <CardHeader>
+                    <T t={t} k="appointment-overview.title" />
+                    <Button
+                        type="info"
+                        aria-label="Close modal"
+                        className="bulma-delete"
+                        data-test-id="modal-close"
+                        onClick={onClose}
+                    />
+                </CardHeader>
+                <CardContent>
+                    <ul className="kip-appointment-details">
+                        <li>
+                            <T t={t} k="appointment-overview.details.date" />:{' '}
+                            {new Date(
+                                appointment.timestamp
+                            ).toLocaleDateString()}{' '}
+                            {new Date(
+                                appointment.timestamp
+                            ).toLocaleTimeString()}
+                        </li>
+                        <li>
+                            <T t={t} k="appointment-overview.details.slots" />:{' '}
+                            {appointment.slotData.length}{' '}
+                        </li>
+                        <li>
+                            <T t={t} k="appointment-overview.details.booked" />:{' '}
+                            {appointment.slotData.filter(sl => !sl.open).length}{' '}
+                        </li>
+                    </ul>
+                    {(acceptedItems.length > 0 && (
+                        <F>
+                            <h3>
+                                <T
+                                    t={t}
+                                    k="appointment-overview.details.booking-codes"
+                                />
+                            </h3>
+                            <ul className="kip-booking-codes">
+                                {acceptedItems}
+                            </ul>
+                        </F>
+                    )) || (
+                        <Message type="info">
+                            <T
+                                t={t}
+                                k="appointment-overview.details.no-booked-slots"
+                            />
+                        </Message>
+                    )}
+                </CardContent>
+                <CardFooter>
+                    <PropertyTags appointment={appointment} />
+                </CardFooter>
+            </Card>
         </Modal>
     );
 };
@@ -81,6 +150,21 @@ const AppointmentCard = ({ appointment, n }) => {
         oa => oa.index < appointment.index
     ).length;
     const l = Math.floor(2.5 + i * (w + 2.5));
+
+    const [showModal, setShowModal] = useState(false);
+    let modal;
+
+    const close = () => setShowModal(false);
+
+    if (showModal)
+        modal = (
+            <AppointmentOverview
+                onCancel={close}
+                onClose={close}
+                appointment={appointment}
+            />
+        );
+
     return (
         <div
             style={{
@@ -88,8 +172,12 @@ const AppointmentCard = ({ appointment, n }) => {
                 width: `${w}%`,
                 left: `${l}%`,
             }}
-            className="kip-appointment-card"
+            onClick={() => !showModal && setShowModal(true)}
+            className={classNames('kip-appointment-card', {
+                'kip-is-active': showModal,
+            })}
         >
+            {modal}
             <span className="kip-tag kip-is-booked">
                 {appointment.slotData.filter(sl => !sl.open).length}
             </span>
@@ -104,7 +192,6 @@ const AppointmentCard = ({ appointment, n }) => {
 const CalendarAppointments = ({ appointments }) => {
     const [showModal, setShowModal] = useState(false);
     let modal;
-    const close = () => setShowModal(false);
     const appointmentsItems = appointments
         .filter(ap => ap.startsHere)
         .map(({ appointment }) => (
@@ -114,23 +201,9 @@ const CalendarAppointments = ({ appointments }) => {
                 n={appointments.length}
             />
         ));
-    if (showModal)
-        modal = (
-            <AppointmentsOverview
-                onCancel={close}
-                onClose={close}
-                appointments={appointments}
-            />
-        );
     return (
         <F>
-            {modal}
-            <div
-                className="kip-appointments"
-                onClick={() => setShowModal(true)}
-            >
-                {appointmentsItems}
-            </div>
+            <div className="kip-appointments">{appointmentsItems}</div>
         </F>
     );
 };
