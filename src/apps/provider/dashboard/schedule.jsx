@@ -48,7 +48,11 @@ const AppointmentOverview = ({ appointment, onClose, ...props }) => {
     let acceptedItems = appointment.slotData
         .map(sl => {
             if (sl.open) return;
-            return <li key={sl.id}>{sl.token.data.code}</li>;
+            return (
+                <li className="kip-is-code" key={sl.id}>
+                    {sl.token.data.code}
+                </li>
+            );
         })
         .filter(it => it);
     return (
@@ -378,20 +382,25 @@ const NewAppointment = withSettings(
                 ({
                     createAppointment,
                     settings,
+                    action,
                     createAppointmentAction,
                     openAppointmentsAction,
                     router,
                     form: { valid, error, data, set, reset },
                 }) => {
+                    let actionUrl = '';
+                    if (action !== undefined) actionUrl = `/${action}`;
                     const [initialized, setInitialized] = useState(false);
                     const cancel = () =>
-                        router.navigateToUrl('/provider/schedule');
+                        router.navigateToUrl(`/provider/schedule${actionUrl}`);
                     const save = () => {
                         createAppointmentAction(data).then(() => {
                             // we reload the appointments
                             openAppointmentsAction();
                             // and we go back to the schedule view
-                            router.navigateToUrl('/provider/schedule');
+                            router.navigateToUrl(
+                                `/provider/schedule${actionUrl}`
+                            );
                         });
                     };
 
@@ -623,7 +632,9 @@ const Invitations = withTimer(
                     let newAppointmentModal;
 
                     if (secondaryAction === 'new-appointment')
-                        newAppointmentModal = <NewAppointment />;
+                        newAppointmentModal = (
+                            <NewAppointment action={action} />
+                        );
                     let startDate;
 
                     if (action !== undefined) {
