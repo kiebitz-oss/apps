@@ -67,6 +67,8 @@ schedule:
       de: Einzeltermin
     series:
       de: Terminserie
+    add:
+      de: Termin erstellen
   view:
     calendar:
       de: Kalenderansicht
