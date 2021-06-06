@@ -86,9 +86,12 @@ const Settings = withActions(
 
                     let modal;
 
+                    const title = settings.get('title').toLowerCase()
+
                     const backupData = () => {
                         const a = document.createElement('a');
-                        a.download = 'kiebitz-backup-data.enc';
+
+                        a.download = `${title}-backup-data.enc`;
                         a.href = URL.createObjectURL(blob);
                         document.body.appendChild(a);
                         a.click();
@@ -235,7 +238,7 @@ const Settings = withActions(
                                 </Button>
                                 <a
                                     className="bulma-button bulma-is-success"
-                                    download=" kiebitz-backup-data.enc"
+                                    download={`${title}-backup-data.enc`}
                                     href={URL.createObjectURL(blob)}
                                 >
                                     Sicherungsdatei herunterladen
