@@ -71,7 +71,7 @@ settings:
   verified:
     de: Verifizierte Daten
   local:
-    de: Lokale Daten
+    de: Unverifizierte Daten
   title:
     de: Einstellungen
 log-out:
@@ -79,7 +79,7 @@ log-out:
 delete:
   de: Konto löschen
 invalid-key:
-  de: Ihre Daten wurden noch nicht verifiziert. Sie können bereits Termine anlegen, allerdings werden Impfwillige noch nicht über Ihre eingestellten Termine benachrichtigt.
+  de: Ihre Daten wurden noch nicht verifiziert. Sie können bereits Termine anlegen, allerdings werden Impfwillige noch nicht über Ihre Termine benachrichtigt.
 save-and-restore:
   de: Speichern & Wiederherstellen
 save:
@@ -133,6 +133,8 @@ provider-data:
     de: Hier können Sie die Daten Ihrer Organisation angeben (die Daten werden geprüft bevor Sie diese einsetzen können).
   title:
     de: Ihre Daten
+  verified-vs-unverifired-desc:
+    de: Ihre Daten unterlaufen einer Überprüfung unsererseits. Sobald Ihre Daten überprüft wurden, werden Sie Impfwilligen angezeigt. Führen Sie nach der Überprüfung Ihrer Daten noch Änderungen dieser durch, so müssen diese erneut Überprüft werden und werden entsprechend erst nach erfolgreicher Überprüfung Impfwilligen angezeigt. Daher differenzieren wir zwischen verifizierten und unverifizierten Daten. 
   invalid-name:
     de: Bitte gegen Sie einen gültigen Namen an
   name:
