@@ -2,7 +2,11 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { generateECDHKeyPair, generateECDSAKeyPair } from 'helpers/crypto';
+import {
+    generateECDHKeyPair,
+    generateECDSAKeyPair,
+    generateSymmetricKey,
+} from 'helpers/crypto';
 
 import { markAsLoading } from 'helpers/actions';
 
@@ -19,9 +23,11 @@ export async function keyPairs(state, keyStore, settings) {
 
         if (providerKeyPairs === null) {
             try {
+                const syncKey = await generateSymmetricKey();
                 const signingKeyPair = await generateECDSAKeyPair();
                 const encryptionKeyPair = await generateECDHKeyPair();
                 const keyPairs = {
+                    sync: syncKey,
                     signing: signingKeyPair,
                     encryption: encryptionKeyPair,
                 };
