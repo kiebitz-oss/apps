@@ -9,6 +9,7 @@ import './select.scss';
 export const RichSelectItem = ({ onClick, option, selected }) => {
     return (
         <div
+            tabIndex="0"
             className={classnames('kip-select-item', {
                 'kip-is-selected': selected,
             })}
@@ -35,6 +36,7 @@ export const RichSelect = ({ id, options, onChange, value }) => {
             id={id}
             className={classnames('kip-select', { 'kip-is-active': active })}
             onClick={() => setActive(!active)}
+            aria-selected={() => setActive(true)}
         >
             <span className="bulma-more">
                 <span className="kip-select-more">&or;</span>

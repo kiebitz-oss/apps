@@ -56,7 +56,7 @@ export async function submitProviderData(
                 keyPairs.signing
             );
 
-            data.data.submitted = true;
+            data.submitted = true;
             backend.local.set('provider::data', data);
             return {
                 status: 'succeeded',

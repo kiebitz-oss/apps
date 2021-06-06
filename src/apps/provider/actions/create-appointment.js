@@ -30,6 +30,7 @@ export async function createAppointment(
         }
         openAppointments.push({
             slotData: slotData,
+            id: randomBytes(32),
             ...appointment,
         });
         backend.local.set('provider::appointments::open', openAppointments);

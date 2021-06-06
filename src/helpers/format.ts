@@ -41,8 +41,7 @@ export function format(str: string, ...rest: any[]): any[] {
 }
 
 export function formatDuration(minutes, settings, t){
-    console.log(settings.t)
-	if (minutes < 60)
+    if (minutes < 60)
         return settings.t(t, 'minute-string', {minutes: minutes})
     const hours = Math.floor(minutes/60)
     const remainingMinutes = minutes % 60

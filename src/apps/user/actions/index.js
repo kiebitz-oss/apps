@@ -2,6 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
+export * from './restore-from-backup';
 export * from './accepted-invitation';
 export * from './check-invitation-data';
 export * from './confirm-offers';

@@ -61,7 +61,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
     const footer = (
         <Form>
             <FieldSet>
-                <label htmlFor="file-upload" class="custom-file-upload">
+                <label htmlFor="file-upload" className="custom-file-upload">
                     <T t={t} k="upload-key-pairs.input" />
                     <input
                         id="file-upload"

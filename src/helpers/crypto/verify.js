@@ -34,7 +34,7 @@ export async function verify(keys, signedData) {
                 return true;
             }
         } catch (e) {
-            console.log(e);
+            console.error(e);
             continue;
         }
     }

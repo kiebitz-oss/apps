@@ -37,7 +37,7 @@ export async function generateECDSAKeyPair() {
 
         return { publicKey: buf2b64(pubKey), privateKey: privKey };
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
     return null;
 }
@@ -55,7 +55,7 @@ export async function generateECDHKeyPair() {
         const privKey = await e(crypto.subtle.exportKey('jwk', key.privateKey));
         return { publicKey: buf2b64(pubKey), privateKey: privKey };
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
     return null;
 }

@@ -146,6 +146,7 @@ interface CheckboxProps {
 export const Checkbox = ({ name, onChange, defaultChecked }: CheckboxProps) => (
     <input
         type="checkbox"
+        tabIndex="0"
         onChange={e => onChange(e.target.checked)}
         name={name}
         id={name}
@@ -187,6 +188,7 @@ export class Input extends PureComponent<InputProps> {
             <input
                 ref={forwardedRef}
                 {...props}
+                tabIndex="0"
                 onKeyDown={e =>
                     onEnter &&
                     (e.key === 'Enter' || e.keyCode === 13) &&

@@ -38,6 +38,21 @@ export class Switch extends React.Component {
         return (
             <fieldset disabled={disabled}>
                 <label
+                    tabIndex="0"
+                    onKeyDown={e => {
+                        switch (e.which) {
+                            case 32:
+                            case 13:
+                                onChange(!checked);
+                                break;
+                            case 39:
+                                onChange(true);
+                                break;
+                            case 37:
+                                onChange(false);
+                                break;
+                        }
+                    }}
                     className={
                         'kip-switch' + (updating ? ' kip-switch-updating' : '')
                     }
@@ -45,6 +60,8 @@ export class Switch extends React.Component {
                 >
                     <input
                         type="checkbox"
+                        tabIndex="0"
+                        role="button"
                         checked={checked}
                         onChange={e => {
                             if (onChange !== undefined) onChange(!checked);

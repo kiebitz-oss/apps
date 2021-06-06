@@ -8,9 +8,33 @@ title:
 what-to-do:
   de: Was möchten Sie tun?
 setup:
-  de: Eine neue Anmeldung durchführen
+  de: Als Arzt registriren
 restore:
   de: Daten wiederherstellen
+load-backup:
+  failed:
+    de: Das Laden Ihrer Daten ist leider fehlgeschlagen. Bitte prüfen Sie Ihren Datenschlüssel sowie die angegebene Datei.
+  invalid-secret:
+    de: Ungültiger Datenschlüssel (12-16 Zeichen im Bereich A-Z ohne O & I sowie Ziffern zwischen 2-9)
+  missing-file:
+    de: Bitte geben Sie einen Dateinamen an
+  title:
+    de: Daten wiederherstellen
+  load:
+    de: Daten wiederherstellen
+  secret:
+    label:
+      de: Datenschlüssel
+    description:
+      de: Der Datenschlüssel, den Sie bei der Registrierung erhalten haben.
+  invalid-file:
+    de: "Ungültige Backup-Datei. Hinweis: Der Name der Datei sollte '{title}.enc' sein."
+  input:
+    label:
+      de: Backup-Datei wählen
+    change:
+      de: "{filename}"
+    de: Backup-Datei wählen
 show-help:
   de: Hilfe anzeigen
 data-deleted:
@@ -18,7 +42,9 @@ data-deleted:
 thanks-for-using-us:
   de: Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie {service} genutzt haben!
 logged-out:
+  log-in-again:
+    de: Daten wiederherstellen
   title:
     de: Erfolgreich abgemeldet.
   notice:
-    de: Sie wurden erfolgreich abgemeldet.
+    de: Sie wurden erfolgreich abgemeldet. Sie können Ihre Daten jederzeit mit Ihrem Datenschlüssel und Ihrer Backup-Datei wiederherstellen.
