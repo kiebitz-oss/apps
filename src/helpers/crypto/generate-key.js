@@ -7,10 +7,14 @@ import { e } from 'helpers/async';
 
 export async function generateSymmetricKey() {
     try {
-        const key = await crypto.subtle.generateKey({
-            name: 'AES-GCM',
-            length: 256,
-        }, true, ['encrypt', 'decrypt']);
+        const key = await crypto.subtle.generateKey(
+            {
+                name: 'AES-GCM',
+                length: 256,
+            },
+            true,
+            ['encrypt', 'decrypt']
+        );
         const keyBytes = await e(crypto.subtle.exportKey('raw', key));
         return buf2b64(keyBytes);
     } catch (e) {

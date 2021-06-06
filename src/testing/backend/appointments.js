@@ -386,7 +386,7 @@ export default class AppointmentsBackend {
     }
 
     _distance(zipCodeA, zipCodeB) {
-        return 10.0;
+        return 0.0;
     }
 
     // get n tokens from the given queue IDs
@@ -396,7 +396,6 @@ export default class AppointmentsBackend {
         if (providerKeyData === null) return null;
 
         // to do: verify signature against the official key
-        console.log(providerKeyData);
         // we update the tokens
         this.tokens = this.store.get('tokens', {});
         const queueIDs = providerKeyData.queues;
@@ -423,8 +422,9 @@ export default class AppointmentsBackend {
                         if (
                             this._distance(token.queueData.zipCode, zipCode) >
                             token.queueData.distance
-                        )
+                        ) {
                             continue candidates; // the distance between user and provider is too large
+                        }
                         for (let [k, v] of Object.entries(properties)) {
                             if (
                                 token.queueData[k] !== undefined &&

@@ -2,23 +2,15 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { aesEncrypt } from 'helpers/crypto';
-import { base322buf } from 'helpers/conversion';
-import { markAsLoading } from 'helpers/actions';
+import { aesEncrypt, deriveSecrets } from 'helpers/crypto';
+import { b642buf } from 'helpers/conversion';
 
 // make sure the signing and encryption key pairs exist
-export async function encryptBackupData(
-    state,
-    keyStore,
-    settings,
-    keyPairs,
-    secret
-) {
+export async function syncData(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
     try {
         await backend.local.lock();
         const data = {
-            keyPairs: keyPairs,
             providerData: backend.local.get('provider::data'),
             appointments: backend.local.get('provider::appointments::open'),
             verifiedProviderData: backend.local.get('provider::data::verified'),
@@ -27,10 +19,15 @@ export async function encryptBackupData(
                 'provider::data::encryptionKey'
             ),
         };
+
+        const [id, key] = await deriveSecrets(b642buf(keyPairs.sync), 32, 2);
+
         const encryptedData = await aesEncrypt(
             JSON.stringify(data),
-            base322buf(secret)
+            b642buf(key)
         );
+
+        await backend.storage.storeSettings({ id: id, data: encryptedData });
 
         return {
             status: 'succeeded',
@@ -46,4 +43,4 @@ export async function encryptBackupData(
     }
 }
 
-encryptBackupData.actionName = 'encryptBackupData';
+backupData.actionName = 'backupData';

@@ -92,7 +92,8 @@ const Settings = withActions(
                         const a = document.createElement('a');
 
                         a.download = `${title}-backup-data.enc`;
-                        a.href = URL.createObjectURL(blob);
+                        if (blob !== undefined)
+                            a.href = URL.createObjectURL(blob);
                         document.body.appendChild(a);
                         a.click();
                         router.navigateToUrl('/provider/settings');
@@ -239,7 +240,11 @@ const Settings = withActions(
                                 <a
                                     className="bulma-button bulma-is-success"
                                     download={`${title}-backup-data.enc`}
-                                    href={URL.createObjectURL(blob)}
+                                    href={
+                                        blob !== undefined
+                                            ? URL.createObjectURL(blob)
+                                            : ''
+                                    }
                                 >
                                     Sicherungsdatei herunterladen
                                 </a>

@@ -13,8 +13,10 @@ import smallWhiteLogo from 'assets/images/logo-small-white.png';
 import routes from 'routes';
 import baseSettings from './base';
 import siLogo from 'assets/images/si-logo.png';
+import properties from './properties.yml';
 
 const settings = new Settings([
+    ['appointmentProperties', properties],
     ['title', 'Kiebitz'],
     ['logo', siLogo],
     ['whiteLogo', siLogo],
