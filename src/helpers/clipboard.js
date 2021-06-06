@@ -1,4 +1,7 @@
-// https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+// Kiebitz - Privacy-Friendly Appointments
+// Copyright (C) 2021-2021 The Kiebitz Authors
+// README.md contains license information.
+
 export const copyToClipboard = text => {
     if (window.clipboardData && window.clipboardData.setData) {
         // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.

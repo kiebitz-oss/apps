@@ -62,7 +62,6 @@
 			tr.kip-selected, tr.kip-selected:nth-child(even) {
 				background: $kip-green;
 				color: #fff;
-				font-weight: bolder;
 
 
 				@for $i from 1 through 10 {

@@ -148,6 +148,13 @@ $border: 1px dashed #ccc;
 							margin-right: map-get($kip-space, md);
 							background: $kip-appt-background;
 							padding: map-get($kip-space, sm);
+
+							&.kip-is-code{
+								@include fs(large);
+								box-shadow: $kip-box-shadow;
+								font-weight: bolder;
+								text-transform: uppercase;
+							}
 						}
 					}
 				}
