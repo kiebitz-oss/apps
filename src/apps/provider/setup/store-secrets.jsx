@@ -21,7 +21,7 @@ import { providerSecret, keyPairs, encryptBackupData } from '../actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
-import { copyToClipboard} from '../../../helpers/clipboard';
+import { copyToClipboard } from '../../../helpers/clipboard';
 
 export const DataSecret = ({ settings, secret, embedded, hideNotice }) => {
     const [succeeded, setSucceeded] = useState(false);
@@ -172,7 +172,7 @@ export default withRouter(
                         </Modal>
                     );
 
-                const title = settings.get('title').toLowerCase()
+                const title = settings.get('title').toLowerCase();
 
                 return (
                     <React.Fragment>

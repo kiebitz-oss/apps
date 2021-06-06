@@ -1,5 +1,5 @@
 // https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
-export const copyToClipboard = (text) => {
+export const copyToClipboard = text => {
     if (window.clipboardData && window.clipboardData.setData) {
         // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.
         return window.clipboardData.setData('Text', text);
@@ -20,4 +20,4 @@ export const copyToClipboard = (text) => {
             document.body.removeChild(textarea);
         }
     }
-}
+};

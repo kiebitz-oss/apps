@@ -34,6 +34,10 @@ appointment-overview:
   title:
     de: Terminübersicht
 schedule:
+  backward:
+    de: vorherige Woche
+  forward:
+    de: nächste Woche
   appointment:
     duration:
       title:

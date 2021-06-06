@@ -22,6 +22,11 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             const appointments = [];
             const usedTokens = [];
             for (const appointment of openAppointments) {
+                const timestamp = new Date(appointment.timestamp);
+                const inOneHour = new Date(
+                    new Date().getTime() + 1000 * 60 * 60
+                );
+                if (timestamp < inOneHour) continue; // we skip appointments that are less than one hour away
                 for (const slotData of appointment.slotData) {
                     if (!slotData.open) continue;
                     ids.push(slotData.id);

@@ -50,7 +50,6 @@ const AppointmentOverview = ({ appointment, onClose, ...props }) => {
     let acceptedItems = appointment.slotData
         .map(sl => {
             if (sl.open) return;
-            console.log(sl);
             return <li key={sl.id}>{sl.token.data.code}</li>;
         })
         .filter(it => it);
@@ -570,12 +569,26 @@ function getMonday(d) {
     return new Date(d.setDate(diff));
 }
 
+// https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 const Invitations = withTimer(
     withSettings(
         withRouter(
             withActions(
                 ({
                     action,
+                    secondaryAction,
                     id,
                     keys,
                     keysAction,
@@ -604,10 +617,52 @@ const Invitations = withTimer(
 
                     let newAppointmentModal;
 
-                    if (action === 'new-appointment')
+                    if (secondaryAction === 'new-appointment')
                         newAppointmentModal = <NewAppointment />;
+                    let startDate;
 
-                    const startDate = getMonday(new Date());
+                    if (action !== undefined) {
+                        const result = /^(\d{4})-(\d{2})-(\d{2})$/.exec(action);
+                        if (result) {
+                            const [, year, month, day] = result;
+                            startDate = getMonday(
+                                new Date(
+                                    Number(year),
+                                    Number(month) - 1,
+                                    Number(day)
+                                )
+                            );
+                        }
+                    }
+
+                    if (startDate === undefined)
+                        startDate = getMonday(new Date());
+
+                    let dateString = formatDate(startDate);
+
+                    const goBackward = () => {
+                        const newDate = formatDate(
+                            getMonday(
+                                new Date(
+                                    startDate.getTime() -
+                                        1000 * 60 * 60 * 24 * 7
+                                )
+                            )
+                        );
+                        router.navigateToUrl(`/provider/schedule/${newDate}`);
+                    };
+
+                    const goForward = () => {
+                        const newDate = formatDate(
+                            getMonday(
+                                new Date(
+                                    startDate.getTime() +
+                                        1000 * 60 * 60 * 24 * 7
+                                )
+                            )
+                        );
+                        router.navigateToUrl(`/provider/schedule/${newDate}`);
+                    };
 
                     const render = () => {
                         return (
@@ -615,13 +670,27 @@ const Invitations = withTimer(
                                 <CardContent>
                                     {newAppointmentModal}
                                     <Button
-                                        href="/provider/schedule/new-appointment"
+                                        href={`/provider/schedule/${dateString}/new-appointment`}
                                     >
-                                        <T
-                                            t={t}
-                                            k="schedule.appointment.add"
-                                        />
+                                        <T t={t} k="schedule.appointment.add" />
                                     </Button>
+                                    <hr />
+                                    <div className="kip-schedule-navigation">
+                                        <Button
+                                            className="kip-backward"
+                                            type=""
+                                            onClick={goBackward}
+                                        >
+                                            <T t={t} k="schedule.backward" />
+                                        </Button>
+                                        <Button
+                                            className="kip-forward"
+                                            type=""
+                                            onClick={goForward}
+                                        >
+                                            <T t={t} k="schedule.forward" />
+                                        </Button>
+                                    </div>
                                     <WeekCalendar
                                         startDate={startDate}
                                         appointments={

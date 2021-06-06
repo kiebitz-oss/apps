@@ -61,6 +61,18 @@ $border: 1px dashed #ccc;
 
 .kip-schedule {
 	padding-top: map-get($kip-space, md);
+
+	.kip-schedule-navigation {
+		display: flex;
+		flex-direction: row;
+		a:nth-child(1) {
+			margin-right: map-get($kip-space, md);
+		}
+		a:nth-child(2) {
+			margin-left: auto;
+		}
+	}
+
 }
 
 .kip-week-calendar {

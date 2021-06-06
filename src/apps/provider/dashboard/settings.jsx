@@ -86,7 +86,7 @@ const Settings = withActions(
 
                     let modal;
 
-                    const title = settings.get('title').toLowerCase()
+                    const title = settings.get('title').toLowerCase();
 
                     const backupData = () => {
                         const a = document.createElement('a');

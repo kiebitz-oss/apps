@@ -37,6 +37,7 @@ import './finalize.scss';
 class FinalizeForm extends Form {
     validate() {
         const errors = {};
+        if (this.data.distance === undefined) this.data.distance = 5;
         if (!this.data.zipCode || this.data.zipCode.length != 5)
             errors.zipCode = this.settings.t(
                 t,
@@ -86,7 +87,7 @@ const Finalize = withForm(
                         submitToQueueAction.reset();
                         queueDataAction().then(qd => {
                             const initialData = {
-                                distance: 50,
+                                distance: 5,
                             };
                             for (const [k, v] of Object.entries(
                                 t['contact-data'].properties
@@ -264,7 +265,7 @@ const Finalize = withForm(
                                         />
                                         <RichSelect
                                             id="distance"
-                                            value={data.distance || 10}
+                                            value={data.distance || 5}
                                             onChange={value =>
                                                 setAndMarkModified(
                                                     'distance',
@@ -272,6 +273,16 @@ const Finalize = withForm(
                                                 )
                                             }
                                             options={[
+                                                {
+                                                    value: 5,
+                                                    description: (
+                                                        <T
+                                                            t={t}
+                                                            k="contact-data.distance.option"
+                                                            distance={5}
+                                                        />
+                                                    ),
+                                                },
                                                 {
                                                     value: 10,
                                                     description: (

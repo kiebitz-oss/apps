@@ -43,7 +43,7 @@ const Dashboard = withRouter(
                 ({
                     route: {
                         handler: {
-                            props: { tab, action, id },
+                            props: { tab, action, secondaryAction, id },
                         },
                     },
                     router,
@@ -129,8 +129,6 @@ const Dashboard = withRouter(
                         )
                             return;
 
-                        console.log(verifiedProviderData);
-
                         // we send invitations and then check invitation data
                         sendInvitationsAction(
                             keyPairs.data,
@@ -150,6 +148,7 @@ const Dashboard = withRouter(
                             content = (
                                 <Schedule
                                     action={action}
+                                    secondaryAction={secondaryAction}
                                     id={id}
                                     key="schedule"
                                     lastUpdated={lastUpdated}

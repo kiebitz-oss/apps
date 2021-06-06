@@ -27,14 +27,19 @@ const routes = new Map([
         'providerDashboard',
         {
             url:
-                '/provider(?:/(schedule|settings)(?:/([a-z-]+))?(?:/([a-z0-9]+))?)?',
-            handler: (tab, action, id) => ({
+                '/provider(?:/(schedule|settings)(?:/([a-z0-9-]+))?(?:/([a-z0-9-]+))?(?:/([a-z0-9]+))?)?',
+            handler: (tab, action, secondaryAction, id) => ({
                 t: t,
                 title: 'dashboard',
                 component: Dashboard,
                 isSimple: true,
                 authentication: 'provider',
-                props: { tab: tab || 'schedule', action: action, id: id },
+                props: {
+                    tab: tab || 'schedule',
+                    secondaryAction: secondaryAction,
+                    action: action,
+                    id: id,
+                },
             }),
         },
     ],

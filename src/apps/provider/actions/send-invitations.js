@@ -40,6 +40,13 @@ export async function sendInvitations(
                 status: 'succeeded',
             };
 
+        // only offer appointments that are in the future
+        openAppointments = openAppointments.filter(oa => {
+            const timestamp = new Date(oa.timestamp);
+            const inOneHour = new Date(new Date().getTime() + 1000 * 60 * 60);
+            return timestamp > inOneHour;
+        });
+
         let openTokens = backend.local.get('provider::tokens::open', []);
         let openSlots = 0;
         openAppointments.forEach(ap => {
