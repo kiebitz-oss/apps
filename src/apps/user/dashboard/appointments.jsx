@@ -205,6 +205,7 @@ const InvitationDetails = withSettings(
 
             // to do: use something better than the index i for the key?
             const offers = data.offers
+                .filter(a => new Date(a.timestamp) > new Date())
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
                     const d = new Date(offer.timestamp);
@@ -243,6 +244,35 @@ const InvitationDetails = withSettings(
                     );
                 });
 
+            let offerDetails
+
+            if (offers.length === 0)
+                offerDetails = <Message type="warning"><T t={t} k="no-offers-anymore" /></Message>
+            else
+                offerDetails = <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>
+                                <T
+                                    t={t}
+                                    k="appointment-preference"
+                                />
+                            </th>
+                            <th>
+                                <T t={t} k="appointment-date" />
+                            </th>
+                            <th>
+                                <T t={t} k="appointment-duration" />
+                            </th>
+                            <th>
+                                <T t={t} k="appointment-vaccine" />
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>{offers}</tbody>
+                </table>
+
+
             return (
                 <F>
                     <CardContent>
@@ -255,28 +285,7 @@ const InvitationDetails = withSettings(
                                 <T t={t} k="appointments-notice" />
                             </p>
                             <hr />
-                            <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <T
-                                                t={t}
-                                                k="appointment-preference"
-                                            />
-                                        </th>
-                                        <th>
-                                            <T t={t} k="appointment-date" />
-                                        </th>
-                                        <th>
-                                            <T t={t} k="appointment-duration" />
-                                        </th>
-                                        <th>
-                                            <T t={t} k="appointment-vaccine" />
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>{offers}</tbody>
-                            </table>
+                            {offerDetails}
                         </div>
                     </CardContent>
                     <CardFooter>
