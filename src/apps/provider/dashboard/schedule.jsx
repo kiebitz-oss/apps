@@ -115,22 +115,22 @@ const AppointmentOverview = ({ appointment, onClose, ...props }) => {
                     )}
                 </CardContent>
                 <CardFooter>
-                    <PropertyTags appointment={appointment} />
+                    <PropertyTags verbose appointment={appointment} />
                 </CardFooter>
             </Card>
         </Modal>
     );
 };
 
-const PropertyTags = ({ appointment }) => {
+const PropertyTags = ({ appointment, verbose }) => {
     const props = Object.entries(appointment)
         .filter(([k, v]) => v === true)
-        .map(([k, v]) => <PropertyTag key={k} property={k} />)
+        .map(([k, v]) => <PropertyTag verbose={verbose} key={k} property={k} />)
         .filter(p => p !== undefined);
     return <F>{props}</F>;
 };
 
-const PropertyTag = withSettings(({ settings, property }) => {
+const PropertyTag = withSettings(({ settings, property, verbose }) => {
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
     for (const [category, values] of Object.entries(properties)) {
@@ -138,7 +138,7 @@ const PropertyTag = withSettings(({ settings, property }) => {
         if (prop !== undefined) {
             return (
                 <span key={property} className={`kip-tag kip-is-${property}`}>
-                    {prop.tag[lang]}
+                    {verbose ? prop[lang] : prop.tag[lang]}
                 </span>
             );
         }

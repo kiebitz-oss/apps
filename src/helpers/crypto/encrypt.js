@@ -48,6 +48,41 @@ export async function aesEncrypt(rawData, secret) {
         return null;
     }
 }
+
+export async function aesDecrypt(data, secret) {
+    try {
+        const secretKey = await e(
+            crypto.subtle.importKey('raw', secret, 'PBKDF2', false, [
+                'deriveKey',
+            ])
+        );
+
+        const symmetricKey = await crypto.subtle.deriveKey(
+            { name: 'PBKDF2', hash: 'SHA-256', salt: salt, iterations: 100000 },
+            secretKey,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
+
+        const decryptedData = await e(
+            crypto.subtle.decrypt(
+                {
+                    name: 'AES-GCM',
+                    tagLength: 128,
+                    iv: b642buf(data.iv),
+                },
+                symmetricKey,
+                b642buf(data.data)
+            )
+        );
+        return ab2str(decryptedData);
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
+
 export async function ecdhEncrypt(rawData, keyPair, publicKeyData) {
     const data = str2ab(rawData);
 

@@ -8,9 +8,31 @@ title:
 what-to-do:
   de: Was möchten Sie tun?
 setup:
-  de: Eine neue Anmeldung durchführen
+  de: Als Arzt registriren
 restore:
   de: Daten wiederherstellen
+load-backup:
+  invalid-secret:
+    de: Ungültiger Datenschlüssel (12-16 Zeichen im Bereich A-Z ohne O & I sowie Ziffern zwischen 2-9)
+  missing-file:
+    de: Bitte geben Sie einen Dateinamen an
+  title:
+    de: Daten wiederherstellen
+  load:
+    de: Daten wiederherstellen
+  secret:
+    label:
+      de: Datenschlüssel
+    description:
+      de: Der Datenschlüssel, den Sie bei der Registrierung erhalten haben.
+  invalid-file:
+    de: "Ungültige Backup-Datei. Hinweis: Der Name der Datei sollte '{title}.enc' sein."
+  input:
+    label:
+      de: Backup-Datei wählen
+    change:
+      de: "{filename}"
+    de: Backup-Datei wählen
 show-help:
   de: Hilfe anzeigen
 data-deleted:

@@ -57,7 +57,7 @@ $kip-appt-background: #efa;
 	}
 }
 
-$border: 1px dashed #ccc;
+$border: 1px solid #ddd;
 
 .kip-schedule {
 	padding-top: map-get($kip-space, md);
@@ -98,12 +98,15 @@ $border: 1px dashed #ccc;
 
 			&.kip-is-hour-label {
 				display: flex;
+				background: #fafafa;
 				align-items: center;
 				justify-content: center;
 			}
 
 			&.kip-is-day-label {
 				text-align: center;
+				background: #fafafa;
+				padding-top: map-get($kip-space, md);
 				span.kip-day, span.kip-date {
 					font-size: 14px;
 					display: block;

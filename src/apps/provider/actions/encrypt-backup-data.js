@@ -6,6 +6,15 @@ import { aesEncrypt } from 'helpers/crypto';
 import { base322buf } from 'helpers/conversion';
 import { markAsLoading } from 'helpers/actions';
 
+export const dataMap = {
+    keyPairs: 'provider::keyPairs',
+    providerData: 'provider::data',
+    appointments: 'provider::appointments::open',
+    verifiedProviderData: 'provider::data::verified',
+    openTokens: 'provider::tokens::open',
+    providerDataEncryptionKey: 'provider::data::encryptionKey',
+};
+
 // make sure the signing and encryption key pairs exist
 export async function encryptBackupData(
     state,
@@ -19,14 +28,10 @@ export async function encryptBackupData(
         await backend.local.lock();
         const data = {
             keyPairs: keyPairs,
-            providerData: backend.local.get('provider::data'),
-            appointments: backend.local.get('provider::appointments::open'),
-            verifiedProviderData: backend.local.get('provider::data::verified'),
-            openTokens: backend.local.get('provider::tokens::open'),
-            providerDataEncryptionKey: backend.local.get(
-                'provider::data::encryptionKey'
-            ),
         };
+        for (const [k, v] of Object.entries(dataMap)) {
+            data[k] = backend.local.get(v);
+        }
         const encryptedData = await aesEncrypt(
             JSON.stringify(data),
             base322buf(secret)

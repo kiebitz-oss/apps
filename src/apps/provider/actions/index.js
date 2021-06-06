@@ -17,3 +17,4 @@ export * from './valid-key-pairs';
 export * from './verified-provider-data';
 export * from './provider-secret';
 export * from './open-appointments';
+export * from './restore-from-backup';
