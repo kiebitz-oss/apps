@@ -194,6 +194,8 @@ export default withRouter(
                         </Modal>
                     );
 
+                const title = settings.get('title').toLowerCase()
+
                 return (
                     <React.Fragment>
                         {modal}
@@ -207,7 +209,7 @@ export default withRouter(
                                 <a
                                     onClick={showSecrets}
                                     className="bulma-button bulma-is-success"
-                                    download="kiebitz-backup-data.enc"
+                                    download={`${title}-backup-data.enc`}
                                     href={URL.createObjectURL(blob)}
                                     type="success"
                                 >

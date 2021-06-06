@@ -60,7 +60,6 @@ export async function submitProviderData(
             backend.local.set('provider::data', data);
             return result;
         } catch (e) {
-            console.error(e);
             return { status: 'failed', error: e };
         }
     } finally {
