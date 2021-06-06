@@ -1,0 +1,24 @@
+vaccine-types:
+  title:
+    de: Impfstofftyp
+  values:
+    biontech:
+      tag:
+        de: BT
+      de: Biontech Pfizer (Comirnaty)
+      _default: true
+    astrazeneca:
+      tag:
+        de: AZ
+      de: Astra Zeneca (Vaxzevria)
+      _default: true
+    johnson-johnson:
+      tag:
+        de: JJ
+      de: Johnson & Johnson
+      _default: true
+    moderna:
+      tag:
+        de: MD
+      de: Moderna
+      _default: true
