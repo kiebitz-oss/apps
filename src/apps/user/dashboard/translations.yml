@@ -12,6 +12,8 @@ invitation-accepted:
     de: "Buchungscode zur Vorlage: Bitte notieren!"
   title:
     de: Termin bestätigt!
+no-offers-anymore:
+  de: Alle Terminangebote sind bereits abgelaufen. Bitte hab' etwas Geduld, du wirst voraussichtlich neue Angebote erhalten.
 appointments-notice:
   de: Bitte wähle einen für Dich passenden Termin aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum geannten Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.
 confirm-appointment:
