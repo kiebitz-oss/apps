@@ -19,7 +19,10 @@ export async function confirmProvider(
         const keyHashesData = {
             signing: providerData.publicKeys.signing,
             encryption: providerData.publicKeys.encryption,
-            zipCode: providerData.data.zipCode, // so we can calculate distances
+            queueData: {
+                zipCode: providerData.data.zipCode,
+                accessible: providerData.data.accessible,
+            },
             queues: providerData.data.queues, // so we know which queues the provider can query
         };
 
@@ -69,7 +72,8 @@ export async function confirmProvider(
 
         const result = await backend.appointments.confirmProvider(
             {
-                id: providerData.verifiedID, // the ID to store the data under
+                id: providerData.id, // the ID of the unverified data
+                verifiedID: providerData.verifiedID, // the ID to store the data under
                 encryptedProviderData: encryptedProviderData,
                 signedKeyData: signedKeyData,
             },

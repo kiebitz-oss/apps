@@ -6,6 +6,7 @@ import {
     sign,
     ecdhEncrypt,
     ecdhDecrypt,
+    randomBytes,
     generateECDHKeyPair,
 } from 'helpers/crypto';
 
@@ -84,6 +85,8 @@ export async function sendInvitations(
                             continue;
                         }
                         token.keyPair = await generateECDHKeyPair();
+                        token.grantID = randomBytes(32);
+                        token.cancelGrantID = randomBytes(32);
                         validTokens.push(token);
                     }
                     openTokens = [...openTokens, ...validTokens];
@@ -95,47 +98,95 @@ export async function sendInvitations(
             // we make sure all token holders can initialize all appointment data IDs
             for (const [i, token] of openTokens.entries()) {
                 try {
+                    if (token.grantID === undefined)
+                        token.grantID = randomBytes(32);
+                    if (token.cancelGrantID === undefined)
+                        token.cancelGrantID = randomBytes(32);
                     // we generate grants for all appointments IDs.
-                    const grantsData = await Promise.all(
+                    let grantsData = await Promise.all(
                         openAppointments
                             .filter(
                                 oa =>
                                     oa.slotData.filter(sl => sl.open).length > 0
                             )
-                            .map(async oa =>
-                                oa.slotData
-                                    .filter(sl => sl.open)
-                                    .map(
-                                        async sl =>
-                                            await sign(
-                                                keyPairs.signing.privateKey,
-                                                JSON.stringify({
-                                                    rights: [
-                                                        'write',
-                                                        'read',
-                                                        'delete',
-                                                    ],
-                                                    singleUse: true,
-                                                    id: sl.id,
-                                                    permissions: [
-                                                        {
-                                                            rights: [
-                                                                'write',
-                                                                'read',
-                                                                'delete',
+                            .map(
+                                async oa =>
+                                    await Promise.all(
+                                        oa.slotData
+                                            .filter(sl => sl.open)
+                                            .map(
+                                                async sl =>
+                                                    await Promise.all(
+                                                        [
+                                                            [
+                                                                sl.id,
+                                                                token.grantID,
                                                             ],
-                                                            keys: [
-                                                                keyPairs.signing
-                                                                    .publicKey,
+                                                            [
+                                                                sl.cancel,
+                                                                token.cancelGrantID,
                                                             ],
-                                                        },
-                                                    ],
-                                                }),
-                                                keyPairs.signing.publicKey
+                                                        ].map(
+                                                            async ([
+                                                                id,
+                                                                grantID,
+                                                            ]) =>
+                                                                await sign(
+                                                                    keyPairs
+                                                                        .signing
+                                                                        .privateKey,
+                                                                    JSON.stringify(
+                                                                        {
+                                                                            objectID: id,
+                                                                            grantID: grantID,
+                                                                            singleUse: true,
+                                                                            expiresAt: new Date(
+                                                                                new Date().getTime() +
+                                                                                    1000 *
+                                                                                        60 *
+                                                                                        60 *
+                                                                                        24 *
+                                                                                        7
+                                                                            ),
+                                                                            permissions: [
+                                                                                {
+                                                                                    rights: [
+                                                                                        'read',
+                                                                                        'write',
+                                                                                        'delete',
+                                                                                    ],
+                                                                                    keys: [
+                                                                                        keyPairs
+                                                                                            .signing
+                                                                                            .publicKey,
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    rights: [
+                                                                                        'write',
+                                                                                        'read',
+                                                                                        'delete',
+                                                                                    ],
+                                                                                    keys: [
+                                                                                        token
+                                                                                            .data
+                                                                                            .publicKey,
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        }
+                                                                    ),
+                                                                    keyPairs
+                                                                        .signing
+                                                                        .publicKey
+                                                                )
+                                                        )
+                                                    )
                                             )
                                     )
                             )
                     );
+                    grantsData = grantsData.map(gd => gd.flat());
                     const userData = {
                         provider: verifiedProviderData.signedData,
                         offers: openAppointments
@@ -173,6 +224,10 @@ export async function sendInvitations(
                             {
                                 rights: ['read'],
                                 keys: [token.data.publicKey],
+                            },
+                            {
+                                rights: ['read', 'write', 'delete'],
+                                keys: [keyPairs.signing.publicKey],
                             },
                         ],
                     });

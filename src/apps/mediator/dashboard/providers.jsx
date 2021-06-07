@@ -5,7 +5,12 @@
 import React, { useState, useEffect, Fragment as F } from 'react';
 import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
 import Form from 'helpers/form';
-import { providers, keyPairs, confirmProvider } from '../actions';
+import {
+    pendingProviders,
+    verifiedProviders,
+    keyPairs,
+    confirmProvider,
+} from '../actions';
 import {
     withActions,
     withRouter,
@@ -41,21 +46,28 @@ const Providers = withTimer(
                 confirmProviderAction,
                 keyPairs,
                 keyPairsAction,
-                providers,
-                providersAction,
+                pendingProviders,
+                pendingProvidersAction,
+                verifiedProviders,
+                verifiedProvidersAction,
             }) => {
                 const [lastRun, setLastRun] = useState(-1);
+                const [view, setView] = useState('pending');
 
                 const getData = t => {
                     setLastRun(t);
-                    keyPairsAction().then(keyPairs =>
-                        providersAction(keyPairs.data)
-                    );
+                    keyPairsAction().then(keyPairs => {
+                        pendingProvidersAction(keyPairs.data);
+                        verifiedProvidersAction(keyPairs.data);
+                    });
                 };
 
                 useEffect(() => {
                     if (lastRun !== timer) getData(timer);
                 });
+
+                const providers =
+                    view === 'pending' ? pendingProviders : verifiedProviders;
 
                 const render = () => {
                     const showProvider = i => {
@@ -201,7 +213,6 @@ const Providers = withTimer(
                                     {provider.data.street} ·{' '}
                                     {provider.data.city}
                                 </ListColumn>
-                                <ListColumn size="icon"></ListColumn>
                             </ListItem>
                         ));
 
@@ -211,21 +222,22 @@ const Providers = withTimer(
                             <DropdownMenu
                                 title={
                                     <F>
-                                        <Icon icon="check-circle" /> Bestätigt
+                                        <Icon icon="check-circle" />
+                                        <T t={t} k={`providers.${view}`} />
                                     </F>
                                 }
                             >
                                 <DropdownMenuItem
                                     icon="check-circle"
-                                    onClick={() => console.log('foo')}
+                                    onClick={() => setView('verified')}
                                 >
-                                    Bestätigt
+                                    <T t={t} k="providers.verified" />
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                     icon="exclamation-circle"
-                                    onClick={() => console.log('foo')}
+                                    onClick={() => setView('pending')}
                                 >
-                                    Unbestätigt
+                                    <T t={t} k="providers.pending" />
                                 </DropdownMenuItem>
                             </DropdownMenu>
                             <List>
@@ -236,9 +248,6 @@ const Providers = withTimer(
                                     <ListColumn size="md">
                                         <T t={t} k="providers.address" />
                                     </ListColumn>
-                                    <ListColumn size="icon">
-                                        <T t={t} k="providers.menu" />
-                                    </ListColumn>
                                 </ListHeader>
                                 {providerItems}
                             </List>
@@ -247,12 +256,16 @@ const Providers = withTimer(
                 };
                 return (
                     <WithLoader
-                        resources={[providers, keyPairs]}
+                        resources={[
+                            pendingProviders,
+                            verifiedProviders,
+                            keyPairs,
+                        ]}
                         renderLoaded={render}
                     />
                 );
             },
-            [providers, keyPairs, confirmProvider]
+            [pendingProviders, verifiedProviders, keyPairs, confirmProvider]
         )
     ),
     10000

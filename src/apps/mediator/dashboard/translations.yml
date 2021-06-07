@@ -1,4 +1,8 @@
 providers:
+  pending:
+    de: Unbestätigt
+  verified:
+    de: Bestätigt
   title:
     de: Anbieter
   name:

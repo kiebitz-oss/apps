@@ -28,16 +28,25 @@ export async function confirmOffers(
             try {
                 for (let i = 0; i < offer.slotData.length; i++) {
                     const slotData = offer.slotData[i];
-                    const grant = offer.grants[i];
-                    const result = await backend.appointments.storeData(
-                        {
-                            id: slotData.id,
-                            data: encryptedProviderData,
-                            permissions: [],
-                            grant: grant,
-                        },
-                        tokenData.signingKeyPair
-                    );
+                    const grant = offer.grants.find(grant => {
+                        const data = JSON.parse(grant.data);
+                        return data.objectID === slotData.id;
+                    });
+                    if (grant === undefined) continue;
+                    try {
+                        const result = await backend.appointments.storeData(
+                            {
+                                id: slotData.id,
+                                data: encryptedProviderData,
+                                grant: grant,
+                            },
+                            tokenData.signingKeyPair
+                        );
+                    } catch (e) {
+                        // we can't use this slot, we try the next...
+                        console.error(e);
+                        continue;
+                    }
                     // we store the information about the offer which we've accepted
                     backend.local.set('user::invitation::accepted', {
                         offer: offer,

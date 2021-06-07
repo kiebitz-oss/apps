@@ -45,7 +45,7 @@ export default class AppointmentsBackend {
     }
 
     async confirmProvider(
-        { id, encryptedProviderData, signedKeyData },
+        { verifiedID, id, encryptedProviderData, signedKeyData },
         keyPair
     ) {
         let found = false;
@@ -68,7 +68,32 @@ export default class AppointmentsBackend {
             { id, data: encryptedProviderData },
             keyPair
         );
+
         if (!result) return;
+
+        // we remove the provider from the list of unverified providers
+        let oldProviderData;
+        const providersList = this.store.get('providers::list', []);
+        const providers = [];
+        for (const providerID of providersList) {
+            const providerData = this.store.get(`data::${providerID}`);
+            if (providerData === null) continue;
+            if (providerData.id === id) {
+                oldProviderData = providerData;
+                continue;
+            }
+            providers.push(providerData);
+        }
+        this.store.set('providers::list', providers);
+
+        // we add the provider to the list of verified providers
+        const verifiedProvidersList = this.store.get(
+            'providers::list::verified',
+            []
+        );
+        verifiedProvidersList.push(oldProviderData);
+        this.store.get('providers::list::verified', verifiedProvidersList);
+
         return {};
     }
 
@@ -504,12 +529,22 @@ export default class AppointmentsBackend {
     }
 
     async getPendingProviderData({ limit }, keyPair) {
-        const providersList = this.store.get('providers::list');
-        if (providersList === null) return [];
+        const providersList = this.store.get('providers::list', []);
         const providers = [];
         for (const providerID of providersList) {
             const providerData = this.store.get(`data::${providerID}`);
-            if (providerData === null) return [];
+            if (providerData === null) continue;
+            providers.push(providerData);
+        }
+        return providers;
+    }
+
+    async getVerifiedProviderData({ limit }, keyPair) {
+        const providersList = this.store.get('providers::list::verified', []);
+        const providers = [];
+        for (const providerID of providersList) {
+            const providerData = this.store.get(`data::${providerID}`);
+            if (providerData === null) continue;
             providers.push(providerData);
         }
         return providers;
