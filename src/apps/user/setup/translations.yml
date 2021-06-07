@@ -8,11 +8,6 @@ store-secrets:
       de: Nutze Dein Browser-Menü um ein Lesezeichen für diese Seite zu erstellen. Du kannst dieses Lesezeichen öffnen, um Deinen Sicherheitscode wiederherzustellen.
     title:
       de: Lesezeichen erstellen
-  local:
-    title:
-      de: Lokal
-    text:
-      de: Daten zur Ihrer Impfanmeldung werden in einer Datei gespeichert. Bitte bewahren Sie diese Datei sorgsam auf, ohne Sie können Ihre Daten nicht wiederhergestellt werden!
   online:
     title:
       de: Online
@@ -33,7 +28,7 @@ finalize:
 wizard:
   failed:
     invalid-code:
-      de: Ihr Zugangscode ist ungültig oder wurde bereits benutzt. Sie können sich nicht mehrfach registrieren.
+      de: Ihr Zugangscode ist ungültig oder wurde bereits benutzt. Du kannst sich nicht mehrfach registrieren.
     title:
       de: Fehlgeschlagen :/
     notice:
@@ -116,30 +111,14 @@ contact-data:
       de: Optionale Angaben
     text:
       de: Die folgenden Angaben sind optional.
-  name:
-    de: Vollständiger Name
-  invalid-name:
-    de: Bitte geben Sie Ihren vollständigen Namen an.
-  phone:
-    de: Telefonnummer
-  invalid-phone:
-    de: Bitte geben Sie eine gültige Telefonnummer an.
   email:
     label:
       de: E-Mail Adresse
     description:
       de: " "
   invalid-email:
-    de: Bitte geben Sie eine gültige E-Mail Adresse an.
+    de: Bitte gib' eine gültige E-Mail Adresse an.
   zip-code:
     de: Postleitzahl Deines Wohnorts
   invalid-zip-code:
     de: Bitte trage eine gültige Postleitzahl ein.
-  city:
-    de: Ort
-  invalid-city:
-    de: Bitte geben Sie einen gültigen Ortsnamen an.
-  street:
-    de: Straße & Hausnummer
-  invalid-street:
-    de: Bitte geben Sie einen gültigen Straßennamen (inkl. Hausnummer) an.
