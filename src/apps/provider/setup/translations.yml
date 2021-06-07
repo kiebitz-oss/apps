@@ -35,6 +35,13 @@ finalize:
   text:
     de: Bitte warten, Initialisierung wird abgeschlossen...
 wizard:
+  failed:
+    invalid-code:
+      de: Ihr Zugangscode ist leider ungültig.
+    title:
+      de: Fehlgeschlagen
+    notice:
+      de: Sorry, hier ist etwas schief gelaufen. Bitte versuche es später erneut.
   generating-backup-data:
     de: Bitte warten, erstelle Backup-Daten...
   download-backup-data:

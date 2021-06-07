@@ -8,6 +8,7 @@ import {
     withActions,
     withRouter,
     Modal,
+    Message,
     CardContent,
     WithLoader,
     CardFooter,
@@ -152,6 +153,7 @@ const Verify = withRouter(
                 useEffect(() => {
                     if (initialized) return;
                     providerDataAction();
+                    submitProviderDataAction.reset();
                     keyPairsAction();
                     keysAction();
                     setInitialized(true);
@@ -168,13 +170,41 @@ const Verify = withRouter(
                         keys.data
                     ).then(pd => {
                         setSubmitting(false);
-                        router.navigateToUrl('/provider/setup/store-secrets');
+                        if (pd.status === 'succeeded')
+                            router.navigateToUrl(
+                                '/provider/setup/store-secrets'
+                            );
                     });
                 };
+
+                let failedMessage;
+                let failed;
+
+                if (
+                    submitProviderData !== undefined &&
+                    submitProviderData.status === 'failed'
+                ) {
+                    failed = true;
+                    if (submitProviderData.error.error.code === 401) {
+                        failedMessage = (
+                            <Message type="danger">
+                                <T t={t} k="wizard.failed.invalid-code" />
+                            </Message>
+                        );
+                    }
+                }
+
+                if (failed && !failedMessage)
+                    failedMessage = (
+                        <Message type="danger">
+                            <T t={t} k="wizard.failed.notice" />
+                        </Message>
+                    );
 
                 const render = () => (
                     <React.Fragment>
                         <CardContent>
+                            {failedMessage}
                             <p className="kip-verify-notice">
                                 <T
                                     t={t}
@@ -198,14 +228,16 @@ const Verify = withRouter(
                         </CardContent>
                         <CardFooter>
                             <Button
-                                type="success"
+                                type={failed ? 'danger' : 'success'}
                                 disabled={submitting}
                                 onClick={submit}
                             >
                                 <T
                                     t={t}
                                     k={
-                                        submitting
+                                        failed
+                                            ? 'wizard.failed.title'
+                                            : submitting
                                             ? 'wizard.please-wait'
                                             : 'wizard.continue'
                                     }

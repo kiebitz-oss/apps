@@ -34,6 +34,7 @@ import {
     keys,
     keyPairs,
     createAppointment,
+    deleteAppointment,
     openAppointments,
 } from '../actions';
 import t from './translations.yml';
@@ -44,89 +45,155 @@ Date.prototype.addHours = function(h) {
     return this;
 };
 
-const AppointmentOverview = ({ appointment, onClose, ...props }) => {
-    let acceptedItems = appointment.slotData
-        .map(sl => {
-            if (sl.open) return;
-            return <li key={sl.id}>{sl.token.data.code}</li>;
-        })
-        .filter(it => it);
-    return (
-        <Modal
-            bare
-            onClose={onClose}
-            {...props}
-            className="kip-appointment-overview"
-        >
-            <Card>
-                <CardHeader>
-                    <T t={t} k="appointment-overview.title" />
-                    <Button
-                        type="info"
-                        aria-label="Close modal"
-                        className="bulma-delete"
-                        data-test-id="modal-close"
-                        onClick={onClose}
-                    />
-                </CardHeader>
-                <CardContent>
-                    <ul className="kip-appointment-details">
-                        <li>
-                            <T t={t} k="appointment-overview.details.date" />:{' '}
-                            {new Date(
-                                appointment.timestamp
-                            ).toLocaleDateString()}{' '}
-                            {new Date(
-                                appointment.timestamp
-                            ).toLocaleTimeString()}
-                        </li>
-                        <li>
-                            <T t={t} k="appointment-overview.details.slots" />:{' '}
-                            {appointment.slotData.length}{' '}
-                        </li>
-                        <li>
-                            <T t={t} k="appointment-overview.details.booked" />:{' '}
-                            {appointment.slotData.filter(sl => !sl.open).length}{' '}
-                        </li>
-                    </ul>
-                    {(acceptedItems.length > 0 && (
-                        <F>
-                            <h3>
+const AppointmentOverview = withActions(
+    ({
+        openAppointmentsAction,
+        deleteAppointmentAction,
+        appointment,
+        onClose,
+        ...props
+    }) => {
+        const [showDelete, setShowDelete] = useState(false);
+        let acceptedItems = appointment.slotData
+            .map(sl => {
+                if (sl.open) return;
+                return (
+                    <li className="kip-is-code" key={sl.id}>
+                        {sl.token.data.code}
+                    </li>
+                );
+            })
+            .filter(it => it);
+
+        const doDelete = () => {
+            deleteAppointmentAction(appointment).then(() => {
+                // we reload the appointments
+                openAppointmentsAction();
+                onClose();
+            });
+        };
+
+        const deletable =
+            appointment.slotData.find(sl => !sl.open) !== undefined;
+
+        if (showDelete)
+            return (
+                <Modal
+                    onSave={doDelete}
+                    onClose={() => setShowDelete(false)}
+                    onCancel={() => setShowDelete(false)}
+                    saveType="danger"
+                    save={<T t={t} k="appointment-overview.delete.confirm" />}
+                    cancel={<T t={t} k="appointment-overview.delete.cancel" />}
+                    title={<T t={t} k="appointment-overview.delete.title" />}
+                    {...props}
+                    className="kip-appointment-overview"
+                >
+                    <p>
+                        <T t={t} k="appointment-overview.delete.notice" />
+                    </p>
+                </Modal>
+            );
+        return (
+            <Modal
+                bare
+                onClose={onClose}
+                {...props}
+                className="kip-appointment-overview"
+            >
+                <Card>
+                    <CardHeader>
+                        <T t={t} k="appointment-overview.title" />
+                        <Button
+                            type="info"
+                            aria-label="Close modal"
+                            className="bulma-delete"
+                            data-test-id="modal-close"
+                            onClick={onClose}
+                        />
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="kip-appointment-details">
+                            <li>
                                 <T
                                     t={t}
-                                    k="appointment-overview.details.booking-codes"
+                                    k="appointment-overview.details.date"
                                 />
-                            </h3>
-                            <ul className="kip-booking-codes">
-                                {acceptedItems}
-                            </ul>
-                        </F>
-                    )) || (
-                        <Message type="info">
-                            <T
-                                t={t}
-                                k="appointment-overview.details.no-booked-slots"
-                            />
-                        </Message>
-                    )}
-                </CardContent>
-                <CardFooter>
-                    <PropertyTags appointment={appointment} />
-                </CardFooter>
-            </Card>
-        </Modal>
-    );
-};
+                                :{' '}
+                                {new Date(
+                                    appointment.timestamp
+                                ).toLocaleDateString()}{' '}
+                                {new Date(
+                                    appointment.timestamp
+                                ).toLocaleTimeString()}
+                            </li>
+                            <li>
+                                <T
+                                    t={t}
+                                    k="appointment-overview.details.slots"
+                                />
+                                : {appointment.slotData.length}{' '}
+                            </li>
+                            <li>
+                                <T
+                                    t={t}
+                                    k="appointment-overview.details.booked"
+                                />
+                                :{' '}
+                                {
+                                    appointment.slotData.filter(sl => !sl.open)
+                                        .length
+                                }{' '}
+                            </li>
+                        </ul>
+                        <hr />
+                        <PropertyTags verbose appointment={appointment} />
+                        {(acceptedItems.length > 0 && (
+                            <F>
+                                <h3>
+                                    <T
+                                        t={t}
+                                        k="appointment-overview.details.booking-codes"
+                                    />
+                                </h3>
+                                <ul className="kip-booking-codes">
+                                    {acceptedItems}
+                                </ul>
+                            </F>
+                        )) || (
+                            <Message type="info">
+                                <T
+                                    t={t}
+                                    k="appointment-overview.details.no-booked-slots"
+                                />
+                            </Message>
+                        )}
+                    </CardContent>
+                    <CardFooter>
+                        <Button
+                            disabled={deletable}
+                            type="danger"
+                            onClick={() => setShowDelete(true)}
+                        >
+                            <T t={t} k="appointment-overview.delete.button" />
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </Modal>
+        );
+    },
+    [deleteAppointment, openAppointments]
+);
 
-const PropertyTags = ({ appointment }) => {
+const PropertyTags = ({ appointment, verbose }) => {
     const props = Object.entries(appointment)
         .filter(([k, v]) => v === true)
-        .map(([k, v]) => <PropertyTag key={k} property={k} />)
+        .map(([k, v]) => <PropertyTag verbose={verbose} key={k} property={k} />)
         .filter(p => p !== undefined);
     return <F>{props}</F>;
 };
 
-const PropertyTag = withSettings(({ settings, property }) => {
+const PropertyTag = withSettings(({ settings, property, verbose }) => {
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
     for (const [category, values] of Object.entries(properties)) {
@@ -134,7 +201,7 @@ const PropertyTag = withSettings(({ settings, property }) => {
         if (prop !== undefined) {
             return (
                 <span key={property} className={`kip-tag kip-is-${property}`}>
-                    {prop.tag[lang]}
+                    {verbose ? prop[lang] : prop.tag[lang]}
                 </span>
             );
         }
@@ -378,20 +445,25 @@ const NewAppointment = withSettings(
                 ({
                     createAppointment,
                     settings,
+                    action,
                     createAppointmentAction,
                     openAppointmentsAction,
                     router,
                     form: { valid, error, data, set, reset },
                 }) => {
+                    let actionUrl = '';
+                    if (action !== undefined) actionUrl = `/${action}`;
                     const [initialized, setInitialized] = useState(false);
                     const cancel = () =>
-                        router.navigateToUrl('/provider/schedule');
+                        router.navigateToUrl(`/provider/schedule${actionUrl}`);
                     const save = () => {
                         createAppointmentAction(data).then(() => {
                             // we reload the appointments
                             openAppointmentsAction();
                             // and we go back to the schedule view
-                            router.navigateToUrl('/provider/schedule');
+                            router.navigateToUrl(
+                                `/provider/schedule${actionUrl}`
+                            );
                         });
                     };
 
@@ -623,7 +695,9 @@ const Invitations = withTimer(
                     let newAppointmentModal;
 
                     if (secondaryAction === 'new-appointment')
-                        newAppointmentModal = <NewAppointment />;
+                        newAppointmentModal = (
+                            <NewAppointment action={action} />
+                        );
                     let startDate;
 
                     if (action !== undefined) {
@@ -730,24 +804,3 @@ const Invitations = withTimer(
 );
 
 export default Invitations;
-
-/*
-                                        <DropdownMenuItem
-                                            icon="list"
-                                            onClick={() => console.log('foo')}
-                                        >
-                                            <T
-                                                t={t}
-                                                k="schedule.appointment.series"
-                                            />
-                                        </DropdownMenuItem>
-
-
-                                        <DropdownMenuItem
-                                            icon="list"
-                                            onClick={() => setView('list')}
-                                        >
-                                            <T t={t} k="schedule.view.list" />
-                                        </DropdownMenuItem>
-
-*/

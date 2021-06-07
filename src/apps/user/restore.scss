@@ -1,0 +1,20 @@
+@import 'scss/variables.scss';
+
+.kip-restore-from-backup {
+
+	.bulma-message {
+		margin-bottom: map-get($kip-space, md);
+	}
+
+	label {
+		padding: map-get($kip-space, md);
+		border-radius: $kip-border-radius;
+	    display: inline-block;
+	    cursor: pointer;
+	    background: $kip-green;
+	    color: #fff;
+		input[type=file].bulma-input {
+			display: none;
+		}
+	}
+}

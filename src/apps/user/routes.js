@@ -4,6 +4,7 @@
 
 import Setup from './setup';
 import Start from './start';
+import Restore from './restore';
 import Deleted from './deleted';
 import LoggedOut from './logged-out';
 import Dashboard from './dashboard';
@@ -18,6 +19,19 @@ const routes = new Map([
                 t: t,
                 title: 'welcome',
                 component: Start,
+                isSimple: true,
+                props: {},
+            }),
+        },
+    ],
+    [
+        'restoreUserData',
+        {
+            url: '/user/restore',
+            handler: () => ({
+                t: t,
+                title: 'restore',
+                component: Restore,
                 isSimple: true,
                 props: {},
             }),

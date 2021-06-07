@@ -6,19 +6,34 @@ settings:
     de: Einstellungen
 appointment-preference:
   de:
-    Präferenz
+    Rang
 invitation-accepted:
   booking-code:
     de: "Buchungscode zur Vorlage: Bitte notieren!"
   title:
     de: Termin bestätigt!
+no-offers-anymore:
+  de: Alle Terminangebote sind bereits abgelaufen. Bitte hab' etwas Geduld, du wirst voraussichtlich neue Angebote erhalten.
 appointments-notice:
-  de: Bitte wähle einen für Dich passenden Termin aus und bestätige anschließend Deine Auswahl.
+  de: Bitte wähle einen für Dich passenden Termin aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum geannten Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.
 confirm-appointment:
   de: Terminauswahl bestätigen
 appointment-date:
   de:
     Datum
+appointment-duration:
+  de: Dauer
+appointment-vaccine:
+  de: Impfstoff
+minute-string:
+  de: "{minutes} Minuten"
+hour-string:
+  de: "{hours} Stunden"
+hour-minute-string:
+  de: "{hours} Stunden {minutes} Minuten"
+provider-details:
+  accessible:
+    de: (barrierefreier Zugang)
 invitation-received:
   title:
     de: "Verfügbare Termine:"

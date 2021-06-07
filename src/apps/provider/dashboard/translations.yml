@@ -20,6 +20,17 @@ delete-modal:
   deleting-text:
     de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
 appointment-overview:
+  delete:
+    confirm:
+      de: Löschen bestätigen
+    cancel:
+      de: Abbrechen
+    button:
+      de: Termin löschen
+    title:
+      de: Termin löschen
+    notice:
+      de: Wollen Sie diesen Termin wirklich löschen?
   details:
     booking-codes:
       de: Buchungscodes

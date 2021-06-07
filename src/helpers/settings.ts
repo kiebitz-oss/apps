@@ -2,43 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-function format(str: string, ...rest: string[]): string[];
-function format(str: string, ...rest: any[]): any[];
-function format(str: string, ...rest: any[]): any[] {
-    const t = typeof rest[0];
-    let args;
-    if (rest.length === 0) args = {};
-    else
-        args =
-            t === "string" || t === "number"
-                ? Array.prototype.slice.call(rest)
-                : rest[0];
-
-    const splits = [];
-
-    let s = str.toString();
-    while (s.length > 0) {
-        const m = s.match(/\{(?!\{)([\w\d]+)\}(?!\})/);
-        if (m !== null && m.index !== undefined) {
-            const left = s.substr(0, m.index);
-            s = s.substr(m.index + m[0].length);
-            const n = parseInt(m[1]);
-            splits.push(left);
-            // eslint-disable-next-line eqeqeq
-            if (n != n) {
-                // not a number
-                splits.push(args[m[1]]);
-            } else {
-                // a numbered argument
-                splits.push(args[n]);
-            }
-        } else {
-            splits.push(s);
-            s = "";
-        }
-    }
-    return splits;
-}
+import { format } from './format';
 
 const assign = (d: Map<string, any>, key: string, value: any) => {
     if (value instanceof Map) {

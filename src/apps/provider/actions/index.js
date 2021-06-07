@@ -2,6 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
+export * from './delete-appointment';
 export * from './encrypt-backup-data';
 export * from './check-invitations';
 export * from './check-verified-provider-data';
@@ -17,3 +18,4 @@ export * from './valid-key-pairs';
 export * from './verified-provider-data';
 export * from './provider-secret';
 export * from './open-appointments';
+export * from './restore-from-backup';

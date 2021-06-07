@@ -26,15 +26,11 @@ export default withActions(
                     setInitialized(true);
                     providerDataAction().then(pd => {
                         if (
-                            pd === undefined ||
-                            pd.data === undefined ||
-                            Object.keys(pd.data.data).length === 0
-                        ) {
-                            router.navigateToUrl('/provider/setup');
-                            return;
-                        } else {
+                            pd !== undefined &&
+                            pd.data !== undefined &&
+                            pd.data.submitted
+                        )
                             router.navigateToUrl('/provider/schedule');
-                        }
                     });
                 });
                 return (
@@ -45,8 +41,13 @@ export default withActions(
                             </h1>
                             <ul className="kip-cm-selector">
                                 <li>
-                                    <A href="/provide/setup">
+                                    <A href="/provider/setup">
                                         <T t={t} k="setup" />
+                                    </A>
+                                </li>
+                                <li>
+                                    <A href="/provider/restore">
+                                        <T t={t} k="restore" />
                                     </A>
                                 </li>
                             </ul>
