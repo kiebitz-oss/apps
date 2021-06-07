@@ -31,6 +31,7 @@ export class StorageStore {
     }
 
     set(key, data) {
+        if (data === null || data === undefined) return this.delete(key);
         this.storage.setItem(key, JSON.stringify(data));
     }
 
