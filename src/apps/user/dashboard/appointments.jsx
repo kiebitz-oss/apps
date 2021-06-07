@@ -244,34 +244,36 @@ const InvitationDetails = withSettings(
                     );
                 });
 
-            let offerDetails
+            let offerDetails;
 
             if (offers.length === 0)
-                offerDetails = <Message type="warning"><T t={t} k="no-offers-anymore" /></Message>
+                offerDetails = (
+                    <Message type="warning">
+                        <T t={t} k="no-offers-anymore" />
+                    </Message>
+                );
             else
-                offerDetails = <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th>
-                                <T
-                                    t={t}
-                                    k="appointment-preference"
-                                />
-                            </th>
-                            <th>
-                                <T t={t} k="appointment-date" />
-                            </th>
-                            <th>
-                                <T t={t} k="appointment-duration" />
-                            </th>
-                            <th>
-                                <T t={t} k="appointment-vaccine" />
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>{offers}</tbody>
-                </table>
-
+                offerDetails = (
+                    <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <T t={t} k="appointment-preference" />
+                                </th>
+                                <th>
+                                    <T t={t} k="appointment-date" />
+                                </th>
+                                <th>
+                                    <T t={t} k="appointment-duration" />
+                                </th>
+                                <th>
+                                    <T t={t} k="appointment-vaccine" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>{offers}</tbody>
+                    </table>
+                );
 
             return (
                 <F>

@@ -42,7 +42,9 @@ export function base322buf(base32) {
     const bytes = [];
     let pos = 0;
     let b = 0;
-    base32 = base32.toLowerCase().replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
+    base32 = base32
+        .toLowerCase()
+        .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
     for (const c of base32) {
         const i = b32.indexOf(c);
         b |= (i << pos % 8) & 0xff;
