@@ -99,14 +99,6 @@ const Dashboard = withTimer(
                                 >
                                     <T t={t} k="settings.title" />
                                 </Tab>
-                                <Tab
-                                    last
-                                    icon={<Icon icon="sign-out-alt" />}
-                                    active={tab === 'log-out'}
-                                    href="/user/settings/logout"
-                                >
-                                    <T t={t} k="log-out" />
-                                </Tab>
                             </Tabs>
                         </CardHeader>
                         {content}
