@@ -68,6 +68,6 @@ no-invitations:
   title:
     de: Keine Terminangebote
   notice:
-    de: Bisher sind noch keine Termine in Deiner Umgebung verfügbar
+    de: Im Moment sind keine Termine in Deiner Umgebung verfügbar. Schau einfach regelmäßig hier vorbei. Sobald neue Termine in Deiner Nähe verfügbar sind, werden sie Dir hier angezeigt.
   update-notice:
     de: Diese Seite wird automatisch aktualisiert...
