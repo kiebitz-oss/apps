@@ -151,6 +151,18 @@ export async function sendInvitations(
                                                                             permissions: [
                                                                                 {
                                                                                     rights: [
+                                                                                        'read',
+                                                                                        'write',
+                                                                                        'delete',
+                                                                                    ],
+                                                                                    keys: [
+                                                                                        keyPairs
+                                                                                            .signing
+                                                                                            .publicKey,
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    rights: [
                                                                                         'write',
                                                                                         'read',
                                                                                         'delete',
@@ -212,6 +224,10 @@ export async function sendInvitations(
                             {
                                 rights: ['read'],
                                 keys: [token.data.publicKey],
+                            },
+                            {
+                                rights: ['read', 'write', 'delete'],
+                                keys: [keyPairs.signing.publicKey],
                             },
                         ],
                     });
