@@ -5,7 +5,7 @@ what-to-do:
 setup:
   de: Registrieren
 restore:
-  de: Sicherheitscode eingeben
+  de: Einloggen
 show-help:
   de: Hilfe anzeigen
 data-deleted:
@@ -14,7 +14,7 @@ thanks-for-using-us:
   de: Deine Daten wurden erfolgreich gelöscht. Vielen Dank, dass Du {service} genutzt hast!
 logged-out:
   log-in-again:
-    de: Erneut anmelden
+    de: Anmelden
   title:
     de: Erfolgreich abgemeldet.
   notice:
