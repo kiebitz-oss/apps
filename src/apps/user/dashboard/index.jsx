@@ -69,37 +69,45 @@ const Dashboard = withTimer(
                 });
 
                 let content;
+                let menu;
 
                 switch (tab) {
                     case 'settings':
                         content = (
                             <Settings action={action} userSecret={userSecret} />
                         );
+                        menu = (
+                            <A href={'/user/appointments'}>
+                                <span className="kip-icon">
+                                    <Icon icon="undo-alt" />
+                                </span>
+                            </A>
+                        );
                         break;
                     case 'appointments':
                         content = <Appointments />;
+                        menu = (
+                            <A href={'/user/settings'}>
+                                <span className="kip-icon">
+                                    <Icon icon="cogs" />
+                                </span>
+                            </A>
+                        );
                         break;
                 }
 
                 return (
                     <CenteredCard tight>
                         <CardHeader>
-                            <Tabs>
-                                <Tab
-                                    icon={<Icon icon="calendar" />}
-                                    active={tab === 'appointments'}
-                                    href="/user/appointments"
-                                >
-                                    <T t={t} k="appointments.title" />
-                                </Tab>
-                                <Tab
-                                    icon={<Icon icon="cogs" />}
-                                    active={tab === 'settings'}
-                                    href="/user/settings"
-                                >
-                                    <T t={t} k="settings.title" />
-                                </Tab>
-                            </Tabs>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    paddingBottom: '13px',
+                                }}
+                            >
+                                {menu}
+                            </div>
                         </CardHeader>
                         {content}
                     </CenteredCard>
