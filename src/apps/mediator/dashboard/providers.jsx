@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, useEffect, Fragment as F, useMemo } from 'react';
+import React, { useState, useEffect, Fragment as F } from 'react';
 import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
 import Form from 'helpers/form';
 import { providers, keyPairs, confirmProvider } from '../actions';
@@ -186,30 +186,24 @@ const Providers = withTimer(
                             );
                     }
 
-                    const providerItems = useMemo(
-                        () =>
-                            providers.data
-                                .sort(sortProviderByDate)
-                                .map(provider => (
-                                    <ListItem
-                                        onClick={() =>
-                                            showProvider(provider.id)
-                                        }
-                                        key={provider.id}
-                                        isCard
-                                    >
-                                        <ListColumn size="md">
-                                            {provider.data.name}
-                                        </ListColumn>
-                                        <ListColumn size="md">
-                                            {provider.data.street} ·{' '}
-                                            {provider.data.city}
-                                        </ListColumn>
-                                        <ListColumn size="icon"></ListColumn>
-                                    </ListItem>
-                                )),
-                        [providers.data]
-                    );
+                    const providerItems = providers.data
+                        .sort(sortProviderByDate)
+                        .map(provider => (
+                            <ListItem
+                                onClick={() => showProvider(provider.id)}
+                                key={provider.id}
+                                isCard
+                            >
+                                <ListColumn size="md">
+                                    {provider.data.name}
+                                </ListColumn>
+                                <ListColumn size="md">
+                                    {provider.data.street} ·{' '}
+                                    {provider.data.city}
+                                </ListColumn>
+                                <ListColumn size="icon"></ListColumn>
+                            </ListItem>
+                        ));
 
                     return (
                         <div className="kip-providers">
