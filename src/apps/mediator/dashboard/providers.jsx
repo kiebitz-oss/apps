@@ -182,7 +182,9 @@ const Providers = withTimer(
                             );
                     }
 
-                    const providerItems = providers.data.map(provider => (
+                    console.log(providers.data)
+
+                    const providerItems = providers.data.sort((a,b) => a > b).map(provider => (
                         <ListItem
                             onClick={() => showProvider(provider.id)}
                             key={provider.id}
