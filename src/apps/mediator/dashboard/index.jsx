@@ -151,12 +151,6 @@ const Dashboard = withActions(
                                 <T t={t} k="providers.title" />
                             </Tab>
                             <Tab
-                                active={tab === 'queues'}
-                                href="/mediator/queues"
-                            >
-                                <T t={t} k="queues.title" />
-                            </Tab>
-                            <Tab
                                 active={tab === 'settings'}
                                 href="/mediator/settings"
                             >
