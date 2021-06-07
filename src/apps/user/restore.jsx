@@ -87,10 +87,6 @@ export default withForm(
                                 {notice}
                                 <FormComponent>
                                     <FieldSet>
-                                        <ErrorFor
-                                            error={error}
-                                            field="secret"
-                                        />
                                         <RetractingLabelInput
                                             value={data.secret || ''}
                                             onChange={value =>
