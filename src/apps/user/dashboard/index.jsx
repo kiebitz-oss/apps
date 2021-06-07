@@ -79,7 +79,8 @@ const Dashboard = withTimer(
                         menu = (
                             <A href={'/user/appointments'}>
                                 <span className="kip-icon">
-                                    <Icon icon="undo-alt" />
+                                    <Icon icon="chevron-left" />{' '}
+                                    <T t={t} k="go-back.button" />
                                 </span>
                             </A>
                         );

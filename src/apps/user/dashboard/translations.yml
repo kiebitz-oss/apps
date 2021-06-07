@@ -71,3 +71,7 @@ no-invitations:
     de: Im Moment sind keine Termine in Deiner Umgebung verfügbar. Schau einfach regelmäßig hier vorbei. Sobald neue Termine in Deiner Nähe verfügbar sind, werden sie Dir hier angezeigt.
   update-notice:
     de: Diese Seite wird automatisch aktualisiert...
+go-back:
+  button:
+    en: Go back
+    de: Zurück

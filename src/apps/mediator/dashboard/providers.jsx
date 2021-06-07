@@ -26,7 +26,7 @@ import t from './translations.yml';
 import './providers.scss';
 
 const sortProviderByDate = (a, b) => {
-    return new Date(a.entry.timestamp) - new Date(b.entry.timestamp);
+    return new Date(b.entry.timestamp) - new Date(a.entry.timestamp);
 };
 
 const Providers = withTimer(
