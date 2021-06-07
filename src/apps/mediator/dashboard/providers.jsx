@@ -25,6 +25,10 @@ import {
 import t from './translations.yml';
 import './providers.scss';
 
+const sortProviderByDate = (a, b) => {
+    return new Date(a.entry.timestamp) - new Date(b.entry.timestamp);
+};
+
 const Providers = withTimer(
     withRouter(
         withActions(
@@ -182,23 +186,24 @@ const Providers = withTimer(
                             );
                     }
 
-                    console.log(providers.data)
-
-                    const providerItems = providers.data.sort((a,b) => a.data.name < b.data.name ? -1 : a.data.name > b.data.name ? 1 : 0).map(provider => (
-                        <ListItem
-                            onClick={() => showProvider(provider.id)}
-                            key={provider.id}
-                            isCard
-                        >
-                            <ListColumn size="md">
-                                {provider.data.name}
-                            </ListColumn>
-                            <ListColumn size="md">
-                                {provider.data.street} · {provider.data.city}
-                            </ListColumn>
-                            <ListColumn size="icon"></ListColumn>
-                        </ListItem>
-                    ));
+                    const providerItems = providers.data
+                        .sort(sortProviderByDate)
+                        .map(provider => (
+                            <ListItem
+                                onClick={() => showProvider(provider.id)}
+                                key={provider.id}
+                                isCard
+                            >
+                                <ListColumn size="md">
+                                    {provider.data.name}
+                                </ListColumn>
+                                <ListColumn size="md">
+                                    {provider.data.street} ·{' '}
+                                    {provider.data.city}
+                                </ListColumn>
+                                <ListColumn size="icon"></ListColumn>
+                            </ListItem>
+                        ));
 
                     return (
                         <div className="kip-providers">

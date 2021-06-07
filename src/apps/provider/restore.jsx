@@ -115,10 +115,6 @@ export default withForm(
                                 {notice}
                                 <FormComponent>
                                     <FieldSet>
-                                        <ErrorFor
-                                            error={error}
-                                            field="secret"
-                                        />
                                         <RetractingLabelInput
                                             value={data.secret || ''}
                                             onChange={value =>
@@ -143,7 +139,6 @@ export default withForm(
                                                 k="load-backup.input.label"
                                             />
                                         </h2>
-                                        <ErrorFor error={error} field="file" />
                                         <label
                                             role="button"
                                             onKeyDown={keyDown}
