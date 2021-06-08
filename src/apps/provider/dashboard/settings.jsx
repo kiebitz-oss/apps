@@ -32,7 +32,7 @@ import {
     keyPairs,
     providerData,
     providerSecret,
-    encryptBackupData,
+    backupData,
     verifiedProviderData,
 } from '../actions';
 import t from './translations.yml';
@@ -55,8 +55,7 @@ const Settings = withActions(
                     providerSecretAction,
                     providerData,
                     providerDataAction,
-                    encryptBackupData,
-                    encryptBackupDataAction,
+                    backupData,
                     verifiedProviderData,
                     verifiedProviderDataAction,
                     router,
@@ -71,12 +70,6 @@ const Settings = withActions(
                     useEffect(() => {
                         if (initialized) return;
 
-                        keyPairsAction().then(kp =>
-                            providerSecretAction().then(ps =>
-                                encryptBackupDataAction(kp.data, ps.data)
-                            )
-                        );
-
                         keysAction();
                         verifiedProviderDataAction();
                         providerDataAction();
@@ -88,7 +81,7 @@ const Settings = withActions(
 
                     const title = settings.get('title').toLowerCase();
 
-                    const backupData = () => {
+                    const doBackup = () => {
                         const a = document.createElement('a');
 
                         a.download = `${title}-backup-data.enc`;
@@ -107,30 +100,26 @@ const Settings = withActions(
                         setDeleting(true);
                         const backend = settings.get('backend');
                         backend.local.deleteAll('provider::');
-                        setTimeout(() => {
-                            setDeleting(false);
-                            router.navigateToUrl('/provider/deleted');
-                        }, 3000);
+                        setDeleting(false);
+                        router.navigateToUrl('/provider/deleted');
                     };
 
                     const logOut = () => {
                         setLoggingOut(true);
                         const backend = settings.get('backend');
                         backend.local.deleteAll('provider::');
-                        setTimeout(() => {
-                            setLoggingOut(false);
-                            router.navigateToUrl('/provider/logged-out');
-                        }, 3000);
+                        setLoggingOut(false);
+                        router.navigateToUrl('/provider/logged-out');
                     };
 
                     let blob;
 
                     if (
-                        encryptBackupData !== undefined &&
-                        encryptBackupData.status === 'succeeded'
+                        backupData !== undefined &&
+                        backupData.status === 'succeeded'
                     ) {
                         blob = new Blob(
-                            [str2ab(JSON.stringify(encryptBackupData.data))],
+                            [str2ab(JSON.stringify(backupData.data))],
                             {
                                 type: 'application/octet-stream',
                             }
@@ -146,7 +135,7 @@ const Settings = withActions(
                                 waiting={backingUp}
                                 title={<T t={t} k="backup-modal.title" />}
                                 onCancel={cancel}
-                                onSave={backupData}
+                                onSave={doBackup}
                                 saveType="success"
                             >
                                 <p>
@@ -340,7 +329,7 @@ const Settings = withActions(
                     );
                 }
             ),
-            [providerSecret, encryptBackupData, keyPairs]
+            [providerSecret, backupData, keyPairs]
         )
     ),
     [keys, providerData, keyPairs, verifiedProviderData, providerSecret]

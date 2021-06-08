@@ -35,6 +35,10 @@ class LoadBackupForm extends Form {
             errors.file = this.settings.t(t, 'load-backup.invalid-file', {
                 title: this.settings.get('title'),
             });
+        if (data.secret !== undefined)
+            data.secret = data.secret
+                .toLowerCase()
+                .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
         if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(data.secret))
             errors.secret = this.settings.t(t, 'load-backup.invalid-secret');
 

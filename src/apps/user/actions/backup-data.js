@@ -17,6 +17,7 @@ export const backupKeys = [
 export async function backupData(state, keyStore, settings, secret) {
     const backend = settings.get('backend');
     try {
+        await backend.local.lock();
         const data = {};
 
         for (const key of backupKeys) {
@@ -55,6 +56,8 @@ export async function backupData(state, keyStore, settings, secret) {
             status: 'failed',
             error: e,
         };
+    } finally {
+        backend.local.unlock();
     }
 }
 

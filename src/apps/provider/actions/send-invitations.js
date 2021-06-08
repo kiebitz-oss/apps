@@ -49,6 +49,22 @@ export async function sendInvitations(
         });
 
         let openTokens = backend.local.get('provider::tokens::open', []);
+        // we announce expired tokens to the backend
+        let expiredTokens = openTokens.filter(
+            token => new Date(token.expiresAt) <= new Date()
+        );
+        // we filter out any expired tokens...
+
+        // we send the signed, encrypted data to the backend
+        if (expiredTokens.length > 0)
+            await backend.appointments.returnTokens(
+                { tokens: expiredTokens.map(token => token.token) },
+                keyPairs.signing
+            );
+
+        openTokens = openTokens.filter(
+            token => new Date(token.expiresAt) > new Date()
+        );
         let openSlots = 0;
         openAppointments.forEach(ap => {
             openSlots += ap.slotData.filter(sl => sl.open).length;
@@ -92,6 +108,10 @@ export async function sendInvitations(
                         token.keyPair = await generateECDHKeyPair();
                         token.grantID = randomBytes(32);
                         token.cancelGrantID = randomBytes(32);
+                        // users have 24 hours to respond
+                        token.expiresAt = new Date(
+                            new Date().getTime() + 1000 * 60 * 60 * 24
+                        ).toISOString();
                         validTokens.push(token);
                     }
                     openTokens = [...openTokens, ...validTokens];
@@ -107,6 +127,10 @@ export async function sendInvitations(
                         token.grantID = randomBytes(32);
                     if (token.cancelGrantID === undefined)
                         token.cancelGrantID = randomBytes(32);
+                    if (token.expiresAt === undefined)
+                        token.expiresAt = new Date(
+                            new Date().getTime() + 1000 * 60 * 60 * 24
+                        ).toISOString();
                     // we generate grants for all appointments IDs.
                     let grantsData = await Promise.all(
                         openAppointments
@@ -145,14 +169,8 @@ export async function sendInvitations(
                                                                             objectID: id,
                                                                             grantID: grantID,
                                                                             singleUse: true,
-                                                                            expiresAt: new Date(
-                                                                                new Date().getTime() +
-                                                                                    1000 *
-                                                                                        60 *
-                                                                                        60 *
-                                                                                        24 *
-                                                                                        7
-                                                                            ),
+                                                                            expiresAt:
+                                                                                token.expiresAt,
                                                                             permissions: [
                                                                                 {
                                                                                     rights: [
@@ -222,7 +240,7 @@ export async function sendInvitations(
                         JSON.stringify(encryptedUserData),
                         keyPairs.signing.publicKey
                     );
-                    dataToSubmit.push({
+                    const submitData = {
                         id: token.data.id,
                         data: signedEncryptedUserData,
                         permissions: [
@@ -235,7 +253,8 @@ export async function sendInvitations(
                                 keys: [keyPairs.signing.publicKey],
                             },
                         ],
-                    });
+                    };
+                    dataToSubmit.push(submitData);
                 } catch (e) {
                     console.error(e);
                     continue;

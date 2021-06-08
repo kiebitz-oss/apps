@@ -86,6 +86,18 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             }
             backend.local.set('provider::appointments::open', openAppointments);
 
+            // we mark the successful tokens
+            const successfulTokens = openTokens.filter(ot =>
+                usedTokens.some(ut => ut.token === ot.token)
+            );
+
+            // we send the signed, encrypted data to the backend
+            if (successfulTokens.length > 0)
+                await backend.appointments.markTokensAsUsed(
+                    { tokens: successfulTokens.map(token => token.token) },
+                    keyPairs.signing
+                );
+
             // we remove the tokens corresponding to the accepted slots from
             // the list of open tokens...
             openTokens = openTokens.filter(

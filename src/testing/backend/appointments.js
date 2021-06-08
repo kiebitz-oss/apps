@@ -414,6 +414,8 @@ export default class AppointmentsBackend {
         return 0.0;
     }
 
+    async returnTokens({ tokens }, keyPair) {}
+
     // get n tokens from the given queue IDs
     async getQueueTokens({ capacities }, keyPair) {
         const providerKeyData = this._getProviderKeyData(keyPair.publicKey);
@@ -506,7 +508,7 @@ export default class AppointmentsBackend {
     }
 
     // mark a given token as used using its secret
-    markTokenAsUsed({ token, secret }, keyPair) {
+    markTokensAsUsed({ tokens }, keyPair) {
         return new Promise((resolve, reject) => {
             resolve();
         });

@@ -17,7 +17,7 @@ import {
     T,
     A,
 } from 'components';
-import { providerSecret, keyPairs, encryptBackupData } from '../actions';
+import { providerSecret, keyPairs, backupData } from '../actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
@@ -105,8 +105,8 @@ export default withRouter(
                 router,
                 providerSecret,
                 providerSecretAction,
-                encryptBackupData,
-                encryptBackupDataAction,
+                backupData,
+                backupDataAction,
                 status,
             }) => {
                 const [url, setUrl] = useState(null);
@@ -117,7 +117,7 @@ export default withRouter(
                     setInitialized(true);
                     keyPairsAction().then(kp =>
                         providerSecretAction().then(ps =>
-                            encryptBackupDataAction(kp.data, ps.data)
+                            backupDataAction(kp.data, ps.data)
                         )
                     );
                 });
@@ -125,15 +125,12 @@ export default withRouter(
                 let blob;
 
                 if (
-                    encryptBackupData !== undefined &&
-                    encryptBackupData.status === 'succeeded'
+                    backupData !== undefined &&
+                    backupData.status === 'succeeded'
                 ) {
-                    blob = new Blob(
-                        [str2ab(JSON.stringify(encryptBackupData.data))],
-                        {
-                            type: 'application/octet-stream',
-                        }
-                    );
+                    blob = new Blob([str2ab(JSON.stringify(backupData.data))], {
+                        type: 'application/octet-stream',
+                    });
                 }
 
                 const showSecrets = () => {
@@ -203,7 +200,7 @@ export default withRouter(
                 );
             }
         ),
-        [providerSecret, encryptBackupData, keyPairs]
+        [providerSecret, backupData, keyPairs]
     )
 );
 

@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 export * from './delete-appointment';
-export * from './encrypt-backup-data';
+export * from './backup-data';
 export * from './check-invitations';
 export * from './check-verified-provider-data';
 export * from './key-pairs';
