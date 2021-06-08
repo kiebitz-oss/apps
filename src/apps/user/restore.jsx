@@ -29,9 +29,12 @@ import './restore.scss';
 class LoadBackupForm extends Form {
     validate() {
         const errors = {};
-        if (
-            !/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(this.data.secret)
-        )
+        const { data } = this;
+        if (data.secret !== undefined)
+            data.secret = data.secret
+                .toLowerCase()
+                .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
+        if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(data.secret))
             errors.secret = this.settings.t(t, 'load-backup.invalid-secret');
         return errors;
     }

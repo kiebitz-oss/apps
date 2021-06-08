@@ -12,7 +12,9 @@ import {
     keys,
     validKeyPairs,
     providerData,
+    backupData,
     sendInvitations,
+    providerSecret,
     openAppointments,
     checkInvitations,
     submitProviderData,
@@ -62,6 +64,8 @@ const Dashboard = withRouter(
                     checkVerifiedProviderDataAction,
                     timer,
                     keys,
+                    backupDataAction,
+                    providerSecretAction,
                     keysAction,
                     sendInvitations,
                     sendInvitationsAction,
@@ -93,6 +97,9 @@ const Dashboard = withRouter(
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
+                                providerSecretAction().then(ps =>
+                                    backupDataAction(kp.data, ps.data)
+                                );
                                 validKeyPairsAction(kp.data, ks.data);
                                 providerDataAction().then(pd => {
                                     if (
@@ -208,6 +215,8 @@ const Dashboard = withRouter(
             keyPairs,
             keys,
             validKeyPairs,
+            backupData,
+            providerSecret,
             providerData,
             submitProviderData,
             checkInvitations,

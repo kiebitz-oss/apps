@@ -101,6 +101,11 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     // provider-only endpoints
 
     // get n tokens from the given queue IDs
+    async returnTokens({ tokens }, keyPair) {
+        return await this.call('returnTokens', { tokens }, keyPair);
+    }
+
+    // get n tokens from the given queue IDs
     async getQueueTokens({ capacities }, keyPair) {
         return await this.call('getQueueTokens', { capacities }, keyPair);
     }
@@ -113,9 +118,9 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         );
     }
 
-    // mark a given token as used using its secret
-    async markTokenAsUsed({ token, secret }, keyPair) {
-        return await this.call('markTokenAsUsed', { token, secret }, keyPair);
+    // mark tokens as used
+    async markTokensAsUsed({ tokens }, keyPair) {
+        return await this.call('markTokenAsUsed', { tokens }, keyPair);
     }
 
     // mediator-only endpoint

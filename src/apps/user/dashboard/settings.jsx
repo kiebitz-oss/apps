@@ -38,10 +38,8 @@ const Settings = withActions(
                     setDeleting(true);
                     const backend = settings.get('backend');
                     backend.local.deleteAll('user::');
-                    setTimeout(() => {
-                        setDeleting(false);
-                        router.navigateToUrl('/user/deleted');
-                    }, 100);
+                    setDeleting(false);
+                    router.navigateToUrl('/user/deleted');
                 };
 
                 const logOut = () => {
@@ -50,10 +48,8 @@ const Settings = withActions(
                     // we perform a backup before logging the user out...
                     backupDataAction(userSecret.data).then(() => {
                         backend.local.deleteAll('user::');
-                        setTimeout(() => {
-                            setLoggingOut(false);
-                            router.navigateToUrl('/user/logged-out');
-                        }, 100);
+                        setLoggingOut(false);
+                        router.navigateToUrl('/user/logged-out');
                     });
                 };
 
