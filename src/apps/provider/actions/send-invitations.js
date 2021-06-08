@@ -54,7 +54,9 @@ export async function sendInvitations(
             openSlots += ap.slotData.filter(sl => sl.open).length;
         });
         try {
-            const n = Math.max(0, openSlots - openTokens.length);
+            // how many more users we invite than we have slots
+            const overbookingFactor = 5
+            const n = Math.floor(Math.max(0, openSlots*overbookingFactor - openTokens.length));
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0) {
                 // to do: get appointments by type
