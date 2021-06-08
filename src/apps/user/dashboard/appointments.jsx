@@ -10,7 +10,7 @@ import { formatDuration } from 'helpers/format';
 import {
     tokenData,
     userSecret,
-    invitationData,
+    invitation,
     confirmOffers,
     acceptedInvitation,
 } from 'apps/user/actions';
@@ -62,7 +62,7 @@ const AcceptedInvitation = withActions(
                         <h2>
                             <T t={t} k="invitation-accepted.title" />
                         </h2>
-                        <ProviderDetails data={data.invitationData.provider} />
+                        <ProviderDetails data={data.invitation.provider} />
                         <p className="kip-appointment-date">
                             {d.toLocaleDateString()} ·{' '}
                             <u>{d.toLocaleTimeString()}</u>
@@ -154,6 +154,7 @@ const InvitationDetails = withSettings(
             data,
             tokenData,
             settings,
+            userSecret,
             toggleOffers,
             toggleOffersAction,
             acceptedInvitation,
@@ -189,7 +190,9 @@ const InvitationDetails = withSettings(
                     data,
                     tokenData.data
                 );
-                p.then(() => acceptedInvitationAction());
+                p.then(() => {
+                    acceptedInvitationAction();
+                });
                 p.finally(() => setConfirming(false));
             };
 
@@ -306,29 +309,29 @@ const InvitationDetails = withSettings(
                 </F>
             );
         },
-        [toggleOffers, confirmOffers, acceptedInvitation]
+        [toggleOffers, confirmOffers, acceptedInvitation, userSecret]
     )
 );
 
 const Appointments = withActions(
-    ({ settings, invitationData, tokenData }) => {
+    ({ settings, invitation, tokenData }) => {
         let content;
         const render = () => {
             return (
                 <InvitationDetails
                     tokenData={tokenData}
-                    data={invitationData.data}
+                    data={invitation.data}
                 />
             );
         };
         return (
             <WithLoader
-                resources={[tokenData, invitationData]}
+                resources={[tokenData, invitation]}
                 renderLoaded={render}
             />
         );
     },
-    [tokenData, invitationData]
+    [tokenData, invitation]
 );
 
 export default Appointments;

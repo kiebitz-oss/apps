@@ -2,12 +2,12 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-export async function invitationData(state, keyStore, settings) {
+export async function invitation(state, keyStore, settings) {
     const backend = settings.get('backend');
     return {
         status: 'loaded',
-        data: backend.local.get('user::invitationData::verified'),
+        data: backend.local.get('user::invitation::verified'),
     };
 }
 
-invitationData.actionName = 'invitationData';
+invitation.actionName = 'invitation';

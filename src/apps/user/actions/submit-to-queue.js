@@ -30,85 +30,97 @@ export async function submitToQueue(
     userSecret
 ) {
     const backend = settings.get('backend');
-    keyStore.set({ status: 'submitting' });
-    let tokenData = backend.local.get('user::tokenData');
-    if (tokenData !== null) {
+    try {
+        await backend.local.lock();
+        keyStore.set({ status: 'submitting' });
+        let tokenData = backend.local.get('user::tokenData');
+        if (tokenData !== null) {
+            try {
+                // we already have a token, we just submit to another queue
+                const signedToken = await backend.appointments.getToken({
+                    hash: tokenData.dataHash,
+                    code: contactData.code,
+                    encryptedData: tokenData.encryptedTokenData,
+                    queueID: queue.id,
+                    queueData: queueData,
+                    signedTokenData: tokenData.signedToken,
+                });
+
+                tokenData.signedToken = signedToken;
+
+                backend.local.set('user::tokenData', tokenData);
+
+                return {
+                    data: tokenData,
+                    status: 'suceeded',
+                };
+            } catch (e) {
+                return {
+                    status: 'failed',
+                    error: e,
+                };
+            }
+        }
         try {
-            // we already have a token, we just submit to another queue
+            // we hash the user data to prove it didn't change later...
+            const [dataHash, nonce] = await hashContactData(contactData);
+            const signingKeyPair = await generateECDSAKeyPair();
+
+            const userToken = {
+                // we use the user secrets first 4 digits as a code
+                // this weakens the key a bit but the provider has access to all
+                // of the user's appointment data anyway...
+                code: userSecret.slice(0, 4),
+                publicKey: signingKeyPair.publicKey, // the signing key to control the ID
+                id: randomBytes(32), // the ID where we want to receive data
+            };
+
+            // we encrypt the token data so the provider can decrypt it...
+            const [encryptedTokenData, privateKey] = await ephemeralECDHEncrypt(
+                JSON.stringify(userToken),
+                queue.publicKey
+            );
+
+            // currently we don't give the provider any infos...
+            const contactDataForProvider = {};
+
+            // we also encrypt the contact data for the provider...
+            // this won't get sent to the provider immediately though...
+            const [encryptedContactData] = await ephemeralECDHEncrypt(
+                JSON.stringify(contactDataForProvider),
+                queue.publicKey
+            );
+
             const signedToken = await backend.appointments.getToken({
-                hash: tokenData.dataHash,
+                hash: dataHash,
                 code: contactData.code,
-                encryptedData: tokenData.encryptedTokenData,
+                encryptedData: encryptedTokenData,
                 queueID: queue.id,
                 queueData: queueData,
-                signedTokenData: tokenData.signedToken,
             });
+
+            tokenData = {
+                signedToken: signedToken,
+                signingKeyPair: signingKeyPair,
+                encryptedTokenData: encryptedTokenData,
+                encryptedContactData: encryptedContactData,
+                queueData: queueData,
+                privateKey: privateKey,
+                hashNonce: nonce,
+                dataHash: dataHash,
+                tokenData: userToken,
+            };
+
+            backend.local.set('user::tokenData', tokenData);
             return {
-                data: signedToken,
-                status: 'suceeded',
+                data: tokenData,
+                status: 'succeeded',
             };
         } catch (e) {
-            return {
-                status: 'failed',
-                error: e,
-            };
+            return { status: 'failed', error: e };
         }
-    }
-    try {
-        // we hash the user data to prove it didn't change later...
-        const [dataHash, nonce] = await hashContactData(contactData);
-        const signingKeyPair = await generateECDSAKeyPair();
-
-        const tokenData = {
-            // we use the user secrets first 4 digits as a code
-            // this weakens the key a bit but the provider has access to all
-            // of the user's appointment data anyway...
-            code: userSecret.slice(0, 4),
-            publicKey: signingKeyPair.publicKey, // the signing key to control the ID
-            id: randomBytes(32), // the ID where we want to receive data
-        };
-
-        // we encrypt the token data so the provider can decrypt it...
-        const [encryptedTokenData, privateKey] = await ephemeralECDHEncrypt(
-            JSON.stringify(tokenData),
-            queue.publicKey
-        );
-
-        // currently we don't give the provider any infos...
-        const contactDataForProvider = {};
-
-        // we also encrypt the contact data for the provider...
-        // this won't get sent to the provider immediately though...
-        const [encryptedContactData] = await ephemeralECDHEncrypt(
-            JSON.stringify(contactDataForProvider),
-            queue.publicKey
-        );
-
-        const signedToken = await backend.appointments.getToken({
-            hash: dataHash,
-            code: contactData.code,
-            encryptedData: encryptedTokenData,
-            queueID: queue.id,
-            queueData: queueData,
-        });
-
-        backend.local.set('user::tokenData', {
-            signedToken: signedToken,
-            signingKeyPair: signingKeyPair,
-            encryptedTokenData: encryptedTokenData,
-            encryptedContactData: encryptedContactData,
-            queueData: queueData,
-            privateKey: privateKey,
-            hashNonce: nonce,
-            dataHash: dataHash,
-            tokenData: tokenData,
-        });
-        return {
-            data: signedToken,
-            status: 'succeeded',
-        };
-    } catch (e) {
-        return { status: 'failed', error: e };
+    } finally {
+        backend.local.unlock();
     }
 }
 

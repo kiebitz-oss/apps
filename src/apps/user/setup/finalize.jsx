@@ -124,7 +124,8 @@ const Finalize = withForm(
                                 ).then(hd => {
                                     setSubmitting(false);
                                     if (hd.status === 'failed') return;
-                                    backupDataAction(hd.data, userSecret.data);
+
+                                    backupDataAction(userSecret.data);
                                     router.navigateToUrl(
                                         '/user/setup/store-secrets'
                                     );
