@@ -32,6 +32,11 @@ export async function encryptBackupData(
         for (const [k, v] of Object.entries(dataMap)) {
             data[k] = backend.local.get(v);
         }
+
+        // we store the version and creation date as well
+        data.version = '0.1'
+        data.createdAt = new Date().toISOString()
+
         const encryptedData = await aesEncrypt(
             JSON.stringify(data),
             base322buf(secret)

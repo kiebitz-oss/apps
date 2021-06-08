@@ -11,6 +11,8 @@ export async function backupData(state, keyStore, settings, tokenData, secret) {
     try {
         const data = {
             tokenData: tokenData,
+            version: '0.1',
+            createdAt: new Date().toISOString(),
         };
 
         const [id, key] = await deriveSecrets(base322buf(secret), 32, 2);
