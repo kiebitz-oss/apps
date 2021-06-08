@@ -54,13 +54,16 @@ export async function checkInvitationData(
             );
 
             verifyProviderData(decryptedData.provider);
-            backend.local.set('user::invitationData', data);
-            backend.local.set('user::invitationData::verified', decryptedData);
+
+            backend.local.set('user::invitation', data);
+            backend.local.set('user::invitation::verified', decryptedData);
+
             return {
                 status: 'loaded',
                 data: decryptedData,
             };
         } catch (e) {
+            console.error(e);
             return {
                 status: 'failed',
                 error: e,

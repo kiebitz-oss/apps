@@ -9,7 +9,7 @@ export async function confirmOffers(
     keyStore,
     settings,
     offers,
-    invitationData,
+    invitation,
     tokenData
 ) {
     const backend = settings.get('backend');
@@ -22,7 +22,7 @@ export async function confirmOffers(
         };
         const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
             JSON.stringify(providerData),
-            invitationData.publicKey
+            invitation.publicKey
         );
         for (const offer of offers) {
             try {
@@ -50,7 +50,7 @@ export async function confirmOffers(
                     // we store the information about the offer which we've accepted
                     backend.local.set('user::invitation::accepted', {
                         offer: offer,
-                        invitationData: invitationData,
+                        invitation: invitation,
                         slotData: slotData,
                         grant: grant,
                     });

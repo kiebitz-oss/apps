@@ -5,12 +5,26 @@
 import { aesEncrypt, deriveSecrets } from 'helpers/crypto';
 import { base322buf, b642buf } from 'helpers/conversion';
 
+export const backupKeys = [
+    'tokenData',
+    'invitation',
+    'invitation::verified',
+    'invitation::accepted',
+    'secret',
+];
+
 // make sure the signing and encryption key pairs exist
-export async function backupData(state, keyStore, settings, tokenData, secret) {
+export async function backupData(state, keyStore, settings, secret) {
     const backend = settings.get('backend');
     try {
-        const data = {
-            tokenData: tokenData,
+        const data = {};
+
+        for (const key of backupKeys) {
+            data[key] = backend.local.get(`user::${key}`);
+        }
+
+        const fullData = {
+            ...data,
             version: '0.1',
             createdAt: new Date().toISOString(),
         };
@@ -18,15 +32,22 @@ export async function backupData(state, keyStore, settings, tokenData, secret) {
         const [id, key] = await deriveSecrets(base322buf(secret), 32, 2);
 
         const encryptedData = await aesEncrypt(
-            JSON.stringify(data),
+            JSON.stringify(fullData),
             b642buf(key)
         );
+
+        if (state !== undefined && state.referenceData != undefined) {
+            if (JSON.stringify(state.referenceData) === JSON.stringify(data)) {
+                return state;
+            }
+        }
 
         await backend.storage.storeSettings({ id: id, data: encryptedData });
 
         return {
             status: 'succeeded',
             data: encryptedData,
+            referenceData: data,
         };
     } catch (e) {
         console.error(e);

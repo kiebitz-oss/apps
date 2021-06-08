@@ -10,8 +10,9 @@ import Appointments from './appointments';
 import { keys } from 'apps/provider/actions';
 import {
     userSecret,
+    backupData,
     tokenData,
-    invitationData,
+    invitation,
     checkInvitationData,
 } from 'apps/user/actions';
 import {
@@ -19,6 +20,7 @@ import {
     CardHeader,
     CardContent,
     CardFooter,
+    withRouter,
     withSettings,
     withActions,
     withTimer,
@@ -32,91 +34,116 @@ import {
 import { StoreOnline } from 'apps/user/setup/store-secrets';
 import t from './translations.yml';
 
-const Dashboard = withTimer(
-    withActions(
-        withSettings(
-            ({
-                route: {
-                    handler: {
-                        props: { tab, action },
+const Dashboard = withRouter(
+    withTimer(
+        withActions(
+            withSettings(
+                ({
+                    route: {
+                        handler: {
+                            props: { tab, action },
+                        },
                     },
-                },
-                settings,
-                timer,
-                keys,
-                userSecret,
-                keysAction,
-                invitationDataAction,
-                checkInvitationData,
-                checkInvitationDataAction,
-                tokenData,
-                tokenDataAction,
-            }) => {
-                const [tv, setTv] = useState(-2);
+                    settings,
+                    timer,
+                    keys,
+                    router,
+                    userSecret,
+                    keysAction,
+                    backupDataAction,
+                    invitationAction,
+                    checkInvitationData,
+                    checkInvitationDataAction,
+                    tokenData,
+                    tokenDataAction,
+                }) => {
+                    const [tv, setTv] = useState(-2);
+                    const [initialized, setInitialized] = useState(false);
 
-                useEffect(() => {
-                    // we do this only once per timer interval...
-                    if (timer === tv) return;
-                    setTv(timer);
-                    keysAction().then(kd =>
-                        tokenDataAction().then(td =>
-                            checkInvitationDataAction(
-                                kd.data,
-                                td.data
-                            ).then(() => invitationDataAction())
-                        )
-                    );
-                });
+                    useEffect(() => {
+                        if (initialized) return;
+                        setInitialized(true);
+                        tokenDataAction().then(td => {
+                            if (td === undefined || td.data === null)
+                                router.navigateToUrl('/user');
+                        });
+                    });
 
-                let content;
-
-                switch (tab) {
-                    case 'settings':
-                        content = (
-                            <Settings action={action} userSecret={userSecret} />
+                    useEffect(() => {
+                        // we do this only once per timer interval...
+                        if (timer === tv) return;
+                        setTv(timer);
+                        keysAction().then(kd =>
+                            tokenDataAction().then(td => {
+                                if (td === undefined || td.data === null)
+                                    return;
+                                checkInvitationDataAction(
+                                    kd.data,
+                                    td.data
+                                ).then(() => {
+                                    backupDataAction(userSecret.data);
+                                    invitationAction();
+                                });
+                            })
                         );
-                        break;
-                    case 'appointments':
-                        content = <Appointments />;
-                        break;
-                }
+                    });
 
-                return (
-                    <CenteredCard tight>
-                        <CardHeader>
-                            <Tabs>
-                                <Tab
-                                    icon={<Icon icon="calendar" />}
-                                    active={tab === 'appointments'}
-                                    href="/user/appointments"
+                    let content;
+                    let menu;
+
+                    switch (tab) {
+                        case 'settings':
+                            content = <Settings action={action} />;
+                            menu = (
+                                <A href={'/user/appointments'}>
+                                    <span className="kip-icon">
+                                        <Icon icon="chevron-left" />{' '}
+                                        <T t={t} k="go-back.button" />
+                                    </span>
+                                </A>
+                            );
+                            break;
+                        case 'appointments':
+                            content = <Appointments />;
+                            menu = (
+                                <A href={'/user/settings'}>
+                                    <span className="kip-icon">
+                                        <Icon icon="cogs" />
+                                    </span>
+                                </A>
+                            );
+                            break;
+                    }
+
+                    return (
+                        <CenteredCard tight>
+                            <CardHeader>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-end',
+                                        paddingBottom: '13px',
+                                    }}
                                 >
-                                    <T t={t} k="appointments.title" />
-                                </Tab>
-                                <Tab
-                                    icon={<Icon icon="cogs" />}
-                                    active={tab === 'settings'}
-                                    href="/user/settings"
-                                >
-                                    <T t={t} k="settings.title" />
-                                </Tab>
-                                <Tab
-                                    last
-                                    icon={<Icon icon="sign-out-alt" />}
-                                    active={tab === 'log-out'}
-                                    href="/user/settings/logout"
-                                >
-                                    <T t={t} k="log-out" />
-                                </Tab>
-                            </Tabs>
-                        </CardHeader>
-                        {content}
-                    </CenteredCard>
-                );
-            }
+                                    {menu}
+                                </div>
+                            </CardHeader>
+                            {content}
+                        </CenteredCard>
+                    );
+                }
+            ),
+            [
+                tokenData,
+                keys,
+                checkInvitationData,
+                invitation,
+                userSecret,
+                backupData,
+            ]
         ),
-        [tokenData, keys, checkInvitationData, invitationData, userSecret]
-    ),
-    2000
+        2000
+    )
 );
 
 export default Dashboard;

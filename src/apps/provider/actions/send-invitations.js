@@ -55,10 +55,13 @@ export async function sendInvitations(
         });
         try {
             // how many more users we invite than we have slots
-            const overbookingFactor = 5
-            const n = Math.floor(Math.max(0, openSlots*overbookingFactor - openTokens.length));
+            const overbookingFactor = 5;
+            const n = Math.floor(
+                Math.max(0, openSlots * overbookingFactor - openTokens.length)
+            );
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0) {
+                console.log(`Requesting ${n} new tokens...`);
                 // to do: get appointments by type
                 const newTokens = await backend.appointments.getQueueTokens(
                     { capacities: [{ n: n, properties: {} }] },

@@ -34,8 +34,8 @@ export async function encryptBackupData(
         }
 
         // we store the version and creation date as well
-        data.version = '0.1'
-        data.createdAt = new Date().toISOString()
+        data.version = '0.1';
+        data.createdAt = new Date().toISOString();
 
         const encryptedData = await aesEncrypt(
             JSON.stringify(data),

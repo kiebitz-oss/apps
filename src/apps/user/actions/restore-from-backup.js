@@ -4,6 +4,7 @@
 
 import { aesDecrypt, deriveSecrets } from 'helpers/crypto';
 import { base322buf, b642buf } from 'helpers/conversion';
+import { backupKeys } from './backup-data';
 
 // make sure the signing and encryption key pairs exist
 export async function restoreFromBackup(state, keyStore, settings, secret) {
@@ -15,8 +16,9 @@ export async function restoreFromBackup(state, keyStore, settings, secret) {
         const data = await backend.storage.getSettings({ id: id });
         const dd = JSON.parse(await aesDecrypt(data, b642buf(key)));
 
-        // we restore the token data
-        backend.local.set('user::tokenData', dd.tokenData);
+        for (const key of backupKeys) {
+            backend.local.set(`user::${key}`, dd[key]);
+        }
 
         return {
             status: 'succeeded',

@@ -154,6 +154,7 @@ $border: 1px solid #ddd;
 
 							&.kip-is-code{
 								@include fs(large);
+								margin-bottom: map-get($kip-space, md);
 								box-shadow: $kip-box-shadow;
 								font-weight: bolder;
 								text-transform: uppercase;
