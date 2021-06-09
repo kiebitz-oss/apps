@@ -4,11 +4,13 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
+const KIEBITZ_DIR = path.resolve(__dirname, 'kiebitz');
 const BUILD_DIR = path.resolve(__dirname, 'build/web');
 const PUBLIC_DIR = path.resolve(BUILD_DIR, 'public');
 const SRC_DIR = path.resolve(__dirname, 'src');
 const NODE_MODULES_DIR = path.resolve(__dirname, 'node_modules');
 const APP_ENV = process.env.APP_ENV || 'production';
+
 let indexPath = 'index.jsx';
 switch (APP_ENV) {
   case 'dev':
@@ -82,6 +84,11 @@ let config = {
         test: /\.[tj]sx?$/,
         include: [SRC_DIR],
         use: 'babel-loader'
+      },
+      {
+        test: /\.ts$/,
+        include: [KIEBITZ_DIR],
+        use: 'ts-loader'
       }
     ]
   },
@@ -94,7 +101,6 @@ let config = {
   },
   plugins: [
     ...copyPlugins,
-    new webpack.NamedModulesPlugin(),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
