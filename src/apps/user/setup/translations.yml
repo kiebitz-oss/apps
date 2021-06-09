@@ -28,7 +28,7 @@ finalize:
 wizard:
   failed:
     invalid-code:
-      de: Ihr Zugangscode ist ungültig oder wurde bereits benutzt. Du kannst sich nicht mehrfach registrieren.
+      de: Dein Zugangscode ist ungültig oder wurde bereits benutzt. Du kannst sich nicht mehrfach registrieren.
     title:
       de: Fehlgeschlagen :/
     notice:
@@ -65,22 +65,6 @@ wizard:
       de: Kontaktdaten prüfen
 contact-data:
   properties: #if you change the vaccine types here you need to change them in 'apps/provider/dashboard/translations.ym' as well (to be migrated to settings)
-#    vaccine-types:
-#      title:
-#        de: Impfstofftypen
-#      values:
-#        biontech:
-#          de: Biontech Pfizer (Comirnaty)
-#          _default: true
-#        astrazeneca:
-#          de: Astra Zeneca (Vaxzevria)
-#          _default: true
-#        johnson-johnson:
-#          de: Johnson & Johnson
-#          _default: true
-#        moderna:
-#          de: Moderna
-#          _default: true
     location:
       title:
         de: Impfort
