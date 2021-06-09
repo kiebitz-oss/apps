@@ -22,7 +22,7 @@ function enrichAppointments(appointments) {
         // end of appointment
         oa.stop = new Date(oa.start.getTime() + 1000 * 60 * oa.duration);
         activeAppointments = activeAppointments.filter(
-            aa => aa.stop > oa.start
+            aa => aa.stop >= oa.start
         );
         oa.overlapsWith = [...activeAppointments];
 
