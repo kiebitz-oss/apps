@@ -12,7 +12,7 @@ variables:
   IMAGE_SPACE: "registry.sofort-impfen.de/si/apps"
 
 ## Production
-build-frontend-production:
+build-apps-production:
   stage: build
   before_script:
     - echo $LOGIN_PASSPHRASE | docker login --username gitlab+deploy-token-6 --password-stdin $REGISTRY
@@ -22,7 +22,8 @@ build-frontend-production:
     - docker push "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}"
     - docker push "${IMAGE_SPACE}/sofort-impfen-apps:latest"
 
-deploy-frontend-production:
+deploy-apps-production:
+  environment: production
   image: alpine:latest
   stage: deploy
   before_script:
@@ -32,3 +33,30 @@ deploy-frontend-production:
   variables:
     GIT_STRATEGY: none
 
+## Staging
+build-apps-staging:
+  stage: build
+  before_script:
+    - echo $LOGIN_PASSPHRASE | docker login --username gitlab+deploy-token-6 --password-stdin $REGISTRY
+  script:
+    - rm -rf .git
+    - docker build --build-arg CI_COMMIT_SHA=${CI_COMMIT_SHA} -t "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_SPACE}/sofort-impfen-apps:staging" .
+    - docker push "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}"
+    - docker push "${IMAGE_SPACE}/sofort-impfen-apps:staging"
+  only:
+    refs:
+      - staging
+
+deploy-apps-staging:
+  environment: staging
+  image: alpine:latest
+  stage: deploy
+  before_script:
+    - apk add curl
+  script:
+    - curl -X POST "https://rundeck.sofort-impfen.de/api/19/job/f88ca224-ed98-4908-8ebd-ac2bd141b2d1/run?authtoken=${RUNDECK_TOKEN}" --header "Content-Type:text/xml"
+  variables:
+    GIT_STRATEGY: none
+  only:
+    refs:
+      - staging
