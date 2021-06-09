@@ -6,6 +6,16 @@ import { aesDecrypt, deriveSecrets } from 'helpers/crypto';
 import { base322buf, b642buf } from 'helpers/conversion';
 import { localKeys, cloudKeys } from './backup-data';
 
+// to support old backup versions
+const dataMap = {
+    keyPairs: 'provider::keyPairs',
+    providerData: 'provider::data',
+    appointments: 'provider::appointments::open',
+    verifiedProviderData: 'provider::data::verified',
+    openTokens: 'provider::tokens::open',
+    providerDataEncryptionKey: 'provider::data::encryptionKey',
+};
+
 export async function restoreFromBackup(
     state,
     keyStore,
@@ -27,9 +37,22 @@ export async function restoreFromBackup(
                 },
             };
 
-        for (const key of localKeys) {
-            backend.local.set(`provider::${key}`, dd[key]);
+        // to do: remove as soon as everyone's on the new versioned schema
+        if (dd.version === undefined){
+            // this is an old backup file
+            for(const [k,v] of Object.entries(dataMap)){
+                backend.local.set(v, dd[k])
+            }
+            return {
+                status: 'succeeded',
+                data: dd,
+            }
+        } else {
+            for (const key of localKeys) {
+                backend.local.set(`provider::${key}`, dd[key]);
+            }            
         }
+
 
         backend.local.set('provider::secret', secret);
 
