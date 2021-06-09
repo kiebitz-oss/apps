@@ -40,8 +40,6 @@ export async function backupData(state, keyStore, settings, keyPairs, secret) {
             }
         }
 
-        console.log('Making a backup...');
-
         cloudData.version = '0.1';
         cloudData.createdAt = new Date().toISOString();
 
