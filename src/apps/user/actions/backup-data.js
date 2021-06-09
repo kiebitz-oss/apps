@@ -2,8 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { aesEncrypt, deriveSecrets } from 'helpers/crypto';
-import { base322buf, b642buf } from 'helpers/conversion';
+import { exportLocalStorageToSecret } from '../business-logic/backup';
 
 export const backupKeys = [
     'tokenData',
@@ -15,49 +14,33 @@ export const backupKeys = [
 
 // make sure the signing and encryption key pairs exist
 export async function backupData(state, keyStore, settings, secret) {
-    const backend = settings.get('backend');
     try {
-        await backend.local.lock();
-        const data = {};
-
-        for (const key of backupKeys) {
-            data[key] = backend.local.get(`user::${key}`);
-        }
-
-        const fullData = {
-            ...data,
-            version: '0.1',
-            createdAt: new Date().toISOString(),
-        };
-
-        const [id, key] = await deriveSecrets(base322buf(secret), 32, 2);
-
-        const encryptedData = await aesEncrypt(
-            JSON.stringify(fullData),
-            b642buf(key)
+        const [referenceData, data] = exportLocalStorageToSecret(
+            secret,
+            backupKeys
         );
 
+        // TODO: Fix type coercion or add eslint ignore + comment if on purpose.
         if (state !== undefined && state.referenceData != undefined) {
-            if (JSON.stringify(state.referenceData) === JSON.stringify(data)) {
+            if (
+                JSON.stringify(state.referenceData) ===
+                JSON.stringify(referenceData)
+            ) {
                 return state;
             }
         }
 
-        await backend.storage.storeSettings({ id: id, data: encryptedData });
-
         return {
             status: 'succeeded',
-            data: encryptedData,
-            referenceData: data,
+            referenceData,
+            data,
         };
-    } catch (e) {
-        console.error(e);
+    } catch (error) {
+        console.error(error);
         return {
             status: 'failed',
-            error: e,
+            error,
         };
-    } finally {
-        backend.local.unlock();
     }
 }
 
