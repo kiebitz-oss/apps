@@ -2,20 +2,20 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import BaseApi from "apis/base";
-import Settings from "helpers/settings";
-import Store, { copy } from "helpers/store";
+import BaseApi from 'apis/base';
+import { Settings } from 'helpers/settings';
+import Store, { copy } from 'helpers/store';
 
 export enum ActionStates {
-    undefined = "undefined",
-    loading = "loading",
-    loaded = "loaded",
-    succeeded = "succeeded",
-    failed = "failed",
-    creating = "creating",
-    updating = "updating",
-    deleting = "deleting",
-    confirming = "confirming"
+    undefined = 'undefined',
+    loading = 'loading',
+    loaded = 'loaded',
+    succeeded = 'succeeded',
+    failed = 'failed',
+    creating = 'creating',
+    updating = 'updating',
+    deleting = 'deleting',
+    confirming = 'confirming',
 }
 
 /**
@@ -38,7 +38,7 @@ export default class Base {
      */
     static get defaultKey(): string {
         throw new Error(
-            "No defaultKey defined for this action. Add one to your class."
+            'No defaultKey defined for this action. Add one to your class.'
         );
     }
 
@@ -50,9 +50,9 @@ export default class Base {
      */
     constructor(store: Store, settings: Settings, key?: string) {
         if (!(store instanceof Store))
-            throw new Error("store (1st parameter) must be a Store");
+            throw new Error('store (1st parameter) must be a Store');
         if (!(settings instanceof Settings))
-            throw new Error("settings (2nd parameter) must be a Setting");
+            throw new Error('settings (2nd parameter) must be a Setting');
         this.settings = settings;
         this.store = store;
         this.promises = {};
@@ -102,7 +102,7 @@ export default class Base {
     protected persistentUpdate(data: Record<string, any>) {
         this.persistentSet({
             ...this.persistentGet(),
-            ...data
+            ...data,
         });
     }
 
@@ -169,7 +169,7 @@ export default class Base {
         const promise = fn();
         this.promises[name] = {
             promise: promise,
-            dependencies: dependencies
+            dependencies: dependencies,
         };
         // we delete the request after it completes
         promise.then(() => delete this.promises[name]);
@@ -190,8 +190,8 @@ export default class Base {
         return promise;
     }
 
-    public copy(a){
-        return copy(a)
+    public copy(a) {
+        return copy(a);
     }
 }
 
@@ -205,7 +205,7 @@ export class BaseWithApi extends Base {
 
     get objectType(): string {
         throw new Error(
-            "No objectType defined for this action. Add one to your class."
+            'No objectType defined for this action. Add one to your class.'
         );
     }
 
@@ -222,13 +222,13 @@ export class BaseWithApi extends Base {
             );
         this.api = new ApiClass(settings);
         this.set({
-            status: "undefined"
+            status: 'undefined',
         });
     }
 
     public reset() {
         this.set({
-            status: ActionStates.initialized
+            status: ActionStates.initialized,
         });
     }
 }

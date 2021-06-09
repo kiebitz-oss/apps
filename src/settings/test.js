@@ -2,11 +2,9 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import Settings from 'helpers/settings';
+import settings, { Settings } from 'helpers/settings';
 import Fixtures from 'testing/fixtures';
 import baseSettings from './base';
-
-const settings = new Settings();
 
 settings.update(baseSettings);
 
