@@ -6,6 +6,7 @@ import {
 } from 'helpers/crypto';
 
 import { hashContactData } from './crypto';
+import { getUserTokenData } from './token-data';
 
 // TODO: Should be defined and exported somewhere in settings, since it's a
 // settings relevant key.
@@ -34,7 +35,7 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
     try {
         await backend.local.lock();
 
-        const tokenData = backend.local.get('user::tokenData');
+        const tokenData = await getUserTokenData();
         if (tokenData !== null) {
             // We already have a token, so we submit to another queue.
             tokenData.signedToken = await backend.appointments.getToken({
