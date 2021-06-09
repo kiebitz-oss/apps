@@ -26,11 +26,10 @@ import t from './translations.yml';
 import Form from 'helpers/form';
 import './restore.scss';
 
-function formatSecret(secret){
-    const parts = secret.match(/.{1,4}/g)
-    if (parts === null)
-        return secret
-    return parts.join("  ")
+function formatSecret(secret) {
+    const parts = secret.match(/.{1,4}/g);
+    if (parts === null) return secret;
+    return parts.join('  ');
 }
 
 class LoadBackupForm extends Form {
@@ -99,7 +98,9 @@ export default withForm(
                                     <FieldSet>
                                         <RetractingLabelInput
                                             id="secret"
-                                            value={formatSecret(data.secret || '')}
+                                            value={formatSecret(
+                                                data.secret || ''
+                                            )}
                                             onChange={value =>
                                                 set('secret', value)
                                             }

@@ -1,4 +1,8 @@
 backup-modal:
+  download-backup:
+    de: Backup-Datei herunterladen
+  close:
+    de: Schließen
   backing-up-test:
     de: Bitte warten, Datenbackup wird erstellt...
   title:

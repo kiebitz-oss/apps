@@ -44,10 +44,10 @@ export async function keyPairs(state, keyStore, settings) {
             }
         } else {
             // to do: only to support old apps, remove in July 2021
-            if (providerKeyPairs.sync === undefined){
+            if (providerKeyPairs.sync === undefined) {
                 const syncKey = await generateSymmetricKey();
                 providerKeyPairs.sync = syncKey;
-                backend.local.set('provider::keyPairs', providerKeyPairs)
+                backend.local.set('provider::keyPairs', providerKeyPairs);
             }
             return {
                 status: 'loaded',

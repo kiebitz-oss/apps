@@ -8,12 +8,12 @@ import { localKeys, cloudKeys } from './backup-data';
 
 // to support old backup versions
 const dataMap = {
-    keyPairs: 'provider::keyPairs',
-    providerData: 'provider::data',
-    appointments: 'provider::appointments::open',
-    verifiedProviderData: 'provider::data::verified',
-    openTokens: 'provider::tokens::open',
-    providerDataEncryptionKey: 'provider::data::encryptionKey',
+    keyPairs: 'keyPairs',
+    providerData: 'data',
+    appointments: 'appointments::open',
+    verifiedProviderData: 'data::verified',
+    openTokens: 'tokens::open',
+    providerDataEncryptionKey: 'data::encryptionKey',
 };
 
 export async function restoreFromBackup(
@@ -37,32 +37,41 @@ export async function restoreFromBackup(
                 },
             };
 
-        // to do: remove as soon as everyone's on the new versioned schema
-        if (dd.version === undefined){
-            // this is an old backup file
-            for(const [k,v] of Object.entries(dataMap)){
-                backend.local.set(v, dd[k])
-            }
-            return {
-                status: 'succeeded',
-                data: dd,
-            }
-        } else {
-            for (const key of localKeys) {
-                backend.local.set(`provider::${key}`, dd[key]);
-            }            
-        }
-
-
         backend.local.set('provider::secret', secret);
 
-        const [id, key] = await deriveSecrets(b642buf(dd.keyPairs.sync), 32, 2);
+        // to do: remove as soon as everyone's on the new versioned schema
+        if (dd.version === undefined || dd.version === '0.1') {
+            // this is an old backup file, we restore data from it...
+            for (const [k, v] of Object.entries(dataMap)) {
+                if (dd[k] !== undefined)
+                    backend.local.set(`provider::${v}`, dd[k]);
+            }
+        }
 
-        const cloudData = await backend.storage.getSettings({ id: id });
-        const ddCloud = JSON.parse(await aesDecrypt(cloudData, b642buf(key)));
+        for (const key of localKeys) {
+            backend.local.set(`provider::${key}`, dd[key]);
+        }
 
-        for (const key of cloudKeys) {
-            backend.local.set(`provider::${key}`, ddCloud[key]);
+        if (dd.keyPairs.sync !== undefined) {
+            const [id, key] = await deriveSecrets(
+                b642buf(dd.keyPairs.sync),
+                32,
+                2
+            );
+
+            try {
+                const cloudData = await backend.storage.getSettings({ id: id });
+                const ddCloud = JSON.parse(
+                    await aesDecrypt(cloudData, b642buf(key))
+                );
+
+                for (const key of cloudKeys) {
+                    if (ddCloud[key] !== undefined)
+                        backend.local.set(`provider::${key}`, ddCloud[key]);
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         return {

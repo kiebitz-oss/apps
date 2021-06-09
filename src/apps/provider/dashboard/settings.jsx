@@ -25,6 +25,7 @@ import {
     Button,
 } from 'components';
 import { ProviderData } from '../setup/verify';
+import { BackupDataLink } from '../setup/store-secrets';
 import { DataSecret } from '../setup/store-secrets';
 import { str2ab } from 'helpers/conversion';
 import {
@@ -32,7 +33,6 @@ import {
     keyPairs,
     providerData,
     providerSecret,
-    backupData,
     verifiedProviderData,
 } from '../actions';
 import t from './translations.yml';
@@ -55,13 +55,11 @@ const Settings = withActions(
                     providerSecretAction,
                     providerData,
                     providerDataAction,
-                    backupData,
                     verifiedProviderData,
                     verifiedProviderDataAction,
                     router,
                 }) => {
                     const [deleting, setDeleting] = useState(false);
-                    const [backingUp, setBackingUp] = useState(false);
                     const [loggingOut, setLoggingOut] = useState(false);
                     const [initialized, setInitialized] = useState(false);
                     const [view, setView] = useState('verified');
@@ -80,17 +78,6 @@ const Settings = withActions(
                     let modal;
 
                     const title = settings.get('title').toLowerCase();
-
-                    const doBackup = () => {
-                        const a = document.createElement('a');
-
-                        a.download = `${title}-backup-data.enc`;
-                        if (blob !== undefined)
-                            a.href = URL.createObjectURL(blob);
-                        document.body.appendChild(a);
-                        a.click();
-                        router.navigateToUrl('/provider/settings');
-                    };
 
                     const cancel = () => {
                         router.navigateToUrl('/provider/settings');
@@ -112,41 +99,18 @@ const Settings = withActions(
                         router.navigateToUrl('/provider/logged-out');
                     };
 
-                    let blob;
-
-                    if (
-                        backupData !== undefined &&
-                        backupData.status === 'succeeded'
-                    ) {
-                        blob = new Blob(
-                            [str2ab(JSON.stringify(backupData.data))],
-                            {
-                                type: 'application/octet-stream',
-                            }
-                        );
-                    }
-
                     if (action === 'backup') {
                         modal = (
                             <Modal
                                 onClose={cancel}
                                 save="Sicherungsdatei herunterladen"
-                                disabled={backingUp}
-                                waiting={backingUp}
                                 title={<T t={t} k="backup-modal.title" />}
                                 onCancel={cancel}
-                                onSave={doBackup}
+                                cancel={<T t={t} k="backup-modal.close" />}
                                 saveType="success"
                             >
                                 <p>
-                                    <T
-                                        t={t}
-                                        k={
-                                            backingUp
-                                                ? 'backup-modal.backing-up-text'
-                                                : 'backup-modal.text'
-                                        }
-                                    />
+                                    <T t={t} k="backup-modal.text" />
                                 </p>
                                 <hr />
                                 <DataSecret
@@ -163,6 +127,15 @@ const Settings = withActions(
                                 >
                                     Datenschlüssel kopieren
                                 </Button>
+                                <BackupDataLink
+                                    downloadText={
+                                        <T
+                                            t={t}
+                                            k="backup-modal.download-backup"
+                                        />
+                                    }
+                                    onSuccess={cancel}
+                                />
                             </Modal>
                         );
                     } else if (action === 'delete') {
@@ -226,17 +199,14 @@ const Settings = withActions(
                                 >
                                     Datenschlüssel kopieren
                                 </Button>
-                                <a
-                                    className="bulma-button bulma-is-success"
-                                    download={`${title}-backup-data.enc`}
-                                    href={
-                                        blob !== undefined
-                                            ? URL.createObjectURL(blob)
-                                            : ''
+                                <BackupDataLink
+                                    downloadText={
+                                        <T
+                                            t={t}
+                                            k="backup-modal.download-backup"
+                                        />
                                     }
-                                >
-                                    Sicherungsdatei herunterladen
-                                </a>
+                                />
                             </Modal>
                         );
                     }
@@ -329,7 +299,7 @@ const Settings = withActions(
                     );
                 }
             ),
-            [providerSecret, backupData, keyPairs]
+            [providerSecret, keyPairs]
         )
     ),
     [keys, providerData, keyPairs, verifiedProviderData, providerSecret]

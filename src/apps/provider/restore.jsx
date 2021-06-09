@@ -46,11 +46,10 @@ class LoadBackupForm extends Form {
     }
 }
 
-function formatSecret(secret){
-    const parts = secret.match(/.{1,4}/g)
-    if (parts === null)
-        return secret
-    return parts.join("  ")
+function formatSecret(secret) {
+    const parts = secret.match(/.{1,4}/g);
+    if (parts === null) return secret;
+    return parts.join('  ');
 }
 
 export default withForm(
@@ -128,7 +127,9 @@ export default withForm(
                                     <FieldSet>
                                         <RetractingLabelInput
                                             id="secret"
-                                            value={formatSecret(data.secret || '')}
+                                            value={formatSecret(
+                                                data.secret || ''
+                                            )}
                                             onChange={value =>
                                                 set('secret', value)
                                             }

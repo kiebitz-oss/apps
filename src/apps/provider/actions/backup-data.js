@@ -40,10 +40,10 @@ export async function backupData(state, keyStore, settings, keyPairs, secret) {
             }
         }
 
-        cloudData.version = '0.1';
+        cloudData.version = '0.2';
         cloudData.createdAt = new Date().toISOString();
 
-        data.version = '0.1';
+        data.version = '0.2';
         data.createdAt = new Date().toISOString();
 
         // locally stored data

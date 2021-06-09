@@ -20,7 +20,9 @@ function enrichAppointments(appointments) {
         oa.index = i;
         oa.start = new Date(`${oa.timestamp}`);
         // end of appointment (we calculate with 45 minute minimum duration)
-        oa.stop = new Date(oa.start.getTime() + 1000 * 60 * Math.max(45, oa.duration));
+        oa.stop = new Date(
+            oa.start.getTime() + 1000 * 60 * Math.max(45, oa.duration)
+        );
         activeAppointments = activeAppointments.filter(
             aa => aa.stop >= oa.start
         );
