@@ -10,60 +10,50 @@ export const KEY_USER_INVITATION_ACCEPTED = 'user::invitation::accepted';
 export const KEY_USER_INVITATION_VERIFIED = 'user::invitation::verified';
 
 export const setUserInvitation = async (data: any): Promise<any> => {
-    const backend = settings.get(KEY_BACKEND);
-    backend.local.set(KEY_USER_INVITATION, data);
+  const backend = settings.get(KEY_BACKEND);
+  backend.local.set(KEY_USER_INVITATION, data);
 };
 
 export const getUserInvitationAccepted = async (): Promise<any> => {
-    const backend = settings.get(KEY_BACKEND);
-    return backend.local.get(KEY_USER_INVITATION_ACCEPTED);
+  const backend = settings.get(KEY_BACKEND);
+  return backend.local.get(KEY_USER_INVITATION_ACCEPTED);
 };
 
 export const setUserInvitationVerified = async (data: any): Promise<any> => {
-    const backend = settings.get(KEY_BACKEND);
-    backend.local.set(KEY_USER_INVITATION_VERIFIED, data);
+  const backend = settings.get(KEY_BACKEND);
+  backend.local.set(KEY_USER_INVITATION_VERIFIED, data);
 };
 
 export const getUserInvitationVerified = async (): Promise<any> => {
-    const backend = settings.get(KEY_BACKEND);
-    return backend.local.get(KEY_USER_INVITATION_VERIFIED);
+  const backend = settings.get(KEY_BACKEND);
+  return backend.local.get(KEY_USER_INVITATION_VERIFIED);
 };
 
-export const getUserDecryptedInvitationData = async (
-    keys: any,
-    tokenData: any
-): Promise<any> => {
-    const backend = settings.get(KEY_BACKEND);
-    // Make sure we don't have any data races.
+export const getUserDecryptedInvitationData = async (keys: any, tokenData: any): Promise<any> => {
+  const backend = settings.get(KEY_BACKEND);
+  // Make sure we don't have any data races.
 
-    try {
-        await backend.local.lock();
+  try {
+    await backend.local.lock();
 
-        const data = await backend.appointments.getData(
-            { id: tokenData.tokenData.id },
-            tokenData.signingKeyPair
-        );
-        if (data === null)
-            return {
-                status: 'not-found',
-            };
+    const data = await backend.appointments.getData({ id: tokenData.tokenData.id }, tokenData.signingKeyPair);
+    if (data === null)
+      return {
+        status: 'not-found'
+      };
 
-        const decryptedData = await decryptInvitationData(
-            data,
-            keys,
-            tokenData
-        );
+    const decryptedData = await decryptInvitationData(data, keys, tokenData);
 
-        await verifyProviderData(decryptedData.provider);
+    await verifyProviderData(decryptedData.provider);
 
-        await setUserInvitation(data);
-        await setUserInvitationVerified(decryptedData);
+    await setUserInvitation(data);
+    await setUserInvitationVerified(decryptedData);
 
-        return {
-            status: 'loaded',
-            data: decryptedData,
-        };
-    } finally {
-        backend.local.unlock();
-    }
+    return {
+      status: 'loaded',
+      data: decryptedData
+    };
+  } finally {
+    backend.local.unlock();
+  }
 };
