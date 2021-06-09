@@ -49,7 +49,7 @@ build-apps-staging:
     IMAGE_SPACE: "registry.sofort-impfen.de/si/apps"
   stage: build
   before_script:
-    - echo $LOGIN_PASSPHRASE | docker login --username gitlab+deploy-token-6 --password-stdin $REGISTRY
+    - docker login -u gitlab+deploy-token-6 -p ${LOGIN_PASSPHRASE} $REGISTRY
   script:
     - rm -rf .git
     - docker build --build-arg CI_COMMIT_SHA=${CI_COMMIT_SHA} --build-arg ENVIRONMENT=staging -t "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_SPACE}/sofort-impfen-apps:staging" .
