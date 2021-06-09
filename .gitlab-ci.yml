@@ -21,6 +21,10 @@ build-apps-production:
     - docker build --build-arg CI_COMMIT_SHA=${CI_COMMIT_SHA} --build-arg ENVIRONMENT=prod -t "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_SPACE}/sofort-impfen-apps:latest" .
     - docker push "${IMAGE_SPACE}/sofort-impfen-apps:${CI_COMMIT_SHORT_SHA}"
     - docker push "${IMAGE_SPACE}/sofort-impfen-apps:latest"
+  only:
+    refs:
+      - master
+      - main
 
 deploy-apps-production:
   environment: production
@@ -32,6 +36,10 @@ deploy-apps-production:
     - curl -X POST "https://rundeck.sofort-impfen.de/api/19/job/d96f307f-f974-4504-9bdf-65094a0bdc66/run?authtoken=${RUNDECK_TOKEN}" --header "Content-Type:text/xml"
   variables:
     GIT_STRATEGY: none
+  only:
+    refs:
+      - master
+      - main
 
 ## Staging
 build-apps-staging:
