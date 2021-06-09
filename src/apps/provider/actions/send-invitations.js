@@ -127,10 +127,10 @@ export async function sendInvitations(
                         token.grantID = randomBytes(32);
                     if (token.cancelGrantID === undefined)
                         token.cancelGrantID = randomBytes(32);
-                    if (token.expiresAt === undefined)
-                        token.expiresAt = new Date(
-                            new Date().getTime() + 1000 * 60 * 60 * 24
-                        ).toISOString();
+                    // to do: expire tokens
+                    token.expiresAt = new Date(
+                        new Date().getTime() + 1000 * 60 * 60 * 24
+                    ).toISOString();
                     // we generate grants for all appointments IDs.
                     let grantsData = await Promise.all(
                         openAppointments
