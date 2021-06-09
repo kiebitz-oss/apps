@@ -46,6 +46,13 @@ class LoadBackupForm extends Form {
     }
 }
 
+function formatSecret(secret){
+    const parts = secret.match(/.{1,4}/g)
+    if (parts === null)
+        return secret
+    return parts.join("  ")
+}
+
 export default withForm(
     withActions(
         withRouter(
@@ -120,7 +127,8 @@ export default withForm(
                                 <FormComponent>
                                     <FieldSet>
                                         <RetractingLabelInput
-                                            value={data.secret || ''}
+                                            id="secret"
+                                            value={formatSecret(data.secret || '')}
                                             onChange={value =>
                                                 set('secret', value)
                                             }
