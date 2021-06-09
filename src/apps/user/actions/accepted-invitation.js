@@ -2,17 +2,18 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
+import { getUserInvitationAccepted } from '../business-logic/invitation';
+
 export async function acceptedInvitation(state, keyStore, settings) {
-    const backend = settings.get('backend');
     return {
         status: 'loaded',
-        data: backend.local.get('user::invitation::accepted'),
+        data: getUserInvitationAccepted(),
     };
 }
 
 acceptedInvitation.init = (ks, settings) => ({
     status: 'loaded',
-    data: settings.get('backend').local.get('user::invitation::accepted'),
+    data: getUserInvitationAccepted(),
 });
 
 acceptedInvitation.actionName = 'acceptedInvitation';

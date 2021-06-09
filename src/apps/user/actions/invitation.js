@@ -2,11 +2,12 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
+import { getUserInvitationVerified } from '../business-logic/invitation';
+
 export async function invitation(state, keyStore, settings) {
-    const backend = settings.get('backend');
     return {
         status: 'loaded',
-        data: backend.local.get('user::invitation::verified'),
+        data: getUserInvitationVerified,
     };
 }
 
