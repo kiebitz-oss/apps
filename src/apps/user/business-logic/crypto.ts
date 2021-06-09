@@ -1,4 +1,4 @@
-import { verify, ecdhDecrypt } from 'helpers/crypto';
+import { verify, ecdhDecrypt, randomBytes, hashString } from 'helpers/crypto';
 
 // TODO: Verify the provider data.
 export const verifyProviderData = async (
@@ -33,4 +33,15 @@ export const decryptInvitationData = async (
     // we store the public key as we need it to reply to the invitation
     decryptedData.publicKey = signedData.json.publicKey;
     return decryptedData;
+};
+
+export const hashContactData = async (data: any): Promise<any> => {
+    const hashData = {
+        name: data.name,
+        nonce: randomBytes(32),
+    };
+
+    const hashDataJSON = JSON.stringify(hashData);
+    const dataHash = await hashString(hashDataJSON);
+    return [dataHash, hashData.nonce];
 };
