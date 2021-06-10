@@ -3,6 +3,7 @@
 // README.md contains license information.
 
 import React, { useState, useEffect, Fragment as F } from 'react';
+import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
 import Form from 'helpers/form';
 import {
@@ -34,7 +35,8 @@ import {
     keys,
     keyPairs,
     createAppointment,
-    deleteAppointment,
+    updateAppointment,
+    cancelAppointment,
     openAppointments,
 } from '../actions';
 import t from './translations.yml';
@@ -45,11 +47,16 @@ Date.prototype.addHours = function(h) {
     return this;
 };
 
+function getHexId(id) {
+    return buf2hex(b642buf(id));
+}
+
 const AppointmentOverview = withActions(
     ({
         openAppointmentsAction,
-        deleteAppointmentAction,
+        cancelAppointmentAction,
         appointment,
+        action,
         onClose,
         ...props
     }) => {
@@ -66,15 +73,14 @@ const AppointmentOverview = withActions(
             .filter(it => it);
 
         const doDelete = () => {
-            deleteAppointmentAction(appointment).then(() => {
+            cancelAppointmentAction(appointment).then(() => {
                 // we reload the appointments
                 openAppointmentsAction();
                 onClose();
             });
         };
 
-        const deletable =
-            appointment.slotData.find(sl => !sl.open) !== undefined;
+        const hexId = getHexId(appointment.id);
 
         if (showDelete)
             return (
@@ -171,7 +177,13 @@ const AppointmentOverview = withActions(
                     </CardContent>
                     <CardFooter>
                         <Button
-                            disabled={deletable}
+                            type="warning"
+                            href={`/provider/schedule/${action}/edit/${hexId}`}
+                        >
+                            <T t={t} k="appointment-overview.edit.button" />
+                        </Button>
+                        &nbsp;
+                        <Button
                             type="danger"
                             onClick={() => setShowDelete(true)}
                         >
@@ -182,7 +194,7 @@ const AppointmentOverview = withActions(
             </Modal>
         );
     },
-    [deleteAppointment, openAppointments]
+    [cancelAppointment, openAppointments]
 );
 
 const PropertyTags = ({ appointment, verbose }) => {
@@ -208,60 +220,81 @@ const PropertyTag = withSettings(({ settings, property, verbose }) => {
     }
 });
 
-const AppointmentCard = ({ appointment, n }) => {
-    const p = Math.floor((appointment.duration / 60) * 100);
-    const w = Math.floor(97.5 / (1 + appointment.maxOverlap) - 2.5);
-    const i = appointment.overlapsWith.filter(
-        oa => oa.index < appointment.index
-    ).length;
-    const l = Math.floor(2.5 + i * (w + 2.5));
+const AppointmentCard = withRouter(
+    ({ router, action, secondaryAction, id, appointment, n }) => {
+        const p = Math.floor((appointment.duration / 60) * 100);
+        const w = Math.floor(97.5 / (1 + appointment.maxOverlap) - 2.5);
+        const i = appointment.overlapsWith.filter(
+            oa => oa.index < appointment.index
+        ).length;
+        const l = Math.floor(2.5 + i * (w + 2.5));
 
-    const [showModal, setShowModal] = useState(false);
-    let modal;
+        let modal;
 
-    const close = () => setShowModal(false);
+        const close = () =>
+            router.navigateToUrl(`/provider/schedule/${action}`);
+        const hexId = getHexId(appointment.id);
 
-    if (showModal)
-        modal = (
-            <AppointmentOverview
-                onCancel={close}
-                onClose={close}
-                appointment={appointment}
-            />
+        const active = secondaryAction === 'show' && id === hexId;
+
+        if (active)
+            modal = (
+                <AppointmentOverview
+                    action={action}
+                    secondaryAction={secondaryAction}
+                    id={id}
+                    onCancel={close}
+                    onClose={close}
+                    appointment={appointment}
+                />
+            );
+
+        return (
+            <div
+                style={{
+                    height: `calc(${p}% - 8px)`,
+                    width: `${w}%`,
+                    left: `${l}%`,
+                }}
+                onClick={() =>
+                    !active &&
+                    router.navigateToUrl(
+                        `/provider/schedule/${action}/show/${hexId}`
+                    )
+                }
+                className={classNames('kip-appointment-card', {
+                    'kip-is-active': active,
+                })}
+            >
+                {modal}
+                <span className="kip-tag kip-is-booked">
+                    {appointment.slotData.filter(sl => !sl.open).length}
+                </span>
+                <span className="kip-tag kip-is-open">
+                    {appointment.slotData.filter(sl => sl.open).length}
+                </span>
+                <PropertyTags appointment={appointment} />
+            </div>
         );
+    }
+);
 
-    return (
-        <div
-            style={{
-                height: `calc(${p}% - 8px)`,
-                width: `${w}%`,
-                left: `${l}%`,
-            }}
-            onClick={() => !showModal && setShowModal(true)}
-            className={classNames('kip-appointment-card', {
-                'kip-is-active': showModal,
-            })}
-        >
-            {modal}
-            <span className="kip-tag kip-is-booked">
-                {appointment.slotData.filter(sl => !sl.open).length}
-            </span>
-            <span className="kip-tag kip-is-open">
-                {appointment.slotData.filter(sl => sl.open).length}
-            </span>
-            <PropertyTags appointment={appointment} />
-        </div>
-    );
-};
-
-const CalendarAppointments = ({ appointments }) => {
+const CalendarAppointments = ({
+    action,
+    secondaryAction,
+    id,
+    appointments,
+}) => {
     const [showModal, setShowModal] = useState(false);
     let modal;
     const appointmentsItems = appointments
-        .filter(ap => ap.startsHere)
+        .filter(ap => ap.startsHere && ap.appointment.slots > 0)
         .map(({ appointment }) => (
             <AppointmentCard
-                key={appointment.slotData[0].id}
+                action={action}
+                secondaryAction={secondaryAction}
+                id={id}
+                key={appointment.id}
                 appointment={appointment}
                 n={appointments.length}
             />
@@ -273,7 +306,15 @@ const CalendarAppointments = ({ appointments }) => {
     );
 };
 
-const HourRow = ({ appointments, date, day, hour }) => {
+const HourRow = ({
+    appointments,
+    action,
+    secondaryAction,
+    id,
+    date,
+    day,
+    hour,
+}) => {
     const ots = new Date(
         date.toLocaleDateString('en-US') +
             ' ' +
@@ -319,6 +360,9 @@ const HourRow = ({ appointments, date, day, hour }) => {
                 <CalendarAppointments
                     ots={ots}
                     ote={ote}
+                    id={id}
+                    action={action}
+                    secondaryAction={secondaryAction}
                     appointments={relevantAppointments}
                 />
             )}
@@ -351,7 +395,14 @@ const DayLabelRow = ({ day, date }) => {
     );
 };
 
-const DayColumn = ({ day, date, appointments }) => {
+const DayColumn = ({
+    day,
+    date,
+    action,
+    secondaryAction,
+    id,
+    appointments,
+}) => {
     const hourRows = [
         <DayLabelRow
             appointments={appointments}
@@ -364,6 +415,9 @@ const DayColumn = ({ day, date, appointments }) => {
         hourRows.push(
             <HourRow
                 appointments={appointments}
+                id={id}
+                action={action}
+                secondaryAction={secondaryAction}
                 key={i}
                 hour={i}
                 day={day}
@@ -382,13 +436,22 @@ const DayLabelColumn = () => {
     return <div className="kip-day-column kip-is-day-label">{hourRows}</div>;
 };
 
-const WeekCalendar = ({ startDate, appointments }) => {
+const WeekCalendar = ({
+    action,
+    secondaryAction,
+    id,
+    startDate,
+    appointments,
+}) => {
     const dayColumns = [<DayLabelColumn key="-" appointments={appointments} />];
     const date = new Date(startDate);
     for (let i = 0; i < 7; i++) {
         dayColumns.push(
             <DayColumn
                 appointments={appointments}
+                secondaryAction={secondaryAction}
+                action={action}
+                id={id}
                 date={new Date(date)}
                 day={i}
                 key={i}
@@ -443,21 +506,39 @@ const NewAppointment = withSettings(
         withRouter(
             withForm(
                 ({
+                    updateAppointment,
                     createAppointment,
+                    appointments,
+                    existingAppointment,
                     settings,
                     action,
+                    id,
                     createAppointmentAction,
+                    updateAppointmentAction,
                     openAppointmentsAction,
                     router,
                     form: { valid, error, data, set, reset },
                 }) => {
                     let actionUrl = '';
                     if (action !== undefined) actionUrl = `/${action}`;
+                    if (id !== undefined) actionUrl += `/view/${id}`;
                     const [initialized, setInitialized] = useState(false);
                     const cancel = () =>
                         router.navigateToUrl(`/provider/schedule${actionUrl}`);
+
+                    let appointment;
+
+                    if (id !== undefined)
+                        appointment = appointments.find(
+                            app => getHexId(app.id) === id
+                        );
+
                     const save = () => {
-                        createAppointmentAction(data).then(() => {
+                        let action;
+                        if (appointment !== undefined)
+                            action = updateAppointmentAction;
+                        else action = createAppointmentAction;
+                        action(data, appointment).then(() => {
                             // we reload the appointments
                             openAppointmentsAction();
                             // and we go back to the schedule view
@@ -470,11 +551,30 @@ const NewAppointment = withSettings(
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
-                        reset({
-                            duration: 30,
-                            slots: 1,
-                            biontech: true,
-                        });
+                        if (appointment !== undefined) {
+                            const appointmentData = {
+                                time: appointment.time,
+                                date: appointment.date,
+                                slots: appointment.slots,
+                                duration: appointment.duration,
+                            };
+                            for (const [_, v] of Object.entries(properties)) {
+                                for (const [kk, _] of Object.entries(
+                                    v.values
+                                )) {
+                                    if (appointment[kk] !== undefined)
+                                        appointmentData[kk] = true;
+                                    else delete appointmentData[kk];
+                                }
+                            }
+                            reset(appointmentData);
+                        } else {
+                            reset({
+                                duration: 30,
+                                slots: 1,
+                                biontech: true,
+                            });
+                        }
                     });
 
                     const properties = settings.get('appointmentProperties');
@@ -498,14 +598,15 @@ const NewAppointment = withSettings(
 
                             for (const [k, v] of Object.entries(data)) {
                                 for (const option of options) {
-                                    if (k === option.value) currentOption = k;
+                                    if (k === option.value && v === true)
+                                        currentOption = k;
                                 }
                             }
 
                             const changeTo = option => {
                                 const newData = { ...data };
                                 for (const option of options)
-                                    delete newData[option.value];
+                                    newData[option.value] = undefined;
                                 newData[option.value] = true;
                                 reset(newData);
                             };
@@ -634,7 +735,7 @@ const NewAppointment = withSettings(
                 'form'
             )
         ),
-        [createAppointment, openAppointments]
+        [createAppointment, updateAppointment, openAppointments]
     )
 );
 
@@ -692,12 +793,6 @@ const Invitations = withTimer(
                         keysAction();
                     });
 
-                    let newAppointmentModal;
-
-                    if (secondaryAction === 'new-appointment')
-                        newAppointmentModal = (
-                            <NewAppointment action={action} />
-                        );
                     let startDate;
 
                     if (action !== undefined) {
@@ -744,12 +839,26 @@ const Invitations = withTimer(
                     };
 
                     const render = () => {
+                        let newAppointmentModal;
+
+                        if (
+                            secondaryAction === 'new' ||
+                            secondaryAction === 'edit'
+                        )
+                            newAppointmentModal = (
+                                <NewAppointment
+                                    appointments={openAppointments.data}
+                                    action={action}
+                                    id={id}
+                                />
+                            );
+
                         return (
                             <div className="kip-schedule">
                                 <CardContent>
                                     {newAppointmentModal}
                                     <Button
-                                        href={`/provider/schedule/${dateString}/new-appointment`}
+                                        href={`/provider/schedule/${dateString}/new`}
                                     >
                                         <T t={t} k="schedule.appointment.add" />
                                     </Button>
@@ -772,6 +881,9 @@ const Invitations = withTimer(
                                     </div>
                                     <WeekCalendar
                                         startDate={startDate}
+                                        action={action}
+                                        secondaryAction={secondaryAction}
+                                        id={id}
                                         appointments={
                                             openAppointments.enrichedData
                                         }

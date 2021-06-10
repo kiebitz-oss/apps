@@ -136,13 +136,14 @@ export async function sendInvitations(
                         openAppointments
                             .filter(
                                 oa =>
-                                    oa.slotData.filter(sl => sl.open).length > 0
+                                    oa.slotData.filter(sl => sl.open || true)
+                                        .length > 0
                             )
                             .map(
                                 async oa =>
                                     await Promise.all(
                                         oa.slotData
-                                            .filter(sl => sl.open)
+                                            .filter(sl => sl.open || true)
                                             .map(
                                                 async sl =>
                                                     await Promise.all(
@@ -215,7 +216,8 @@ export async function sendInvitations(
                         offers: openAppointments
                             .filter(
                                 oa =>
-                                    oa.slotData.filter(sl => sl.open).length > 0
+                                    oa.slotData.filter(sl => sl.open || true)
+                                        .length > 0
                             )
                             .map((oa, i) => {
                                 // to do: we should maybe not send all fields to the
@@ -223,7 +225,17 @@ export async function sendInvitations(
                                 const on = { ...oa };
                                 // we only send information about the open slots to
                                 // the user...
-                                on.slotData = on.slotData.filter(sl => sl.open);
+                                on.slotData = on.slotData
+                                    .filter(sl => sl.open || true)
+                                    .map(
+                                        ({
+                                            open,
+                                            cancel,
+                                            canceled,
+                                            id,
+                                            status,
+                                        }) => ({ open, cancel, id, canceled })
+                                    );
                                 on.grants = grantsData[i];
                                 return on;
                             }),

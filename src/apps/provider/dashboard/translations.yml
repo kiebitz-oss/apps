@@ -24,6 +24,9 @@ delete-modal:
   deleting-text:
     de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
 appointment-overview:
+  edit:
+    button:
+      de: Bearbeiten
   delete:
     confirm:
       de: Löschen bestätigen

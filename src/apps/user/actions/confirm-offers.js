@@ -28,6 +28,7 @@ export async function confirmOffers(
             try {
                 for (let i = 0; i < offer.slotData.length; i++) {
                     const slotData = offer.slotData[i];
+                    if (slotData.failed || !slotData.open) continue;
                     const grant = offer.grants.find(grant => {
                         const data = JSON.parse(grant.data);
                         return data.objectID === slotData.id;
@@ -43,6 +44,11 @@ export async function confirmOffers(
                             tokenData.signingKeyPair
                         );
                     } catch (e) {
+                        slotData.failed = true;
+                        backend.local.set(
+                            'user::invitation::verified',
+                            invitation
+                        );
                         // we can't use this slot, we try the next...
                         console.error(e);
                         continue;

@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-export async function invitation(state, keyStore, settings) {
+export async function invitation(state, keyStore, settings, data) {
     const backend = settings.get('backend');
     return {
         status: 'loaded',

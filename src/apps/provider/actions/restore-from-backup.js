@@ -37,8 +37,6 @@ export async function restoreFromBackup(
                 },
             };
 
-        backend.local.set('provider::secret', secret);
-
         // to do: remove as soon as everyone's on the new versioned schema
         if (dd.version === undefined || dd.version === '0.1') {
             // this is an old backup file, we restore data from it...
@@ -73,6 +71,8 @@ export async function restoreFromBackup(
                 console.error(e);
             }
         }
+
+        backend.local.set('provider::secret', secret);
 
         return {
             status: 'succeeded',

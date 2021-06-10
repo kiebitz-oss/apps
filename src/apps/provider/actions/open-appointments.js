@@ -15,7 +15,9 @@ function enrichAppointments(appointments) {
         .map(oa => ({ ...oa }));
     let activeAppointments = [];
 
-    for (const [i, oa] of sortedAppointments.entries()) {
+    for (const [i, oa] of sortedAppointments
+        .filter(app => app.slots > 0)
+        .entries()) {
         oa.maxOverlap = 0;
         oa.index = i;
         oa.start = new Date(`${oa.timestamp}`);

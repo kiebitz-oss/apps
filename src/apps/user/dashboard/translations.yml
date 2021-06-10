@@ -8,6 +8,21 @@ appointment-preference:
   de:
     Rang
 invitation-accepted:
+  delete:
+    title:
+      de: Termin absagen
+    notice:
+      de: Willst du den Termin wirklich absagen?
+    confirm:
+      de: Bestätigen
+    cancel:
+      de: Abbrechen
+  confirm-deletion:
+    de: Zurück zur Terminvergabe
+  deleted:
+    de: Der Termin wurde vom Anbieter gelöscht. Sorry! Du kannst zurück zur Terminvergabe gehen, um neue Terminvorschläge zu erhalten.
+  changed:
+    de: Details Deines Termins haben sich geändert!
   booking-code:
     de: "Buchungscode zur Vorlage: Bitte notieren!"
   title:

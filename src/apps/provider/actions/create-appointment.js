@@ -4,6 +4,15 @@
 
 import { randomBytes } from 'helpers/crypto';
 
+export function createSlot() {
+    return {
+        open: true,
+        id: randomBytes(32), // where the user can submit his confirmation
+        status: randomBytes(32), // where the user can get the appointment status
+        cancel: randomBytes(32), // where the user can cancel his confirmation
+    };
+}
+
 export async function createAppointment(
     state,
     keyStore,
@@ -21,12 +30,7 @@ export async function createAppointment(
         );
         const slotData = [];
         for (let i = 0; i < appointment.slots; i++) {
-            slotData.push({
-                open: true,
-                id: randomBytes(32), // where the user can submit his confirmation
-                status: randomBytes(32), // where the user can get the appointment status
-                cancel: randomBytes(32), // where the user can cancel his confirmation
-            });
+            slotData.push(createSlot());
         }
         openAppointments.push({
             slotData: slotData,

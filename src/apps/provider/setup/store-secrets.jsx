@@ -152,7 +152,6 @@ export const BackupDataLink = withSettings(
             const title = settings.get('title').toLowerCase();
 
             const dateString = formatDate(new Date());
-            console.log(dateString);
 
             const filename = `${title}-backup-${dateString}.enc`;
 

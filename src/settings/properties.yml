@@ -5,21 +5,29 @@ vaccine-types:
     de: Impfstofftyp
   values:
     biontech:
+      notice:
+        de: Das ist der Hinweistext für Biontech
       tag:
         de: BT
       de: Biontech Pfizer (Comirnaty)
       _default: true
     astrazeneca:
+      notice:
+        de: Das ist der Hinweistext für Astra Zeneca
       tag:
         de: AZ
       de: Astra Zeneca (Vaxzevria)
       _default: true
     johnson-johnson:
+      notice:
+        de: Das ist der Hinweistext für Johnson & Johnson
       tag:
         de: JJ
       de: Johnson & Johnson
       _default: true
     moderna:
+      notice:
+        de: Das ist der Hinweistext für Moderna
       tag:
         de: MD
       de: Moderna
