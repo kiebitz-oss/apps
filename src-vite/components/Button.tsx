@@ -6,6 +6,8 @@ const baseButtonClasses =
 
 const ButtonSchemeClasses = {
     primary: 'border-transparent shadow-sm text-white bg-cyan-400 hover:bg-cyan-500 focus:ring-cyan-500',
+    brandUser:
+        'border-transparent shadow-sm text-white bg-brand-user hover:bg-brand-user-light focus:ring-brand-user-light',
     secondary: 'border-transparent text-cyan-900 bg-cyan-100 hover:bg-cyan-200 focus:ring-cyan-500',
     white: 'border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:ring-cyan-500',
 } as const;

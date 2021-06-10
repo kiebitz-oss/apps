@@ -24,6 +24,7 @@ const defaultConfig = {
         'react/jsx-uses-react': 'error',
         'react/jsx-uses-vars': 'error',
         'react/prop-types': 'off', // to become an error
+        'react/display-name': 'off',
         'react/default-props-match-prop-types': 'error',
         'react/forbid-foreign-prop-types': 'error',
         'react/no-unused-prop-types': 'error',

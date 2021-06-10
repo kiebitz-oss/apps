@@ -10,19 +10,25 @@ const KEY_BACKEND = 'backend';
 
 export const KEY_USER_QUEUE_DATA = 'user::queueData';
 
-export const getUserTemporaryQueueData = async (): Promise<any> => {
+export type UserQueueData = {
+    accessible: boolean;
+    distance: number;
+    zipCode: string;
+};
+
+export const getUserTemporaryQueueData = async (): Promise<UserQueueData> => {
     const backend = settings.get(KEY_BACKEND);
     return backend.temporary.get(KEY_USER_QUEUE_DATA);
 };
 
-export const setUserTemporaryQueueData = async (data: any): Promise<any> => {
+export const setUserTemporaryQueueData = async (data: UserQueueData): Promise<any> => {
     const backend = settings.get(KEY_BACKEND);
     backend.temporary.set(KEY_USER_QUEUE_DATA, data);
 };
 
 export const getUserAppointmentsTokenDataWithSignedToken = async (
     contactData: any,
-    queueData: any,
+    queueData: UserQueueData,
     queue: any,
     userSecret: any
 ): Promise<any> => {
