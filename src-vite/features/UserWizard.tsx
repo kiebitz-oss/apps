@@ -58,7 +58,7 @@ export const UserWizard = () => {
                             >
                                 <Select values={Object.keys(distances)} placeholder="Bitte wählen..." />
                             </Field>
-                            <Field label="Barrierefreier Impfort gewünscht" labelHidden name="accessible" isCustom>
+                            <Field label="Barrierefreier Impfort gewünscht" labelHidden name="accessible">
                                 <Toggle label="Barrierefreier Impfort gewünscht" />
                             </Field>
                         </div>
