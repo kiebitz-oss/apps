@@ -23,7 +23,7 @@ const defaultConfig = {
         yoda: 'error',
         'react/jsx-uses-react': 'error',
         'react/jsx-uses-vars': 'error',
-        'react/prop-types': 'warn', // to become an error
+        'react/prop-types': 'off', // to become an error
         'react/default-props-match-prop-types': 'error',
         'react/forbid-foreign-prop-types': 'error',
         'react/no-unused-prop-types': 'error',
@@ -31,34 +31,34 @@ const defaultConfig = {
         'react/no-string-refs': 'warn', // to become an error
         'eol-last': ['error', 'always'],
         '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/no-explicit-any': 'off'
-    }
+        '@typescript-eslint/no-explicit-any': 'off',
+    },
 };
 
 module.exports = {
     ...defaultConfig,
     env: {
         browser: true,
-        es6: true
+        es6: true,
     },
     globals: {
         Atomics: 'readonly',
         Buffer: 'readonly',
-        SharedArrayBuffer: 'readonly'
+        SharedArrayBuffer: 'readonly',
     },
     parser: 'babel-eslint',
     parserOptions: {
         ecmaFeatures: {
-            jsx: true
+            jsx: true,
         },
         ecmaVersion: 2018,
-        sourceType: 'module'
+        sourceType: 'module',
     },
     plugins: ['react', 'prettier'],
     settings: {
         react: {
-            version: 'detect'
-        }
+            version: 'detect',
+        },
     },
     overrides: [
         {
@@ -70,7 +70,7 @@ module.exports = {
                 ...defaultConfig.extends,
 
                 // Extending this sets the parser to @typescript-eslint/parser
-                'plugin:@typescript-eslint/recommended'
+                'plugin:@typescript-eslint/recommended',
 
                 // Disabled because further configuration is required.
                 //"plugin:@typescript-eslint/recommended-requiring-type-checking",
@@ -79,8 +79,8 @@ module.exports = {
             // clears all rules of an override.
             rules: {
                 ...defaultConfig.rules,
-                'no-dupe-class-members': 'off' // overloads are mistaken for dupes
-            }
-        }
-    ]
+                'no-dupe-class-members': 'off', // overloads are mistaken for dupes
+            },
+        },
+    ],
 };
