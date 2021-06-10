@@ -2,14 +2,14 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import Store from "helpers/store";
-import Settings from "helpers/settings";
+import Store from 'helpers/store';
+import Settings from 'helpers/settings';
 
-import Base from "./base";
+import Base from './base';
 
 export default class KeyValue extends Base {
     static get defaultKey(): string {
-        return "kv";
+        return 'kv';
     }
 
     setData(key: string, value: any) {
@@ -22,7 +22,7 @@ export default class KeyValue extends Base {
         this.set({});
     }
 
-    constructor(store: Store, settings: Settings, key?: string) {
+    constructor(store: Store, settings: typeof Settings, key?: string) {
         super(store, settings, key);
         this.reset();
     }

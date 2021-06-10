@@ -2,21 +2,21 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import Base from "./base";
+import Base from './base';
 
 export default class Title extends Base {
     static get defaultKey() {
-        return "title";
+        return 'title';
     }
 
-    setTitle(title: string) {
-        const oldTitle = this.get();
-        if (title instanceof Array)
-            title = title.join(" ")
-        if (!(typeof title === 'string') && !(title instanceof String)){
-            return
+    setTitle(title: string | Array<string>) {
+        const newTitle = Array.isArray(title) ? title.join(' ') : title;
+        if (title instanceof Array) title = title.join(' ');
+        if (typeof newTitle !== 'string') {
+            return;
         }
-        if (oldTitle === title) return;
+        const oldTitle = this.get();
+        if (oldTitle === newTitle) return;
         this.set(title);
         document.title = `${title} · Kiebitz`;
     }

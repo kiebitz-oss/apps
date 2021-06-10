@@ -8,13 +8,9 @@ export function format(str: string, ...rest: any[]): any[] {
     const t = typeof rest[0];
     let args;
     if (rest.length === 0) args = {};
-    else
-        args =
-            t === "string" || t === "number"
-                ? Array.prototype.slice.call(rest)
-                : rest[0];
+    else args = t === 'string' || t === 'number' ? Array.prototype.slice.call(rest) : rest[0];
 
-    const splits = [];
+    const splits: Array<string> = [];
 
     let s = str.toString();
     while (s.length > 0) {
@@ -34,18 +30,16 @@ export function format(str: string, ...rest: any[]): any[] {
             }
         } else {
             splits.push(s);
-            s = "";
+            s = '';
         }
     }
     return splits;
 }
 
-export function formatDuration(minutes, settings, t){
-    if (minutes < 60)
-        return settings.t(t, 'minute-string', {minutes: minutes})
-    const hours = Math.floor(minutes/60)
-    const remainingMinutes = minutes % 60
-    if (remainingMinutes === 0)
-        return settings.t(t, 'hour-string', {hours: hours})
-    return settings.t(t, 'hour-minute-string', {hours: hours, minutes: remainingMinutes})
+export function formatDuration(minutes, settings, t) {
+    if (minutes < 60) return settings.t(t, 'minute-string', { minutes: minutes });
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    if (remainingMinutes === 0) return settings.t(t, 'hour-string', { hours: hours });
+    return settings.t(t, 'hour-minute-string', { hours: hours, minutes: remainingMinutes });
 }
