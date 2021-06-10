@@ -78,6 +78,7 @@
     "date-fns": "^2.22.1",
     "heroicons-react": "^1.4.1",
     "luxon": "^1.27.0",
+    "react-hook-form": "^7.8.3",
     "react-icons": "^4.2.0",
     "react-router-dom": "^5.2.0",
     "rifm": "^0.12.0",

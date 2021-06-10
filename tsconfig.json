@@ -23,7 +23,7 @@
           "actions/*": ["./src/actions/*"],
           "apis": ["./src/apis"],
           "apis/*": ["./src/apis/*"],
-        }
+        },
     },
-    "include": ["kiebitz", "src", "src-vite", "custom.d.ts"]
+    "include": ["kiebitz", "src", "src-vite", "custom.d.ts"],
 }
