@@ -2,19 +2,24 @@
     "compileOnSave": false,
     "compilerOptions": {
         "jsx": "react",
-        "lib": ["dom", "es2015", "es2016", "es2019"],
+        "lib": ["dom", "dom.iterable", "es2015", "es2016", "es2019"],
         "allowSyntheticDefaultImports": true,
         "target": "es2016",
         "module": "es2015",
         "moduleResolution": "node",
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "removeComments": false,
         "preserveConstEnums": true,
         "skipLibCheck": true,
         "sourceMap": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "baseUrl": ".",
+        "paths": {
+          "helpers": ["./src/helpers"],
+          "helpers/*": ["./src/helpers/*"]
+        }
     },
     "include": ["kiebitz", "src", "src-vite"]
 }
