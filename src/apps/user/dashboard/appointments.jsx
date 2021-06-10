@@ -340,6 +340,7 @@ const InvitationDetails = withSettings(
 
             // to do: use something better than the index i for the key?
             const offers = data.offers
+                .filter(offer => offer.slotData.some(sl => sl.open))
                 .filter(a => new Date(a.timestamp) > new Date())
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
