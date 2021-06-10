@@ -9,6 +9,6 @@ const KEY_BACKEND = 'backend';
 export const KEY_USER_TOKEN_DATA = 'user::tokenData';
 
 export const getUserTokenData = async (): Promise<any> => {
-  const backend = settings.get(KEY_BACKEND);
-  return backend.local.get(KEY_USER_TOKEN_DATA);
+    const backend = settings.get(KEY_BACKEND);
+    return backend.local.get(KEY_USER_TOKEN_DATA);
 };
