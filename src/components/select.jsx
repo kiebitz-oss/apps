@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import React, { useState } from 'react';
-import classnames from 'helpers/classnames';
+import classnames from 'classnames'
 import './select.scss';
 
 export const RichSelectItem = ({ onClick, option, selected }) => {

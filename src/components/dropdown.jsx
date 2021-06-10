@@ -4,7 +4,7 @@
 
 import React, { Fragment as F } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'helpers/classnames';
+import classnames from 'classnames'
 import { A } from './a';
 import './dropdown.scss';
 

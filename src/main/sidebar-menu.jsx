@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { A } from 'components';
-import classnames from 'helpers/classnames';
+import classnames from 'classnames'
 import './sidebar-menu.scss';
 
 class NavItem extends React.Component {

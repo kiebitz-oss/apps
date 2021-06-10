@@ -4,7 +4,7 @@
 
 import React, { Component, PureComponent, ReactChild } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'helpers/classnames';
+import classnames from 'classnames'
 import { Button } from './button';
 import './form.scss';
 

@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import React from 'react';
-import classnames from 'helpers/classnames';
+import classnames from 'classnames'
 import PropTypes from 'prop-types';
 
 import './sidebar.scss';

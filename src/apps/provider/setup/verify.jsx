@@ -18,7 +18,7 @@ import {
     A,
 } from 'components';
 import Wizard from './wizard';
-import classNames from 'helpers/classnames';
+import classNames from 'classnames'
 import { submitProviderData, providerData, keyPairs, keys } from '../actions';
 
 import t from './translations.yml';

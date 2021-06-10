@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import React, { useState, useEffect, Fragment as F } from 'react';
-import classNames from 'helpers/classnames';
+import classNames from 'classnames'
 import Form from 'helpers/form';
 import {
     withRouter,

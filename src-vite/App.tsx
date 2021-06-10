@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { getUserInvitationAccepted } from '../kiebitz/user/invitation';
+import './index.css';
 
 const App = () => {
   useEffect(() => {

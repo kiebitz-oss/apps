@@ -5,7 +5,7 @@
 import React, { ReactChild } from 'react';
 import PropTypes from 'prop-types';
 import { ButtonIcon } from './button';
-import classnames from 'helpers/classnames';
+import classnames from 'classnames'
 import './message.scss';
 
 type MessageProps = {

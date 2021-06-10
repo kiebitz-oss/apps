@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { Button } from './button';
 import { T } from './t';
 import './modal.scss';
-import classnames from 'helpers/classnames';
+import classnames from 'classnames'
 import t from './translations.yml';
 
 export class Modal extends React.Component {
