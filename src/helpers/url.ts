@@ -3,18 +3,11 @@
 // README.md contains license information.
 
 export function parseQuery(qstr: string) {
-    const query: Record<string, any> = {};
-    const a = (qstr[0] === "?" ? qstr.substr(1) : qstr).split("&");
-    for (let i = 0; i < a.length; i++) {
-        const b = a[i].split("=");
-        query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || "");
-    }
-    return query;
+    return Object.fromEntries(new URLSearchParams(qstr));
 }
 
-export function encodeQueryData(data: Record<string, any>) {
-    const ret = [];
-    for (const d in data)
-        ret.push(`${encodeURIComponent(d)}=${encodeURIComponent(data[d])}`);
-    return ret.join("&");
+export function encodeQueryData(data: { [key: string]: string }) {
+    return Object.entries(data)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join('&');
 }

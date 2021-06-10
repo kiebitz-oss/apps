@@ -9,6 +9,7 @@ import { Button } from './button';
 import './form.scss';
 
 interface FormProps {
+    className?: string;
     children?: ReactChild;
     id?: string;
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -20,7 +21,7 @@ export const Form = ({ className, onSubmit, children, id }: FormProps) => (
         id={id}
         onSubmit={e => {
             e.preventDefault();
-            if (onSubmit !== undefined) onSubmit();
+            if (onSubmit !== undefined) onSubmit(e);
         }}
     >
         {children}
@@ -29,20 +30,18 @@ export const Form = ({ className, onSubmit, children, id }: FormProps) => (
 Form.propTypes = {
     children: PropTypes.node,
     id: PropTypes.string,
-    onSubmit: PropTypes.func,
+    onSubmit: PropTypes.func
 };
 
 interface FieldProps {
     children?: ReactChild;
     id?: string;
-    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
-export const Field = ({ children }: FieldProps) => (
-    <div className="bulma-field">{children}</div>
-);
+export const Field = ({ children }: FieldProps) => <div className="bulma-field">{children}</div>;
 Field.propTypes = {
-    children: PropTypes.node,
+    children: PropTypes.node
 };
 
 interface LabelProps {
@@ -51,11 +50,7 @@ interface LabelProps {
     htmlFor?: string;
 }
 
-export const Label = ({
-    children,
-    htmlFor,
-    className = 'bulma-label',
-}: LabelProps) => (
+export const Label = ({ children, htmlFor, className = 'bulma-label' }: LabelProps) => (
     <label htmlFor={htmlFor} className={className}>
         {children}
     </label>
@@ -63,7 +58,7 @@ export const Label = ({
 Label.propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    htmlFor: PropTypes.string,
+    htmlFor: PropTypes.string
 };
 
 interface SubmitButtonProps {
@@ -76,7 +71,7 @@ export const SubmitButton = ({ disabled, children }: SubmitButtonProps) => (
 );
 SubmitButton.propTypes = {
     children: PropTypes.node,
-    disabled: PropTypes.bool,
+    disabled: PropTypes.bool
 };
 
 interface ControlProps {
@@ -89,7 +84,7 @@ export const Control = ({ children, className }: ControlProps) => (
 );
 Control.propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string,
+    className: PropTypes.string
 };
 
 interface SelectProps {
@@ -100,13 +95,7 @@ interface SelectProps {
     items: { text: string; value: number | string }[];
     onChange: (value: string) => void;
 }
-export const Select = ({
-    className,
-    items,
-    defaultValue,
-    disabled = false,
-    onChange,
-}: SelectProps) => {
+export const Select = ({ className, items, defaultValue, disabled = false, onChange }: SelectProps) => {
     const options = items.map(item => (
         <option key={item.value} value={item.value}>
             {item.text}
@@ -114,11 +103,7 @@ export const Select = ({
     ));
     return (
         <div className={classnames('bulma-select', className)}>
-            <select
-                defaultValue={defaultValue}
-                disabled={disabled}
-                onChange={e => onChange(e.target.value)}
-            >
+            <select defaultValue={defaultValue} disabled={disabled} onChange={e => onChange(e.target.value)}>
                 {options}
             </select>
         </div>
@@ -131,10 +116,10 @@ Select.propTypes = {
     items: PropTypes.arrayOf(
         PropTypes.shape({
             text: PropTypes.node.isRequired,
-            value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+            value: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
         })
     ).isRequired,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired
 };
 
 interface CheckboxProps {
@@ -146,7 +131,7 @@ interface CheckboxProps {
 export const Checkbox = ({ name, onChange, defaultChecked }: CheckboxProps) => (
     <input
         type="checkbox"
-        tabIndex="0"
+        tabIndex={0}
         onChange={e => onChange(e.target.checked)}
         name={name}
         id={name}
@@ -156,7 +141,7 @@ export const Checkbox = ({ name, onChange, defaultChecked }: CheckboxProps) => (
 Checkbox.propTypes = {
     defaultChecked: PropTypes.bool,
     name: PropTypes.string,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired
 };
 
 interface InputProps {
@@ -164,18 +149,19 @@ interface InputProps {
     forwardedRef?: React.Ref<HTMLInputElement>;
     value: string;
     onChange: (value: string) => void;
+    onEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export class Input extends PureComponent<InputProps> {
     static defaultProps = {
-        className: undefined,
+        className: undefined
     };
 
     static propTypes = {
         /** Class name to apply on the input */
         className: PropTypes.string,
         /** Returns the new value (not the event) on change */
-        onChange: PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired
     };
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,12 +174,8 @@ export class Input extends PureComponent<InputProps> {
             <input
                 ref={forwardedRef}
                 {...props}
-                tabIndex="0"
-                onKeyDown={e =>
-                    onEnter &&
-                    (e.key === 'Enter' || e.keyCode === 13) &&
-                    onEnter(e)
-                }
+                tabIndex={0}
+                onKeyDown={e => onEnter && (e.key === 'Enter' || e.keyCode === 13) && onEnter(e)}
                 className={classnames('kip-input', this.props.className)}
                 onChange={this.handleChange}
             />
@@ -217,13 +199,13 @@ export class NumberInput extends Component<NumberInputProps, NumberInputState> {
     static propTypes = {
         value: PropTypes.any.isRequired,
         /** Returns the new value (not the event) on change */
-        onChange: PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired
     };
 
     constructor(props: NumberInputProps) {
         super(props);
         this.state = {
-            stringValue: props.value.toString(),
+            stringValue: props.value.toString()
         };
     }
 
@@ -237,14 +219,7 @@ export class NumberInput extends Component<NumberInputProps, NumberInputState> {
     };
 
     render() {
-        return (
-            <Input
-                type="number"
-                {...this.props}
-                value={this.state.stringValue}
-                onChange={this.handleChange}
-            />
-        );
+        return <Input type="number" {...this.props} value={this.state.stringValue} onChange={this.handleChange} />;
     }
 }
 
@@ -256,14 +231,14 @@ interface TextAreaProps {
 
 export class TextArea extends PureComponent<TextAreaProps> {
     static defaultProps = {
-        className: undefined,
+        className: undefined
     };
 
     static propTypes = {
         /** Class name to apply on the input */
         className: PropTypes.string,
         /** Returns the new value (not the event) on change */
-        onChange: PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired
     };
 
     handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -291,7 +266,7 @@ export const FieldSet = ({ children, disabled = false }: FieldSetProps) => (
 );
 FieldSet.propTypes = {
     children: PropTypes.node,
-    disabled: PropTypes.bool,
+    disabled: PropTypes.bool
 };
 
 export const SubmitField = ({ onClick, disabled, title, ...props }) => (

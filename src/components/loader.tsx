@@ -74,16 +74,21 @@ type WithLoaderProps = {
     onLoad: () => {};
 };
 
-export class WithLoader extends Component<WithLoaderProps> {
+type WithLoaderState = {
+    showLoader: boolean;
+};
+
+export class WithLoader extends Component<WithLoaderProps, WithLoaderState> {
     static defaultProps = {
         renderWait: RenderWait,
-        renderFailed: RenderFailed,
+        renderFailed: RenderFailed
     };
+    private mounted = false;
 
     constructor(props: WithLoaderProps) {
         super(props);
         this.state = {
-            showLoader: false,
+            showLoader: false
         };
         this.update();
     }
@@ -95,9 +100,7 @@ export class WithLoader extends Component<WithLoaderProps> {
         // fast flickering of fast-loading resources...
         setTimeout(
             () =>
-                this.mounted &&
-                (!isLoaded(resources) || isUpdating(resources)) &&
-                this.setState({ showLoader: true }),
+                this.mounted && (!isLoaded(resources) || isUpdating(resources)) && this.setState({ showLoader: true }),
             200
         );
     }
@@ -123,16 +126,14 @@ export class WithLoader extends Component<WithLoaderProps> {
         if (isLoaded(resources)) {
             const component = this.props.renderLoaded();
             let loadingIndicator;
-            if (isUpdating(resources))
-                loadingIndicator = <LoadingIndicator key="loadingIndicator" />;
+            if (isUpdating(resources)) loadingIndicator = <LoadingIndicator key="loadingIndicator" />;
             return (
                 <React.Fragment>
                     {loadingIndicator}
                     {component}
                 </React.Fragment>
             );
-        } else if (isFailed(resources))
-            return this.props.renderFailed(resources);
+        } else if (isFailed(resources)) return this.props.renderFailed(resources);
         if (showLoader) return this.props.renderWait();
         return <React.Fragment />;
     }

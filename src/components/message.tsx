@@ -10,15 +10,12 @@ import './message.scss';
 
 type MessageProps = {
     children: ReactChild;
-    type: string;
+    className?: string;
+    waiting?: boolean;
+    type: 'info' | 'success' | 'danger' | 'primary' | 'warning';
 };
 
-export const Message = ({
-    children,
-    className,
-    waiting,
-    type,
-}: MessageProps) => (
+export const Message = ({ children, className, waiting, type }: MessageProps) => (
     <div className={classnames(className, 'bulma-message', `bulma-is-${type}`)}>
         <div className="bulma-message-body">
             {waiting && (
@@ -35,5 +32,5 @@ export const Message = ({
 Message.propTypes = {
     children: PropTypes.node.isRequired,
     waiting: PropTypes.bool,
-    type: PropTypes.oneOf(['info', 'success', 'danger', 'primary', 'warning']),
+    type: PropTypes.oneOf(['info', 'success', 'danger', 'primary', 'warning'])
 };

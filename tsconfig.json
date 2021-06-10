@@ -18,8 +18,12 @@
         "baseUrl": ".",
         "paths": {
           "helpers": ["./src/helpers"],
-          "helpers/*": ["./src/helpers/*"]
+          "helpers/*": ["./src/helpers/*"],
+          "actions": ["./src/actions"],
+          "actions/*": ["./src/actions/*"],
+          "apis": ["./src/apis"],
+          "apis/*": ["./src/apis/*"],
         }
     },
-    "include": ["kiebitz", "src", "src-vite"]
+    "include": ["kiebitz", "src", "src-vite", "custom.d.ts"]
 }

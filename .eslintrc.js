@@ -5,7 +5,8 @@ const defaultConfig = {
         indent: ['error', 4, { SwitchCase: 1 }],
         'linebreak-style': ['error', 'unix'],
         'no-alert': 'error',
-        'no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
+        'no-unused-vars': ['warn'],
+        // 'no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }], // Enable this after the initial refactoring
         'no-confusing-arrow': 'error',
         'no-console': ['error', { allow: ['warn', 'error'] }],
         'no-implied-eval': 'error',
@@ -28,7 +29,9 @@ const defaultConfig = {
         'react/no-unused-prop-types': 'error',
         'react/sort-prop-types': 'off',
         'react/no-string-refs': 'warn', // to become an error
-        'eol-last': ['error', 'always']
+        'eol-last': ['error', 'always'],
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/no-explicit-any': 'off'
     }
 };
 

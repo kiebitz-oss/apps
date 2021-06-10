@@ -2,29 +2,25 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import Settings from "./settings";
+import Settings from './settings';
 
-export function isEmpty(value: string): bool {
-    return value === undefined || value === null || value === "";
+export function isEmpty(value: string): boolean {
+    return value === undefined || value === null || value === '';
 }
 
 export default class Form {
     data: Record<string, any>;
-    settings: Settings;
-    _errors: Record<string, any>;
+    settings: typeof Settings;
+    private _errors: Record<string, any>;
+    private _errorMessage: string;
+    private _valid: boolean;
 
-    constructor(
-        data: Record<string, any>,
-        settings: Settings,
-        error: Record<string, any>
-    ) {
+    constructor(data: Record<string, any>, settings: typeof Settings, error: Record<string, any>) {
         this.data = data || {};
         this.settings = settings;
-        const r = this.validate()
-        if (r instanceof Array)
-            [this._errors, this._errorMessage] = r;
-        else
-            this._errors = r;
+        const r = this.validate();
+        if (r instanceof Array) [this._errors, this._errorMessage] = r;
+        else this._errors = r;
         this._valid = Object.keys(this._errors).length === 0;
         if (error !== undefined) {
             this._errorMessage = error.message;
