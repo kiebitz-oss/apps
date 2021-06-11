@@ -7,5 +7,5 @@ import { buf2b64 } from 'helpers/conversion';
 export function randomBytes(n) {
     const array = new Uint8Array(n);
     window.crypto.getRandomValues(array);
-    return buf2b64(Buffer.from(array));
+    return buf2b64(array);
 }
