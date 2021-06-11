@@ -117,7 +117,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
                         }
                         const wrapper = function() {
                             const state = store.get(key);
-                            console.log({actionName: key}, state.status, state.data)
+                            console.log({actionName: key}, state && state.status, state && state.data)
                             const result = ActionProvider(
                                 state,
                                 keyStore,
