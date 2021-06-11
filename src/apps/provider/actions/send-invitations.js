@@ -146,7 +146,14 @@ export async function sendInvitations(
 
                     if (token.grantID === undefined)
                         token.grantID = randomBytes(32);
-                    if (token.slotIDs === undefined) token.slotIDs = [];
+                    if (token.slotIDs === undefined){
+                        token.slotIDs = [];
+                        // we always add the booked slot
+                        for(const slot of Object.values(slotsById)){
+                            if (slot.token !== undefined && slot.token.token === token.token)
+                                token.slotIDs.push(slot)
+                        }
+                    }
                     token.slotIDs = token.slotIDs.filter(id => {
                         const slot = slotsById[id];
                         // we remove slots that have been deleted
