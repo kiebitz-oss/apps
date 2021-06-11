@@ -5,12 +5,12 @@
 import { markAsLoading } from 'helpers/actions';
 
 function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 let tv = 0;
 // to do: add keyPair to queue request (as the request needs to be signed)
-export async function queues(state, keyStore, settings, zipCode, radius, to) {
+export async function queues(state, keyStore, settings, zipCode: string, radius: number, timeoutMs: number) {
     const q = async () => {
         const backend = settings.get('backend');
         if (!markAsLoading(state, keyStore)) return; // we're already loading queues
@@ -24,9 +24,9 @@ export async function queues(state, keyStore, settings, zipCode, radius, to) {
             return { status: 'failed', error: e };
         }
     };
-    if (to !== undefined) {
+    if (timeoutMs !== undefined) {
         const ti = tv++;
-        await timeout(to);
+        await timeout(timeoutMs);
         if (tv - 1 > ti) return;
         return await q();
     } else {
