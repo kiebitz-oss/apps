@@ -151,7 +151,7 @@ export async function sendInvitations(
                         // we always add the booked slot
                         for(const slot of Object.values(slotsById)){
                             if (slot.token !== undefined && slot.token.token === token.token)
-                                token.slotIDs.push(slot)
+                                token.slotIDs.push(slot.id)
                         }
                     }
                     token.slotIDs = token.slotIDs.filter(id => {
