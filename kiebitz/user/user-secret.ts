@@ -9,17 +9,17 @@ const KEY_BACKEND = 'backend';
 
 export const KEY_USER_SECRET = 'user::secret';
 
-export const setUserSecret = (data: any): void => {
+export const setUserSecret = (data: string): void => {
     const backend = settings.get(KEY_BACKEND);
     backend.local.set(KEY_USER_SECRET, data);
 };
 
-export const getUserSecret = (): any => {
+export const getUserSecret = (): string => {
     const backend = settings.get(KEY_BACKEND);
     return backend.local.get(KEY_USER_SECRET);
 };
 
-export const initUserSecret = (): any => {
+export const initUserSecret = (): string => {
     const secret = getUserSecret();
     if (secret) {
         return secret;
