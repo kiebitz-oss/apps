@@ -39,22 +39,29 @@ export async function cancelAppointment(
             []
         );
 
-        const otherAppointments = openAppointments.filter(
-            ap => ap.id !== appointment.id
+        // we select the appointment from the "official" list as the given appointment might
+        // contain enrichment data and e.g. cyclic data structures...
+        const canceledAppointment = openAppointments.find(
+            ap => ap.id === appointment.id
         );
-        if (!openAppointments.find(ap => ap.id === appointment.id))
+
+        if (canceledAppointment === undefined)
             return {
                 status: 'failed',
             };
 
-        await cancelSlots(backend, appointment.slotData);
+        const otherAppointments = openAppointments.filter(
+            ap => ap.id !== appointment.id
+        );
+
+        await cancelSlots(backend, canceledAppointment.slotData);
 
         // we simply remove all slots
-        appointment.slots = 0;
-        appointment.slotData = [];
+        canceledAppointment.slots = 0;
+        canceledAppointment.slotData = [];
 
         // we push the modified appointment
-        otherAppointments.push(appointment);
+        otherAppointments.push(canceledAppointment);
         backend.local.set('provider::appointments::open', otherAppointments);
 
         return {

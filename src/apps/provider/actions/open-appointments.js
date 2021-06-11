@@ -23,10 +23,10 @@ function enrichAppointments(appointments) {
         oa.start = new Date(`${oa.timestamp}`);
         // end of appointment (we calculate with 45 minute minimum duration)
         oa.stop = new Date(
-            oa.start.getTime() + 1000 * 60 * Math.max(45, oa.duration)
+            oa.start.getTime() + 1000 * 60 * Math.max(0, oa.duration)
         );
         activeAppointments = activeAppointments.filter(
-            aa => aa.stop >= oa.start
+            aa => aa.stop > oa.start
         );
         oa.overlapsWith = [...activeAppointments];
 

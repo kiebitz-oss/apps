@@ -224,10 +224,14 @@ const AppointmentCard = withRouter(
     ({ router, action, secondaryAction, id, appointment, n }) => {
         const p = Math.floor((appointment.duration / 60) * 100);
         const w = Math.floor(97.5 / (1 + appointment.maxOverlap) - 2.5);
+        const y = Math.floor(
+            (new Date(appointment.timestamp).getMinutes() / 60) * 100
+        );
         const i = appointment.overlapsWith.filter(
             oa => oa.index < appointment.index
         ).length;
         const l = Math.floor(2.5 + i * (w + 2.5));
+        const tiny = p < 25 || w < 33;
 
         let modal;
 
@@ -252,8 +256,9 @@ const AppointmentCard = withRouter(
         return (
             <div
                 style={{
-                    height: `calc(${p}% - 8px)`,
+                    height: `calc(${p}% - 4px)`,
                     width: `${w}%`,
+                    top: `${y}%`,
                     left: `${l}%`,
                 }}
                 onClick={() =>
@@ -267,13 +272,19 @@ const AppointmentCard = withRouter(
                 })}
             >
                 {modal}
-                <span className="kip-tag kip-is-booked">
-                    {appointment.slotData.filter(sl => !sl.open).length}
-                </span>
-                <span className="kip-tag kip-is-open">
-                    {appointment.slotData.filter(sl => sl.open).length}
-                </span>
-                <PropertyTags appointment={appointment} />
+                {!tiny && (
+                    <F>
+                        <span className="kip-tag kip-is-open">
+                            {appointment.slots}
+                        </span>
+                        <span className="kip-tag kip-is-booked">
+                            ·{' '}
+                            {appointment.slotData.filter(sl => !sl.open).length}{' '}
+                            ·
+                        </span>
+                        <PropertyTags appointment={appointment} />
+                    </F>
+                )}
             </div>
         );
     }
@@ -398,6 +409,8 @@ const DayLabelRow = ({ day, date }) => {
 const DayColumn = ({
     day,
     date,
+    fromHour,
+    toHour,
     action,
     secondaryAction,
     id,
@@ -411,7 +424,7 @@ const DayColumn = ({
             key="-"
         />,
     ];
-    for (let i = 0; i < 24; i++) {
+    for (let i = fromHour; i <= toHour; i++) {
         hourRows.push(
             <HourRow
                 appointments={appointments}
@@ -428,9 +441,9 @@ const DayColumn = ({
     return <div className="kip-day-column">{hourRows}</div>;
 };
 
-const DayLabelColumn = () => {
+const DayLabelColumn = ({ fromHour, toHour }) => {
     const hourRows = [<HourLabelRow hour="-" key="-" />];
-    for (let i = 0; i < 24; i++) {
+    for (let i = fromHour; i <= toHour; i++) {
         hourRows.push(<HourLabelRow hour={i} key={i} />);
     }
     return <div className="kip-day-column kip-is-day-label">{hourRows}</div>;
@@ -443,7 +456,27 @@ const WeekCalendar = ({
     startDate,
     appointments,
 }) => {
-    const dayColumns = [<DayLabelColumn key="-" appointments={appointments} />];
+    let fromHour;
+    let toHour;
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 7);
+    appointments.forEach(app => {
+        const date = new Date(app.timestamp);
+        if (date < startDate || date > endDate || app.slots === 0) return;
+        const hours = date.getHours();
+        if (fromHour === undefined || hours < fromHour) fromHour = hours;
+        if (toHour === undefined || hours > toHour) toHour = hours;
+    });
+    if (fromHour === undefined || fromHour > 8) fromHour = 8;
+    if (toHour === undefined || toHour < 19) toHour = 19; // hours are inclusive
+    const dayColumns = [
+        <DayLabelColumn
+            fromHour={fromHour}
+            toHour={toHour}
+            key="-"
+            appointments={appointments}
+        />,
+    ];
     const date = new Date(startDate);
     for (let i = 0; i < 7; i++) {
         dayColumns.push(
@@ -452,6 +485,8 @@ const WeekCalendar = ({
                 secondaryAction={secondaryAction}
                 action={action}
                 id={id}
+                fromHour={fromHour}
+                toHour={toHour}
                 date={new Date(date)}
                 day={i}
                 key={i}

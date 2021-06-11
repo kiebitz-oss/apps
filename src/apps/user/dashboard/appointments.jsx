@@ -57,7 +57,7 @@ const ProviderDetails = ({ data }) => {
 
 const OfferDetails = withSettings(({ settings, offer }) => {
     // we disable this for now (until the texts are ready)
-    return <div />
+    return <div />;
     const lang = settings.get('lang');
     const notices = [];
     const properties = settings.get('appointmentProperties');

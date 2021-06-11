@@ -85,10 +85,9 @@ $border: 1px solid #ddd;
 	.kip-day-column {
 		min-width: 120px;
 		flex-grow: 1;
-		min-height: 100vh;
 
 		.kip-hour-row {
-			height: 60px;
+			height: 100px;
 			padding: 0;
 			background: #fff;
 			z-index: 3;
@@ -104,11 +103,16 @@ $border: 1px solid #ddd;
 			}
 
 			&.kip-is-day-label {
+				display:flex;
+				flex-direction:column;
+				flex-wrap: wrap;
+				justify-content: space-evenly;
 				text-align: center;
 				background: #fafafa;
 				padding-top: map-get($kip-space, md);
 				span.kip-day, span.kip-date {
-					font-size: 14px;
+					font-size: 18px;
+					font-weight: bolder;
 					display: block;
 				}
 				span.kip-date {
@@ -170,30 +174,21 @@ $border: 1px solid #ddd;
 					color: #000;
 					background: $kip-appt-background;
 					opacity: 1;
+					font-size: 12px;
 					margin-right: map-get($kip-space, xs);
 					margin-bottom: map-get($kip-space, xs);
-					padding: map-get($kip-space, xs);
-					border-radius: $kip-border-radius;
-					&.kip-is-open {
-						background: #f56;
-						color: #000;
-					}
-					&.kip-is-booked {
-						background: #5fa;
-						color: #000;
-					}
 				}
 				
 				width: 95%;
 				top: 4px;
-				min-height: 34px;
 				font-size: 14px;
 				font-weight: bolder;
 				left: 2.5%;
 				position: absolute;
 				box-shadow: $kip-box-shadow;
 				z-index: 2;
-				padding: 4px;
+				padding: 0;
+				padding-left: 4px;
 				background: $kip-appt-background;
 				opacity: 0.8;
 				cursor: pointer;
