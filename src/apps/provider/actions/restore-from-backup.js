@@ -24,9 +24,15 @@ export async function restoreFromBackup(
     data
 ) {
     const backend = settings.get('backend');
-    try {
-        await backend.local.lock();
 
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         const dd = JSON.parse(await aesDecrypt(data, base322buf(secret)));
 
         if (dd === null)

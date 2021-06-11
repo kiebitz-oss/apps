@@ -7,8 +7,15 @@ import { randomBytes } from 'helpers/crypto';
 
 export async function providerSecret(state, keyStore, settings, data) {
     const backend = settings.get('backend');
+
     try {
+        // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         if (data !== undefined) backend.local.set('provider::secret', data);
         data = backend.local.get('provider::secret');
         if (data === null)

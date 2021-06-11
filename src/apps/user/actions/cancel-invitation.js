@@ -14,32 +14,25 @@ export async function cancelInvitation(
     const backend = settings.get('backend');
 
     try {
+        // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
 
+    try {
         const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
             JSON.stringify({ cancel: true }),
             acceptedInvitation.invitation.publicKey
         );
 
-        const cancelID = acceptedInvitation.slotData.cancel;
-
-        const grant = acceptedInvitation.offer.grants.find(grant => {
-            const grantData = JSON.parse(grant.data);
-            if (grantData.objectID === cancelID) return true;
-        });
-
-        if (grant === undefined) {
-            return {
-                status: 'failed',
-            };
-        }
+        const id = acceptedInvitation.slotData.id;
 
         try {
             const result = await backend.appointments.storeData(
                 {
-                    id: cancelID,
+                    id: id,
                     data: encryptedProviderData,
-                    grant: grant,
                 },
                 tokenData.signingKeyPair
             );
@@ -51,7 +44,9 @@ export async function cancelInvitation(
             };
         }
 
+        backend.local.set('user::invitation::verified', null);
         backend.local.set('user::invitation::accepted', null);
+        backend.local.set('user::invitation', null);
 
         return {
             status: 'succeeded',

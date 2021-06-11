@@ -13,9 +13,15 @@ export async function confirmOffers(
     tokenData
 ) {
     const backend = settings.get('backend');
+
     try {
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         const providerData = {
             signedToken: tokenData.signedToken,
             userData: tokenData.hashData,
@@ -34,6 +40,7 @@ export async function confirmOffers(
                         return data.objectID === slotData.id;
                     });
                     if (grant === undefined) continue;
+                    const grantData = JSON.parse(grant.data);
                     try {
                         const result = await backend.appointments.storeData(
                             {
@@ -60,6 +67,11 @@ export async function confirmOffers(
                         slotData: slotData,
                         grant: grant,
                     });
+
+                    backend.local.set(
+                        'user::invitation::grantID',
+                        grantData.grantID
+                    );
                     return {
                         status: 'succeeded',
                         data: {

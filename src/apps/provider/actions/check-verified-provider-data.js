@@ -12,9 +12,15 @@ export async function checkVerifiedProviderData(
     keyPairs
 ) {
     const backend = settings.get('backend');
+
     try {
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         const verifiedData = await backend.appointments.getData(
             { id: data.verifiedID },
             keyPairs.signing

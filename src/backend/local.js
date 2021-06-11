@@ -12,30 +12,27 @@ export default class LocalBackend {
         this.settings = settings;
         this.store = store;
         this._locked = false;
-        this._lock_requested = false;
     }
 
     get(key, defaultValue) {
         return this.store.get(key, defaultValue);
     }
 
-    async unlock() {
+    unlock() {
         this._locked = false;
+        console.log('unlocked');
     }
 
     async lock() {
         let i = 0;
-        if (this._lock_requested) return;
-        this._lock_requested = true;
         while (this._locked) {
             await timeout(10);
-            if (i++ > 100) {
+            if (i++ > 1000) {
                 throw 'still locked';
             }
         }
-        if (!this._lock_requested) throw 'race';
-        this._lock_requested = false;
         this._locked = true;
+        console.log('locked');
     }
 
     set(key, data) {

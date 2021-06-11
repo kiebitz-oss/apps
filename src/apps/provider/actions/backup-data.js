@@ -18,8 +18,15 @@ export const cloudKeys = [
 // make sure the signing and encryption key pairs exist
 export async function backupData(state, keyStore, settings, keyPairs, secret) {
     const backend = settings.get('backend');
+
     try {
+        // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         const data = {};
         for (const key of localKeys) {
             data[key] = backend.local.get(`provider::${key}`);

@@ -83,8 +83,9 @@ $border: 1px solid #ddd;
 	box-shadow: $kip-box-shadow;
 	margin-top: 20px;
 	.kip-day-column {
+		width: 200px;
 		min-width: 120px;
-		flex-grow: 1;
+		flex-grow: 0;
 
 		.kip-hour-row {
 			height: 100px;

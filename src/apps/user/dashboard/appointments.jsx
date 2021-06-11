@@ -82,6 +82,7 @@ const AcceptedInvitation = withActions(
         acceptedInvitationAction,
         confirmDeletionAction,
         cancelInvitation,
+        invitationAction,
         cancelInvitationAction,
         offers,
         userSecret,
@@ -96,10 +97,15 @@ const AcceptedInvitation = withActions(
             ).then(() => {
                 // we reload the appointments
                 acceptedInvitationAction();
+                invitationAction();
             });
         };
 
-        const { offer, invitation, slotData } = acceptedInvitation.data;
+        const {
+            offer,
+            invitation: invitationData,
+            slotData,
+        } = acceptedInvitation.data;
         const currentOffer = offers.find(of => of.id == offer.id);
         let currentSlotData;
         if (currentOffer !== undefined)
@@ -181,7 +187,7 @@ const AcceptedInvitation = withActions(
                         <h2>
                             <T t={t} k="invitation-accepted.title" />
                         </h2>
-                        <ProviderDetails data={invitation.provider} />
+                        <ProviderDetails data={invitationData.provider} />
                         <OfferDetails offer={currentOffer} />
                         <p className="kip-appointment-date">
                             {d.toLocaleDateString()} ·{' '}
@@ -211,6 +217,7 @@ const AcceptedInvitation = withActions(
         confirmDeletion,
         acceptedInvitation,
         cancelInvitation,
+        invitation,
         tokenData,
     ]
 );

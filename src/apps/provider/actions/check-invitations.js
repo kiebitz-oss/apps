@@ -9,10 +9,15 @@ import { createSlot } from './create-appointment';
 // checks invitations
 export async function checkInvitations(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
+
     try {
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
 
+    try {
         let openTokens = backend.local.get('provider::tokens::open', []);
         let openAppointments = backend.local.get(
             'provider::appointments::open',
@@ -20,7 +25,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
         );
         try {
             const ids = [];
-            const cancelIds = [];
             const appointments = [];
             const usedTokens = [];
             for (const appointment of openAppointments.filter(
@@ -33,11 +37,10 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 if (timestamp < inOneHour) continue; // we skip appointments that are less than one hour away
                 for (const slotData of appointment.slotData) {
                     ids.push(slotData.id);
-                    cancelIds.push(slotData.cancel);
                     appointments.push(appointment);
                 }
             }
-            const allIds = [...ids, ...cancelIds];
+            const allIds = [...ids];
             const results = await backend.appointments.bulkGetData(
                 { ids: allIds },
                 keyPairs.signing
@@ -57,31 +60,40 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         );
                         if (decryptedData === null) continue; // not the right token....
 
-                        const signedData = JSON.parse(
-                            decryptedData.signedToken.data
-                        );
-
-                        if (
-                            openAppointments.find(oa =>
-                                oa.slotData.some(
-                                    sl =>
-                                        sl.token !== undefined &&
-                                        sl.token.token === signedData.token
-                                )
-                            )
-                        ) {
-                            continue; // we already stored this token
-                        }
-
-                        // we get the slot data for the token
                         const slotData = appointment.slotData.find(
-                            sl => sl.id === allIds[i]
+                            sl =>
+                                sl.token !== undefined &&
+                                sl.token.token === openToken.token
                         );
-                        slotData.open = false;
-                        slotData.token = openToken;
-                        slotData.userData = decryptedData;
 
-                        usedTokens.push(openToken);
+                        // we cancel the slot
+                        if (slotData !== undefined) {
+                            slotData.userData = decryptedData;
+                            if (decryptedData.cancel === true) {
+                                // the user wants to cancel this appointment
+                                await cancelSlots(
+                                    undefined,
+                                    [slotData],
+                                    openTokens
+                                );
+                                // we remove the canceled slot
+                                appointment.slotData = appointment.slotData.filter(
+                                    sl => sl.id !== slotData.id
+                                );
+                                // we replace the slot
+                                appointment.slotData.push(createSlot());
+                            }
+                        } else {
+                            // we get the slot data for the token
+                            const slotData = appointment.slotData.find(
+                                sl => sl.id === allIds[i]
+                            );
+                            slotData.open = false;
+                            slotData.token = openToken;
+                            slotData.userData = decryptedData;
+
+                            usedTokens.push(openToken);
+                        }
                     } catch (e) {
                         console.error(e);
                         continue;

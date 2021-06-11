@@ -9,9 +9,15 @@ import { backupKeys } from './backup-data';
 // make sure the signing and encryption key pairs exist
 export async function restoreFromBackup(state, keyStore, settings, secret) {
     const backend = settings.get('backend');
-    try {
-        await backend.local.lock();
 
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         const [id, key] = await deriveSecrets(base322buf(secret), 32, 2);
         const data = await backend.storage.getSettings({ id: id });
         const dd = JSON.parse(await aesDecrypt(data, b642buf(key)));
