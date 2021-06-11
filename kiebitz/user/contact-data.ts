@@ -13,12 +13,12 @@ export type ContactData = {
     code: string;
 };
 
-export const getUserContactData = async (): Promise<ContactData> => {
+export const getUserContactData = (): ContactData => {
     const backend = settings.get(KEY_BACKEND);
     return backend.temporary.get(KEY_USER_CONTACT_DATA);
 };
 
-export const setUserContactData = async (data: ContactData): Promise<ContactData> => {
+export const setUserContactData = (data: ContactData): void => {
     const backend = settings.get(KEY_BACKEND);
     return backend.temporary.set(KEY_USER_CONTACT_DATA, data);
 };

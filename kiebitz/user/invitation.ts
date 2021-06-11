@@ -9,22 +9,22 @@ export const KEY_USER_INVITATION = 'user::invitation';
 export const KEY_USER_INVITATION_ACCEPTED = 'user::invitation::accepted';
 export const KEY_USER_INVITATION_VERIFIED = 'user::invitation::verified';
 
-export const setUserInvitation = async (data: any): Promise<any> => {
+export const setUserInvitation = (data: any): any => {
     const backend = settings.get(KEY_BACKEND);
     backend.local.set(KEY_USER_INVITATION, data);
 };
 
-export const getUserInvitationAccepted = async (): Promise<any> => {
+export const getUserInvitationAccepted = (): any => {
     const backend = settings.get(KEY_BACKEND);
     return backend.local.get(KEY_USER_INVITATION_ACCEPTED);
 };
 
-export const setUserInvitationVerified = async (data: any): Promise<any> => {
+export const setUserInvitationVerified = (data: any): any => {
     const backend = settings.get(KEY_BACKEND);
     backend.local.set(KEY_USER_INVITATION_VERIFIED, data);
 };
 
-export const getUserInvitationVerified = async (): Promise<any> => {
+export const getUserInvitationVerified = (): any => {
     const backend = settings.get(KEY_BACKEND);
     return backend.local.get(KEY_USER_INVITATION_VERIFIED);
 };
