@@ -21,22 +21,20 @@ export const ProviderAppointmentCreate = () => {
                         <div className="flex -mx-2">
                             <DateInput
                                 className="px-2"
-                                label="Datum"
-                                labelHidden
                                 placeholder="Datum auswählen"
                                 trailingIcon={<CalendarOutline />}
                             />
-                            <Input className="px-2" label="von" labelHidden placeholder="von" type="time" />
-                            <Input className="px-2" label="bis" labelHidden placeholder="bis" type="time" />
+                            <Input className="px-2" placeholder="von" type="time" />
+                            <Input className="px-2" placeholder="bis" type="time" />
                         </div>
                     </div>
                     <div>
                         <label className="block mb-2 text-xl font-semibold">Verfügbare Impfstoffe</label>
                         <div className="flex -mx-2">
-                            <Input className="px-2" label="AstraZeneca" placeholder="Menge" />
-                            <Input className="px-2" label="BioNTech" placeholder="Menge" />
-                            <Input className="px-2" label="Moderna" placeholder="Menge" />
-                            <Input className="px-2" label="Johnson&Johnson" placeholder="Menge" />
+                            <Input className="px-2" placeholder="Menge" />
+                            <Input className="px-2" placeholder="Menge" />
+                            <Input className="px-2" placeholder="Menge" />
+                            <Input className="px-2" placeholder="Menge" />
                         </div>
                     </div>
                 </div>
