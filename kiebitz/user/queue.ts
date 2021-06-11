@@ -3,6 +3,7 @@ import { ephemeralECDHEncrypt, generateECDSAKeyPair, randomBytes } from 'helpers
 
 import { hashContactData } from './crypto';
 import { getUserTokenData } from './token-data';
+import { GetQueueResponse } from 'kiebitz/provider/queues';
 
 // TODO: Should be defined and exported somewhere in settings, since it's a
 // settings relevant key.
@@ -29,8 +30,8 @@ export const setUserTemporaryQueueData = async (data: UserQueueData): Promise<an
 export const getUserAppointmentsTokenDataWithSignedToken = async (
     contactData: any,
     queueData: UserQueueData,
-    queue: any,
-    userSecret: any
+    queue: GetQueueResponse,
+    userSecret: string
 ): Promise<any> => {
     const backend = settings.get(KEY_BACKEND);
 
