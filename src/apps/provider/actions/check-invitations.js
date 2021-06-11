@@ -23,6 +23,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             'provider::appointments::open',
             []
         );
+
         try {
             const ids = [];
             const appointments = [];
@@ -31,27 +32,39 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 oa => oa.slots > 0
             )) {
                 const timestamp = new Date(appointment.timestamp);
-                const inOneHour = new Date(
-                    new Date().getTime() + 1000 * 60 * 60
-                );
-                if (timestamp < inOneHour) continue; // we skip appointments that are less than one hour away
+                if (timestamp < new Date()) continue;
                 for (const slotData of appointment.slotData) {
                     ids.push(slotData.id);
                     appointments.push(appointment);
                 }
             }
-            const allIds = [...ids];
-            const results = await backend.appointments.bulkGetData(
-                { ids: allIds },
-                keyPairs.signing
-            );
 
-            for (const [i, result] of results.slice(0, ids.length).entries()) {
+            const results = [];
+
+            for (let i = 0; i < ids.length; i += 100) {
+                const sliceResults = await backend.appointments.bulkGetData(
+                    { ids: ids.slice(i, i + 100) },
+                    keyPairs.signing
+                );
+                sliceResults.forEach(result => results.push(result));
+            }
+
+            if (results.length !== ids.length) {
+                throw 'lengths do not match';
+            }
+
+            for (const [i, result] of results.entries()) {
                 const appointment = appointments[i];
                 if (result === null) continue;
                 // we try to decrypt this data with the private key of each token
                 for (const openToken of openTokens) {
                     try {
+                        if (
+                            result.publicKey !==
+                            openToken.encryptedData.publicKey
+                        )
+                            continue;
+
                         const decryptedData = JSON.parse(
                             await ecdhDecrypt(
                                 result,
@@ -86,7 +99,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         } else {
                             // we get the slot data for the token
                             const slotData = appointment.slotData.find(
-                                sl => sl.id === allIds[i]
+                                sl => sl.id === ids[i]
                             );
                             slotData.open = false;
                             slotData.token = openToken;
@@ -94,44 +107,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
                             usedTokens.push(openToken);
                         }
-                    } catch (e) {
-                        console.error(e);
-                        continue;
-                    }
-                }
-            }
-
-            // we check the cancel requests
-            for (const [i, result] of results.slice(ids.length).entries()) {
-                const appointment = appointments[i];
-                if (result === null) continue;
-                // we try to decrypt this data with the private key of each token
-                for (const openToken of openTokens) {
-                    try {
-                        const decryptedData = JSON.parse(
-                            await ecdhDecrypt(
-                                result,
-                                openToken.keyPair.privateKey
-                            )
-                        );
-                        if (decryptedData === null) continue; // not the right token....
-
-                        const slotData = appointment.slotData.find(
-                            sl =>
-                                sl.token !== undefined &&
-                                sl.token.token === openToken.token
-                        );
-
-                        // we cancel the slot
-                        await cancelSlots(undefined, [slotData], openTokens);
-
-                        // we remove the canceled slot
-                        appointment.slotData = appointment.slotData.filter(
-                            sl => sl.id !== slotData.id
-                        );
-
-                        // we replace the slot
-                        appointment.slotData.push(createSlot());
                     } catch (e) {
                         console.error(e);
                         continue;
@@ -160,11 +135,16 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 .flat();
 
             // we send the signed, encrypted data to the backend
-            if (pastTokens.length > 0)
-                await backend.appointments.markTokensAsUsed(
-                    { tokens: pastTokens.map(token => token.token) },
-                    keyPairs.signing
-                );
+            if (pastTokens.length > 0) {
+                try {
+                    await backend.appointments.markTokensAsUsed(
+                        { tokens: pastTokens.map(token => token.token) },
+                        keyPairs.signing
+                    );
+                } catch (e) {
+                    console.error(e);
+                }
+            }
 
             // we remove the past tokens from the list of open tokens...
             openTokens = openTokens.filter(

@@ -20,19 +20,17 @@ export default class LocalBackend {
 
     unlock() {
         this._locked = false;
-        console.log('unlocked');
     }
 
     async lock() {
         let i = 0;
         while (this._locked) {
             await timeout(10);
-            if (i++ > 1000) {
+            if (i++ > 100) {
                 throw 'still locked';
             }
         }
         this._locked = true;
-        console.log('locked');
     }
 
     set(key, data) {

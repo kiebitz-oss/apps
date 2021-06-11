@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { ephemeralECDHEncrypt } from 'helpers/crypto';
+import { ecdhEncrypt } from 'helpers/crypto';
 
 export async function cancelInvitation(
     state,
@@ -21,8 +21,9 @@ export async function cancelInvitation(
     }
 
     try {
-        const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
+        const encryptedProviderData = await ecdhEncrypt(
             JSON.stringify({ cancel: true }),
+            tokenData.keyPair,
             acceptedInvitation.invitation.publicKey
         );
 

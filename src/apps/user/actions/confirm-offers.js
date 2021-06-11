@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { ephemeralECDHEncrypt } from 'helpers/crypto';
+import { ecdhEncrypt } from 'helpers/crypto';
 
 export async function confirmOffers(
     state,
@@ -26,8 +26,10 @@ export async function confirmOffers(
             signedToken: tokenData.signedToken,
             userData: tokenData.hashData,
         };
-        const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
+
+        const encryptedProviderData = await ecdhEncrypt(
             JSON.stringify(providerData),
+            tokenData.keyPair,
             invitation.publicKey
         );
         for (const offer of offers) {

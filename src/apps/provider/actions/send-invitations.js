@@ -106,6 +106,7 @@ export async function sendInvitations(
                                     privateKey
                                 )
                             );
+                            if (token.data === null) continue;
                         } catch (e) {
                             console.error(e);
                             continue;
@@ -139,19 +140,22 @@ export async function sendInvitations(
                     slotsById[slot.id] = slot;
                 }
             }
-            const dataToSubmit = [];
+
+            let dataToSubmit = [];
             // we make sure all token holders can initialize all appointment data IDs
             for (const [i, token] of openTokens.entries()) {
                 try {
-
                     if (token.grantID === undefined)
                         token.grantID = randomBytes(32);
-                    if (token.slotIDs === undefined){
+                    if (token.slotIDs === undefined) {
                         token.slotIDs = [];
                         // we always add the booked slot
-                        for(const slot of Object.values(slotsById)){
-                            if (slot.token !== undefined && slot.token.token === token.token)
-                                token.slotIDs.push(slot.id)
+                        for (const slot of Object.values(slotsById)) {
+                            if (
+                                slot.token !== undefined &&
+                                slot.token.token === token.token
+                            )
+                                token.slotIDs.push(slot.id);
                         }
                     }
                     token.slotIDs = token.slotIDs.filter(id => {
@@ -289,15 +293,40 @@ export async function sendInvitations(
                     console.error(e);
                     continue;
                 }
+
+                if (dataToSubmit.length > 100) {
+                    try {
+                        // we send the signed, encrypted data to the backend
+                        await backend.appointments.bulkStoreData(
+                            { dataList: dataToSubmit },
+                            keyPairs.signing
+                        );
+                    } catch (e) {
+                        console.error(e);
+                        continue;
+                    } finally {
+                        dataToSubmit = [];
+                    }
+                }
             }
 
-            backend.local.set('provider::tokens::open', openTokens);
+            if (dataToSubmit.length > 0) {
+                try {
+                    // we send the signed, encrypted data to the backend
+                    await backend.appointments.bulkStoreData(
+                        { dataList: dataToSubmit },
+                        keyPairs.signing
+                    );
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    dataToSubmit = [];
+                }
+            }
 
-            // we send the signed, encrypted data to the backend
-            await backend.appointments.bulkStoreData(
-                { dataList: dataToSubmit },
-                keyPairs.signing
-            );
+            console.log('Invitations successfully sent');
+
+            backend.local.set('provider::tokens::open', openTokens);
 
             return { status: 'succeeded' };
         } catch (e) {

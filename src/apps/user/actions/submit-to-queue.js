@@ -78,6 +78,7 @@ export async function submitToQueue(
                 // this weakens the key a bit but the provider has access to all
                 // of the user's appointment data anyway...
                 code: userSecret.slice(0, 4),
+                version: '0.1',
                 publicKey: signingKeyPair.publicKey, // the signing key to control the ID
                 id: randomBytes(32), // the ID where we want to receive data
             };
@@ -112,6 +113,10 @@ export async function submitToQueue(
                 encryptedTokenData: encryptedTokenData,
                 encryptedContactData: encryptedContactData,
                 queueData: queueData,
+                keyPair: {
+                    publicKey: encryptedTokenData.publicKey,
+                    privateKey: privateKey,
+                },
                 privateKey: privateKey,
                 hashNonce: nonce,
                 dataHash: dataHash,
