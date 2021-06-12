@@ -144,7 +144,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             }
 
             // remove appointments that are in the past
-            const pastAppointments = openAppointments.filter(
+            const newlyPastAppointments = openAppointments.filter(
                 oa => new Date(oa.timestamp) < new Date()
             );
 
@@ -154,8 +154,13 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             );
             backend.local.set('provider::appointments::open', openAppointments);
 
+            if (newlyPastAppointments.length > 0){
+                const pastAppointments = backend.local.set('provider::appointments::past', []);
+                backend.local.set('provider::appointments::past', [...pastAppointments, ...newlyPastAppointments])
+            }
+
             // we mark the successful tokens
-            const newlyUsedTokens = pastAppointments
+            const newlyUsedTokens = newlyPastAppointments
                 .map(pa =>
                     pa.slotData
                         .filter(sl => sl.token !== undefined)
