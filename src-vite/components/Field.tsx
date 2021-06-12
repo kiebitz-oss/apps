@@ -70,7 +70,7 @@ export const Field = memo((props: Props): ReactElement => {
             )}
             {FormComponent}
             {hint && (
-                <div className="mt-1 ml-1 text-gray-500 text-xs" id={`hint-${name}`}>
+                <div className="mt-2 text-gray-500 text-xs" id={`hint-${name}`}>
                     {hint}
                 </div>
             )}
