@@ -92,11 +92,17 @@ $border: 1px solid #ddd;
 			padding: 0;
 			background: #fff;
 			z-index: 3;
+			cursor: pointer;
+
+			&:hover {
+				background: #efe;
+			}
 
 			&.kip-has-appointments {
 			}
 
 			&.kip-is-hour-label {
+				cursor: inherit;
 				display: flex;
 				background: #fafafa;
 				align-items: center;
@@ -104,6 +110,7 @@ $border: 1px solid #ddd;
 			}
 
 			&.kip-is-day-label {
+				cursor: inherit;
 				display:flex;
 				flex-direction:column;
 				flex-wrap: wrap;
@@ -128,6 +135,21 @@ $border: 1px solid #ddd;
 			}
 
 			.kip-appointment-card {
+
+				overflow: hidden;
+				width: 95%;
+				top: 4px;
+				font-size: 14px;
+				font-weight: bolder;
+				left: 2.5%;
+				position: absolute;
+				box-shadow: $kip-box-shadow;
+				z-index: 2;
+				padding: 0;
+				padding-left: 4px;
+				background: $kip-appt-background;
+				opacity: 0.8;
+				cursor: pointer;
 
 				&.kip-is-active {
 					z-index: 3;
@@ -168,8 +190,6 @@ $border: 1px solid #ddd;
 					}
 				}
 
-				overflow: hidden;
-
 				.kip-tag {
 					display: inline-block;
 					color: #000;
@@ -180,20 +200,6 @@ $border: 1px solid #ddd;
 					margin-bottom: map-get($kip-space, xs);
 				}
 				
-				width: 95%;
-				top: 4px;
-				font-size: 14px;
-				font-weight: bolder;
-				left: 2.5%;
-				position: absolute;
-				box-shadow: $kip-box-shadow;
-				z-index: 2;
-				padding: 0;
-				padding-left: 4px;
-				background: $kip-appt-background;
-				opacity: 0.8;
-				cursor: pointer;
-
 			}
 
 		}

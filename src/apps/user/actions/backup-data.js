@@ -6,10 +6,13 @@ import { aesEncrypt, deriveSecrets } from 'helpers/crypto';
 import { base322buf, b642buf } from 'helpers/conversion';
 
 export const backupKeys = [
+    'grantID',
     'tokenData',
     'invitation',
     'invitation::verified',
     'invitation::accepted',
+    'invitation::slots',
+    'invitation::grantID',
     'secret',
 ];
 

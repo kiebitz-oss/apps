@@ -9,6 +9,8 @@ import { keys } from 'apps/provider/actions';
 import { formatDuration } from 'helpers/format';
 import {
     tokenData,
+    grantID,
+    slotInfos,
     userSecret,
     invitation,
     confirmOffers,
@@ -84,6 +86,8 @@ const AcceptedInvitation = withActions(
         cancelInvitation,
         invitationAction,
         cancelInvitationAction,
+        grantIDAction,
+        slotInfosAction,
         offers,
         userSecret,
     }) => {
@@ -97,6 +101,8 @@ const AcceptedInvitation = withActions(
             ).then(() => {
                 // we reload the appointments
                 acceptedInvitationAction();
+                grantIDAction();
+                slotInfosAction();
                 invitationAction();
             });
         };
@@ -218,6 +224,8 @@ const AcceptedInvitation = withActions(
         acceptedInvitation,
         cancelInvitation,
         invitation,
+        grantID,
+        slotInfos,
         tokenData,
     ]
 );
@@ -243,13 +251,15 @@ const NoInvitations = ({ tokenData }) => {
     );
 };
 
-async function toggleOffers(state, keyStore, settings, offer) {
+async function toggleOffers(state, keyStore, settings, offer, offers) {
     if (offer === null) return { data: [] };
-    if (state.data.find(i => i === offer.slotData[0].id) !== undefined) {
-        state.data = state.data.filter(i => i !== offer.slotData[0].id);
+    if (state.data.find(i => i === offer.id) !== undefined) {
+        state.data = state.data.filter(i => i !== offer.id);
     } else {
-        state.data.push(offer.slotData[0].id);
+        state.data.push(offer.id);
     }
+    // we remove non-existing offers
+    state.data = state.data.filter(i => !offers.includes(i));
     return { data: state.data };
 }
 
@@ -289,6 +299,10 @@ const InvitationDetails = withSettings(
             settings,
             userSecret,
             toggleOffers,
+            grantID,
+            grantIDAction,
+            slotInfos,
+            slotInfosAction,
             toggleOffersAction,
             acceptedInvitation,
             acceptedInvitationAction,
@@ -302,10 +316,12 @@ const InvitationDetails = withSettings(
                 if (initialized) return;
                 setInitialized(true);
                 toggleOffersAction(null);
+                slotInfosAction();
+                grantIDAction();
             });
 
             const toggle = offer => {
-                toggleOffersAction(offer);
+                toggleOffersAction(offer, data.offers);
             };
 
             const doConfirmOffers = () => {
@@ -313,7 +329,7 @@ const InvitationDetails = withSettings(
                 // we add the selected offers in the order the user chose
                 for (const offerID of toggleOffers.data) {
                     const offer = data.offers.find(
-                        offer => offer.slotData[0].id === offerID
+                        offer => offer.id === offerID
                     );
                     selectedOffers.push(offer);
                 }
@@ -337,12 +353,52 @@ const InvitationDetails = withSettings(
 
             let noOpenSlots = false;
             if (data !== null)
-                noOpenSlots =
-                    data.offers
-                        .map(offer => offer.slotData)
-                        .flat()
-                        .filter(sl => sl.open && !sl.canceled).length === 0;
-            if (data === null || data.offers === null || noOpenSlots)
+                noOpenSlots = !data.offers
+                    .map(offer => offer.slotData)
+                    .flat()
+                    .some(sl => {
+                        if (sl.open && !sl.canceled) {
+                            if (
+                                slotInfos !== undefined &&
+                                slotInfos.data !== null
+                            ) {
+                                const slotInfo = slotInfos.data[sl.id];
+                                if (slotInfo !== undefined) {
+                                    if (slotInfo.status === 'taken') {
+                                        sl.open = false;
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                        return false;
+                    });
+            else noOpenSlots = true;
+
+            let oldGrant = false;
+
+            if (
+                !noOpenSlots &&
+                grantID !== undefined &&
+                grantID.data !== null
+            ) {
+                const grant = data.offers[0].grants[0];
+                if (grant === undefined) oldGrant = true;
+                try {
+                    const grantData = JSON.parse(grant.data);
+                    if (grantData.grantID === grantID.data) oldGrant = true;
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            if (
+                data === null ||
+                data.offers === null ||
+                noOpenSlots ||
+                oldGrant
+            )
                 return <NoInvitations data={tokenData} />;
 
             const properties = settings.get('appointmentProperties');
@@ -354,16 +410,13 @@ const InvitationDetails = withSettings(
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
                     const d = new Date(offer.timestamp);
-                    const selected = toggleOffers.data.includes(
-                        offer.slotData[0].id
-                    );
+                    const selected = toggleOffers.data.includes(offer.id);
                     let pref;
                     if (selected)
-                        pref =
-                            toggleOffers.data.indexOf(offer.slotData[0].id) + 1;
+                        pref = toggleOffers.data.indexOf(offer.id) + 1;
                     return (
                         <tr
-                            key={offer.slotData[0].id}
+                            key={offer.id}
                             className={
                                 selected ? `kip-selected kip-pref-${pref}` : ''
                             }
@@ -451,7 +504,14 @@ const InvitationDetails = withSettings(
                 </F>
             );
         },
-        [toggleOffers, confirmOffers, acceptedInvitation, userSecret]
+        [
+            toggleOffers,
+            confirmOffers,
+            acceptedInvitation,
+            userSecret,
+            slotInfos,
+            grantID,
+        ]
     )
 );
 

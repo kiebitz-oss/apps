@@ -30,6 +30,17 @@ class ContactDataForm extends Form {
     }
 }
 
+/*
+            <ErrorFor error={error} field="email" />
+            <RetractingLabelInput
+                description={<T t={t} k="contact-data.email.description" />}
+                value={data.email || ''}
+                onChange={value => setAndMarkModified('email', value)}
+                label={<T t={t} k="contact-data.email.label" />}
+            />
+
+*/
+
 const BaseContactData = ({
     contactData,
     contactDataAction,
@@ -62,13 +73,6 @@ const BaseContactData = ({
 
     const controls = (
         <React.Fragment>
-            <ErrorFor error={error} field="email" />
-            <RetractingLabelInput
-                description={<T t={t} k="contact-data.email.description" />}
-                value={data.email || ''}
-                onChange={value => setAndMarkModified('email', value)}
-                label={<T t={t} k="contact-data.email.label" />}
-            />
             <ErrorFor error={error} field="code" />
             <RetractingLabelInput
                 value={data.code || ''}

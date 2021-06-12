@@ -10,6 +10,8 @@ import {
     generateECDHKeyPair,
 } from 'helpers/crypto';
 
+import { shuffle } from 'helpers/lists';
+
 function getQueuePrivateKey(queueID, verifiedProviderData) {
     for (const queueKeys of verifiedProviderData.queuePrivateKeys) {
         if (queueKeys.id === queueID) return JSON.parse(queueKeys.privateKey);
@@ -34,6 +36,9 @@ export async function sendInvitations(
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
+
+    // we process at most N tokens during one invocation of this function
+    const N = 200;
 
     try {
         let openAppointments = backend.local.get(
@@ -141,15 +146,25 @@ export async function sendInvitations(
                 }
             }
 
+            const currentIndex = backend.local.get(
+                'provider::appointments::send::index',
+                0
+            );
+            let newIndex = currentIndex + N;
+            if (newIndex >= openTokens.length) newIndex = 0; // we start from the beginning
+            backend.local.set('provider::appointments::send::index', newIndex);
+
             let dataToSubmit = [];
             // we make sure all token holders can initialize all appointment data IDs
-            for (const [i, token] of openTokens.entries()) {
+            for (const [i, token] of openTokens
+                .slice(currentIndex, currentIndex + N)
+                .entries()) {
                 try {
                     if (token.grantID === undefined)
                         token.grantID = randomBytes(32);
                     if (token.slotIDs === undefined) {
                         token.slotIDs = [];
-                        // we always add the booked slot
+                        // we always add the booked slot (we can remove this for the next version, just for backwards-compatibility)
                         for (const slot of Object.values(slotsById)) {
                             if (
                                 slot.token !== undefined &&
@@ -158,11 +173,14 @@ export async function sendInvitations(
                                 token.slotIDs.push(slot.id);
                         }
                     }
+
                     token.slotIDs = token.slotIDs.filter(id => {
                         const slot = slotsById[id];
-                        // we remove slots that have been deleted
+                        // we remove slots that have been deleted e.g. because
+                        // the appointment has been deleted
                         if (slot === undefined) return false;
-                        // we remove slots taken by other users
+                        // we remove slots taken by other users as the user
+                        // won't be able to book them anymore...
                         if (!slot.open && !slot.token.token === token.token)
                             return false;
                         return true;
@@ -170,14 +188,22 @@ export async function sendInvitations(
 
                     addSlots: while (token.slotIDs.length < 12) {
                         let addedSlots = 0;
+                        // we shuffle the open appointments to distribute them
+                        // evenly over all tokens
+                        shuffle(selectedAppointments);
                         for (const oa of selectedAppointments) {
                             const openSlots = oa.slotData.filter(sl => sl.open);
+                            // we shuffle the open slots to distribute them
+                            // evenly over all tokens
+                            shuffle(openSlots);
                             // we add three slots per appointment offer
                             for (
                                 let i = 0;
                                 i < Math.min(3, openSlots.length);
                                 i++
                             ) {
+                                // we check if the slot is already associated
+                                // with this token
                                 if (
                                     !token.slotIDs.find(
                                         id => id === openSlots[i].id
@@ -189,7 +215,8 @@ export async function sendInvitations(
                                 if (token.slotIDs.length >= 12) break addSlots;
                             }
                         }
-                        // seems there are no more slots left
+                        // seems there are no more slots left, we break out
+                        // of the loop
                         if (addedSlots === 0) break;
                     }
                     // to do: expire tokens

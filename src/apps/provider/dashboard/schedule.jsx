@@ -5,6 +5,7 @@
 import React, { useState, useEffect, Fragment as F } from 'react';
 import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
+import { urlEncode } from 'helpers/data';
 import Form from 'helpers/form';
 import {
     withRouter,
@@ -16,6 +17,7 @@ import {
     Card,
     CardHeader,
     CardContent,
+    A,
     CardFooter,
     Modal,
     Label,
@@ -223,7 +225,7 @@ const PropertyTag = withSettings(({ settings, property, verbose }) => {
 const AppointmentCard = withRouter(
     ({ router, action, secondaryAction, id, appointment, n }) => {
         const p = Math.floor((appointment.duration / 60) * 100);
-        const w = Math.floor(97.5 / (1 + appointment.maxOverlap) - 2.5);
+        const w = Math.floor(95 / (1 + appointment.maxOverlap) - 5);
         const y = Math.floor(
             (new Date(appointment.timestamp).getMinutes() / 60) * 100
         );
@@ -259,14 +261,16 @@ const AppointmentCard = withRouter(
                     height: `calc(${p}% - 4px)`,
                     width: `${w}%`,
                     top: `${y}%`,
-                    left: `${l}%`,
+                    left: `calc(${l}% + 4px)`,
                 }}
-                onClick={() =>
-                    !active &&
-                    router.navigateToUrl(
-                        `/provider/schedule/${action}/show/${hexId}`
-                    )
-                }
+                onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!active)
+                        router.navigateToUrl(
+                            `/provider/schedule/${action}/show/${hexId}`
+                        );
+                }}
                 className={classNames('kip-appointment-card', {
                     'kip-is-active': active,
                 })}
@@ -317,69 +321,79 @@ const CalendarAppointments = ({
     );
 };
 
-const HourRow = ({
-    appointments,
-    action,
-    secondaryAction,
-    id,
-    date,
-    day,
-    hour,
-}) => {
-    const ots = new Date(
-        date.toLocaleDateString('en-US') +
-            ' ' +
-            hour.toLocaleString('en-US', { minimumIntegerDigits: 2 }) +
-            ':00:00'
-    );
-    const ote = new Date(ots);
-    ote.addHours(1);
-    const relevantAppointments = [];
-    for (const oa of appointments) {
-        // beginning of appointment
-        const oas = new Date(`${oa.timestamp}`);
-        // end of appointment
-        const oae = new Date(oas.getTime() + 1000 * 60 * oa.duration);
-        let startsHere = false;
-        let relevant = false;
-        // starts in interval
-        if (oas >= ots && oas < ote) {
-            startsHere = true;
-            relevant = true;
-        }
-        // ends in interval
-        if (oae > ots && oae <= ote) relevant = true;
-
-        // is in interval
-        if (oas <= ots && oae >= ote) relevant = true;
-
-        if (relevant)
-            relevantAppointments.push({
-                startsHere: startsHere,
-                appointment: oa,
-            });
-    }
-    let hasAppointments = relevantAppointments.length > 0;
-    return (
-        <div
-            className={
-                'kip-hour-row' +
-                (hasAppointments ? ' kip-has-appointments' : '')
+const HourRow = withRouter(
+    ({
+        appointments,
+        action,
+        router,
+        secondaryAction,
+        id,
+        date,
+        day,
+        hour,
+    }) => {
+        const ots = new Date(
+            date.toLocaleDateString('en-US') +
+                ' ' +
+                hour.toLocaleString('en-US', { minimumIntegerDigits: 2 }) +
+                ':00:00'
+        );
+        const ote = new Date(ots);
+        ote.addHours(1);
+        const relevantAppointments = [];
+        for (const oa of appointments) {
+            // beginning of appointment
+            const oas = new Date(`${oa.timestamp}`);
+            // end of appointment
+            const oae = new Date(oas.getTime() + 1000 * 60 * oa.duration);
+            let startsHere = false;
+            let relevant = false;
+            // starts in interval
+            if (oas >= ots && oas < ote) {
+                startsHere = true;
+                relevant = true;
             }
-        >
-            {hasAppointments && (
-                <CalendarAppointments
-                    ots={ots}
-                    ote={ote}
-                    id={id}
-                    action={action}
-                    secondaryAction={secondaryAction}
-                    appointments={relevantAppointments}
-                />
-            )}
-        </div>
-    );
-};
+            // ends in interval
+            if (oae > ots && oae <= ote) relevant = true;
+
+            // is in interval
+            if (oas <= ots && oae >= ote) relevant = true;
+
+            if (relevant)
+                relevantAppointments.push({
+                    startsHere: startsHere,
+                    appointment: oa,
+                });
+        }
+
+        const showNewAppointment = () => {
+            const query = urlEncode({ timestamp: ots.toISOString() });
+            router.navigateToUrl(`/provider/schedule/${action}/new#${query}`);
+        };
+
+        let hasAppointments = relevantAppointments.length > 0;
+        return (
+            <div
+                onClick={showNewAppointment}
+                className={
+                    'kip-hour-row' +
+                    (hasAppointments ? ' kip-has-appointments' : '')
+                }
+            >
+                {hasAppointments && (
+                    <CalendarAppointments
+                        ots={ots}
+                        ote={ote}
+                        id={id}
+                        action={action}
+                        secondaryAction={secondaryAction}
+                        appointments={relevantAppointments}
+                    />
+                )}
+            </div>
+        );
+    }
+);
 
 const HourLabelRow = ({ hour }) => {
     let content;
@@ -546,6 +560,7 @@ const NewAppointment = withSettings(
                     appointments,
                     existingAppointment,
                     settings,
+                    route,
                     action,
                     id,
                     createAppointmentAction,
@@ -558,6 +573,7 @@ const NewAppointment = withSettings(
                     if (action !== undefined) actionUrl = `/${action}`;
                     if (id !== undefined) actionUrl += `/view/${id}`;
                     const [initialized, setInitialized] = useState(false);
+                    const [saving, setSaving] = useState(false);
                     const cancel = () =>
                         router.navigateToUrl(`/provider/schedule${actionUrl}`);
 
@@ -570,10 +586,13 @@ const NewAppointment = withSettings(
 
                     const save = () => {
                         let action;
+                        setSaving(true);
                         if (appointment !== undefined)
                             action = updateAppointmentAction;
                         else action = createAppointmentAction;
-                        action(data, appointment).then(() => {
+                        const promise = action(data, appointment);
+                        promise.finally(() => setSaving(false));
+                        promise.then(() => {
                             // we reload the appointments
                             openAppointmentsAction();
                             // and we go back to the schedule view
@@ -604,11 +623,40 @@ const NewAppointment = withSettings(
                             }
                             reset(appointmentData);
                         } else {
-                            reset({
-                                duration: 30,
-                                slots: 1,
-                                biontech: true,
-                            });
+                            const newData = {
+                                duration: data.duration || 30,
+                                slots: data.slots || 1,
+                            };
+
+                            let firstProperty;
+                            let found = false;
+                            addProps: for (const [_, v] of Object.entries(
+                                properties
+                            )) {
+                                for (const [kk, _] of Object.entries(
+                                    v.values
+                                )) {
+                                    if (firstProperty === undefined)
+                                        firstProperty = kk;
+                                    if (data[kk] !== undefined) {
+                                        found = true;
+                                        newData[kk] = true;
+                                        break addProps;
+                                    }
+                                }
+                            }
+                            if (!found) newData[firstProperty] = true;
+
+                            if (route.hashParams !== undefined) {
+                                if (route.hashParams.timestamp !== undefined) {
+                                    const date = new Date(
+                                        route.hashParams.timestamp
+                                    );
+                                    newData.time = formatTime(date);
+                                    newData.date = formatDate(date);
+                                }
+                            }
+                            reset(newData);
                         }
                     });
 
@@ -686,9 +734,12 @@ const NewAppointment = withSettings(
 
                     return (
                         <Modal
-                            saveDisabled={!valid}
+                            saveDisabled={!valid || saving}
+                            cancelDisabled={saving}
+                            closeDisabled={saving}
                             className="kip-new-appointment"
                             onSave={save}
+                            waiting={saving}
                             onCancel={cancel}
                             onClose={cancel}
                             title={<T t={t} k="new-appointment.title" />}
@@ -795,6 +846,18 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
+// https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd
+function formatTime(date) {
+    var d = new Date(date),
+        hours = '' + d.getHours(),
+        minutes = '' + d.getMinutes();
+
+    if (hours.length < 2) hours = '0' + hours;
+    if (minutes.length < 2) minutes = '0' + minutes;
+
+    return [hours, minutes].join(':');
+}
+
 const Invitations = withTimer(
     withSettings(
         withRouter(
@@ -808,6 +871,7 @@ const Invitations = withTimer(
                     lastUpdated,
                     keyPairs,
                     timer,
+                    route,
                     settings,
                     keyPairsAction,
                     invitationQueues,
@@ -882,6 +946,7 @@ const Invitations = withTimer(
                         )
                             newAppointmentModal = (
                                 <NewAppointment
+                                    route={route}
                                     appointments={openAppointments.data}
                                     action={action}
                                     id={id}

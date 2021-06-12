@@ -17,6 +17,9 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
 
+    // we process at most N appointments during one invocation of this function
+    const N = 50;
+
     try {
         let openTokens = backend.local.get('provider::tokens::open', []);
         let openAppointments = backend.local.get(
@@ -24,13 +27,21 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             []
         );
 
+        const currentIndex = backend.local.get(
+            'provider::appointments::check::index',
+            0
+        );
+        let newIndex = currentIndex + N;
+        if (newIndex >= openAppointments.length) newIndex = 0; // we start from the beginning
+        backend.local.set('provider::appointments::check::index', newIndex);
+
         try {
             const ids = [];
-            const appointments = [];
+            let appointments = [];
             const usedTokens = [];
-            for (const appointment of openAppointments.filter(
-                oa => oa.slots > 0
-            )) {
+            for (const appointment of openAppointments
+                .slice(currentIndex, currentIndex + N)
+                .filter(oa => oa.slots > 0)) {
                 const timestamp = new Date(appointment.timestamp);
                 if (timestamp < new Date()) continue;
                 for (const slotData of appointment.slotData) {
@@ -41,6 +52,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
             const results = [];
 
+            // we make requests with 100 IDs at a time
             for (let i = 0; i < ids.length; i += 100) {
                 const sliceResults = await backend.appointments.bulkGetData(
                     { ids: ids.slice(i, i + 100) },
