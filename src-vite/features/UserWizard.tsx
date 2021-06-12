@@ -6,6 +6,7 @@ import { Select } from '../components/Select';
 import { Toggle } from '../components/Toggle';
 import { Field } from '../components/Field';
 import { Form } from '../components/Form';
+import Card from '../components/Card';
 
 const distances = { '5km': 5, '10km': 10, '20km': 20, '30km': 30, '40km': 40, '50km': 50 };
 const plzRegex = /^[0-9]{5}$/;
@@ -24,24 +25,16 @@ const UserWizard = () => {
     };
 
     return (
-        <div className="container mx-auto 2xl:pt-24 pt-12">
-            <HeroTitle
-                title="Willkommen"
-                desc="Dieser Assistent hilft Dir bei der Impfanmeldung"
-                className="mx-auto mb-24"
-            />
-            <Form onSubmit={handleSubmit}>
-                <div className="max-w-2xl mx-auto bg-white divide-y divide-gray-200 rounded-lg shadow">
-                    <div className="px-4 py-5 sm:p-6">
+        <div className="container mx-auto 2xl:pt-24 pt-12 2xl:w-1/4 lg:w-1/2">
+            <Card>
+                <h1 className="text-4xl text-brand-user">Willkommen</h1>
+                <p>Hier kannst Du Dich mit wenigen Angaben für freie Impftermine in Deiner Nähe registrieren.</p>
+                <Form onSubmit={handleSubmit}>
+                    <div className="py-5">
                         <div className="mb-4 space-y-4">
-                            <Field label="Zugangscode aus deiner E-Mail" name="code" isRequired>
-                                <Input placeholder="fb892bcc42124679dd4e2aeb935b1c99" />
-                            </Field>
-
                             <Field label="Postleitzahl deines Wohnorts" name="plz" pattern={plzRegex} isRequired>
                                 <Input placeholder="38259" />
                             </Field>
-
                             <Field
                                 label="E-Mail-Adresse"
                                 name="email"
@@ -50,6 +43,16 @@ const UserWizard = () => {
                             >
                                 <Input placeholder="max.muster@muster.de" />
                             </Field>
+
+                            <Field
+                                label="Zugangscode aus deiner E-Mail"
+                                name="code"
+                                hint="Der in Deiner Anmelde-E-Mail enthaltene Zugangscode (dieser sollte bereits ausgefüllt sein)."
+                                isRequired
+                            >
+                                <Input placeholder="fb892bcc42124679dd4e2aeb935b1c99" />
+                            </Field>
+
                             <Field
                                 label="Maximale Entfernung zum Impfort in Kilometern (km)"
                                 name="distance"
@@ -67,8 +70,8 @@ const UserWizard = () => {
                             Postleitzahl prüfen
                         </Button>
                     </div>
-                </div>
-            </Form>
+                </Form>
+            </Card>
         </div>
     );
 };
