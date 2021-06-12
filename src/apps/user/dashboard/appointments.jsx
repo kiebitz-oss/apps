@@ -230,18 +230,45 @@ const AcceptedInvitation = withActions(
     ]
 );
 
-const NoInvitations = ({ tokenData }) => {
+const NoInvitations = ({ tokenData, oldGrant }) => {
+    let createdAt;
+
+    if (tokenData.createdAt !== undefined)
+        createdAt = new Date(tokenData.createdAt);
+
+    let content;
+
+    // in the first 10 minutes since the creation of the token we show a 'please wait'
+    // message, as it can take some time for appointments to show up...
+    if (
+        createdAt !== undefined &&
+        new Date(createdAt.getTime() + 1000 * 60 * 10) > new Date()
+    ) {
+        content = (
+            <F>
+                <Message type="success">
+                    <T t={t} k="no-invitations.please-wait" />
+                </Message>
+            </F>
+        );
+    } else {
+        content = (
+            <F>
+                <Message type="warning">
+                    <T t={t} k="no-invitations.notice" />
+                </Message>
+                {oldGrant && (
+                    <Message type="warning">
+                        <T t={t} k="no-invitations.old-grant-notice" />
+                    </Message>
+                )}
+            </F>
+        );
+    }
     return (
         <F>
             <CardContent>
-                <div className="kip-no-invitations">
-                    <h2>
-                        <T t={t} k="no-invitations.title" />
-                    </h2>
-                    <p className="kip-no-invitations-text">
-                        <T t={t} k="no-invitations.notice" />
-                    </p>
-                </div>
+                <div className="kip-no-invitations">{content}</div>
             </CardContent>
             <Message type="info">
                 <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
@@ -401,7 +428,14 @@ const InvitationDetails = withSettings(
                 noOpenSlots ||
                 oldGrant
             )
-                return <NoInvitations data={tokenData} />;
+                return (
+                    <NoInvitations
+                        tokenData={tokenData.data}
+                        noOpenSlots={noOpenSlots}
+                        oldGrant={oldGrant}
+                        data={tokenData}
+                    />
+                );
 
             const properties = settings.get('appointmentProperties');
 

@@ -6,6 +6,10 @@
 		margin: 0 auto;
 	}
 
+	.bulma-message {
+		margin-top: map-get($kip-space, md);
+	}
+
 	.kip-booking-code {
 		@include fs(large);
 		text-align: center;

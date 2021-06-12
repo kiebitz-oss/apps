@@ -54,13 +54,13 @@ wizard:
     hi:
       de: Los geht's!
     enter-contact-data:
-      de: Kontaktdaten eingeben
+      de: Registrierungsdaten eingeben
     store-secrets:
       de: Sicherheitscode notieren
     save-contact-data:
       de: Kontakdaten angeben
     finalize:
-      de: Weitere Angaben
+      de: Daten zu Impfung eingeben
     verify:
       de: Kontaktdaten prüfen
 contact-data:

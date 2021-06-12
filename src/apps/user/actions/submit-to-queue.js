@@ -111,6 +111,7 @@ export async function submitToQueue(
             });
 
             tokenData = {
+                createdAt: new Date().toISOString(),
                 signedToken: signedToken,
                 signingKeyPair: signingKeyPair,
                 encryptedTokenData: encryptedTokenData,

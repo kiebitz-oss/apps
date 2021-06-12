@@ -28,7 +28,7 @@ import './wizard.scss';
 const pages = [
     'hi',
     'enter-contact-data',
-    'verify',
+    //    'verify',
     'finalize',
     'store-secrets',
 ];

@@ -54,7 +54,7 @@ const BaseContactData = ({
         if (!valid) return;
         contactDataAction(data);
         // we redirect to the 'verify' step
-        router.navigateToUrl(`/user/setup/verify`);
+        router.navigateToUrl(`/user/setup/finalize`);
     };
 
     useEffect(() => {

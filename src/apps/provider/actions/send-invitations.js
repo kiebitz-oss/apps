@@ -196,6 +196,13 @@ export async function sendInvitations(
                             // we shuffle the open slots to distribute them
                             // evenly over all tokens
                             shuffle(openSlots);
+                            const existingSlots = token.slotIDs.filter(
+                                sl =>
+                                    oa.slotData.find(
+                                        osl => osl.id === sl.id
+                                    ) !== undefined
+                            ).length;
+                            if (existingSlots >= 3) continue; // the user already has 3 slots for this appointment, that's all we give out...
                             // we add three slots per appointment offer
                             for (
                                 let i = 0;

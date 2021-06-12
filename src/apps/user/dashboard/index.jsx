@@ -142,7 +142,7 @@ const Dashboard = withRouter(
                 backupData,
             ]
         ),
-        5000
+        10000
     )
 );
 

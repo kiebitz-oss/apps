@@ -80,10 +80,12 @@ delete-modal:
 cancel-appointment:
   de: Termin absagen
 no-invitations:
-  title:
-    de: Keine Terminangebote
+  please-wait:
+    de: Deine Daten wurden im System gespeichert. Falls Termine in deiner Nähe verfügbar sind, werden diese in wenigen Minuten hier angezeigt.
+  old-grant-notice:
+    de: Du hast Deinen Termin storniert, oder Dein Termin wurde storniert. Bitte warte, bis neue Termine für dich bereitgestellt werden.
   notice:
-    de: Im Moment sind keine Termine in Deiner Umgebung verfügbar. Schau einfach regelmäßig hier vorbei. Sobald neue Termine in Deiner Nähe verfügbar sind, werden sie Dir hier angezeigt.
+    de: Im Moment sind scheinbar keine Termine in Deiner Umgebung verfügbar. Schau einfach regelmäßig hier vorbei. Sobald neue Termine in Deiner Nähe verfügbar sind, werden sie Dir hier angezeigt.
   update-notice:
     de: Diese Seite wird automatisch aktualisiert...
 go-back:
