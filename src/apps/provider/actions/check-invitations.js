@@ -143,20 +143,28 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 }
             }
 
-            // remove appointments that are in the past
-            const newlyPastAppointments = openAppointments.filter(
-                oa => new Date(oa.timestamp) < new Date()
+            const isExpired = oa =>
+                new Date(oa.timestamp) <
+                new Date(new Date().getTime() - 1000 * 60 * 60 * 0);
+
+            // remove appointments that are in the past (with a 2 hour grace period)
+            const newlyPastAppointments = openAppointments.filter(oa =>
+                isExpired(oa)
             );
 
             // only keep appointments that are in the future
-            openAppointments = openAppointments.filter(
-                oa => new Date(oa.timestamp) >= new Date()
-            );
+            openAppointments = openAppointments.filter(oa => !isExpired(oa));
             backend.local.set('provider::appointments::open', openAppointments);
 
-            if (newlyPastAppointments.length > 0){
-                const pastAppointments = backend.local.set('provider::appointments::past', []);
-                backend.local.set('provider::appointments::past', [...pastAppointments, ...newlyPastAppointments])
+            if (newlyPastAppointments.length > 0) {
+                const pastAppointments = backend.local.get(
+                    'provider::appointments::past',
+                    []
+                );
+                backend.local.set('provider::appointments::past', [
+                    ...pastAppointments,
+                    ...newlyPastAppointments,
+                ]);
             }
 
             // we mark the successful tokens

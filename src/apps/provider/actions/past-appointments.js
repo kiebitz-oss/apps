@@ -6,7 +6,7 @@ import { buf2base32, b642buf } from 'helpers/conversion';
 import { randomBytes } from 'helpers/crypto';
 import { enrichAppointments } from './helpers';
 
-export async function openAppointments(state, keyStore, settings) {
+export async function pastAppointments(state, keyStore, settings) {
     const backend = settings.get('backend');
 
     try {
@@ -18,19 +18,9 @@ export async function openAppointments(state, keyStore, settings) {
 
     try {
         const appointments = backend.local.get(
-            'provider::appointments::open',
+            'provider::appointments::past',
             []
         );
-        let changed = false;
-
-        for (const appointment of appointments) {
-            if (appointment.id === undefined) {
-                appointment.id = randomBytes(32);
-                changed = true;
-            }
-        }
-
-        if (changed) backend.local.set('provider::appointments::open', []);
 
         try {
             return {
@@ -46,4 +36,4 @@ export async function openAppointments(state, keyStore, settings) {
     }
 }
 
-openAppointments.actionName = 'openAppointments';
+pastAppointments.actionName = 'pastAppointments';

@@ -142,7 +142,9 @@ export async function sendInvitations(
             }
 
             const selectedAppointments = openAppointments.filter(
-                oa => oa.slotData.filter(sl => sl.open || true).length > 0
+                oa =>
+                    new Date(oa.timestamp) > new Date() &&
+                    oa.slotData.filter(sl => sl.open || true).length > 0
             );
             const appointmentsById = {};
             const appointmentsBySlotId = {};
@@ -196,7 +198,7 @@ export async function sendInvitations(
                             break;
                         }
                     }
-                    const expiresInHours = 4;
+                    const expiresInHours = 8;
                     // to do: remove this once all tokens have proper expiration times
                     if (
                         token.expiresAt === undefined ||
