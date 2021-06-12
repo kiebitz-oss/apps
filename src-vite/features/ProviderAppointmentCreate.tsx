@@ -1,13 +1,14 @@
-import { CalendarOutline } from 'heroicons-react';
 import React from 'react';
+import { CalendarOutline } from 'heroicons-react';
+
 import { Button } from '../components/Button';
 import { DateInput } from '../components/DateInput';
 import { HeroTitle } from '../components/HeroTitle';
 import { Input } from '../components/Input';
 
-export const ProviderAppointmentCreate = () => {
+const ProviderAppointmentCreate = () => {
     return (
-        <>
+        <div className="container mx-auto 2xl:pt-24 pt-12">
             <HeroTitle
                 title="Mein Impfangebot"
                 desc="Geben Sie schnell und einfach bekannt, zu welcher Zeit Sie welchen Impfstoff anbieten können."
@@ -39,9 +40,11 @@ export const ProviderAppointmentCreate = () => {
                     </div>
                 </div>
                 <div className="flex justify-end px-4 py-4 sm:px-6">
-                    <Button scheme="brandUser">Postleitzahl prüfen</Button>
+                    <Button scheme="user">Postleitzahl prüfen</Button>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
+
+export default ProviderAppointmentCreate;

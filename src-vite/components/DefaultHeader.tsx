@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Entity } from '../types';
 import classnames from 'classnames';
+import DefaultNavigationBar from './DefaultNavigationBar';
 
 export interface DefaultHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
     entity: Entity;

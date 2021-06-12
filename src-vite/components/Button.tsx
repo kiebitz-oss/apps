@@ -2,12 +2,11 @@ import React, { FC } from 'react';
 import cn from 'classnames';
 
 const baseButtonClasses =
-    'inline-flex items-center font-medium rounded-md border focus:outline-none focus:ring-2 focus:ring-offset-2';
+    'inline-flex items-center rounded-md border focus:outline-none focus:ring-2 focus:ring-offset-2';
 
 const ButtonSchemeClasses = {
     primary: 'border-transparent shadow-sm text-white bg-cyan-400 hover:bg-cyan-500 focus:ring-cyan-500',
-    brandUser:
-        'border-transparent shadow-sm text-white bg-brand-user hover:bg-brand-user-light focus:ring-brand-user-light',
+    user: 'border-transparent shadow-sm text-white bg-brand-user hover:bg-brand-user-light focus:ring-brand-user-light',
     secondary: 'border-transparent text-cyan-900 bg-cyan-100 hover:bg-cyan-200 focus:ring-cyan-500',
     white: 'border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:ring-cyan-500',
 } as const;

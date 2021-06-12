@@ -1,5 +1,4 @@
-import { setUserTemporaryQueueData, UserQueueData } from '../../kiebitz/user/queue';
-import React, { FormEvent, useState } from 'react';
+import React from 'react';
 import { Button } from '../components/Button';
 import { HeroTitle } from '../components/HeroTitle';
 import { Input } from '../components/Input';
@@ -18,14 +17,14 @@ type FormSubmitData = {
     accessible: boolean;
 };
 
-export const UserWizard = () => {
+const UserWizard = () => {
     const handleSubmit = async (data: FormSubmitData) => {
         // const res = await setUserTemporaryQueueData({ accessible, distance, zipCode });
         console.log({ data });
     };
 
     return (
-        <>
+        <div className="container mx-auto 2xl:pt-24 pt-12">
             <HeroTitle
                 title="Willkommen"
                 desc="Dieser Assistent hilft Dir bei der Impfanmeldung"
@@ -64,12 +63,14 @@ export const UserWizard = () => {
                         </div>
                     </div>
                     <div className="flex justify-end px-4 py-4 sm:px-6">
-                        <Button scheme="brandUser" type="submit">
+                        <Button scheme="user" type="submit">
                             Postleitzahl prüfen
                         </Button>
                     </div>
                 </div>
             </Form>
-        </>
+        </div>
     );
 };
+
+export default UserWizard;

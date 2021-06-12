@@ -8,7 +8,7 @@ const bookAppointment = (data: any) => {
 
 const UserAppointments = () => {
     return (
-        <>
+        <div className="container mx-auto 2xl:pt-24 pt-12">
             <HeroTitle title="Aktuelle Impfangebote" className="mx-auto 2xl:mb-24 mb-12" />
             <div className="grid grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-8 p-4">
                 <MedicalOffice
@@ -30,7 +30,7 @@ const UserAppointments = () => {
                     appointments={[]}
                 />
             </div>
-        </>
+        </div>
     );
 };
 
