@@ -5,10 +5,10 @@
 import { getUserTokenData } from '../../../../kiebitz/user/token-data';
 
 export async function tokenData(state, keyStore, settings) {
-  return {
-    status: 'loaded',
-    data: await getUserTokenData()
-  };
+    return {
+        status: 'loaded',
+        data: await getUserTokenData(),
+    };
 }
 
 tokenData.actionName = 'tokenData';

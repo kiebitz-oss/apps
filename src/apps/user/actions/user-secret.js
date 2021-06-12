@@ -5,31 +5,31 @@
 import { getUserSecret, initUserSecret, setUserSecret } from '../../../../kiebitz/user/user-secret';
 
 export async function userSecret(state, keyStore, settings, data) {
-  if (data !== undefined) {
-    setUserSecret(data);
-  }
+    if (data !== undefined) {
+        setUserSecret(data);
+    }
 
-  data = getUserSecret();
+    data = getUserSecret();
 
-  if (data === null) {
+    if (data === null) {
+        return {
+            status: 'failed',
+        };
+    }
+
     return {
-      status: 'failed'
+        status: 'loaded',
+        data,
     };
-  }
-
-  return {
-    status: 'loaded',
-    data
-  };
 }
 
 userSecret.init = (keyStore, settings) => {
-  const data = initUserSecret();
+    const data = initUserSecret();
 
-  return {
-    status: 'loaded',
-    data
-  };
+    return {
+        status: 'loaded',
+        data,
+    };
 };
 
 userSecret.actionName = 'userSecret';

@@ -4,14 +4,7 @@
 
 import { ephemeralECDHEncrypt } from 'helpers/crypto';
 
-export async function confirmOffers(
-    state,
-    keyStore,
-    settings,
-    offers,
-    invitation,
-    tokenData
-) {
+export async function confirmOffers(state, keyStore, settings, offers, invitation, tokenData) {
     const backend = settings.get('backend');
     try {
         // we lock the local backend to make sure we don't have any data races
@@ -20,6 +13,7 @@ export async function confirmOffers(
             signedToken: tokenData.signedToken,
             userData: tokenData.hashData,
         };
+
         const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
             JSON.stringify(providerData),
             invitation.publicKey
@@ -28,7 +22,7 @@ export async function confirmOffers(
             try {
                 for (let i = 0; i < offer.slotData.length; i++) {
                     const slotData = offer.slotData[i];
-                    const grant = offer.grants.find(grant => {
+                    const grant = offer.grants.find((grant) => {
                         const data = JSON.parse(grant.data);
                         return data.objectID === slotData.id;
                     });

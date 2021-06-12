@@ -5,7 +5,6 @@
 import { getUserInvitationAccepted } from '../../../../kiebitz/user/invitation';
 
 export async function acceptedInvitation(state, keyStore, settings) {
-    console.log(`Called "acceptedInvitation"`);
     return {
         status: 'loaded',
         data: getUserInvitationAccepted(),

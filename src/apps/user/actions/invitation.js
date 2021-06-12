@@ -5,10 +5,10 @@
 import { getUserInvitationVerified } from '../../../../kiebitz/user/invitation';
 
 export async function invitation(state, keyStore, settings) {
-  return {
-    status: 'loaded',
-    data: getUserInvitationVerified
-  };
+    return {
+        status: 'loaded',
+        data: getUserInvitationVerified,
+    };
 }
 
 invitation.actionName = 'invitation';

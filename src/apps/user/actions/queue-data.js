@@ -5,22 +5,22 @@
 import { getUserTemporaryQueueData, setUserTemporaryQueueData } from '../../../../kiebitz/user/queue';
 
 export async function queueData(state, keyStore, settings, data) {
-  if (data !== undefined) {
-    await setUserTemporaryQueueData(data);
-  }
+    if (data !== undefined) {
+        await setUserTemporaryQueueData(data);
+    }
 
-  data = await getUserTemporaryQueueData();
+    data = await getUserTemporaryQueueData();
 
-  if (data === null) {
+    if (data === null) {
+        return {
+            status: 'failed',
+        };
+    }
+
     return {
-      status: 'failed'
+        status: 'loaded',
+        data,
     };
-  }
-
-  return {
-    status: 'loaded',
-    data
-  };
 }
 
 queueData.actionName = 'queueData';
