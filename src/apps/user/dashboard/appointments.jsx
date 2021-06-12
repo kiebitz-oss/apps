@@ -259,7 +259,9 @@ async function toggleOffers(state, keyStore, settings, offer, offers) {
         state.data.push(offer.id);
     }
     // we remove non-existing offers
-    state.data = state.data.filter(i => !offers.includes(i));
+    state.data = state.data.filter(i =>
+        offers.map(offer => offer.id).includes(i)
+    );
     return { data: state.data };
 }
 

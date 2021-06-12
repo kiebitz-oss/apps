@@ -225,15 +225,15 @@ const PropertyTag = withSettings(({ settings, property, verbose }) => {
 const AppointmentCard = withRouter(
     ({ router, action, secondaryAction, id, appointment, n }) => {
         const p = Math.floor((appointment.duration / 60) * 100);
-        const w = Math.floor(95 / (1 + appointment.maxOverlap) - 5);
+        const w = Math.floor(100 / (1 + appointment.maxOverlap));
         const y = Math.floor(
             (new Date(appointment.timestamp).getMinutes() / 60) * 100
         );
         const i = appointment.overlapsWith.filter(
             oa => oa.index < appointment.index
         ).length;
-        const l = Math.floor(2.5 + i * (w + 2.5));
-        const tiny = p < 25 || w < 33;
+        const l = Math.floor(i * w);
+        const tiny = p < 33 || w < 50;
 
         let modal;
 
@@ -258,10 +258,10 @@ const AppointmentCard = withRouter(
         return (
             <div
                 style={{
-                    height: `calc(${p}% - 4px)`,
-                    width: `${w}%`,
-                    top: `${y}%`,
-                    left: `calc(${l}% + 4px)`,
+                    height: `calc(${p}% - 5%)`,
+                    width: `calc(${w}% - 5%)`,
+                    top: `calc(${y}% + 2.5%)`,
+                    left: `calc(${l}% + 2.5%)`,
                 }}
                 onClick={e => {
                     e.preventDefault();

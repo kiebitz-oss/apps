@@ -289,11 +289,22 @@ export async function sendInvitations(
                         offers: Array.from(Object.values(appointments)),
                     };
 
+                    let tokenPublicKey;
+
+                    switch (token.data.version) {
+                        case '0.1':
+                            tokenPublicKey = token.encryptedData.publicKey;
+                            break;
+                        case '0.2':
+                            tokenPublicKey = token.data.encryptionPublicKey;
+                            break;
+                    }
+
                     // we first encrypt the data
                     const encryptedUserData = await ecdhEncrypt(
                         JSON.stringify(userData),
                         token.keyPair,
-                        token.encryptedData.publicKey
+                        tokenPublicKey
                     );
                     // we sign the data with our private key
                     const signedEncryptedUserData = await sign(
@@ -350,8 +361,6 @@ export async function sendInvitations(
                     dataToSubmit = [];
                 }
             }
-
-            console.log('Invitations successfully sent');
 
             backend.local.set('provider::tokens::open', openTokens);
 

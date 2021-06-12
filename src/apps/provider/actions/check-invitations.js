@@ -71,11 +71,20 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 // we try to decrypt this data with the private key of each token
                 for (const openToken of openTokens) {
                     try {
-                        if (
-                            result.publicKey !==
-                            openToken.encryptedData.publicKey
-                        )
-                            continue;
+                        let tokenPublicKey;
+
+                        switch (openToken.data.version) {
+                            case '0.1':
+                                tokenPublicKey =
+                                    openToken.encryptedData.publicKey;
+                                break;
+                            case '0.2':
+                                tokenPublicKey =
+                                    openToken.data.encryptionPublicKey;
+                                break;
+                        }
+
+                        if (result.publicKey !== tokenPublicKey) continue;
 
                         const decryptedData = JSON.parse(
                             await ecdhDecrypt(

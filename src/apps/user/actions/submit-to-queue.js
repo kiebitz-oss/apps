@@ -4,6 +4,7 @@
 
 import {
     generateECDSAKeyPair,
+    generateECDHKeyPair,
     ephemeralECDHEncrypt,
     randomBytes,
     hashString,
@@ -72,19 +73,21 @@ export async function submitToQueue(
             // we hash the user data to prove it didn't change later...
             const [dataHash, nonce] = await hashContactData(contactData);
             const signingKeyPair = await generateECDSAKeyPair();
+            const encryptionKeyPair = await generateECDHKeyPair();
 
             const userToken = {
                 // we use the user secrets first 4 digits as a code
                 // this weakens the key a bit but the provider has access to all
                 // of the user's appointment data anyway...
                 code: userSecret.slice(0, 4),
-                version: '0.1',
+                version: '0.2',
                 publicKey: signingKeyPair.publicKey, // the signing key to control the ID
+                encryptionPublicKey: encryptionKeyPair.publicKey,
                 id: randomBytes(32), // the ID where we want to receive data
             };
 
             // we encrypt the token data so the provider can decrypt it...
-            const [encryptedTokenData, privateKey] = await ephemeralECDHEncrypt(
+            const [encryptedTokenData, _] = await ephemeralECDHEncrypt(
                 JSON.stringify(userToken),
                 queue.publicKey
             );
@@ -113,11 +116,7 @@ export async function submitToQueue(
                 encryptedTokenData: encryptedTokenData,
                 encryptedContactData: encryptedContactData,
                 queueData: queueData,
-                keyPair: {
-                    publicKey: encryptedTokenData.publicKey,
-                    privateKey: privateKey,
-                },
-                privateKey: privateKey,
+                keyPair: encryptionKeyPair,
                 hashNonce: nonce,
                 dataHash: dataHash,
                 tokenData: userToken,
