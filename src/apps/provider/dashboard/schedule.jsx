@@ -123,11 +123,6 @@ const AppointmentOverview = withActions(
                     <CardContent>
                         <ul className="kip-appointment-details">
                             <li>
-                                <T
-                                    t={t}
-                                    k="appointment-overview.details.date"
-                                />
-                                :{' '}
                                 {new Date(
                                     appointment.timestamp
                                 ).toLocaleDateString()}{' '}
@@ -199,22 +194,22 @@ const AppointmentOverview = withActions(
     [cancelAppointment, openAppointments]
 );
 
-const PropertyTags = ({ appointment, verbose }) => {
+const PropertyTags = ({ appointment, verbose, tiny }) => {
     const props = Object.entries(appointment)
         .filter(([k, v]) => v === true)
-        .map(([k, v]) => <PropertyTag verbose={verbose} key={k} property={k} />)
+        .map(([k, v]) => <PropertyTag tiny={tiny} verbose={verbose} key={k} property={k} />)
         .filter(p => p !== undefined);
     return <F>{props}</F>;
 };
 
-const PropertyTag = withSettings(({ settings, property, verbose }) => {
+const PropertyTag = withSettings(({ settings, property, tiny, verbose }) => {
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
     for (const [category, values] of Object.entries(properties)) {
         const prop = values.values[property];
         if (prop !== undefined) {
             return (
-                <span key={property} className={`kip-tag kip-is-${property}`}>
+                <span key={property} className={classNames("kip-tag", `kip-is-${property}`, {"kip-is-tiny": tiny})}>
                     {verbose ? prop[lang] : prop.tag[lang]}
                 </span>
             );
@@ -278,15 +273,15 @@ const AppointmentCard = withRouter(
                 {modal}
                 {!tiny && (
                     <F>
-                        <span className="kip-tag kip-is-open">
+                        <span className="kip-tag kip-is-open kip-is-tiny">
                             {appointment.slots}
                         </span>
-                        <span className="kip-tag kip-is-booked">
+                        <span className="kip-tag kip-is-booked kip-is-tiny">
                             ·{' '}
                             {appointment.slotData.filter(sl => !sl.open).length}{' '}
                             ·
                         </span>
-                        <PropertyTags appointment={appointment} />
+                        <PropertyTags appointment={appointment} tiny />
                     </F>
                 )}
             </div>
@@ -463,8 +458,9 @@ const DayLabelColumn = ({ fromHour, toHour }) => {
     return <div className="kip-day-column kip-is-day-label">{hourRows}</div>;
 };
 
-const WeekCalendar = ({
+const WeekCalendar = withRouter(({
     action,
+    router,
     secondaryAction,
     id,
     startDate,
@@ -508,8 +504,125 @@ const WeekCalendar = ({
         );
         date.setDate(date.getDate() + 1);
     }
-    return <div className="kip-week-calendar">{dayColumns}</div>;
-};
+
+    const goBackward = () => {
+        const newDate = formatDate(
+            getMonday(
+                new Date(
+                    startDate.getTime() -
+                        1000 * 60 * 60 * 24 * 7
+                )
+            )
+        );
+        router.navigateToUrl(`/provider/schedule/${newDate}`);
+    };
+
+    const goForward = () => {
+        const newDate = formatDate(
+            getMonday(
+                new Date(
+                    startDate.getTime() +
+                        1000 * 60 * 60 * 24 * 7
+                )
+            )
+        );
+        router.navigateToUrl(`/provider/schedule/${newDate}`);
+    };
+
+    return <F>
+        <div className="kip-schedule-navigation">
+            <Button
+                className="kip-backward"
+                type=""
+                onClick={goBackward}
+            >
+                <T t={t} k="schedule.backward" />
+            </Button>
+            <Button
+                className="kip-forward"
+                type=""
+                onClick={goForward}
+            >
+                <T t={t} k="schedule.forward" />
+            </Button>
+        </div>
+        <div className="kip-week-calendar">    
+            {dayColumns}
+        </div>
+    </F>;
+});
+
+const AppointmentItem = ({appointment}) => {
+
+    const acceptedItems = appointment.slotData
+        .map(sl => {
+            if (sl.open) return;
+            return (
+                <li className="kip-is-code" key={sl.id}>
+                    {sl.token.data.code}
+                </li>
+            );
+        })
+        .filter(it => it);
+
+    return <li className="kip-appointment-item">
+        <ul className="kip-appointment-details">
+            <li>
+                {new Date(
+                    appointment.timestamp
+                ).toLocaleDateString()}{' '}
+                {new Date(
+                    appointment.timestamp
+                ).toLocaleTimeString()}
+            </li>
+            <li>
+                <T
+                    t={t}
+                    k="appointment-overview.details.slots"
+                />
+                : {appointment.slotData.length}{' '}
+            </li>
+            <li>
+                <T
+                    t={t}
+                    k="appointment-overview.details.booked"
+                />
+                :{' '}
+                {
+                    appointment.slotData.filter(sl => !sl.open)
+                        .length
+                }{' '}
+            </li>
+        </ul>
+        <PropertyTags verbose appointment={appointment} />
+        {(acceptedItems.length > 0 && (
+            <F>
+                <ul className="kip-booking-codes">
+                    {acceptedItems}
+                </ul>
+            </F>
+        )) || (
+            <Message type="info">
+                <T
+                    t={t}
+                    k="appointment-overview.details.no-booked-slots"
+                />
+            </Message>
+        )}
+
+    </li>
+}
+
+const AppointmentsList = ({appointments}) => {
+    const appointmentItems = appointments.filter(app => app.slotData.some(sl => !sl.open)).map(appointment => <AppointmentItem appointment={appointment} />) 
+    return <div className="kip-appointments-list kip-printable">
+        <h2><T t={t} k="appointments-list.title" /></h2>
+        <ul className="kip-appointments">
+            {appointmentItems}
+        </ul>
+
+    </div>
+}
 
 class AppointmentForm extends Form {
     validate() {
@@ -913,32 +1026,28 @@ const Invitations = withTimer(
 
                     let dateString = formatDate(startDate);
 
-                    const goBackward = () => {
-                        const newDate = formatDate(
-                            getMonday(
-                                new Date(
-                                    startDate.getTime() -
-                                        1000 * 60 * 60 * 24 * 7
-                                )
-                            )
-                        );
-                        router.navigateToUrl(`/provider/schedule/${newDate}`);
-                    };
-
-                    const goForward = () => {
-                        const newDate = formatDate(
-                            getMonday(
-                                new Date(
-                                    startDate.getTime() +
-                                        1000 * 60 * 60 * 24 * 7
-                                )
-                            )
-                        );
-                        router.navigateToUrl(`/provider/schedule/${newDate}`);
-                    };
-
                     const render = () => {
                         let newAppointmentModal;
+
+
+                        let content
+                        switch(view){
+                            case 'calendar':
+                                content =                                     <WeekCalendar
+                                    startDate={startDate}
+                                    action={action}
+                                    secondaryAction={secondaryAction}
+                                    id={id}
+                                    appointments={
+                                        openAppointments.enrichedData
+                                    }
+                                />
+                                break
+                            case 'booking-list':
+                                content = <AppointmentsList startDate={startDate} id={id} action={action} secondaryAction={secondaryAction} appointments={openAppointments.enrichedData} />
+                                break
+
+                        }
 
                         if (
                             secondaryAction === 'new' ||
@@ -956,38 +1065,42 @@ const Invitations = withTimer(
                         return (
                             <div className="kip-schedule">
                                 <CardContent>
-                                    {newAppointmentModal}
-                                    <Button
-                                        href={`/provider/schedule/${dateString}/new`}
-                                    >
-                                        <T t={t} k="schedule.appointment.add" />
-                                    </Button>
-                                    <hr />
-                                    <div className="kip-schedule-navigation">
+                                    <div className="kip-non-printable">
+                                        {newAppointmentModal}
                                         <Button
-                                            className="kip-backward"
-                                            type=""
-                                            onClick={goBackward}
+                                            href={`/provider/schedule/${dateString}/new`}
                                         >
-                                            <T t={t} k="schedule.backward" />
+                                            <T t={t} k="schedule.appointment.add" />
                                         </Button>
-                                        <Button
-                                            className="kip-forward"
-                                            type=""
-                                            onClick={goForward}
+                                        &nbsp;
+                                        <DropdownMenu
+                                            title={
+                                                <F>
+                                                    <Icon icon="calendar" />{' '}
+                                                    <T
+                                                        t={t}
+                                                        k={`schedule.${view}`}
+                                                    />
+                                                </F>
+                                            }
                                         >
-                                            <T t={t} k="schedule.forward" />
-                                        </Button>
+                                            <DropdownMenuItem
+                                                icon="calendar"
+                                                onClick={() => setView('calendar')}
+                                            >
+                                                <T t={t} k={`schedule.calendar`} />
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                icon="list"
+                                                onClick={() => setView('booking-list')}
+                                            >
+                                                <T t={t} k={`schedule.booking-list`} />
+                                            </DropdownMenuItem>
+                                        </DropdownMenu>
+
+                                        <hr />
                                     </div>
-                                    <WeekCalendar
-                                        startDate={startDate}
-                                        action={action}
-                                        secondaryAction={secondaryAction}
-                                        id={id}
-                                        appointments={
-                                            openAppointments.enrichedData
-                                        }
-                                    />
+                                    {content}
                                 </CardContent>
                                 <Message type="info" waiting>
                                     <T

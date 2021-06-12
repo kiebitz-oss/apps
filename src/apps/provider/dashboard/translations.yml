@@ -51,6 +51,9 @@ appointment-overview:
       de: Keine gebuchten Slots bisher. Sobald Buchungen vorhanden sind werden hier die Buchungscodes angezeigt.
   title:
     de: Terminübersicht
+appointments-list:
+  title:
+    de: Buchungen
 schedule:
   backward:
     de: vorherige Woche
@@ -66,11 +69,10 @@ schedule:
       de: Terminserie
     add:
       de: Termin erstellen
-  view:
-    calendar:
-      de: Kalenderansicht
-    list:
-      de: Listenansicht
+  calendar:
+    de: Kalenderansicht
+  booking-list:
+    de: Buchungliste
   updating:
     de: "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}" 
   title:

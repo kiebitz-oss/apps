@@ -72,8 +72,69 @@ $border: 1px solid #ddd;
 			margin-left: auto;
 		}
 	}
-
 }
+				
+
+.kip-appointments-list {
+	ul.kip-appointments {
+		li.kip-appointment-item {
+			box-shadow: $kip-box-shadow;
+			margin-bottom: map-get($kip-space, md);
+			padding: map-get($kip-space, md);
+		}
+	}
+}
+
+.kip-appointments-list, .kip-appointment-card {
+
+	.kip-tag {
+		display: inline-block;
+		color: #000;
+		background: $kip-appt-background;
+		opacity: 1;
+		font-size: 12px;
+		box-shadow: $kip-box-shadow;
+		padding: map-get($kip-space, sm);
+		border-radius: $kip-border-radius;
+		margin-right: map-get($kip-space, xs);
+		margin-bottom: map-get($kip-space, xs);
+
+		&.kip-is-tiny {
+			box-shadow: none;
+			padding: 0;
+		}
+
+		&.kip-is-open {
+			color: #a53;
+		}
+
+		&.kip-is-booked {
+			color: #374;
+		}
+	}
+
+	ul.kip-appointment-details, ul.kip-booking-codes {
+		margin-top: map-get($kip-space, md);
+		margin-bottom: map-get($kip-space, md);
+
+		li {
+			display: inline-block;
+			margin-right: map-get($kip-space, md);
+			background: #fafafa;
+			padding: map-get($kip-space, sm);
+			border-radius: $kip-border-radius;
+			box-shadow: $kip-box-shadow;
+
+			&.kip-is-code{
+				@include fs(emphasized);
+				margin-bottom: map-get($kip-space, md);
+				font-weight: bolder;
+				text-transform: uppercase;
+			}
+		}
+	}
+}
+
 
 .kip-week-calendar {
 	position: relative;
@@ -171,35 +232,8 @@ $border: 1px solid #ddd;
 						margin-top: map-get($kip-space, md);
 					}
 
-					ul.kip-appointment-details, ul.kip-booking-codes {
-						margin-top: map-get($kip-space, md);
-						li {
-							display: inline-block;
-							margin-right: map-get($kip-space, md);
-							background: $kip-appt-background;
-							padding: map-get($kip-space, sm);
-
-							&.kip-is-code{
-								@include fs(large);
-								margin-bottom: map-get($kip-space, md);
-								box-shadow: $kip-box-shadow;
-								font-weight: bolder;
-								text-transform: uppercase;
-							}
-						}
-					}
 				}
 
-				.kip-tag {
-					display: inline-block;
-					color: #000;
-					background: $kip-appt-background;
-					opacity: 1;
-					font-size: 12px;
-					margin-right: map-get($kip-space, xs);
-					margin-bottom: map-get($kip-space, xs);
-				}
-				
 			}
 
 		}

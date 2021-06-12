@@ -8,6 +8,12 @@ html {
     background: $kip-background-color;
 }
 
+.kip-non-printable {
+    @media print {
+        display: none !important;
+    }
+}
+
 body.kip-fonts {
     @include font-open-sans;
 
