@@ -57,3 +57,58 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
         backend.local.unlock();
     }
 };
+
+export const confirmUserOffer = async (slotData, encryptedProviderData, grant, tokenData) => {
+    const backend = settings.get(KEY_BACKEND);
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock();
+
+        return await backend.appointments.storeData(
+            {
+                id: slotData.id,
+                data: encryptedProviderData,
+                grant: grant,
+            },
+            tokenData.signingKeyPair
+        );
+    } finally {
+        backend.local.unlock();
+    }
+};
+
+export const confirmUserOffers = async (offers, encryptedProviderData, invitation, tokenData) => {
+    const backend = settings.get(KEY_BACKEND);
+    for (const offer of offers) {
+        try {
+            for (let i = 0; i < offer.slotData.length; i++) {
+                const slotData = offer.slotData[i];
+                const grant = offer.grants.find((grant) => {
+                    const data = JSON.parse(grant.data);
+                    return data.objectID === slotData.id;
+                });
+                if (grant === undefined) continue;
+                try {
+                    await confirmUserOffer(slotData, encryptedProviderData, grant, tokenData);
+                } catch (e) {
+                    // we can't use this slot, we try the next...
+                    console.error(e);
+                    continue;
+                }
+                // we store the information about the offer which we've accepted
+                backend.local.set(KEY_USER_INVITATION_ACCEPTED, {
+                    offer,
+                    invitation,
+                    slotData,
+                    grant,
+                });
+                return {
+                    offer,
+                    slotData,
+                };
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+};
