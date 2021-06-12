@@ -12,6 +12,8 @@ export const cloudKeys = [
     'appointments::open',
     'data::verified',
     'tokens::open',
+    'tokens::expired',
+    'tokens::used',
     'data::encryptionKey',
 ];
 
@@ -34,7 +36,11 @@ export async function backupData(state, keyStore, settings, keyPairs, secret) {
 
         const cloudData = {};
         for (const key of cloudKeys) {
-            cloudData[key] = backend.local.get(`provider::${key}`);
+            const v = backend.local.get(`provider::${key}`);
+            cloudData[key] = v;
+            // we also store the data locally so that we can restore it from
+            // there in case something goes wrong with the cloud backup...
+            data[key] = v;
         }
 
         const referenceData = { local: { ...data }, cloud: { ...cloudData } };

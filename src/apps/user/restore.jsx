@@ -86,7 +86,7 @@ export default withForm(
                         );
 
                     return (
-                        <CenteredCard className="kip-restore-from-backup">
+                        <CenteredCard className="kip-user-restore-from-backup">
                             <CardHeader>
                                 <h1 className="bulma-subtitle">
                                     <T t={t} k="load-backup.title" />

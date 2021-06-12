@@ -21,7 +21,8 @@ export async function restoreFromBackup(
     keyStore,
     settings,
     secret,
-    data
+    data,
+    localOnly // if true, only local data will be imported
 ) {
     const backend = settings.get('backend');
 
@@ -56,7 +57,13 @@ export async function restoreFromBackup(
             backend.local.set(`provider::${key}`, dd[key]);
         }
 
-        if (dd.keyPairs.sync !== undefined) {
+        // if there's local data in the backup we restore it too...
+        for (const key of cloudKeys) {
+            if (dd[key] !== undefined)
+                backend.local.set(`provider::${key}`, dd[key]);
+        }
+
+        if (dd.keyPairs.sync !== undefined && localOnly !== true) {
             const [id, key] = await deriveSecrets(
                 b642buf(dd.keyPairs.sync),
                 32,
