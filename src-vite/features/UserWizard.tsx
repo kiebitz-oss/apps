@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from '../components/Button';
-import { HeroTitle } from '../components/HeroTitle';
 import { Input } from '../components/Input';
 import { Select } from '../components/Select';
 import { Toggle } from '../components/Toggle';
@@ -25,13 +24,13 @@ const UserWizard = () => {
     };
 
     return (
-        <div className="container mx-auto 2xl:pt-24 pt-12 2xl:w-1/4 lg:w-1/2">
-            <Card>
+        <div className="container mx-auto min-h-screen 2xl:pt-24 py-12 2xl:w-1/4 lg:w-1/2">
+            <Card className="lg:rounded-lg">
                 <h1 className="text-4xl text-brand-user">Willkommen</h1>
                 <p>Hier kannst Du Dich mit wenigen Angaben für freie Impftermine in Deiner Nähe registrieren.</p>
                 <Form onSubmit={handleSubmit}>
                     <div className="py-5">
-                        <div className="mb-4 space-y-4">
+                        <div className="space-y-4">
                             <Field label="Postleitzahl deines Wohnorts" name="plz" pattern={plzRegex} isRequired>
                                 <Input placeholder="38259" />
                             </Field>
@@ -65,7 +64,7 @@ const UserWizard = () => {
                             </Field>
                         </div>
                     </div>
-                    <div className="flex justify-end px-4 py-4 sm:px-6">
+                    <div className="flex justify-end">
                         <Button scheme="user" type="submit">
                             Postleitzahl prüfen
                         </Button>
