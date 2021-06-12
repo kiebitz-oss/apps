@@ -33,6 +33,10 @@ appointments-notice:
   de: Bitte wähle alle für Dich passenden Termine aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum geannten Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.
 confirm-appointment:
   de: Terminauswahl bestätigen
+offer-expired:
+  de: Das Angebot ist leider abgelaufen. Falls wieder Termine verfügbar sind in deiner Umgebung erhälst du eventuell ein neues Angebot.
+offer-expires-at:
+  de: "Das Angebot läuft in {duration} ab (am {date} um {time}), bitte wähle vorher einen Termin!"
 appointment-date:
   de:
     Datum

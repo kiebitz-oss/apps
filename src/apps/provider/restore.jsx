@@ -80,13 +80,15 @@ export default withForm(
 
                     const restore = () => {
                         setRestoring(true);
-                        restoreFromBackupAction(data.secret, data.file, data.localOnly).then(
-                            data => {
-                                setRestoring(false);
-                                if (data.status === 'succeeded')
-                                    router.navigateToUrl('/provider/schedule');
-                            }
-                        );
+                        restoreFromBackupAction(
+                            data.secret,
+                            data.file,
+                            data.localOnly
+                        ).then(data => {
+                            setRestoring(false);
+                            if (data.status === 'succeeded')
+                                router.navigateToUrl('/provider/schedule');
+                        });
                     };
 
                     let notice;
@@ -176,14 +178,20 @@ export default withForm(
                                                 />
                                             )}
                                         </label>
-                                        <h3><T t={t} k="load-backup.advanced-options" /></h3>
+                                        <h3>
+                                            <T
+                                                t={t}
+                                                k="load-backup.advanced-options"
+                                            />
+                                        </h3>
 
                                         <ul className="kip-properties">
                                             <li className="kip-property">
                                                 <Switch
                                                     id="localOnly"
                                                     checked={
-                                                        data.localOnly !== undefined
+                                                        data.localOnly !==
+                                                        undefined
                                                             ? data.localOnly
                                                             : false
                                                     }
@@ -195,11 +203,13 @@ export default withForm(
                                                 </Switch>
 
                                                 <label htmlFor="localOnly">
-                                                    <T t={t} k="load-backup.local-only.label" />
+                                                    <T
+                                                        t={t}
+                                                        k="load-backup.local-only.label"
+                                                    />
                                                 </label>
                                             </li>
                                         </ul>
-
                                     </FieldSet>
                                 </FormComponent>
                             </CardContent>

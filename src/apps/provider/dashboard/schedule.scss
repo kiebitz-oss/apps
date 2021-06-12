@@ -77,7 +77,16 @@ $border: 1px solid #ddd;
 
 .kip-appointments-list {
 	ul.kip-appointments {
+		display: block;
+		position: relative;
 		li.kip-appointment-item {
+			position: relative;
+			display: block;
+
+			break-inside: avoid;
+			page-break-inside: avoid;
+			-webkit-column-break-inside: avoid;
+
 			box-shadow: $kip-box-shadow;
 			margin-bottom: map-get($kip-space, md);
 			padding: map-get($kip-space, md);

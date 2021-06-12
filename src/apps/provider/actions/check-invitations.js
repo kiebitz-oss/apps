@@ -38,7 +38,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
         try {
             const ids = [];
             let appointments = [];
-            const usedTokens = [];
             for (const appointment of openAppointments
                 .slice(currentIndex, currentIndex + N)
                 .filter(oa => oa.slots > 0)) {
@@ -100,7 +99,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 sl.token.token === openToken.token
                         );
 
-                        // we cancel the slot
                         if (slotData !== undefined) {
                             slotData.userData = decryptedData;
                             if (decryptedData.cancel === true) {
@@ -116,6 +114,14 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 );
                                 // we replace the slot
                                 appointment.slotData.push(createSlot());
+                                // We reset the expiration time. The sendInvitations
+                                // action will take care of giving the token a new one
+                                openToken.expiresAt = undefined;
+                            } else {
+                                // the token will expire with the appointment
+                                openToken.expiresAt = new Date(
+                                    appointment.timestamp
+                                ).toISOString();
                             }
                         } else {
                             // we get the slot data for the token
@@ -125,8 +131,10 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             slotData.open = false;
                             slotData.token = openToken;
                             slotData.userData = decryptedData;
-
-                            usedTokens.push(openToken);
+                            // the token will expire with the appointment
+                            openToken.expiresAt = new Date(
+                                appointment.timestamp
+                            ).toISOString();
                         }
                     } catch (e) {
                         console.error(e);
@@ -147,7 +155,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             backend.local.set('provider::appointments::open', openAppointments);
 
             // we mark the successful tokens
-            const pastTokens = pastAppointments
+            const newlyUsedTokens = pastAppointments
                 .map(pa =>
                     pa.slotData
                         .filter(sl => sl.token !== undefined)
@@ -156,10 +164,18 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 .flat();
 
             // we send the signed, encrypted data to the backend
-            if (pastTokens.length > 0) {
+            if (newlyUsedTokens.length > 0) {
+                const usedTokens = backend.local.get(
+                    'provider::tokens::used',
+                    []
+                );
+                backend.local.set('provider::tokens::used', [
+                    ...usedTokens,
+                    ...newlyUsedTokens,
+                ]);
                 try {
                     await backend.appointments.markTokensAsUsed(
-                        { tokens: pastTokens.map(token => token.token) },
+                        { tokens: newlyUsedTokens.map(token => token.token) },
                         keyPairs.signing
                     );
                 } catch (e) {
@@ -169,7 +185,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
             // we remove the past tokens from the list of open tokens...
             openTokens = openTokens.filter(
-                ot => !pastTokens.some(pt => pt.token === ot.token)
+                ot => !newlyUsedTokens.some(pt => pt.token === ot.token)
             );
 
             backend.local.set('provider::tokens::open', openTokens);

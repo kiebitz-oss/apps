@@ -6,6 +6,7 @@ import React, { useState, useEffect, Fragment as F } from 'react';
 import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
 import { urlEncode } from 'helpers/data';
+import { formatDate, formatTime, getMonday } from 'helpers/time';
 import Form from 'helpers/form';
 import {
     withRouter,
@@ -197,7 +198,9 @@ const AppointmentOverview = withActions(
 const PropertyTags = ({ appointment, verbose, tiny }) => {
     const props = Object.entries(appointment)
         .filter(([k, v]) => v === true)
-        .map(([k, v]) => <PropertyTag tiny={tiny} verbose={verbose} key={k} property={k} />)
+        .map(([k, v]) => (
+            <PropertyTag tiny={tiny} verbose={verbose} key={k} property={k} />
+        ))
         .filter(p => p !== undefined);
     return <F>{props}</F>;
 };
@@ -209,7 +212,12 @@ const PropertyTag = withSettings(({ settings, property, tiny, verbose }) => {
         const prop = values.values[property];
         if (prop !== undefined) {
             return (
-                <span key={property} className={classNames("kip-tag", `kip-is-${property}`, {"kip-is-tiny": tiny})}>
+                <span
+                    key={property}
+                    className={classNames('kip-tag', `kip-is-${property}`, {
+                        'kip-is-tiny': tiny,
+                    })}
+                >
                     {verbose ? prop[lang] : prop.tag[lang]}
                 </span>
             );
@@ -458,102 +466,96 @@ const DayLabelColumn = ({ fromHour, toHour }) => {
     return <div className="kip-day-column kip-is-day-label">{hourRows}</div>;
 };
 
-const WeekCalendar = withRouter(({
-    action,
-    router,
-    secondaryAction,
-    id,
-    startDate,
-    appointments,
-}) => {
-    let fromHour;
-    let toHour;
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 7);
-    appointments.forEach(app => {
-        const date = new Date(app.timestamp);
-        if (date < startDate || date > endDate || app.slots === 0) return;
-        const hours = date.getHours();
-        if (fromHour === undefined || hours < fromHour) fromHour = hours;
-        if (toHour === undefined || hours > toHour) toHour = hours;
-    });
-    if (fromHour === undefined || fromHour > 8) fromHour = 8;
-    if (toHour === undefined || toHour < 19) toHour = 19; // hours are inclusive
-    const dayColumns = [
-        <DayLabelColumn
-            fromHour={fromHour}
-            toHour={toHour}
-            key="-"
-            appointments={appointments}
-        />,
-    ];
-    const date = new Date(startDate);
-    for (let i = 0; i < 7; i++) {
-        dayColumns.push(
-            <DayColumn
-                appointments={appointments}
-                secondaryAction={secondaryAction}
-                action={action}
-                id={id}
+const WeekCalendar = withRouter(
+    ({ action, router, secondaryAction, id, startDate, appointments }) => {
+        let fromHour;
+        let toHour;
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 7);
+        appointments.forEach(app => {
+            const appStartDate = new Date(app.timestamp);
+            const appEndDate = new Date(
+                new Date(app.timestamp).getTime() + 1000 * 60 * app.duration
+            );
+            if (
+                appStartDate < startDate ||
+                appStartDate > endDate ||
+                app.slots === 0
+            )
+                return;
+            const startHours = appStartDate.getHours();
+            const endHours = appEndDate.getHours();
+            if (fromHour === undefined || startHours < fromHour)
+                fromHour = startHours;
+            if (toHour === undefined || endHours > toHour) toHour = endHours;
+        });
+        if (fromHour === undefined || fromHour > 8) fromHour = 8;
+        if (toHour === undefined || toHour < 19) toHour = 19; // hours are inclusive
+        const dayColumns = [
+            <DayLabelColumn
                 fromHour={fromHour}
                 toHour={toHour}
-                date={new Date(date)}
-                day={i}
-                key={i}
-            />
+                key="-"
+                appointments={appointments}
+            />,
+        ];
+        const date = new Date(startDate);
+        for (let i = 0; i < 7; i++) {
+            dayColumns.push(
+                <DayColumn
+                    appointments={appointments}
+                    secondaryAction={secondaryAction}
+                    action={action}
+                    id={id}
+                    fromHour={fromHour}
+                    toHour={toHour}
+                    date={new Date(date)}
+                    day={i}
+                    key={i}
+                />
+            );
+            date.setDate(date.getDate() + 1);
+        }
+
+        const goBackward = () => {
+            const newDate = formatDate(
+                getMonday(
+                    new Date(startDate.getTime() - 1000 * 60 * 60 * 24 * 7)
+                )
+            );
+            router.navigateToUrl(`/provider/schedule/${newDate}`);
+        };
+
+        const goForward = () => {
+            const newDate = formatDate(
+                getMonday(
+                    new Date(startDate.getTime() + 1000 * 60 * 60 * 24 * 7)
+                )
+            );
+            router.navigateToUrl(`/provider/schedule/${newDate}`);
+        };
+
+        return (
+            <F>
+                <div className="kip-schedule-navigation">
+                    <Button
+                        className="kip-backward"
+                        type=""
+                        onClick={goBackward}
+                    >
+                        <T t={t} k="schedule.backward" />
+                    </Button>
+                    <Button className="kip-forward" type="" onClick={goForward}>
+                        <T t={t} k="schedule.forward" />
+                    </Button>
+                </div>
+                <div className="kip-week-calendar">{dayColumns}</div>
+            </F>
         );
-        date.setDate(date.getDate() + 1);
     }
+);
 
-    const goBackward = () => {
-        const newDate = formatDate(
-            getMonday(
-                new Date(
-                    startDate.getTime() -
-                        1000 * 60 * 60 * 24 * 7
-                )
-            )
-        );
-        router.navigateToUrl(`/provider/schedule/${newDate}`);
-    };
-
-    const goForward = () => {
-        const newDate = formatDate(
-            getMonday(
-                new Date(
-                    startDate.getTime() +
-                        1000 * 60 * 60 * 24 * 7
-                )
-            )
-        );
-        router.navigateToUrl(`/provider/schedule/${newDate}`);
-    };
-
-    return <F>
-        <div className="kip-schedule-navigation">
-            <Button
-                className="kip-backward"
-                type=""
-                onClick={goBackward}
-            >
-                <T t={t} k="schedule.backward" />
-            </Button>
-            <Button
-                className="kip-forward"
-                type=""
-                onClick={goForward}
-            >
-                <T t={t} k="schedule.forward" />
-            </Button>
-        </div>
-        <div className="kip-week-calendar">    
-            {dayColumns}
-        </div>
-    </F>;
-});
-
-const AppointmentItem = ({appointment}) => {
-
+const AppointmentItem = ({ appointment }) => {
     const acceptedItems = appointment.slotData
         .map(sl => {
             if (sl.open) return;
@@ -565,64 +567,51 @@ const AppointmentItem = ({appointment}) => {
         })
         .filter(it => it);
 
-    return <li className="kip-appointment-item">
-        <ul className="kip-appointment-details">
-            <li>
-                {new Date(
-                    appointment.timestamp
-                ).toLocaleDateString()}{' '}
-                {new Date(
-                    appointment.timestamp
-                ).toLocaleTimeString()}
-            </li>
-            <li>
-                <T
-                    t={t}
-                    k="appointment-overview.details.slots"
-                />
-                : {appointment.slotData.length}{' '}
-            </li>
-            <li>
-                <T
-                    t={t}
-                    k="appointment-overview.details.booked"
-                />
-                :{' '}
-                {
-                    appointment.slotData.filter(sl => !sl.open)
-                        .length
-                }{' '}
-            </li>
-        </ul>
-        <PropertyTags verbose appointment={appointment} />
-        {(acceptedItems.length > 0 && (
-            <F>
-                <ul className="kip-booking-codes">
-                    {acceptedItems}
-                </ul>
-            </F>
-        )) || (
-            <Message type="info">
-                <T
-                    t={t}
-                    k="appointment-overview.details.no-booked-slots"
-                />
-            </Message>
-        )}
+    return (
+        <li className="kip-appointment-item">
+            <ul className="kip-appointment-details">
+                <li>
+                    {new Date(appointment.timestamp).toLocaleDateString()}{' '}
+                    {new Date(appointment.timestamp).toLocaleTimeString()}
+                </li>
+                <li>
+                    <T t={t} k="appointment-overview.details.slots" />:{' '}
+                    {appointment.slotData.length}{' '}
+                </li>
+                <li>
+                    <T t={t} k="appointment-overview.details.booked" />:{' '}
+                    {appointment.slotData.filter(sl => !sl.open).length}{' '}
+                </li>
+            </ul>
+            <PropertyTags verbose appointment={appointment} />
+            {(acceptedItems.length > 0 && (
+                <F>
+                    <ul className="kip-booking-codes">{acceptedItems}</ul>
+                </F>
+            )) || (
+                <Message type="info">
+                    <T t={t} k="appointment-overview.details.no-booked-slots" />
+                </Message>
+            )}
+        </li>
+    );
+};
 
-    </li>
-}
-
-const AppointmentsList = ({appointments}) => {
-    const appointmentItems = appointments.filter(app => app.slotData.some(sl => !sl.open)).map(appointment => <AppointmentItem appointment={appointment} />) 
-    return <div className="kip-appointments-list kip-printable">
-        <h2><T t={t} k="appointments-list.title" /></h2>
-        <ul className="kip-appointments">
-            {appointmentItems}
-        </ul>
-
-    </div>
-}
+const AppointmentsList = ({ appointments }) => {
+    const appointmentItems = appointments
+        .filter(app => app.slotData.some(sl => !sl.open))
+        .map(appointment => (
+            <AppointmentItem key={appointment.id} appointment={appointment} />
+        ));
+    return (
+        <div className="kip-appointments-list kip-printable">
+            <h2>
+                <T t={t} k="appointments-list.title" />
+            </h2>
+            <ul className="kip-appointments">{appointmentItems}</ul>
+        </div>
+    );
+};
 
 class AppointmentForm extends Form {
     validate() {
@@ -938,39 +927,6 @@ const NewAppointment = withSettings(
     )
 );
 
-// https://stackoverflow.com/questions/4156434/javascript-get-the-first-day-of-the-week-from-current-date
-function getMonday(d) {
-    d = new Date(d);
-    var day = d.getDay(),
-        diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-    return new Date(d.setDate(diff));
-}
-
-// https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd
-function formatDate(date) {
-    var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-}
-
-// https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd
-function formatTime(date) {
-    var d = new Date(date),
-        hours = '' + d.getHours(),
-        minutes = '' + d.getMinutes();
-
-    if (hours.length < 2) hours = '0' + hours;
-    if (minutes.length < 2) minutes = '0' + minutes;
-
-    return [hours, minutes].join(':');
-}
-
 const Invitations = withTimer(
     withSettings(
         withRouter(
@@ -1029,24 +985,34 @@ const Invitations = withTimer(
                     const render = () => {
                         let newAppointmentModal;
 
-
-                        let content
-                        switch(view){
+                        let content;
+                        switch (view) {
                             case 'calendar':
-                                content =                                     <WeekCalendar
-                                    startDate={startDate}
-                                    action={action}
-                                    secondaryAction={secondaryAction}
-                                    id={id}
-                                    appointments={
-                                        openAppointments.enrichedData
-                                    }
-                                />
-                                break
+                                content = (
+                                    <WeekCalendar
+                                        startDate={startDate}
+                                        action={action}
+                                        secondaryAction={secondaryAction}
+                                        id={id}
+                                        appointments={
+                                            openAppointments.enrichedData
+                                        }
+                                    />
+                                );
+                                break;
                             case 'booking-list':
-                                content = <AppointmentsList startDate={startDate} id={id} action={action} secondaryAction={secondaryAction} appointments={openAppointments.enrichedData} />
-                                break
-
+                                content = (
+                                    <AppointmentsList
+                                        startDate={startDate}
+                                        id={id}
+                                        action={action}
+                                        secondaryAction={secondaryAction}
+                                        appointments={
+                                            openAppointments.enrichedData
+                                        }
+                                    />
+                                );
+                                break;
                         }
 
                         if (
@@ -1070,7 +1036,10 @@ const Invitations = withTimer(
                                         <Button
                                             href={`/provider/schedule/${dateString}/new`}
                                         >
-                                            <T t={t} k="schedule.appointment.add" />
+                                            <T
+                                                t={t}
+                                                k="schedule.appointment.add"
+                                            />
                                         </Button>
                                         &nbsp;
                                         <DropdownMenu
@@ -1086,18 +1055,27 @@ const Invitations = withTimer(
                                         >
                                             <DropdownMenuItem
                                                 icon="calendar"
-                                                onClick={() => setView('calendar')}
+                                                onClick={() =>
+                                                    setView('calendar')
+                                                }
                                             >
-                                                <T t={t} k={`schedule.calendar`} />
+                                                <T
+                                                    t={t}
+                                                    k={`schedule.calendar`}
+                                                />
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 icon="list"
-                                                onClick={() => setView('booking-list')}
+                                                onClick={() =>
+                                                    setView('booking-list')
+                                                }
                                             >
-                                                <T t={t} k={`schedule.booking-list`} />
+                                                <T
+                                                    t={t}
+                                                    k={`schedule.booking-list`}
+                                                />
                                             </DropdownMenuItem>
                                         </DropdownMenu>
-
                                         <hr />
                                     </div>
                                     {content}

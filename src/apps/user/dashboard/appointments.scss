@@ -63,6 +63,12 @@
 				}
 
 			}
+			tr.kip-failed {
+				text-decoration: line-through;
+				color: #aaa;
+				background: #fee !important;
+				pointer-events: none;
+			}
 			tr.kip-selected, tr.kip-selected:nth-child(even) {
 				background: $kip-green;
 				color: #fff;
