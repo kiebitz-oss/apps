@@ -145,7 +145,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
             const isExpired = oa =>
                 new Date(oa.timestamp) <
-                new Date(new Date().getTime() - 1000 * 60 * 60 * 0);
+                new Date(new Date().getTime() - 1000 * 60 * 60 * 2);
 
             // remove appointments that are in the past (with a 2 hour grace period)
             const newlyPastAppointments = openAppointments.filter(oa =>
