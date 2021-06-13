@@ -38,7 +38,7 @@ export async function sendInvitations(
     }
 
     // we process at most N tokens during one invocation of this function
-    const N = 200;
+    const N = 500;
 
     try {
         let openAppointments = backend.local.get(
@@ -95,12 +95,14 @@ export async function sendInvitations(
         });
         try {
             // how many more users we invite than we have slots
-            const overbookingFactor = 5;
+            const overbookingFactor = 20;
+            console.log(`Got ${openSlots} open slots and ${openTokens.length} open tokens, overbooking factor is ${overbookingFactor}...`)
             const n = Math.floor(
                 Math.max(0, openSlots * overbookingFactor - openTokens.length)
             );
             // we don't have enough tokens for our open appointments, we generate more
             if (n > 0 && openTokens.length < 3000) {
+                console.log(`Trying to get ${n} new tokens...`)
                 // to do: get appointments by type
                 const newTokens = await backend.appointments.getQueueTokens(
                     { capacities: [{ n: n, properties: {} }] },
@@ -112,6 +114,7 @@ export async function sendInvitations(
                     };
                 const validTokens = [];
                 for (const tokenList of newTokens) {
+                    console.log(`New tokens received: ${tokenList.length}`)
                     for (const token of tokenList) {
                         const privateKey = getQueuePrivateKey(
                             token.queue,
