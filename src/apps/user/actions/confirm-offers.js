@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import { ephemeralECDHEncrypt } from 'helpers/crypto';
-import { confirmUserOffers } from 'kiebitz/user/invitation';
+import { confirmUserOffers } from '../../../../kiebitz/user/invitation';
 
 export async function confirmOffers(state, keyStore, settings, offers, invitation, tokenData) {
     const providerData = {

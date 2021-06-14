@@ -7,7 +7,7 @@ import { getUserAppointmentsTokenDataWithSignedToken } from '../../../../kiebitz
 export async function submitToQueue(state, keyStore, settings, contactData, queueData, queue, userSecret) {
     try {
         keyStore.set({ status: 'submitting' });
-        const tokenData = getUserAppointmentsTokenDataWithSignedToken(contactData, queueData, queue, userSecret);
+        const tokenData = await getUserAppointmentsTokenDataWithSignedToken(contactData, queueData, queue, userSecret);
 
         return {
             data: tokenData,

@@ -22,7 +22,11 @@
             "actions": ["./src/actions"],
             "actions/*": ["./src/actions/*"],
             "apis": ["./src/apis"],
-            "apis/*": ["./src/apis/*"]
+            "apis/*": ["./src/apis/*"],
+            "@/backend": ["./src/backend"],
+            "@/backend/*": ["./src/backend/*"],
+            "@/settings": ["./src/settings"],
+            "@/settings/*": ["./src/settings/*"]
         }
     },
     "include": ["kiebitz", "src", "src-vite", "custom.d.ts"]

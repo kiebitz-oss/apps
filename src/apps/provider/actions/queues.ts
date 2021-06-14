@@ -3,6 +3,7 @@
 // README.md contains license information.
 
 import { markAsLoading } from 'helpers/actions';
+import { getQueues } from '../../../../kiebitz/provider/queues';
 
 function timeout(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -10,12 +11,11 @@ function timeout(ms) {
 
 let tv = 0;
 // to do: add keyPair to queue request (as the request needs to be signed)
-export async function queues(state, keyStore, settings, zipCode: string, radius: number, timeoutMs: number) {
+export async function queues(state, keyStore, _settings, zipCode: string, radius: number, timeoutMs: number) {
     const q = async () => {
-        const backend = settings.get('backend');
         if (!markAsLoading(state, keyStore)) return; // we're already loading queues
         try {
-            const queues = await backend.appointments.getQueues({
+            const queues = await getQueues({
                 zipCode,
                 radius,
             });

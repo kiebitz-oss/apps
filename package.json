@@ -13,7 +13,7 @@
     "make-test": "APP_ENV=test webpack serve --config webpack.config.js --history-api-fallback",
     "make-dev": "APP_ENV=dev webpack serve --config webpack.config.js --history-api-fallback",
     "make": "webpack --config webpack.config.js",
-    "dev-vite": "vite",
+    "dev-vite": "ADAPTER_ENV=test vite",
     "build-vite": "vite build",
     "serve-vite": "vite preview"
   },

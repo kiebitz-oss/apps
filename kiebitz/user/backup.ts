@@ -42,7 +42,6 @@ export const exportLocalStorageToSecret = async (secret: any, keys: string[]): P
         };
 
         const [id, key] = await deriveSecrets(base322buf(secret), 32, 2);
-
         const encryptedData = await aesEncrypt(JSON.stringify(fullData), b642buf(key));
 
         // TODO: There was a conditional return here before related to state.

@@ -11,11 +11,16 @@ const KEY_BACKEND = 'backend';
 
 export const KEY_USER_QUEUE_DATA = 'user::queueData';
 
-export type UserQueueData = {
+export interface UserQueueData {
     accessible: boolean;
     distance: number;
     zipCode: string;
-};
+}
+
+export interface UserContactData {
+    code: string;
+    [x: string]: any;
+}
 
 export const getUserTemporaryQueueData = async (): Promise<UserQueueData> => {
     const backend = settings.get(KEY_BACKEND);
@@ -28,7 +33,7 @@ export const setUserTemporaryQueueData = async (data: UserQueueData): Promise<an
 };
 
 export const getUserAppointmentsTokenDataWithSignedToken = async (
-    contactData: any,
+    contactData: UserContactData,
     queueData: UserQueueData,
     queue: GetQueueResponse,
     userSecret: string

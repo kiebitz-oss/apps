@@ -1,7 +1,7 @@
-// TODO: Should be defined and exported somewhere in settings, since it's a
-// settings relevant key.
 import settings from 'helpers/settings';
 
+// TODO: Should be defined and exported somewhere in settings, since it's a
+// settings relevant key.
 const KEY_BACKEND = 'backend';
 
 export type GetQueueVariables = {
@@ -16,7 +16,7 @@ export type GetQueueResponse = {
     type: string;
 };
 
-export const getQueues = (data: GetQueueVariables): Promise<Array<GetQueueResponse>> => {
+export const getQueues = async (data: GetQueueVariables): Promise<Array<GetQueueResponse>> => {
     const backend = settings.get(KEY_BACKEND);
-    return backend.appointments.getQueues(data);
+    return await backend.appointments.getQueues(data);
 };

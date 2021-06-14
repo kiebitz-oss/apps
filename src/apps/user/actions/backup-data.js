@@ -9,7 +9,7 @@ export const backupKeys = ['tokenData', 'invitation', 'invitation::verified', 'i
 // make sure the signing and encryption key pairs exist
 export async function backupData(state, keyStore, settings, secret) {
     try {
-        const [referenceData, data] = exportLocalStorageToSecret(secret, backupKeys);
+        const [referenceData, data] = await exportLocalStorageToSecret(secret, backupKeys);
 
         // TODO: Fix type coercion or add eslint ignore + comment if on purpose.
         if (state !== undefined && state.referenceData != undefined) {

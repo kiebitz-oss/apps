@@ -7,7 +7,7 @@ import { getUserInvitationVerified } from '../../../../kiebitz/user/invitation';
 export async function invitation(state, keyStore, settings) {
     return {
         status: 'loaded',
-        data: getUserInvitationVerified,
+        data: getUserInvitationVerified(),
     };
 }
 

@@ -37,10 +37,11 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
         await backend.local.lock();
 
         const data = await backend.appointments.getData({ id: tokenData.tokenData.id }, tokenData.signingKeyPair);
-        if (data === null)
+        if (data === null) {
             return {
                 status: 'not-found',
             };
+        }
 
         const decryptedData = await decryptInvitationData(data, keys, tokenData);
 

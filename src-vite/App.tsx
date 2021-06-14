@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
+import './kiebitz/setup';
+
 import DefaultLayout from './layouts/DefaultLayout';
 import UserWelcome from './features/UserWelcome';
 import UserWizard from './features/UserWizard';
