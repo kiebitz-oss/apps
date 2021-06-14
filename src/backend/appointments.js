@@ -2,31 +2,16 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import {
-    hash,
-    sign,
-    verify,
-    deriveToken,
-    generateECDSAKeyPair,
-    ephemeralECDHEncrypt,
-    ecdhDecrypt,
-    generateECDHKeyPair,
-    randomBytes,
-} from 'helpers/crypto';
-
 import JSONRPCBackend from './jsonrpc';
 
 // The appointments backend
-export default class AppointmentsBackend extends JSONRPCBackend {
+class AppointmentsBackend extends JSONRPCBackend {
     constructor(settings) {
         super(settings, 'appointmentsApi');
         this.settings = settings;
     }
 
-    async confirmProvider(
-        { id, verifiedID, key, encryptedProviderData, signedKeyData },
-        keyPair
-    ) {
+    async confirmProvider({ id, verifiedID, key, encryptedProviderData, signedKeyData }, keyPair) {
         return await this.call(
             'confirmProvider',
             { id, verifiedID, key, encryptedProviderData, signedKeyData },
@@ -70,24 +55,13 @@ export default class AppointmentsBackend extends JSONRPCBackend {
 
     // store provider data for verification
     async storeData({ id, data, permissions, grant }, keyPair) {
-        return await this.call(
-            'storeData',
-            { id, data, permissions, grant },
-            keyPair
-        );
+        return await this.call('storeData', { id, data, permissions, grant }, keyPair);
     }
 
     // user endpoints
 
     // get a token for a given queue
-    async getToken({
-        hash,
-        encryptedData,
-        queueID,
-        code,
-        queueData,
-        signedTokenData,
-    }) {
+    async getToken({ hash, encryptedData, queueID, code, queueData, signedTokenData }) {
         return await this.call('getToken', {
             hash: hash,
             code: code,
@@ -111,11 +85,7 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     async storeProviderData({ id, encryptedData, code }, keyPair) {
-        return await this.call(
-            'storeProviderData',
-            { id, encryptedData, code },
-            keyPair
-        );
+        return await this.call('storeProviderData', { id, encryptedData, code }, keyPair);
     }
 
     // mark tokens as used
@@ -137,3 +107,5 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('getVerifiedProviderData', { limit }, keyPair);
     }
 }
+
+export default AppointmentsBackend;

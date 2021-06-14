@@ -4,16 +4,8 @@
 
 import React, { useEffect, useState, Fragment as F } from 'react';
 
-import Settings from './settings';
-import { keys } from 'apps/provider/actions';
 import { formatDuration } from 'helpers/format';
-import {
-    tokenData,
-    userSecret,
-    invitation,
-    confirmOffers,
-    acceptedInvitation,
-} from 'apps/user/actions';
+import { tokenData, userSecret, invitation, confirmOffers, acceptedInvitation } from 'apps/user/actions';
 import {
     withSettings,
     withActions,
@@ -45,9 +37,7 @@ const ProviderDetails = ({ data }) => {
                     </li>
                 )}
             </ul>
-            {data.json.description && (
-                <Message type="info">{data.json.description}</Message>
-            )}
+            {data.json.description && <Message type="info">{data.json.description}</Message>}
         </div>
     );
 };
@@ -64,15 +54,11 @@ const AcceptedInvitation = withActions(
                         </h2>
                         <ProviderDetails data={data.invitation.provider} />
                         <p className="kip-appointment-date">
-                            {d.toLocaleDateString()} ·{' '}
-                            <u>{d.toLocaleTimeString()}</u>
+                            {d.toLocaleDateString()} · <u>{d.toLocaleTimeString()}</u>
                         </p>
                         <p className="kip-booking-code">
                             <span>
-                                <T
-                                    t={t}
-                                    k={'invitation-accepted.booking-code'}
-                                />
+                                <T t={t} k={'invitation-accepted.booking-code'} />
                             </span>
                             {userSecret.data.slice(0, 4)}
                         </p>
@@ -112,15 +98,15 @@ const NoInvitations = ({ tokenData }) => {
 
 async function toggleOffers(state, keyStore, settings, offer) {
     if (offer === null) return { data: [] };
-    if (state.data.find(i => i === offer.slotData[0].id) !== undefined) {
-        state.data = state.data.filter(i => i !== offer.slotData[0].id);
+    if (state.data.find((i) => i === offer.slotData[0].id) !== undefined) {
+        state.data = state.data.filter((i) => i !== offer.slotData[0].id);
     } else {
         state.data.push(offer.slotData[0].id);
     }
     return { data: state.data };
 }
 
-toggleOffers.init = function() {
+toggleOffers.init = function () {
     return { data: [] };
 };
 
@@ -130,7 +116,7 @@ const PropertyTags = ({ appointment }) => {
     const props = Object.entries(appointment)
         .filter(([k, v]) => v === true)
         .map(([k, v]) => <PropertyTag key={k} property={k} />)
-        .filter(p => p !== undefined);
+        .filter((p) => p !== undefined);
     return <F>{props}</F>;
 };
 
@@ -171,7 +157,7 @@ const InvitationDetails = withSettings(
                 toggleOffersAction(null);
             });
 
-            const toggle = offer => {
+            const toggle = (offer) => {
                 toggleOffersAction(offer);
             };
 
@@ -179,17 +165,11 @@ const InvitationDetails = withSettings(
                 const selectedOffers = [];
                 // we add the selected offers in the order the user chose
                 for (const offerID of toggleOffers.data) {
-                    const offer = data.offers.find(
-                        offer => offer.slotData[0].id === offerID
-                    );
+                    const offer = data.offers.find((offer) => offer.slotData[0].id === offerID);
                     selectedOffers.push(offer);
                 }
                 setConfirming(true);
-                const p = confirmOffersAction(
-                    selectedOffers,
-                    data,
-                    tokenData.data
-                );
+                const p = confirmOffersAction(selectedOffers, data, tokenData.data);
                 p.then(() => {
                     acceptedInvitationAction();
                 });
@@ -201,30 +181,25 @@ const InvitationDetails = withSettings(
             }
 
             let content;
-            if (data === null || data.offers === null)
+            if (data === null || data.offers === null) {
                 return <NoInvitations data={tokenData} />;
+            }
 
             const properties = settings.get('appointmentProperties');
 
             // to do: use something better than the index i for the key?
             const offers = data.offers
-                .filter(a => new Date(a.timestamp) > new Date())
+                .filter((a) => new Date(a.timestamp) > new Date())
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
                     const d = new Date(offer.timestamp);
-                    const selected = toggleOffers.data.includes(
-                        offer.slotData[0].id
-                    );
+                    const selected = toggleOffers.data.includes(offer.slotData[0].id);
                     let pref;
-                    if (selected)
-                        pref =
-                            toggleOffers.data.indexOf(offer.slotData[0].id) + 1;
+                    if (selected) pref = toggleOffers.data.indexOf(offer.slotData[0].id) + 1;
                     return (
                         <tr
                             key={offer.slotData[0].id}
-                            className={
-                                selected ? `kip-selected kip-pref-${pref}` : ''
-                            }
+                            className={selected ? `kip-selected kip-pref-${pref}` : ''}
                             onClick={() => toggle(offer)}
                         >
                             <td>{selected ? pref : '-'}</td>
@@ -237,9 +212,7 @@ const InvitationDetails = withSettings(
                                     minute: '2-digit',
                                 })}
                             </td>
-                            <td>
-                                {formatDuration(offer.duration, settings, t)}
-                            </td>
+                            <td>{formatDuration(offer.duration, settings, t)}</td>
                             <td>
                                 <PropertyTags appointment={offer} />
                             </td>
@@ -297,10 +270,7 @@ const InvitationDetails = withSettings(
                         <Button
                             waiting={confirming}
                             onClick={doConfirmOffers}
-                            disabled={
-                                confirming ||
-                                Object.keys(toggleOffers.data).length === 0
-                            }
+                            disabled={confirming || Object.keys(toggleOffers.data).length === 0}
                             type="success"
                         >
                             <T t={t} k="confirm-appointment" />
@@ -317,19 +287,9 @@ const Appointments = withActions(
     ({ settings, invitation, tokenData }) => {
         let content;
         const render = () => {
-            return (
-                <InvitationDetails
-                    tokenData={tokenData}
-                    data={invitation.data}
-                />
-            );
+            return <InvitationDetails tokenData={tokenData} data={invitation.data} />;
         };
-        return (
-            <WithLoader
-                resources={[tokenData, invitation]}
-                renderLoaded={render}
-            />
-        );
+        return <WithLoader resources={[tokenData, invitation]} renderLoaded={render} />;
     },
     [tokenData, invitation]
 );

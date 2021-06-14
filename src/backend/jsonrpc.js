@@ -7,12 +7,7 @@ import { sign } from 'helpers/crypto';
 function urlEncode(data) {
     if (data && typeof data === 'object') {
         return Object.keys(data)
-            .map(
-                key =>
-                    encodeURIComponent(key) +
-                    '=' +
-                    encodeURIComponent(data[key])
-            )
+            .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
             .join('&');
     }
     return null;
@@ -46,7 +41,7 @@ class JSONRPCBackend {
     }
 
     request(opts) {
-        const normalize = data => {
+        const normalize = (data) => {
             if (data.errors === undefined) data.errors = {};
             return data;
         };
@@ -54,15 +49,10 @@ class JSONRPCBackend {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             const params = urlEncode(opts.params);
-            xhr.open(
-                opts.method,
-                opts.url + (params !== null ? '?' + params : '')
-            );
+            xhr.open(opts.method, opts.url + (params !== null ? '?' + params : ''));
 
             xhr.onload = () => {
-                const contentType = (
-                    xhr.getResponseHeader('content-type') || ''
-                ).trim();
+                const contentType = (xhr.getResponseHeader('content-type') || '').trim();
                 if (/^application\/json(;.*)?$/i.exec(contentType) === null)
                     reject({
                         status: xhr.status,
@@ -101,10 +91,7 @@ class JSONRPCBackend {
             const json = opts.json;
 
             if (data !== undefined) {
-                xhr.setRequestHeader(
-                    'Content-Type',
-                    'application/x-www-form-urlencoded'
-                );
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.send(urlEncode(data));
             } else if (json !== undefined) {
                 xhr.setRequestHeader('Content-Type', 'application/json');
@@ -122,11 +109,7 @@ class JSONRPCBackend {
                 ...params,
                 timestamp: new Date().toISOString(),
             };
-            const signedData = await sign(
-                keyPair.privateKey,
-                JSON.stringify(dataToSign),
-                keyPair.publicKey
-            );
+            const signedData = await sign(keyPair.privateKey, JSON.stringify(dataToSign), keyPair.publicKey);
             callParams = signedData;
         } else {
             callParams = params;

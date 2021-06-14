@@ -18,11 +18,12 @@ import { shuffle } from 'helpers/lists';
 import { e } from 'helpers/async';
 
 function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 // The appointments backend
-export default class AppointmentsBackend {
+class AppointmentsBackend {
     constructor(settings, store) {
+        console.log(settings, store);
         this._initialized = false;
         this.settings = settings;
         this.store = store;
@@ -44,10 +45,7 @@ export default class AppointmentsBackend {
         }
     }
 
-    async confirmProvider(
-        { verifiedID, id, encryptedProviderData, signedKeyData },
-        keyPair
-    ) {
+    async confirmProvider({ verifiedID, id, encryptedProviderData, signedKeyData }, keyPair) {
         let found = false;
         const keyDataJSON = JSON.parse(signedKeyData.data);
         const newProviders = [];
@@ -64,10 +62,7 @@ export default class AppointmentsBackend {
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
         // we store the verified provider data
-        const result = await this.storeData(
-            { id, data: encryptedProviderData },
-            keyPair
-        );
+        const result = await this.storeData({ id, data: encryptedProviderData }, keyPair);
 
         if (!result) return;
 
@@ -87,10 +82,7 @@ export default class AppointmentsBackend {
         this.store.set('providers::list', providers);
 
         // we add the provider to the list of verified providers
-        const verifiedProvidersList = this.store.get(
-            'providers::list::verified',
-            []
-        );
+        const verifiedProvidersList = this.store.get('providers::list::verified', []);
         verifiedProvidersList.push(oldProviderData);
         this.store.get('providers::list::verified', verifiedProvidersList);
 
@@ -105,9 +97,7 @@ export default class AppointmentsBackend {
             signing: keys.signing.publicKey,
         };
         const jsonData = JSON.stringify(keyData);
-        const signedData = await e(
-            sign(this.rootSigningKeyPair.privateKey, jsonData)
-        );
+        const signedData = await e(sign(this.rootSigningKeyPair.privateKey, jsonData));
         for (const data of this.keys.mediators) {
             if (data.data == signedData.data) {
                 return;
@@ -151,16 +141,11 @@ export default class AppointmentsBackend {
         this.tokens = tokens;
 
         // the key pair for encrypting queue data
-        let queueKeyEncryptionKeyPair = this.store.get(
-            'queueKeyEncryptionKeyPair'
-        );
+        let queueKeyEncryptionKeyPair = this.store.get('queueKeyEncryptionKeyPair');
 
         if (queueKeyEncryptionKeyPair === null) {
             queueKeyEncryptionKeyPair = await e(generateECDHKeyPair());
-            this.store.set(
-                'queueKeyEncryptionKeyPair',
-                queueKeyEncryptionKeyPair
-            );
+            this.store.set('queueKeyEncryptionKeyPair', queueKeyEncryptionKeyPair);
         }
 
         this.queueKeyEncryptionKeyPair = queueKeyEncryptionKeyPair;
@@ -176,16 +161,11 @@ export default class AppointmentsBackend {
         this.tokenSigningKeyPair = tokenSigningKeyPair;
 
         // the key pair for encrypting provider data
-        let providerDataEncryptionKeyPair = this.store.get(
-            'providerDataEncryptionKeyPair'
-        );
+        let providerDataEncryptionKeyPair = this.store.get('providerDataEncryptionKeyPair');
 
         if (providerDataEncryptionKeyPair === null) {
             providerDataEncryptionKeyPair = await e(generateECDHKeyPair());
-            this.store.set(
-                'providerDataEncryptionKeyPair',
-                providerDataEncryptionKeyPair
-            );
+            this.store.set('providerDataEncryptionKeyPair', providerDataEncryptionKeyPair);
         }
 
         this.providerDataEncryptionKeyPair = providerDataEncryptionKeyPair;
@@ -229,10 +209,7 @@ export default class AppointmentsBackend {
                 // we encrypt the queue key with the queue encryption key pair
                 // to which all mediators have access...
                 [queue.encryptedPrivateKey] = await e(
-                    ephemeralECDHEncrypt(
-                        JSON.stringify(queue.keyPair.privateKey),
-                        queueKeyEncryptionKeyPair.publicKey
-                    )
+                    ephemeralECDHEncrypt(JSON.stringify(queue.keyPair.privateKey), queueKeyEncryptionKeyPair.publicKey)
                 );
 
                 queues.push(queue);
@@ -252,8 +229,8 @@ export default class AppointmentsBackend {
         await e(this.initialized());
         // we just look at nearest neighbors here...
         return this.queues
-            .filter(q => q.zipCode === zipCode.slice(0, 2))
-            .map(queue => ({
+            .filter((q) => q.zipCode === zipCode.slice(0, 2))
+            .map((queue) => ({
                 name: queue.name,
                 type: queue.type,
                 id: queue.id,
@@ -329,25 +306,12 @@ export default class AppointmentsBackend {
     // user endpoints
 
     // get a token for a given queue
-    async getToken({
-        hash,
-        encryptedData,
-        queueID,
-        queueData,
-        signedTokenData,
-    }) {
+    async getToken({ hash, encryptedData, queueID, queueData, signedTokenData }) {
         let queueToken;
         if (signedTokenData !== undefined) {
             // to do: validate signature!
             let signedToken = JSON.parse(signedTokenData.data);
-            if (
-                !(await e(
-                    verify(
-                        [this.tokenSigningKeyPair.publicKey],
-                        signedTokenData
-                    )
-                ))
-            )
+            if (!(await e(verify([this.tokenSigningKeyPair.publicKey], signedTokenData))))
                 throw 'signature does not match';
             const newTokens = {};
             for (const [qID, tokens] of Object.entries(this.tokens)) {
@@ -373,10 +337,7 @@ export default class AppointmentsBackend {
                 hash: hash,
             };
             const tokenDataJSON = JSON.stringify(tokenData);
-            signedTokenData = await sign(
-                this.tokenSigningKeyPair.privateKey,
-                tokenDataJSON
-            );
+            signedTokenData = await sign(this.tokenSigningKeyPair.privateKey, tokenDataJSON);
             queueToken = {
                 token: token,
                 position: this.position,
@@ -441,23 +402,15 @@ export default class AppointmentsBackend {
                 queuesLoop: for (const queueID of queueIDs) {
                     let queueTokens = this.tokens[queueID];
                     // no tokens in this queue
-                    if (queueTokens === undefined || queueTokens.length === 0)
-                        continue queuesLoop;
+                    if (queueTokens === undefined || queueTokens.length === 0) continue queuesLoop;
                     // we iterate through the tokens in the queue
                     candidates: for (let i = 0; i < queueTokens.length; i++) {
                         const token = queueTokens[i];
-                        if (
-                            this._distance(token.queueData.zipCode, zipCode) >
-                            token.queueData.distance
-                        ) {
+                        if (this._distance(token.queueData.zipCode, zipCode) > token.queueData.distance) {
                             continue candidates; // the distance between user and provider is too large
                         }
                         for (let [k, v] of Object.entries(properties)) {
-                            if (
-                                token.queueData[k] !== undefined &&
-                                token.queueData[k] !== v
-                            )
-                                continue candidates; // this token doesn't match the given properties
+                            if (token.queueData[k] !== undefined && token.queueData[k] !== v) continue candidates; // this token doesn't match the given properties
                         }
                         // we have found a suitable token
                         queueTokens = queueTokens.filter((t, j) => i !== j);
@@ -478,10 +431,7 @@ export default class AppointmentsBackend {
             for (const token of tokens) allTokensFlat.push(token);
         }
 
-        const selectedTokens = [
-            ...this.store.get('selectedTokens', []),
-            ...allTokensFlat,
-        ];
+        const selectedTokens = [...this.store.get('selectedTokens', []), ...allTokensFlat];
 
         // we persist the changes
         this.store.set('selectedTokens', selectedTokens);
@@ -492,10 +442,7 @@ export default class AppointmentsBackend {
     }
 
     async storeProviderData({ id, encryptedData, code }, keyPair) {
-        const result = await this.storeData(
-            { id: id, data: { encryptedData: encryptedData } },
-            keyPair
-        );
+        const result = await this.storeData({ id: id, data: { encryptedData: encryptedData } }, keyPair);
         if (!result) return;
         let providerDataList = this.store.get('providers::list');
         if (providerDataList === null) providerDataList = [];
@@ -520,8 +467,8 @@ export default class AppointmentsBackend {
         queueIDs = new Set(queueIDs);
         await e(this.initialized());
         return this.queues
-            .filter(queue => queueIDs.has(queue.id))
-            .map(queue => ({
+            .filter((queue) => queueIDs.has(queue.id))
+            .map((queue) => ({
                 name: queue.name,
                 type: queue.type,
                 id: queue.id,
@@ -555,3 +502,5 @@ export default class AppointmentsBackend {
     // simulates the background tasks that the normal operator backend would do
     backgroundTasks() {}
 }
+
+export default AppointmentsBackend;

@@ -14,13 +14,7 @@ export default class Backend {
         this.settings = settings;
         this.storage = new StorageBackend(settings);
         this.appointments = new AppointmentsBackend(settings);
-        this.local = new LocalBackend(
-            settings,
-            new PrefixStore(store, 'local')
-        );
-        this.temporary = new LocalBackend(
-            settings,
-            new PrefixStore(temporaryStore, 'temporary')
-        );
+        this.local = new LocalBackend(settings, new PrefixStore(store, 'local'));
+        this.temporary = new LocalBackend(settings, new PrefixStore(temporaryStore, 'temporary'));
     }
 }
