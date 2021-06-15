@@ -20,7 +20,7 @@ export const decryptInvitationData = async (signedData: any, keys: any, tokenDat
     // TODO: Make Error.
     if (!result) throw 'invalid signature';
     signedData.json = JSON.parse(signedData.data);
-    const decryptedData = JSON.parse(await ecdhDecrypt(signedData.json, tokenData.privateKey));
+    const decryptedData = JSON.parse(await ecdhDecrypt(signedData.json, tokenData.keyPair.privateKey));
     // we store the public key as we need it to reply to the invitation
     decryptedData.publicKey = signedData.json.publicKey;
     return decryptedData;

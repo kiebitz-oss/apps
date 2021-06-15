@@ -22,15 +22,9 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
     try {
         let openTokens = backend.local.get('provider::tokens::open', []);
-        let openAppointments = backend.local.get(
-            'provider::appointments::open',
-            []
-        );
+        let openAppointments = backend.local.get('provider::appointments::open', []);
 
-        const currentIndex = backend.local.get(
-            'provider::appointments::check::index',
-            0
-        );
+        const currentIndex = backend.local.get('provider::appointments::check::index', 0);
         let newIndex = currentIndex + N;
         if (newIndex >= openAppointments.length) newIndex = 0; // we start from the beginning
         backend.local.set('provider::appointments::check::index', newIndex);
@@ -44,7 +38,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             let appointments = [];
             for (const appointment of openAppointments
                 .slice(currentIndex, currentIndex + N)
-                .filter(oa => oa.slots > 0)) {
+                .filter((oa) => oa.slots > 0)) {
                 const timestamp = new Date(appointment.timestamp);
                 //if (timestamp < new Date()) continue;
                 for (const slotData of appointment.slotData) {
@@ -61,7 +55,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                     { ids: ids.slice(i, i + 100) },
                     keyPairs.signing
                 );
-                sliceResults.forEach(result => results.push(result));
+                sliceResults.forEach((result) => results.push(result));
             }
 
             if (results.length !== ids.length) {
@@ -79,52 +73,35 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         switch (openToken.data.version) {
                             case undefined:
                             case '0.1':
-                                tokenPublicKey =
-                                    openToken.encryptedData.publicKey;
+                                tokenPublicKey = openToken.encryptedData.publicKey;
                                 break;
                             case '0.2':
-                                tokenPublicKey =
-                                    openToken.data.encryptionPublicKey;
+                                tokenPublicKey = openToken.data.encryptionPublicKey;
                                 break;
                         }
 
                         if (result.publicKey !== tokenPublicKey) continue;
 
-                        const decryptedData = JSON.parse(
-                            await ecdhDecrypt(
-                                result,
-                                openToken.keyPair.privateKey
-                            )
-                        );
+                        const decryptedData = JSON.parse(await ecdhDecrypt(result, openToken.keyPair.privateKey));
                         if (decryptedData === null) continue; // not the right token....
 
                         const slotData = appointment.slotData.find(
-                            sl =>
-                                sl.token !== undefined &&
-                                sl.token.token === openToken.token
+                            (sl) => sl.token !== undefined && sl.token.token === openToken.token
                         );
 
                         if (slotData !== undefined) {
                             slotData.userData = decryptedData;
                             if (decryptedData.cancel === true) {
                                 // the user wants to cancel this appointment
-                                await cancelSlots(
-                                    undefined,
-                                    [slotData],
-                                    openTokens
-                                );
+                                await cancelSlots(undefined, [slotData], openTokens);
                                 // we remove the canceled slot
-                                appointment.slotData = appointment.slotData.filter(
-                                    sl => sl.id !== slotData.id
-                                );
+                                appointment.slotData = appointment.slotData.filter((sl) => sl.id !== slotData.id);
                                 // we replace the slot
                                 appointment.slotData.push(createSlot());
                             }
                         } else {
                             // we get the slot data for the token
-                            const slotData = appointment.slotData.find(
-                                sl => sl.id === ids[i]
-                            );
+                            const slotData = appointment.slotData.find((sl) => sl.id === ids[i]);
                             slotData.open = false;
                             slotData.token = openToken;
                             slotData.userData = decryptedData;
@@ -136,52 +113,32 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 }
             }
 
-            const isExpired = oa =>
-                new Date(oa.timestamp) <
-                new Date(new Date().getTime() - 1000 * 60 * 60 * 2);
+            const isExpired = (oa) => new Date(oa.timestamp) < new Date(new Date().getTime() - 1000 * 60 * 60 * 2);
 
             // remove appointments that are in the past (with a 2 hour grace period)
-            const newlyPastAppointments = openAppointments.filter(oa =>
-                isExpired(oa)
-            );
+            const newlyPastAppointments = openAppointments.filter((oa) => isExpired(oa));
 
             // only keep appointments that are in the future
-            openAppointments = openAppointments.filter(oa => !isExpired(oa));
+            openAppointments = openAppointments.filter((oa) => !isExpired(oa));
             backend.local.set('provider::appointments::open', openAppointments);
 
             if (newlyPastAppointments.length > 0) {
-                const pastAppointments = backend.local.get(
-                    'provider::appointments::past',
-                    []
-                );
-                backend.local.set('provider::appointments::past', [
-                    ...pastAppointments,
-                    ...newlyPastAppointments,
-                ]);
+                const pastAppointments = backend.local.get('provider::appointments::past', []);
+                backend.local.set('provider::appointments::past', [...pastAppointments, ...newlyPastAppointments]);
             }
 
             // we mark the successful tokens
             const newlyUsedTokens = newlyPastAppointments
-                .map(pa =>
-                    pa.slotData
-                        .filter(sl => sl.token !== undefined)
-                        .map(sl => sl.token)
-                )
+                .map((pa) => pa.slotData.filter((sl) => sl.token !== undefined).map((sl) => sl.token))
                 .flat();
 
             // we send the signed, encrypted data to the backend
             if (newlyUsedTokens.length > 0) {
-                const usedTokens = backend.local.get(
-                    'provider::tokens::used',
-                    []
-                );
-                backend.local.set('provider::tokens::used', [
-                    ...usedTokens,
-                    ...newlyUsedTokens,
-                ]);
+                const usedTokens = backend.local.get('provider::tokens::used', []);
+                backend.local.set('provider::tokens::used', [...usedTokens, ...newlyUsedTokens]);
                 try {
                     await backend.appointments.markTokensAsUsed(
-                        { tokens: newlyUsedTokens.map(token => token.token) },
+                        { tokens: newlyUsedTokens.map((token) => token.token) },
                         keyPairs.signing
                     );
                 } catch (e) {
@@ -190,9 +147,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             }
 
             // we remove the past tokens from the list of open tokens...
-            openTokens = openTokens.filter(
-                ot => !newlyUsedTokens.some(pt => pt.token === ot.token)
-            );
+            openTokens = openTokens.filter((ot) => !newlyUsedTokens.some((pt) => pt.token === ot.token));
 
             backend.local.set('provider::tokens::open', openTokens);
 

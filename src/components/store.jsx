@@ -105,45 +105,23 @@ export function withActions(Component, actionNames, keyList, noStore) {
                 if (actions[actionKey] === undefined) {
                     if (functional) {
                         const keyStore = new KeyStore(store, key);
-                        if (
-                            ActionProvider.init !== undefined &&
-                            keyStore.get() === undefined
-                        ) {
-                            const initialValue = ActionProvider.init(
-                                keyStore,
-                                settings
-                            );
+                        if (ActionProvider.init !== undefined && keyStore.get() === undefined) {
+                            const initialValue = ActionProvider.init(keyStore, settings);
                             store.set(key, initialValue);
                         }
-                        const wrapper = function() {
+                        const wrapper = function () {
                             const state = store.get(key);
                             try {
-                                const result = ActionProvider(
-                                    state,
-                                    keyStore,
-                                    settings,
-                                    ...arguments
-                                );
+                                const result = ActionProvider(state, keyStore, settings, ...arguments);
 
                                 if (result instanceof Promise) {
                                     result
-                                        .then(
-                                            data =>
-                                                data !== undefined &&
-                                                data !== null &&
-                                                store.set(key, data)
-                                        )
+                                        .then((data) => data !== undefined && data !== null && store.set(key, data))
                                         .catch(
-                                            error =>
-                                                error !== undefined &&
-                                                error !== null &&
-                                                store.set(key, error)
+                                            (error) => error !== undefined && error !== null && store.set(key, error)
                                         );
                                     return result;
-                                } else if (
-                                    result !== undefined &&
-                                    result !== null
-                                ) {
+                                } else if (result !== undefined && result !== null) {
                                     store.set(key, result);
                                     // we always return a promise
                                     return new Promise((resolve, reject) => {
@@ -159,19 +137,12 @@ export function withActions(Component, actionNames, keyList, noStore) {
                         // we add the reset function
                         if (ActionProvider.reset !== undefined) {
                             actionProvider.reset = () => {
-                                const result = ActionProvider.reset(
-                                    keyStore,
-                                    settings
-                                );
+                                const result = ActionProvider.reset(keyStore, settings);
                                 if (result !== undefined) keyStore.set(result);
                             };
                         }
                     } else {
-                        actionProvider = new ActionProvider(
-                            store,
-                            settings,
-                            key
-                        );
+                        actionProvider = new ActionProvider(store, settings, key);
                     }
                     actions[actionKey] = actionProvider;
                 }
@@ -216,6 +187,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
         }
 
         handleUpdate = (_, key, value, notifyId) => {
+            console.log(key, value, notifyId);
             // we make sure the events get passed along in the correct order, and we
             // discard obsolete events...
             if (notifyId < this.lastNotifyId) return;
@@ -246,13 +218,11 @@ export function withActions(Component, actionNames, keyList, noStore) {
     }
 
     // eslint-disable-next-line react/display-name
-    const WithActions = props => (
+    const WithActions = (props) => (
         <SettingsContext.Consumer>
-            {settings => (
+            {(settings) => (
                 <StoreContext.Consumer>
-                    {store => (
-                        <Actions store={store} settings={settings} {...props} />
-                    )}
+                    {(store) => <Actions store={store} settings={settings} {...props} />}
                 </StoreContext.Consumer>
             )}
         </SettingsContext.Consumer>
@@ -265,10 +235,6 @@ export function withActions(Component, actionNames, keyList, noStore) {
 
 export class Store extends React.Component {
     render() {
-        return (
-            <StoreContext.Provider value={this.props.store}>
-                {this.props.children}
-            </StoreContext.Provider>
-        );
+        return <StoreContext.Provider value={this.props.store}>{this.props.children}</StoreContext.Provider>;
     }
 }

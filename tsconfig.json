@@ -23,10 +23,13 @@
             "actions/*": ["./src/actions/*"],
             "apis": ["./src/apis"],
             "apis/*": ["./src/apis/*"],
-            "@/backend": ["./src/backend"],
-            "@/backend/*": ["./src/backend/*"],
-            "@/settings": ["./src/settings"],
-            "@/settings/*": ["./src/settings/*"]
+            "testing": ["./src/testing"],
+            "testing/*": ["./src/testing/*"],
+            "backend": ["./src/backend"],
+            "@/backend": ["./src-vite/adapter/backend"],
+            "@/backend/*": ["./src-vite/adapter/backend/*"],
+            "@/settings": ["./src-vite/adapter/settings"],
+            "@/settings/*": ["./src-vite/adapter/settings/*"]
         }
     },
     "include": ["kiebitz", "src", "src-vite", "custom.d.ts"]

@@ -1,5 +1,5 @@
 import settings from 'helpers/settings';
-import { ephemeralECDHEncrypt, generateECDSAKeyPair, randomBytes } from 'helpers/crypto';
+import { ephemeralECDHEncrypt, generateECDSAKeyPair, randomBytes, generateECDHKeyPair } from 'helpers/crypto';
 
 import { hashContactData } from './crypto';
 import { getUserTokenData } from './token-data';
@@ -107,6 +107,7 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
                 queueData: queueData,
                 keyPair: encryptionKeyPair,
                 hashNonce: nonce,
+                privateKey: privateKey,
                 dataHash: dataHash,
                 tokenData: userToken,
             };

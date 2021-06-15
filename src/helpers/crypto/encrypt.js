@@ -11,11 +11,7 @@ export async function aesEncrypt(rawData, secret) {
     const data = str2ab(rawData);
 
     try {
-        const secretKey = await e(
-            crypto.subtle.importKey('raw', secret, 'PBKDF2', false, [
-                'deriveKey',
-            ])
-        );
+        const secretKey = await e(crypto.subtle.importKey('raw', secret, 'PBKDF2', false, ['deriveKey']));
 
         const symmetricKey = await crypto.subtle.deriveKey(
             { name: 'PBKDF2', hash: 'SHA-256', salt: salt, iterations: 100000 },
@@ -51,11 +47,7 @@ export async function aesEncrypt(rawData, secret) {
 
 export async function aesDecrypt(data, secret) {
     try {
-        const secretKey = await e(
-            crypto.subtle.importKey('raw', secret, 'PBKDF2', false, [
-                'deriveKey',
-            ])
-        );
+        const secretKey = await e(crypto.subtle.importKey('raw', secret, 'PBKDF2', false, ['deriveKey']));
 
         const symmetricKey = await crypto.subtle.deriveKey(
             { name: 'PBKDF2', hash: 'SHA-256', salt: salt, iterations: 100000 },
@@ -88,23 +80,13 @@ export async function ecdhEncrypt(rawData, keyPair, publicKeyData) {
 
     try {
         const publicKey = await e(
-            crypto.subtle.importKey(
-                'spki',
-                b642buf(publicKeyData),
-                { name: 'ECDH', namedCurve: 'P-256' },
-                true,
-                []
-            )
+            crypto.subtle.importKey('spki', b642buf(publicKeyData), { name: 'ECDH', namedCurve: 'P-256' }, true, [])
         );
 
         const privateKey = await e(
-            crypto.subtle.importKey(
-                'jwk',
-                keyPair.privateKey,
-                { name: 'ECDH', namedCurve: 'P-256' },
-                false,
-                ['deriveKey']
-            )
+            crypto.subtle.importKey('jwk', keyPair.privateKey, { name: 'ECDH', namedCurve: 'P-256' }, false, [
+                'deriveKey',
+            ])
         );
 
         const symmetricKey = await e(
@@ -155,22 +137,12 @@ export async function ephemeralECDHEncrypt(rawData, publicKeyData) {
         const ephemeralKeyPair = await e(generateECDHKeyPair());
 
         const publicKey = await e(
-            crypto.subtle.importKey(
-                'spki',
-                b642buf(publicKeyData),
-                { name: 'ECDH', namedCurve: 'P-256' },
-                true,
-                []
-            )
+            crypto.subtle.importKey('spki', b642buf(publicKeyData), { name: 'ECDH', namedCurve: 'P-256' }, true, [])
         );
         const privateKey = await e(
-            crypto.subtle.importKey(
-                'jwk',
-                ephemeralKeyPair.privateKey,
-                { name: 'ECDH', namedCurve: 'P-256' },
-                false,
-                ['deriveKey']
-            )
+            crypto.subtle.importKey('jwk', ephemeralKeyPair.privateKey, { name: 'ECDH', namedCurve: 'P-256' }, false, [
+                'deriveKey',
+            ])
         );
 
         const symmetricKey = await e(
@@ -221,23 +193,11 @@ export async function ephemeralECDHEncrypt(rawData, publicKeyData) {
 export async function ecdhDecrypt(data, privateKeyData) {
     try {
         const privateKey = await e(
-            crypto.subtle.importKey(
-                'jwk',
-                privateKeyData,
-                { name: 'ECDH', namedCurve: 'P-256' },
-                false,
-                ['deriveKey']
-            )
+            crypto.subtle.importKey('jwk', privateKeyData, { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveKey'])
         );
 
         const publicKey = await e(
-            crypto.subtle.importKey(
-                'spki',
-                b642buf(data.publicKey),
-                { name: 'ECDH', namedCurve: 'P-256' },
-                true,
-                []
-            )
+            crypto.subtle.importKey('spki', b642buf(data.publicKey), { name: 'ECDH', namedCurve: 'P-256' }, true, [])
         );
 
         const symmetricKey = await e(
@@ -269,6 +229,7 @@ export async function ecdhDecrypt(data, privateKeyData) {
         );
         return ab2str(decryptedData);
     } catch (e) {
+        console.error(e);
         return null;
     }
 }

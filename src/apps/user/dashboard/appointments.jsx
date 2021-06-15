@@ -4,10 +4,9 @@
 
 import React, { useEffect, useState, Fragment as F } from 'react';
 
-import Settings from './settings';
-import { keys } from 'apps/provider/actions';
-import { formatDuration, formatDate, formatTime } from 'helpers/time';
-import classNames from 'helpers/classnames';
+import classNames from 'classnames';
+import { formatDuration } from 'helpers/time';
+
 import {
     tokenData,
     grantID,
@@ -94,10 +93,7 @@ const AcceptedInvitation = withActions(
 
         const doDelete = () => {
             setShowDelete(false);
-            cancelInvitationAction(
-                acceptedInvitation.data,
-                tokenData.data
-            ).then(() => {
+            cancelInvitationAction(acceptedInvitation.data, tokenData.data).then(() => {
                 // we reload the appointments
                 grantIDAction();
                 slotInfosAction();
@@ -106,17 +102,10 @@ const AcceptedInvitation = withActions(
             });
         };
 
-        const {
-            offer,
-            invitation: invitationData,
-            slotData,
-        } = acceptedInvitation.data;
-        const currentOffer = offers.find(of => of.id == offer.id);
+        const { offer, invitation: invitationData, slotData } = acceptedInvitation.data;
+        const currentOffer = offers.find((of) => of.id == offer.id);
         let currentSlotData;
-        if (currentOffer !== undefined)
-            currentSlotData = currentOffer.slotData.find(
-                sl => sl.id === slotData.id
-            );
+        if (currentOffer !== undefined) currentSlotData = currentOffer.slotData.find((sl) => sl.id === slotData.id);
         let notice;
         if (currentOffer === undefined || currentSlotData === undefined)
             return (
@@ -125,14 +114,7 @@ const AcceptedInvitation = withActions(
                         <T t={t} k="invitation-accepted.deleted" />
                     </Message>
                     <CardFooter>
-                        <Button
-                            type="warning"
-                            onClick={() =>
-                                confirmDeletionAction().then(
-                                    acceptedInvitationAction
-                                )
-                            }
-                        >
+                        <Button type="warning" onClick={() => confirmDeletionAction().then(acceptedInvitationAction)}>
                             <T t={t} k="invitation-accepted.confirm-deletion" />
                         </Button>
                     </CardFooter>
@@ -141,13 +123,7 @@ const AcceptedInvitation = withActions(
         else {
             let changed = false;
             for (const [k, v] of Object.entries(currentOffer)) {
-                if (
-                    k === 'open' ||
-                    k === 'slotData' ||
-                    k === 'grants' ||
-                    k === 'slots'
-                )
-                    continue;
+                if (k === 'open' || k === 'slotData' || k === 'grants' || k === 'slots') continue;
                 if (offer[k] !== v) {
                     changed = true;
                     break;
@@ -213,32 +189,19 @@ const AcceptedInvitation = withActions(
             </F>
         );
     },
-    [
-        userSecret,
-        confirmDeletion,
-        acceptedInvitation,
-        cancelInvitation,
-        invitation,
-        grantID,
-        slotInfos,
-        tokenData,
-    ]
+    [userSecret, confirmDeletion, acceptedInvitation, cancelInvitation, invitation, grantID, slotInfos, tokenData]
 );
 
 const NoInvitations = ({ tokenData, oldGrant }) => {
     let createdAt;
 
-    if (tokenData.createdAt !== undefined)
-        createdAt = new Date(tokenData.createdAt);
+    if (tokenData.createdAt !== undefined) createdAt = new Date(tokenData.createdAt);
 
     let content;
 
     // in the first 10 minutes since the creation of the token we show a 'please wait'
     // message, as it can take some time for appointments to show up...
-    if (
-        createdAt !== undefined &&
-        new Date(createdAt.getTime() + 1000 * 60 * 10) > new Date()
-    ) {
+    if (createdAt !== undefined && new Date(createdAt.getTime() + 1000 * 60 * 10) > new Date()) {
         content = (
             <F>
                 <Message type="success">
@@ -276,15 +239,13 @@ const NoInvitations = ({ tokenData, oldGrant }) => {
 
 async function toggleOffers(state, keyStore, settings, offer, offers) {
     if (offer === null) return { data: [] };
-    if (state.data.find(i => i === offer.id) !== undefined) {
-        state.data = state.data.filter(i => i !== offer.id);
+    if (state.data.find((i) => i === offer.id) !== undefined) {
+        state.data = state.data.filter((i) => i !== offer.id);
     } else {
         state.data.push(offer.id);
     }
     // we remove non-existing offers
-    state.data = state.data.filter(i =>
-        offers.map(offer => offer.id).includes(i)
-    );
+    state.data = state.data.filter((i) => offers.map((offer) => offer.id).includes(i));
     return { data: state.data };
 }
 
@@ -345,7 +306,7 @@ const InvitationDetails = withSettings(
                 grantIDAction();
             });
 
-            const toggle = offer => {
+            const toggle = (offer) => {
                 toggleOffersAction(offer, data.offers);
             };
 
@@ -353,9 +314,7 @@ const InvitationDetails = withSettings(
                 const selectedOffers = [];
                 // we add the selected offers in the order the user chose
                 for (const offerID of toggleOffers.data) {
-                    const offer = data.offers.find(
-                        offer => offer.id === offerID
-                    );
+                    const offer = data.offers.find((offer) => offer.id === offerID);
                     selectedOffers.push(offer);
                 }
                 setConfirming(true);
@@ -380,27 +339,20 @@ const InvitationDetails = withSettings(
             let noOpenSlots = false;
             if (data !== null) {
                 // we get the latest expiration time for all grants
-                data.offers.forEach(offer =>
-                    offer.grants.forEach(grant => {
+                data.offers.forEach((offer) =>
+                    offer.grants.forEach((grant) => {
                         const grantData = JSON.parse(grant.data);
                         const grantExpiresAt = new Date(grantData.expiresAt);
-                        if (
-                            expiresAt === undefined ||
-                            grantExpiresAt > expiresAt
-                        )
-                            expiresAt = grantExpiresAt;
+                        if (expiresAt === undefined || grantExpiresAt > expiresAt) expiresAt = grantExpiresAt;
                     })
                 );
 
                 noOpenSlots = !data.offers
-                    .map(offer => offer.slotData)
+                    .map((offer) => offer.slotData)
                     .flat()
-                    .some(sl => {
+                    .some((sl) => {
                         if (sl.open && !sl.canceled) {
-                            if (
-                                slotInfos !== undefined &&
-                                slotInfos.data !== null
-                            ) {
+                            if (slotInfos !== undefined && slotInfos.data !== null) {
                                 const slotInfo = slotInfos.data[sl.id];
                                 if (slotInfo !== undefined) {
                                     if (slotInfo.status === 'taken') {
@@ -417,8 +369,7 @@ const InvitationDetails = withSettings(
             let oldGrant = true;
             let oldGrantID;
 
-            if (grantID !== undefined && grantID.data !== null)
-                oldGrantID = grantID.data;
+            if (grantID !== undefined && grantID.data !== null) oldGrantID = grantID.data;
 
             if (oldGrantID !== undefined) {
                 if (!noOpenSlots) {
@@ -434,12 +385,7 @@ const InvitationDetails = withSettings(
                 oldGrant = false;
             }
 
-            if (
-                data === null ||
-                data.offers === null ||
-                noOpenSlots ||
-                oldGrant
-            )
+            if (data === null || data.offers === null || noOpenSlots || oldGrant)
                 return (
                     <NoInvitations
                         tokenData={tokenData.data}
@@ -453,29 +399,19 @@ const InvitationDetails = withSettings(
 
             // to do: use something better than the index i for the key?
             const offers = data.offers
-                .filter(offer => offer.slotData.some(sl => sl.open))
-                .filter(a => new Date(a.timestamp) > new Date())
+                .filter((offer) => offer.slotData.some((sl) => sl.open))
+                .filter((a) => new Date(a.timestamp) > new Date())
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
-                    const openSlots = offer.slotData.filter(sl => {
-                        const grant = offer.grants.find(
-                            grant => JSON.parse(grant.data).objectID === sl.id
-                        );
+                    const openSlots = offer.slotData.filter((sl) => {
+                        const grant = offer.grants.find((grant) => JSON.parse(grant.data).objectID === sl.id);
                         // grant is already expired for this slot
-                        if (
-                            grant !== undefined &&
-                            new Date(JSON.parse(grant.data).expiresAt) <
-                                new Date()
-                        ) {
+                        if (grant !== undefined && new Date(JSON.parse(grant.data).expiresAt) < new Date()) {
                             return false;
                         }
-                        if (
-                            slotInfos !== undefined &&
-                            slotInfos.data !== null
-                        ) {
+                        if (slotInfos !== undefined && slotInfos.data !== null) {
                             const sd = slotInfos.data[sl.id];
-                            if (sd !== undefined && sd.status === 'taken')
-                                return false;
+                            if (sd !== undefined && sd.status === 'taken') return false;
                         }
                         return true;
                     });
@@ -483,8 +419,7 @@ const InvitationDetails = withSettings(
                     const d = new Date(offer.timestamp);
                     const selected = toggleOffers.data.includes(offer.id);
                     let pref;
-                    if (selected)
-                        pref = toggleOffers.data.indexOf(offer.id) + 1;
+                    if (selected) pref = toggleOffers.data.indexOf(offer.id) + 1;
                     return (
                         <tr
                             key={offer.id}
@@ -563,11 +498,7 @@ const InvitationDetails = withSettings(
                                 k="offer-expires-at"
                                 time={expiresAt.toLocaleTimeString()}
                                 date={expiresAt.toLocaleDateString()}
-                                duration={formatDuration(
-                                    Math.floor(duration / 1000 / 60),
-                                    settings,
-                                    t
-                                )}
+                                duration={formatDuration(Math.floor(duration / 1000 / 60), settings, t)}
                             />
                         </Message>
                     );
@@ -602,14 +533,7 @@ const InvitationDetails = withSettings(
                 </F>
             );
         },
-        [
-            toggleOffers,
-            confirmOffers,
-            acceptedInvitation,
-            userSecret,
-            slotInfos,
-            grantID,
-        ]
+        [toggleOffers, confirmOffers, acceptedInvitation, userSecret, slotInfos, grantID]
     )
 );
 
