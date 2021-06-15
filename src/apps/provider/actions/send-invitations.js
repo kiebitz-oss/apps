@@ -59,34 +59,23 @@ export async function sendInvitations(
             return timestamp > new Date();
         });
 
-        // checks if the token is expired - a 15 minute grace period is given
-        const isExpired = token =>
-            token.expiresAt !== undefined &&
-            new Date(token.expiresAt) <=
-                new Date(new Date().getTime() - 1000 * 60 * 15);
-
-        let expiredTokens = backend.local.get('provider::tokens::expired', []);
         let openTokens = backend.local.get('provider::tokens::open', []);
-        // we announce expired tokens to the backend
-        let newlyExpiredTokens = openTokens.filter(token => isExpired(token));
 
-        // we filter out any expired tokens...
-        openTokens = openTokens.filter(token => !isExpired(token));
+        let freshTokens = openTokens.filter(
+            token =>
+                new Date(token.createdAt) >
+                new Date(new Date().getTime() - 1000 * 60 * 60 * 2)
+        );
 
-        // we send the signed, encrypted data to the backend
-        if (newlyExpiredTokens.length > 0) {
-            backend.local.set('provider::tokens::expired', [
-                ...expiredTokens,
-                ...newlyExpiredTokens,
-            ]);
-            try {
-                await backend.appointments.returnTokens(
-                    { tokens: expiredTokens.map(token => token.token) },
-                    keyPairs.signing
-                );
-            } catch (e) {
-                console.error(e);
-            }
+        const expiredTokens = backend.local.get(
+            'provider::tokens::expired',
+            []
+        );
+
+        if (expiredTokens.length > 0) {
+            openTokens = [...openTokens, ...expiredTokens];
+            backend.local.set('provider::tokens::open', openTokens);
+            backend.local.set('provider::tokens::expired', []);
         }
 
         let openSlots = 0;
@@ -95,14 +84,16 @@ export async function sendInvitations(
         });
         try {
             // how many more users we invite than we have slots
-            const overbookingFactor = 20;
-            console.log(`Got ${openSlots} open slots and ${openTokens.length} open tokens, overbooking factor is ${overbookingFactor}...`)
+            const overbookingFactor = 3;
+            console.log(
+                `Got ${openSlots} open slots and ${freshTokens.length} fresh tokens (${openTokens.length} tokens in total), overbooking factor is ${overbookingFactor}...`
+            );
             const n = Math.floor(
-                Math.max(0, openSlots * overbookingFactor - openTokens.length)
+                Math.max(0, openSlots * overbookingFactor - freshTokens.length)
             );
             // we don't have enough tokens for our open appointments, we generate more
-            if (n > 0 && openTokens.length < 3000) {
-                console.log(`Trying to get ${n} new tokens...`)
+            if (n > 0) {
+                console.log(`Trying to get ${n} new tokens...`);
                 // to do: get appointments by type
                 const newTokens = await backend.appointments.getQueueTokens(
                     { capacities: [{ n: n, properties: {} }] },
@@ -114,7 +105,7 @@ export async function sendInvitations(
                     };
                 const validTokens = [];
                 for (const tokenList of newTokens) {
-                    console.log(`New tokens received: ${tokenList.length}`)
+                    console.log(`New tokens received: ${tokenList.length}`);
                     for (const token of tokenList) {
                         const privateKey = getQueuePrivateKey(
                             token.queue,
@@ -201,23 +192,6 @@ export async function sendInvitations(
                             break;
                         }
                     }
-                    const expiresInHours = 8;
-                    // to do: remove this once all tokens have proper expiration times
-                    if (
-                        token.expiresAt === undefined ||
-                        (!hasBookedSlot &&
-                            new Date(token.expiresAt) >
-                                new Date(
-                                    new Date().getTime() +
-                                        1000 * 60 * 60 * expiresInHours
-                                ))
-                    ) {
-                        // users have a given time to respond
-                        token.expiresAt = new Date(
-                            new Date().getTime() +
-                                1000 * 60 * 60 * expiresInHours
-                        ).toISOString();
-                    }
 
                     token.slotIDs = token.slotIDs.filter(id => {
                         const slot = slotsById[id];
@@ -283,15 +257,12 @@ export async function sendInvitations(
 
                     let grantsData = await Promise.all(
                         slots.map(async slot => {
-                            let expiresAt = new Date(token.expiresAt);
                             const oa = appointmentsBySlotId[slot.id];
                             // cancellation & booking max 15 minutes before appointment
-                            const maxExpiresAt = new Date(
+                            const expiresAt = new Date(
                                 new Date(oa.timestamp).getTime() -
                                     1000 * 60 * 15
                             );
-                            if (expiresAt > maxExpiresAt)
-                                expiresAt = maxExpiresAt;
                             return await sign(
                                 keyPairs.signing.privateKey,
                                 JSON.stringify({

@@ -35,6 +35,10 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
         if (newIndex >= openAppointments.length) newIndex = 0; // we start from the beginning
         backend.local.set('provider::appointments::check::index', newIndex);
 
+        console.log(
+            `Checking ${openTokens.length} open tokens against ${openAppointments.length} open appointments, current check index is ${currentIndex}...`
+        );
+
         try {
             const ids = [];
             let appointments = [];
@@ -42,7 +46,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 .slice(currentIndex, currentIndex + N)
                 .filter(oa => oa.slots > 0)) {
                 const timestamp = new Date(appointment.timestamp);
-                if (timestamp < new Date()) continue;
+                //if (timestamp < new Date()) continue;
                 for (const slotData of appointment.slotData) {
                     ids.push(slotData.id);
                     appointments.push(appointment);
@@ -73,6 +77,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         let tokenPublicKey;
 
                         switch (openToken.data.version) {
+                            case undefined:
                             case '0.1':
                                 tokenPublicKey =
                                     openToken.encryptedData.publicKey;
@@ -114,14 +119,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 );
                                 // we replace the slot
                                 appointment.slotData.push(createSlot());
-                                // We reset the expiration time. The sendInvitations
-                                // action will take care of giving the token a new one
-                                openToken.expiresAt = undefined;
-                            } else {
-                                // the token will expire with the appointment
-                                openToken.expiresAt = new Date(
-                                    appointment.timestamp
-                                ).toISOString();
                             }
                         } else {
                             // we get the slot data for the token
@@ -131,10 +128,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             slotData.open = false;
                             slotData.token = openToken;
                             slotData.userData = decryptedData;
-                            // the token will expire with the appointment
-                            openToken.expiresAt = new Date(
-                                appointment.timestamp
-                            ).toISOString();
                         }
                     } catch (e) {
                         console.error(e);
