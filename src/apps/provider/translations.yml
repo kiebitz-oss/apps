@@ -12,6 +12,11 @@ setup:
 restore:
   de: Einloggen
 load-backup:
+  advanced-options:
+    de: Erweiterte Optionen
+  local-only:
+    label:
+      de: Nur lokale Daten laden (keine Cloud-Daten)
   failed:
     de: Das Laden Ihrer Daten ist leider fehlgeschlagen. Bitte prüfen Sie Ihren Datenschlüssel sowie die angegebene Datei.
   invalid-secret:

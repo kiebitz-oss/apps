@@ -13,6 +13,7 @@ import {
     Button,
     RetractingLabelInput,
     Message,
+    Switch,
     CardContent,
     CardFooter,
     Form as FormComponent,
@@ -46,6 +47,12 @@ class LoadBackupForm extends Form {
     }
 }
 
+function formatSecret(secret) {
+    const parts = secret.match(/.{1,4}/g);
+    if (parts === null) return secret;
+    return parts.join('  ');
+}
+
 export default withForm(
     withActions(
         withRouter(
@@ -60,6 +67,7 @@ export default withForm(
                     const [initialized, setInitialized] = useState(false);
                     const [restoring, setRestoring] = useState(false);
                     const fileInput = useRef(null);
+
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
@@ -72,13 +80,15 @@ export default withForm(
 
                     const restore = () => {
                         setRestoring(true);
-                        restoreFromBackupAction(data.secret, data.file).then(
-                            data => {
-                                setRestoring(false);
-                                if (data.status === 'succeeded')
-                                    router.navigateToUrl('/provider/schedule');
-                            }
-                        );
+                        restoreFromBackupAction(
+                            data.secret,
+                            data.file,
+                            data.localOnly
+                        ).then(data => {
+                            setRestoring(false);
+                            if (data.status === 'succeeded')
+                                router.navigateToUrl('/provider/schedule');
+                        });
                     };
 
                     let notice;
@@ -111,7 +121,7 @@ export default withForm(
                     };
 
                     return (
-                        <CenteredCard className="kip-restore-from-backup">
+                        <CenteredCard className="kip-provider-restore-from-backup">
                             <CardContent>
                                 <h1 className="bulma-subtitle">
                                     <T t={t} k="load-backup.title" />
@@ -120,7 +130,10 @@ export default withForm(
                                 <FormComponent>
                                     <FieldSet>
                                         <RetractingLabelInput
-                                            value={data.secret || ''}
+                                            id="secret"
+                                            value={formatSecret(
+                                                data.secret || ''
+                                            )}
                                             onChange={value =>
                                                 set('secret', value)
                                             }
@@ -137,12 +150,6 @@ export default withForm(
                                                 />
                                             }
                                         />
-                                        <h2>
-                                            <T
-                                                t={t}
-                                                k="load-backup.input.label"
-                                            />
-                                        </h2>
                                         <label
                                             role="button"
                                             onKeyDown={keyDown}
@@ -171,6 +178,38 @@ export default withForm(
                                                 />
                                             )}
                                         </label>
+                                        <h3>
+                                            <T
+                                                t={t}
+                                                k="load-backup.advanced-options"
+                                            />
+                                        </h3>
+
+                                        <ul className="kip-properties">
+                                            <li className="kip-property">
+                                                <Switch
+                                                    id="localOnly"
+                                                    checked={
+                                                        data.localOnly !==
+                                                        undefined
+                                                            ? data.localOnly
+                                                            : false
+                                                    }
+                                                    onChange={value =>
+                                                        set('localOnly', value)
+                                                    }
+                                                >
+                                                    &nbsp;
+                                                </Switch>
+
+                                                <label htmlFor="localOnly">
+                                                    <T
+                                                        t={t}
+                                                        k="load-backup.local-only.label"
+                                                    />
+                                                </label>
+                                            </li>
+                                        </ul>
                                     </FieldSet>
                                 </FormComponent>
                             </CardContent>

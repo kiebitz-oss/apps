@@ -1,4 +1,8 @@
 backup-modal:
+  download-backup:
+    de: Backup-Datei herunterladen
+  close:
+    de: Schließen
   backing-up-test:
     de: Bitte warten, Datenbackup wird erstellt...
   title:
@@ -20,6 +24,9 @@ delete-modal:
   deleting-text:
     de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
 appointment-overview:
+  edit:
+    button:
+      de: Bearbeiten
   delete:
     confirm:
       de: Löschen bestätigen
@@ -44,6 +51,9 @@ appointment-overview:
       de: Keine gebuchten Slots bisher. Sobald Buchungen vorhanden sind werden hier die Buchungscodes angezeigt.
   title:
     de: Terminübersicht
+appointments-list:
+  title:
+    de: Buchungen
 schedule:
   backward:
     de: vorherige Woche
@@ -59,11 +69,10 @@ schedule:
       de: Terminserie
     add:
       de: Termin erstellen
-  view:
-    calendar:
-      de: Kalenderansicht
-    list:
-      de: Listenansicht
+  calendar:
+    de: Kalenderansicht
+  booking-list:
+    de: Buchungliste
   updating:
     de: "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}" 
   title:

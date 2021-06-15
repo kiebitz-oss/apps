@@ -30,6 +30,7 @@ export const exportLocalStorageToSecret = async (secret: any, keys: string[]): P
     const backend = settings.get(KEY_BACKEND);
     try {
         await backend.local.lock();
+
         const data: any = {};
         for (const key of keys) {
             data[key] = backend.local.get(`user::${key}`);
@@ -46,8 +47,14 @@ export const exportLocalStorageToSecret = async (secret: any, keys: string[]): P
 
         // TODO: There was a conditional return here before related to state.
         // Does it matter that we run the rest?
+        // if (state !== undefined && state.referenceData != undefined) {
+        //     if (JSON.stringify(state.referenceData) === JSON.stringify(referenceData)) {
+        //         return state;
+        //     }
+        // }
 
-        await backend.storage.storeSettings({ id: id, data: encryptedData });
+        // TODO: Is this line needed?
+        await backend.storage.storeSettings({ id, data: encryptedData });
 
         return [data, encryptedData];
     } finally {

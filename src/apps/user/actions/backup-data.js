@@ -4,11 +4,21 @@
 
 import { exportLocalStorageToSecret } from '../../../../kiebitz/user/backup';
 
-export const backupKeys = ['tokenData', 'invitation', 'invitation::verified', 'invitation::accepted', 'secret'];
+export const backupKeys = [
+    'grantID',
+    'tokenData',
+    'invitation',
+    'invitation::verified',
+    'invitation::accepted',
+    'invitation::slots',
+    'invitation::grantID',
+    'secret',
+];
 
 // make sure the signing and encryption key pairs exist
 export async function backupData(state, keyStore, settings, secret) {
     try {
+        // TODO: If locking doesn't work throw null exception.
         const [referenceData, data] = await exportLocalStorageToSecret(secret, backupKeys);
 
         // TODO: Fix type coercion or add eslint ignore + comment if on purpose.

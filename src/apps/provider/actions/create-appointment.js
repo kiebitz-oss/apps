@@ -4,6 +4,15 @@
 
 import { randomBytes } from 'helpers/crypto';
 
+export function createSlot() {
+    return {
+        open: true,
+        id: randomBytes(32), // where the user can submit his confirmation
+        status: randomBytes(32), // where the user can get the appointment status
+        cancel: randomBytes(32), // where the user can cancel his confirmation
+    };
+}
+
 export async function createAppointment(
     state,
     keyStore,
@@ -11,22 +20,22 @@ export async function createAppointment(
     appointment
 ) {
     const backend = settings.get('backend');
+
     try {
         // we lock the local backend to make sure we don't have any data races
         await backend.local.lock();
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
 
+    try {
         const openAppointments = backend.local.get(
             'provider::appointments::open',
             []
         );
         const slotData = [];
         for (let i = 0; i < appointment.slots; i++) {
-            slotData.push({
-                open: true,
-                id: randomBytes(32), // where the user can submit his confirmation
-                status: randomBytes(32), // where the user can get the appointment status
-                cancel: randomBytes(32), // where the user can cancel his confirmation
-            });
+            slotData.push(createSlot());
         }
         openAppointments.push({
             slotData: slotData,

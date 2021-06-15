@@ -3,8 +3,7 @@
 // README.md contains license information.
 
 import { getUserInvitationVerified } from '../../../../kiebitz/user/invitation';
-
-export async function invitation(state, keyStore, settings) {
+export async function invitation(state, keyStore, settings, data) {
     return {
         status: 'loaded',
         data: getUserInvitationVerified(),

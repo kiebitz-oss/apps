@@ -8,6 +8,21 @@ appointment-preference:
   de:
     Rang
 invitation-accepted:
+  delete:
+    title:
+      de: Termin absagen
+    notice:
+      de: Willst du den Termin wirklich absagen?
+    confirm:
+      de: Bestätigen
+    cancel:
+      de: Abbrechen
+  confirm-deletion:
+    de: Zurück zur Terminvergabe
+  deleted:
+    de: Der Termin wurde vom Anbieter gelöscht. Sorry! Du kannst zurück zur Terminvergabe gehen, um neue Terminvorschläge zu erhalten.
+  changed:
+    de: Details Deines Termins haben sich geändert!
   booking-code:
     de: "Buchungscode zur Vorlage: Bitte notieren!"
   title:
@@ -18,6 +33,10 @@ appointments-notice:
   de: Bitte wähle alle für Dich passenden Termine aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum geannten Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.
 confirm-appointment:
   de: Terminauswahl bestätigen
+offer-expired:
+  de: Das Angebot ist leider abgelaufen. Falls wieder Termine verfügbar sind in deiner Umgebung erhälst du eventuell ein neues Angebot.
+offer-expires-at:
+  de: "Das Angebot läuft in {duration} ab (am {date} um {time}), bitte wähle vorher einen Termin!"
 appointment-date:
   de:
     Datum
@@ -65,10 +84,12 @@ delete-modal:
 cancel-appointment:
   de: Termin absagen
 no-invitations:
-  title:
-    de: Keine Terminangebote
+  please-wait:
+    de: Deine Daten wurden im System gespeichert. Falls Termine in deiner Nähe verfügbar sind, werden diese in wenigen Minuten hier angezeigt.
+  old-grant-notice:
+    de: Du hast Deinen Termin storniert, oder Dein Termin wurde storniert. Bitte warte, bis neue Termine für dich bereitgestellt werden.
   notice:
-    de: Im Moment sind keine Termine in Deiner Umgebung verfügbar. Schau einfach regelmäßig hier vorbei. Sobald neue Termine in Deiner Nähe verfügbar sind, werden sie Dir hier angezeigt.
+    de: Im Moment sind scheinbar keine Termine in Deiner Umgebung verfügbar. Schau einfach regelmäßig hier vorbei. Sobald neue Termine in Deiner Nähe verfügbar sind, werden sie Dir hier angezeigt.
   update-notice:
     de: Diese Seite wird automatisch aktualisiert...
 go-back:

@@ -9,6 +9,7 @@ import { initLocalStorageFromSecret } from '../../../../kiebitz/user/backup';
 export async function restoreFromBackup(state, keyStore, settings, secret) {
     try {
         // TODO: What is `dd`?
+        // TODO: Throw null error if locking fails.
         const dd = await initLocalStorageFromSecret(secret, backupKeys);
         return {
             status: 'succeeded',

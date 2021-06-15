@@ -185,7 +185,10 @@ const Verify = withRouter(
                     submitProviderData.status === 'failed'
                 ) {
                     failed = true;
-                    if (submitProviderData.error.error.code === 401) {
+                    if (
+                        submitProviderData.error.error !== undefined &&
+                        submitProviderData.error.error.code === 401
+                    ) {
                         failedMessage = (
                             <Message type="danger">
                                 <T t={t} k="wizard.failed.invalid-code" />

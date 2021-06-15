@@ -61,13 +61,16 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
             // we hash the user data to prove it didn't change later...
             const [dataHash, nonce] = await hashContactData(contactData);
             const signingKeyPair = await generateECDSAKeyPair();
+            const encryptionKeyPair = await generateECDHKeyPair();
 
             const userToken = {
                 // we use the user secrets first 4 digits as a code
                 // this weakens the key a bit but the provider has access to all
                 // of the user's appointment data anyway...
                 code: userSecret.slice(0, 4),
+                version: '0.2',
                 publicKey: signingKeyPair.publicKey, // the signing key to control the ID
+                encryptionPublicKey: encryptionKeyPair.publicKey,
                 id: randomBytes(32), // the ID where we want to receive data
             };
 
@@ -96,12 +99,13 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
             });
 
             const newTokenData = {
+                createdAt: new Date().toISOString(),
                 signedToken: signedToken,
                 signingKeyPair: signingKeyPair,
                 encryptedTokenData: encryptedTokenData,
                 encryptedContactData: encryptedContactData,
                 queueData: queueData,
-                privateKey: privateKey,
+                keyPair: encryptionKeyPair,
                 hashNonce: nonce,
                 dataHash: dataHash,
                 tokenData: userToken,

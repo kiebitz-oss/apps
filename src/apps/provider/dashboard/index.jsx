@@ -48,6 +48,7 @@ const Dashboard = withRouter(
                             props: { tab, action, secondaryAction, id },
                         },
                     },
+                    route,
                     router,
                     settings,
                     openAppointments,
@@ -153,6 +154,7 @@ const Dashboard = withRouter(
                             content = (
                                 <Schedule
                                     action={action}
+                                    route={route}
                                     secondaryAction={secondaryAction}
                                     id={id}
                                     key="schedule"

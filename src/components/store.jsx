@@ -117,32 +117,41 @@ export function withActions(Component, actionNames, keyList, noStore) {
                         }
                         const wrapper = function() {
                             const state = store.get(key);
-                            console.log({actionName: key}, state && state.status, state && state.data)
-                            const result = ActionProvider(
-                                state,
-                                keyStore,
-                                settings,
-                                ...arguments
-                            );
-                            if (result instanceof Promise) {
-                                result
-                                    .then(
-                                        data =>
-                                            data !== undefined &&
-                                            store.set(key, data)
-                                    )
-                                    .catch(
-                                        error =>
-                                            error !== undefined &&
-                                            store.set(key, error)
-                                    );
-                                return result;
-                            } else if (result !== undefined) {
-                                store.set(key, result);
-                                // we always return a promise
-                                return new Promise((resolve, reject) => {
-                                    resolve(result);
-                                });
+                            try {
+                                const result = ActionProvider(
+                                    state,
+                                    keyStore,
+                                    settings,
+                                    ...arguments
+                                );
+
+                                if (result instanceof Promise) {
+                                    result
+                                        .then(
+                                            data =>
+                                                data !== undefined &&
+                                                data !== null &&
+                                                store.set(key, data)
+                                        )
+                                        .catch(
+                                            error =>
+                                                error !== undefined &&
+                                                error !== null &&
+                                                store.set(key, error)
+                                        );
+                                    return result;
+                                } else if (
+                                    result !== undefined &&
+                                    result !== null
+                                ) {
+                                    store.set(key, result);
+                                    // we always return a promise
+                                    return new Promise((resolve, reject) => {
+                                        resolve(result);
+                                    });
+                                }
+                            } catch (e) {
+                                if (e !== null) store.set(key, e);
                             }
                         };
                         actionProvider = wrapper;
