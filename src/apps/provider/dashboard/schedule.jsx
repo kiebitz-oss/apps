@@ -556,18 +556,22 @@ const WeekCalendar = withRouter(
 );
 
 const AppointmentItem = ({ appointment }) => {
-    const acceptedItems = appointment.slotData.sort((a, b) => {
-        if (a.open || b.open || a.token === undefined || b.token === undefined)
-            return 0
-        try {
-            if (a.token.data.code > b.token.data.code)
-                return 1
-            else
-                return -1
-        } catch(e) {
-            return 0
-        }
-    })
+    const acceptedItems = appointment.slotData
+        .sort((a, b) => {
+            if (
+                a.open ||
+                b.open ||
+                a.token === undefined ||
+                b.token === undefined
+            )
+                return 0;
+            try {
+                if (a.token.data.code > b.token.data.code) return 1;
+                else return -1;
+            } catch (e) {
+                return 0;
+            }
+        })
         .map(sl => {
             if (sl.open) return;
             return (
@@ -990,6 +994,10 @@ const Invitations = withTimer(
 
                     if (startDate === undefined)
                         startDate = getMonday(new Date());
+
+                    if (action === undefined) {
+                        action = formatDate(startDate);
+                    }
 
                     let dateString = formatDate(startDate);
 

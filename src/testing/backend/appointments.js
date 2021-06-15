@@ -62,7 +62,10 @@ class AppointmentsBackend {
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
         // we store the verified provider data
-        const result = await this.storeData({ id, data: encryptedProviderData }, keyPair);
+        const result = await this.storeData(
+            { id: verifiedID, data: encryptedProviderData },
+            keyPair
+        );
 
         if (!result) return;
 
@@ -79,12 +82,13 @@ class AppointmentsBackend {
             }
             providers.push(providerData);
         }
+
         this.store.set('providers::list', providers);
 
         // we add the provider to the list of verified providers
         const verifiedProvidersList = this.store.get('providers::list::verified', []);
         verifiedProvidersList.push(oldProviderData);
-        this.store.get('providers::list::verified', verifiedProvidersList);
+        this.store.set('providers::list::verified', verifiedProvidersList);
 
         return {};
     }
@@ -264,7 +268,8 @@ class AppointmentsBackend {
 
     async getData({ id }, keyPair) {
         // to do: implement access control (not really relevant though for the demo)
-        return this.store.get(`data::${id}`);
+        const result = this.store.get(`data::${id}`);
+        return result;
     }
 
     async bulkGetData({ ids }, keyPair) {
