@@ -6,7 +6,7 @@ import './kiebitz/setup';
 import DefaultLayout from './layouts/DefaultLayout';
 import UserWelcome from './features/UserWelcome';
 import UserWizard from './features/UserWizard';
-import UserAppointments from './features/UserAppointments';
+import UserSlotsSelectionFeature from './features/UserSlotsSelectionFeature';
 import UserAppointmentsSuccess from './features/UserAppointmentsSuccess';
 import ProviderAppointmentCreate from './features/ProviderAppointmentCreate';
 
@@ -24,7 +24,7 @@ const App = () => {
                         <UserAppointmentsSuccess />
                     </Route>
                     <Route path="/user/appointments">
-                        <UserAppointments />
+                        <UserSlotsSelectionFeature />
                     </Route>
                     <Route path="/user/">
                         <UserWelcome />

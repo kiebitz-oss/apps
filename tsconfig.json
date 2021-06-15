@@ -29,7 +29,15 @@
             "@/backend": ["./src-vite/adapter/backend"],
             "@/backend/*": ["./src-vite/adapter/backend/*"],
             "@/settings": ["./src-vite/adapter/settings"],
-            "@/settings/*": ["./src-vite/adapter/settings/*"]
+            "@/settings/*": ["./src-vite/adapter/settings/*"],
+            "@/kiebitz": ["./kiebitz"],
+            "@/kiebitz/*": ["./kiebitz/*"],
+            "@/hooks": ["./src-vite/hooks"],
+            "@/hooks/*": ["./src-vite/hooks/*"],
+            "@/components": ["./src-vite/components"],
+            "@/components/*": ["./src-vite/components/*"],
+            "@/types": ["./src-vite/types"],
+            "@/types/*": ["./src-vite/types/*"]
         }
     },
     "include": ["kiebitz", "src", "src-vite", "custom.d.ts"]

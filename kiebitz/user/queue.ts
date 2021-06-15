@@ -22,7 +22,7 @@ export interface UserContactData {
     [x: string]: any;
 }
 
-export const getUserTemporaryQueueData = async (): Promise<UserQueueData> => {
+export const getUserTemporaryQueueData = (): UserQueueData => {
     const backend = settings.get(KEY_BACKEND);
     return backend.temporary.get(KEY_USER_QUEUE_DATA);
 };

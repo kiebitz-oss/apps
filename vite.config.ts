@@ -32,6 +32,8 @@ export default defineConfig({
             '@/features': path.resolve(__dirname, 'src-vite/features'),
             '@/utils': path.resolve(__dirname, 'src-vite/utils'),
             '@/kiebitz': path.resolve(__dirname, 'kiebitz'),
+            '@/hooks': path.resolve(__dirname, 'src-vite/hooks'),
+            '@/types': path.resolve(__dirname, 'src-vite/types.ts'),
         },
     },
     build: {

@@ -1,15 +1,19 @@
+export const getReadableTimeFromDate = (date: Date, locale?: string, options?: Intl.DateTimeFormatOptions): string => {
+    return date.toLocaleTimeString(locale ?? 'de-DE', options);
+};
+
 export const getReadableTimeFromTimestamp = (
     timestamp: number,
     locale?: string,
     options?: Intl.DateTimeFormatOptions
-): string => {
-    return new Date(timestamp).toLocaleTimeString(locale ?? 'de-DE', options);
+): string => getReadableTimeFromDate(new Date(timestamp), locale, options);
+
+export const getReadableDateFromDate = (date: Date, locale?: string, options?: Intl.DateTimeFormatOptions): string => {
+    return date.toLocaleDateString(locale ?? 'de-DE', options);
 };
 
 export const getReadableDateFromTimestamp = (
     timestamp: number,
     locale?: string,
     options?: Intl.DateTimeFormatOptions
-): string => {
-    return new Date(timestamp).toLocaleDateString(locale ?? 'de-DE', options);
-};
+): string => getReadableDateFromDate(new Date(timestamp), locale, options);

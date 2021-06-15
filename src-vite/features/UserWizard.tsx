@@ -1,15 +1,17 @@
-import React from 'react';
-import { Button } from '../components/Button';
-import { Input } from '../components/Input';
-import { Select } from '../components/Select';
-import { Toggle } from '../components/Toggle';
-import { Field } from '../components/Field';
-import { Form } from '../components/Form';
-import Card from '../components/Card';
-import { getQueues, GetQueueVariables } from '../../kiebitz/provider/queues';
-import { getUserAppointmentsTokenDataWithSignedToken, UserQueueData } from '../../kiebitz/user/queue';
-import { user } from 'actions';
-import useUserSecret from '../hooks/useUserSecret';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+import { Select } from '@/components/Select';
+import { Toggle } from '@/components/Toggle';
+import { Field } from '@/components/Field';
+import { Form } from '@/components/Form';
+import Card from '@/components/Card';
+import { getQueues } from '@/kiebitz/provider/queues';
+import { getUserAppointmentsTokenDataWithSignedToken } from '@/kiebitz/user/queue';
+import useUserSecret from '@/hooks/useUserSecret';
+import useUserTokenData from '@/hooks/useUserTokenData';
 
 const distances = { '5km': 5, '10km': 10, '20km': 20, '30km': 30, '40km': 40, '50km': 50 };
 const plzRegex = /^[0-9]{5}$/;
@@ -24,6 +26,18 @@ type FormSubmitData = {
 
 const UserWizard = () => {
     const [userSecret] = useUserSecret();
+    const [userTokenData] = useUserTokenData();
+
+    const history = useHistory();
+
+    useEffect(() => {
+        const hasCompletedSetup = userSecret && userTokenData;
+        if (hasCompletedSetup) {
+            history.push('/user/appointments');
+        }
+    }, [userSecret, useUserTokenData]);
+
+    console.log(userSecret, userTokenData);
 
     const handleSubmit = async (data: FormSubmitData) => {
         const { zip, distance } = data;
