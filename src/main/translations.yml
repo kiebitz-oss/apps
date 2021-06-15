@@ -6,6 +6,6 @@ apps:
   _ignore_unused: true
   en: Apps
 outdated:
-  de: Ihre App-Version ist veraltet, bitte laden Sie die Seite neu um die neueste Version zu nutzen.
+  de: Ihre App-Version ist veraltet, bitte laden Sie die Seite neu um die neueste Version zu nutzen. Automatisches Neuladen erfolgt nach 60 Sekunden.
 reload:
   de: Seite neu laden
