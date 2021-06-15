@@ -65,7 +65,7 @@ export default class AppointmentsBackend {
         this.store.set('keys', this.keys);
         // we store the verified provider data
         const result = await this.storeData(
-            { id, data: encryptedProviderData },
+            { id: verifiedID, data: encryptedProviderData },
             keyPair
         );
 
@@ -84,6 +84,7 @@ export default class AppointmentsBackend {
             }
             providers.push(providerData);
         }
+
         this.store.set('providers::list', providers);
 
         // we add the provider to the list of verified providers
@@ -92,7 +93,7 @@ export default class AppointmentsBackend {
             []
         );
         verifiedProvidersList.push(oldProviderData);
-        this.store.get('providers::list::verified', verifiedProvidersList);
+        this.store.set('providers::list::verified', verifiedProvidersList);
 
         return {};
     }
@@ -287,7 +288,8 @@ export default class AppointmentsBackend {
 
     async getData({ id }, keyPair) {
         // to do: implement access control (not really relevant though for the demo)
-        return this.store.get(`data::${id}`);
+        const result = this.store.get(`data::${id}`);
+        return result;
     }
 
     async bulkGetData({ ids }, keyPair) {
