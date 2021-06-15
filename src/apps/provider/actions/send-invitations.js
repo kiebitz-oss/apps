@@ -200,12 +200,12 @@ export async function sendInvitations(
                         if (slot === undefined) return false;
                         // we remove slots taken by other users as the user
                         // won't be able to book them anymore...
-                        if (!slot.open && !slot.token.token === token.token)
+                        if (!slot.open && slot.token.token !== token.token)
                             return false;
                         return true;
                     });
 
-                    addSlots: while (token.slotIDs.length < 12) {
+                    addSlots: while (token.slotIDs.length < 20) {
                         let addedSlots = 0;
                         // we shuffle the open appointments to distribute them
                         // evenly over all tokens
@@ -216,9 +216,9 @@ export async function sendInvitations(
                             // evenly over all tokens
                             shuffle(openSlots);
                             const existingSlots = token.slotIDs.filter(
-                                sl =>
+                                id =>
                                     oa.slotData.find(
-                                        osl => osl.id === sl.id
+                                        osl => osl.id === id
                                     ) !== undefined
                             ).length;
                             if (existingSlots >= 3) continue; // the user already has 3 slots for this appointment, that's all we give out...
@@ -231,9 +231,9 @@ export async function sendInvitations(
                                 // we check if the slot is already associated
                                 // with this token
                                 if (
-                                    !token.slotIDs.find(
+                                    token.slotIDs.find(
                                         id => id === openSlots[i].id
-                                    )
+                                    ) === undefined
                                 ) {
                                     addedSlots++;
                                     token.slotIDs.push(openSlots[i].id);
