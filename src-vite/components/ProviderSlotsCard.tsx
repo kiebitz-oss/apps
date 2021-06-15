@@ -24,7 +24,7 @@ const ProviderSlotsCard: React.FC<ProviderOffersCardProps> = (props) => {
 
     const renderSlots = (slot: [day: string, slots: Omit<ProviderSlotProps, 'onClickSlot'>[]]) => {
         const [day, slots] = slot;
-        return <ProviderSlots date={new Date(day)} slots={slots} onClickSlot={onClickOffer} />;
+        return <ProviderSlots key={day} date={new Date(day)} slots={slots} onClickSlot={onClickOffer} />;
     };
 
     return (

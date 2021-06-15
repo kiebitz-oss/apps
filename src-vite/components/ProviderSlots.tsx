@@ -27,6 +27,7 @@ const ProviderSlots: React.FC<ProviderSlotsProps> = (props) => {
 
         return (
             <ProviderSlot
+                key={date.getTime()}
                 date={date}
                 vaccines={vaccines}
                 duration={duration}
