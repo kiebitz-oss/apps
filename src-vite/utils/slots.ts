@@ -1,8 +1,8 @@
-import { Vaccine } from '@/types';
-import { ProviderSlotProps } from '@/components/ProviderSlot';
+import { Slot, Vaccine } from '@/types';
 
 // TODO: Actually map the available vaccines.
-export const getSlotFromOffer = (offer: any): Omit<ProviderSlotProps, 'onClickSlot'> => ({
+export const getSlotFromOffer = (offer: any): Slot => ({
+    id: offer.id,
     date: new Date(`${offer.date} ${offer.time}`),
     vaccines: ['biontech'],
     duration: offer.duration,

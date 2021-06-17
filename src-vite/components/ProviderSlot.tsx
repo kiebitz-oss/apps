@@ -1,14 +1,11 @@
 import React, { ReactNode, useMemo } from 'react';
-import { Vaccine } from '@/types';
+import { Slot, Vaccine } from '@/types';
 import { getReadableTimeFromDate } from '../utils/intl';
 import { FiClock } from 'react-icons/fi';
 import { getReadableVaccine } from '../utils/slots';
 import classNames from 'classnames';
 
-export interface ProviderSlotProps extends React.HTMLAttributes<HTMLDivElement> {
-    date: Date;
-    vaccines: Vaccine[];
-    duration: number;
+export interface ProviderSlotProps extends Omit<Slot, 'id'>, React.HTMLAttributes<HTMLDivElement> {
     onClickSlot: (vaccine: Vaccine) => void;
 }
 

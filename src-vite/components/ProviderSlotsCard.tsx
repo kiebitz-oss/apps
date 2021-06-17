@@ -1,9 +1,7 @@
 import React from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
-
-import { ProviderSlotProps } from '@/components/ProviderSlot';
 import ProviderSlots from '@/components/ProviderSlots';
-import { Vaccine } from '@/types';
+import { Slot, Vaccine } from '@/types';
 
 interface ProviderOffersCardProps extends React.HTMLAttributes<HTMLDivElement> {
     name: string;
@@ -15,16 +13,16 @@ interface ProviderOffersCardProps extends React.HTMLAttributes<HTMLDivElement> {
     website?: string;
     desc?: string;
     isAccessible: boolean;
-    slots: [day: string, slots: Omit<ProviderSlotProps, 'onClickSlot'>[]][];
-    onClickOffer: (offer: Omit<ProviderSlotProps, 'onClickSlot'>, vaccine: Vaccine) => void;
+    slots: [day: string, slots: Slot[]][];
+    onClickSlot: (slot: Slot, vaccine: Vaccine) => void;
 }
 
 const ProviderSlotsCard: React.FC<ProviderOffersCardProps> = (props) => {
-    const { name, street, zip, city, email, phone, website, desc, isAccessible, slots = [], onClickOffer } = props;
+    const { name, street, zip, city, email, phone, website, desc, isAccessible, slots = [], onClickSlot } = props;
 
-    const renderSlots = (slot: [day: string, slots: Omit<ProviderSlotProps, 'onClickSlot'>[]]) => {
-        const [day, slots] = slot;
-        return <ProviderSlots key={day} date={new Date(day)} slots={slots} onClickSlot={onClickOffer} />;
+    const renderSlots = (slotByDay: [day: string, slots: Slot[]]) => {
+        const [day, slots] = slotByDay;
+        return <ProviderSlots key={day} date={new Date(day)} slots={slots} onClickSlot={onClickSlot} />;
     };
 
     return (

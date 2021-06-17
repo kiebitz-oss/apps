@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import ProviderSlotsCard from '@/components/ProviderSlotsCard';
 import { HeroTitle } from '@/components/HeroTitle';
-import useAvailableUserSlots, { getSlotsFromOffers } from '@/hooks/useAvailableUserSlots';
+import useAvailableUserSlots from '@/hooks/useAvailableUserSlots';
 import useUserSecret from '@/hooks/useUserSecret';
 import useUserTokenData from '@/hooks/useUserTokenData';
-import { ProviderSlotProps } from '@/components/ProviderSlot';
-import { Vaccine } from '@/types';
+import { Slot, Vaccine } from '@/types';
 
 const UserSlotsSelectionFeature = () => {
     const [userSecret] = useUserSecret();
@@ -26,6 +25,18 @@ const UserSlotsSelectionFeature = () => {
 
     const providerOffers = [{ provider: _provider, offers: slots }];
 
+    const [selectedSlotsIds, setSelectedSlotsIds] = useState<string[]>([]);
+
+    const toggleSlot = (slotId: string) => {
+        const index = selectedSlotsIds.indexOf(slotId);
+        const exists = index !== -1;
+        if (exists) {
+            setSelectedSlotsIds(selectedSlotsIds.slice(index, 1));
+        } else {
+            setSelectedSlotsIds([...selectedSlotsIds, slotId]);
+        }
+    };
+
     const renderProvider = (data): React.ReactNode => {
         if (!data.provider) {
             return null;
@@ -34,9 +45,10 @@ const UserSlotsSelectionFeature = () => {
         const { signature, json } = data.provider;
         const { name, street, zipCode, city, accessible, email, description, website, phone } = json;
 
-        const handleOfferClick = (clickedOffer: Omit<ProviderSlotProps, 'onClickSlot'>, clickedVaccine: Vaccine) => {
+        const handleOfferClick = (clickedOffer: Slot, clickedVaccine: Vaccine) => {
             // eslint-disable-next-line no-console
             console.log({ clickedOffer, clickedVaccine });
+            toggleSlot(clickedOffer.id);
         };
 
         return (

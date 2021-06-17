@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { getUserTokenData } from '@/kiebitz/user/token-data';
 import { getKeys } from '@/kiebitz/user/keys';
 import { getUserDecryptedInvitationData } from '@/kiebitz/user/invitation';
-import { ProviderSlotProps } from '@/components/ProviderSlot';
 import { getSlotFromOffer } from '../utils/slots';
+import { Slot } from '@/types';
 
 // Deliberate naming 'offers' from backend since we haven't transformed to 'slots' yet.
 const getOffersForTokenData = async (tokenData) => {
@@ -16,7 +16,7 @@ const getOffersForTokenData = async (tokenData) => {
     return [offers, provider];
 };
 
-export const getSlotsFromOffers = (offers: any[]): [day: string, slots: Omit<ProviderSlotProps, 'onClickSlot'>[]][] => {
+export const getSlotsFromOffers = (offers: any[]): [day: string, slots: Slot[]][] => {
     const slotsByDayMap = offers.reduce((prev, offer) => {
         // Sorting them ascending by time to easily display in the UI.
         prev[offer.date] = [...(prev[offer.date] ?? []), getSlotFromOffer(offer)].sort(
@@ -28,20 +28,14 @@ export const getSlotsFromOffers = (offers: any[]): [day: string, slots: Omit<Pro
     const slotsByDay = Object.entries(slotsByDayMap);
 
     // Sorting ascending by day to easily display in the UI.
-    return slotsByDay.sort(([dayA], [dayB]) => (dayB > dayA ? -1 : 1)) as unknown as [
-        day: string,
-        slots: Omit<ProviderSlotProps, 'onClickSlot'>[]
-    ][];
+    return slotsByDay.sort(([dayA], [dayB]) => (dayB > dayA ? -1 : 1)) as unknown as [day: string, slots: Slot[]][];
     // TODO: Fix this TS hell above.
 };
 
-const useAvailableUserSlots = (): [[day: string, slots: Omit<ProviderSlotProps, 'onClickSlot'>[]][], any] => {
+const useAvailableUserSlots = (): [[day: string, slots: Slot[]][], any] => {
     const [slots, setSlots] = useState([]);
 
-    const slotsByDay = useMemo<[day: string, slots: Omit<ProviderSlotProps, 'onClickSlot'>[]][]>(
-        () => getSlotsFromOffers(slots),
-        [slots]
-    );
+    const slotsByDay = useMemo<[day: string, slots: Slot[]][]>(() => getSlotsFromOffers(slots), [slots]);
 
     const [provider, setProvider] = useState();
 

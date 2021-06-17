@@ -1,23 +1,19 @@
 import React from 'react';
-import ProviderSlot, { ProviderSlotProps } from '@/components/ProviderSlot';
-import { Vaccine } from '@/types';
-import { getReadableDateFromDate } from '../utils/intl';
 import classNames from 'classnames';
+import { Slot, Vaccine } from '@/types';
+import ProviderSlot from '@/components/ProviderSlot';
+import { getReadableDateFromDate } from '../utils/intl';
 
 export interface ProviderSlotsProps extends React.HTMLAttributes<HTMLDivElement> {
     date: Date;
-    slots: Omit<ProviderSlotProps, 'onClickSlot'>[];
-    onClickSlot: (slot: Omit<ProviderSlotProps, 'onClickSlot'>, vaccine: Vaccine) => void;
+    slots: Slot[];
+    onClickSlot: (slot: Slot, vaccine: Vaccine) => void;
 }
 
 const ProviderSlots: React.FC<ProviderSlotsProps> = (props) => {
     const { date, slots, onClickSlot } = props;
 
-    const renderSlot = (
-        slot: Omit<ProviderSlotProps, 'onClickSlot'>,
-        i: number,
-        arr: Omit<ProviderSlotProps, 'onClickSlot'>[]
-    ): React.ReactNode => {
+    const renderSlot = (slot: Slot, i: number, arr: Slot[]): React.ReactNode => {
         const isLast = arr.length - 1 === i;
         const { date, vaccines, duration } = slot;
 
