@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
@@ -12,8 +11,10 @@ import { getQueues } from '@/kiebitz/provider/queues';
 import { getUserAppointmentsTokenDataWithSignedToken } from '@/kiebitz/user/queue';
 import useUserSecret from '@/hooks/useUserSecret';
 import useUserTokenData from '@/hooks/useUserTokenData';
+import useURLHash from '@/hooks/useURLHash';
+import useUserAppointmentsShortcut from '@/hooks/useUserAppointmentsShortcut';
 
-const distances = { '5km': 5, '10km': 10, '20km': 20, '30km': 30, '40km': 40, '50km': 50 };
+const distances = { '5 Km': 5, '10 Km': 10, '20 Km': 20, '30 Km': 30, '40 Km': 40, '50 Km': 50 };
 const plzRegex = /^[0-9]{5}$/;
 
 type FormSubmitData = {
@@ -28,14 +29,10 @@ const UserWizard = () => {
     const [userSecret] = useUserSecret();
     const [userTokenData] = useUserTokenData();
 
-    const history = useHistory();
+    useUserAppointmentsShortcut(userSecret, userTokenData);
 
-    useEffect(() => {
-        const hasCompletedSetup = userSecret && userTokenData;
-        if (hasCompletedSetup) {
-            history.push('/user/appointments');
-        }
-    }, [userSecret, useUserTokenData]);
+    const hash = useURLHash();
+    const hashParams = hash ? new URLSearchParams(hash.replace('#', '')) : undefined;
 
     console.log(userSecret, userTokenData);
 
@@ -63,12 +60,23 @@ const UserWizard = () => {
 
     console.log(userSecret);
 
+    const hasDefaultValues = hashParams?.has('email') && hashParams?.has('zipCode') && hashParams?.has('code');
+
     return (
         <div className="container mx-auto min-h-screen 2xl:pt-24 py-12 2xl:w-1/4 lg:w-1/2">
             <Card className="lg:rounded-lg">
                 <h1 className="text-4xl text-brand-user">Willkommen</h1>
                 <p>Hier kannst Du Dich mit wenigen Angaben für freie Impftermine in Deiner Nähe registrieren.</p>
-                <Form onSubmit={handleSubmit}>
+                <Form
+                    key={hash}
+                    onSubmit={handleSubmit}
+                    defaultValues={{
+                        email: hashParams?.get('email'),
+                        zip: hashParams?.get('zipCode'),
+                        code: hashParams?.get('code'),
+                        distance: hasDefaultValues ? '50 Km' : undefined,
+                    }}
+                >
                     <div className="py-5">
                         <div className="space-y-4">
                             <Field label="Postleitzahl deines Wohnorts" name="zip" pattern={plzRegex} isRequired>
@@ -93,11 +101,11 @@ const UserWizard = () => {
                             </Field>
 
                             <Field
-                                label="Maximale Entfernung zum Impfort in Kilometern (km)"
+                                label="Maximale Entfernung zum Impfort in Kilometern (Km)"
                                 name="distance"
                                 isRequired
                             >
-                                <Select values={Object.keys(distances)} placeholder="Bitte wählen..." />
+                                <Select values={Object.keys(distances)} placeholder="Bitte wählen ..." />
                             </Field>
                             <Field label="Barrierefreier Impfort gewünscht" labelHidden name="accessible">
                                 <Toggle label="Barrierefreier Impfort gewünscht" />
