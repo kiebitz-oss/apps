@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
@@ -13,7 +14,6 @@ import useUserSecret from '@/hooks/useUserSecret';
 import useUserTokenData from '@/hooks/useUserTokenData';
 import useURLHash from '@/hooks/useURLHash';
 import useUserAppointmentsShortcut from '@/hooks/useUserAppointmentsShortcut';
-
 const distances = { '5 Km': 5, '10 Km': 10, '20 Km': 20, '30 Km': 30, '40 Km': 40, '50 Km': 50 };
 const plzRegex = /^[0-9]{5}$/;
 
@@ -36,6 +36,8 @@ const UserWizard = () => {
 
     console.log(userSecret, userTokenData);
 
+    const history = useHistory();
+
     const handleSubmit = async (data: FormSubmitData) => {
         const { zip, distance } = data;
         const queues = await getQueues({ zipCode: zip, radius: Number.parseInt(distance, 10) });
@@ -55,7 +57,9 @@ const UserWizard = () => {
             userSecret
         );
 
-        console.log(tokenData);
+        if (tokenData) {
+            history.push('/user/appointments');
+        }
     };
 
     console.log(userSecret);

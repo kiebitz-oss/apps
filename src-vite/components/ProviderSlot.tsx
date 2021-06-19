@@ -4,14 +4,20 @@ import { getReadableTimeFromDate } from '../utils/intl';
 import { FiClock } from 'react-icons/fi';
 import { getReadableVaccine } from '../utils/slots';
 import classNames from 'classnames';
+import { SlotsByDuration } from '@/hooks/useAvailableUserSlots';
 
-export interface ProviderSlotProps extends Omit<Slot, 'id'>, React.HTMLAttributes<HTMLDivElement> {
+export interface ProviderSlotProps extends React.HTMLAttributes<HTMLDivElement> {
+    date: Date;
+    duration: number;
+    slots: SlotsByDuration;
     selectionRank?: number;
-    onClickSlot: (vaccine: Vaccine) => void;
+    onClickSlot: (slotId: string) => void;
 }
 
 const ProviderSlot: React.FC<ProviderSlotProps> = (props) => {
-    const { date, vaccines, duration, selectionRank, onClickSlot, className, ...divProps } = props;
+    const { date, duration, slots: slotsByDuration, selectionRank, onClickSlot, className, ...divProps } = props;
+    const [, slots] = slotsByDuration;
+
     const durationInMillis = useMemo<number>(() => duration * 60000, [duration]);
 
     const readableStartTime = getReadableTimeFromDate(date, 'de-DE', { hour: '2-digit', minute: '2-digit' });
@@ -20,11 +26,11 @@ const ProviderSlot: React.FC<ProviderSlotProps> = (props) => {
         minute: '2-digit',
     });
 
-    const renderVaccine = (vaccine: Vaccine): ReactNode => {
-        const handleVaccineClick = () => onClickSlot(vaccine);
+    const renderSlot = (slot: Slot): ReactNode => {
+        const handleVaccineClick = () => onClickSlot(slot.id);
         return (
             <div
-                key={vaccine}
+                key={slot.id}
                 onClick={handleVaccineClick}
                 className={classNames(
                     'flex items-center justify-between p-2 px-4 transition-all duration-100 ease-in-out rounded cursor-pointer group hover:bg-brand-user',
@@ -37,7 +43,7 @@ const ProviderSlot: React.FC<ProviderSlotProps> = (props) => {
                         selectionRank ? 'text-white' : 'text-gray-900'
                     )}
                 >
-                    {selectionRank ? `${selectionRank}.` : ''} {getReadableVaccine(vaccine)}
+                    {selectionRank ? `${selectionRank}.` : ''} {getReadableVaccine(slot.vaccines[0])}
                 </p>
             </div>
         );
@@ -53,7 +59,7 @@ const ProviderSlot: React.FC<ProviderSlotProps> = (props) => {
             </div>
 
             <h6 className="mb-2 text-xs font-semibold text-gray-500 tracking-wide uppercase md:text-sm">Impfstoffe:</h6>
-            {vaccines.map(renderVaccine)}
+            {slots.map(renderSlot)}
         </div>
     );
 };

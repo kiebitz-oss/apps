@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Slot, Vaccine } from '@/types';
+import { Slot } from '@/types';
 import ProviderSlot from '@/components/ProviderSlot';
 import { getReadableDateFromDate } from '../utils/intl';
 import { SlotsByTime } from '@/hooks/useAvailableUserSlots';
@@ -9,7 +9,7 @@ export interface ProviderSlotsProps extends React.HTMLAttributes<HTMLDivElement>
     date: Date;
     slots: SlotsByTime[];
     selectedSlotIds: string[];
-    onClickSlot: (slot: Slot, vaccine: Vaccine) => void;
+    onClickSlot: (slot: Slot) => void;
 }
 
 const ProviderSlots: React.FC<ProviderSlotsProps> = (props) => {
@@ -21,15 +21,15 @@ const ProviderSlots: React.FC<ProviderSlotsProps> = (props) => {
         const isLast = arr.length - 1 === i;
         const { date, vaccines, duration } = slot;
 
-        const handleClickSlot = (vaccine: Vaccine) => {
-            onClickSlot(slot, vaccine);
+        const handleClickSlot = (slotId: string) => {
+            onClickSlot(slot);
         };
 
         return (
             <ProviderSlot
-                key={slot.id}
+                key={time}
                 date={date}
-                vaccines={vaccines}
+                slots={slotsByDuration}
                 duration={duration}
                 selectionRank={selectionRank}
                 onClickSlot={handleClickSlot}
