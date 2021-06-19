@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import cn from 'classnames';
+import classNames from 'classnames';
 
 const baseButtonClasses =
     'inline-flex items-center rounded-md border focus:outline-none focus:ring-2 focus:ring-offset-2';
@@ -40,12 +40,21 @@ export type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTM
 };
 
 export const Button: FC<ButtonProps> = (props) => {
-    const { size = '3', scheme = 'primary', leadingIcon, trailingIcon, children, className, ...buttonProps } = props;
+    const {
+        size = '3',
+        scheme = 'primary',
+        leadingIcon,
+        trailingIcon,
+        children,
+        disabled,
+        className,
+        ...buttonProps
+    } = props;
 
     return (
         <button
             type="button"
-            className={cn(baseButtonClasses, ButtonSizes[size], ButtonSchemeClasses[scheme], className)}
+            className={classNames(baseButtonClasses, ButtonSizes[size], ButtonSchemeClasses[scheme], className)}
             {...buttonProps}
         >
             {leadingIcon && React.cloneElement(leadingIcon, { className: LeadingIconSizes[size] })}

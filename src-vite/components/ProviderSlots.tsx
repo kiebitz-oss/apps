@@ -3,17 +3,21 @@ import classNames from 'classnames';
 import { Slot, Vaccine } from '@/types';
 import ProviderSlot from '@/components/ProviderSlot';
 import { getReadableDateFromDate } from '../utils/intl';
+import { SlotsByTime } from '@/hooks/useAvailableUserSlots';
 
 export interface ProviderSlotsProps extends React.HTMLAttributes<HTMLDivElement> {
     date: Date;
-    slots: Slot[];
+    slots: SlotsByTime[];
+    selectedSlotIds: string[];
     onClickSlot: (slot: Slot, vaccine: Vaccine) => void;
 }
 
 const ProviderSlots: React.FC<ProviderSlotsProps> = (props) => {
-    const { date, slots, onClickSlot } = props;
+    const { date, slots, selectedSlotIds, onClickSlot } = props;
 
-    const renderSlot = (slot: Slot, i: number, arr: Slot[]): React.ReactNode => {
+    const renderSlot = ([time, slotsByDuration], i: number, arr: Slot[]): React.ReactNode => {
+        const indexInSelectedSlotIds = selectedSlotIds.indexOf(slot.id);
+        const selectionRank = indexInSelectedSlotIds === -1 ? undefined : indexInSelectedSlotIds + 1;
         const isLast = arr.length - 1 === i;
         const { date, vaccines, duration } = slot;
 
@@ -23,10 +27,11 @@ const ProviderSlots: React.FC<ProviderSlotsProps> = (props) => {
 
         return (
             <ProviderSlot
-                key={date.getTime()}
+                key={slot.id}
                 date={date}
                 vaccines={vaccines}
                 duration={duration}
+                selectionRank={selectionRank}
                 onClickSlot={handleClickSlot}
                 className={classNames(isLast ? 'mb-2' : 'mb-6')}
             />

@@ -1,40 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 
 import ProviderSlotsCard from '@/components/ProviderSlotsCard';
 import { HeroTitle } from '@/components/HeroTitle';
 import useAvailableUserSlots from '@/hooks/useAvailableUserSlots';
 import useUserSecret from '@/hooks/useUserSecret';
 import useUserTokenData from '@/hooks/useUserTokenData';
-import { Slot, Vaccine } from '@/types';
+import useUserSetupGuard from '@/hooks/useUserSetupGuard';
 
 const UserSlotsSelectionFeature = () => {
     const [userSecret] = useUserSecret();
     const [userTokenData] = useUserTokenData();
 
-    const history = useHistory();
+    // We don't want users to use this page that haven't gone through the setup.
+    useUserSetupGuard(userSecret, userTokenData);
 
-    useEffect(() => {
-        const hasNotCompletedSetupYet = !userSecret || !userTokenData;
-        if (hasNotCompletedSetupYet) {
-            history.replace('/user/setup');
-        }
-    }, [userSecret, userTokenData]);
+    // TODO: We don't want users to use this page if they already have a confirmed invitation.
+    // TODO: useUserInvitationConfirmedGuard();
 
     const [slots, _provider] = useAvailableUserSlots();
 
+    console.log(slots);
+
     const providerOffers = [{ provider: _provider, offers: slots }];
 
-    const [selectedSlotsIds, setSelectedSlotsIds] = useState<string[]>([]);
-
-    const toggleSlot = (slotId: string) => {
-        const index = selectedSlotsIds.indexOf(slotId);
-        const exists = index !== -1;
-        if (exists) {
-            setSelectedSlotsIds(selectedSlotsIds.slice(index, 1));
-        } else {
-            setSelectedSlotsIds([...selectedSlotsIds, slotId]);
-        }
+    const handleSlotsSubmit = (slotIds) => {
+        console.log('IN PARENT', slotIds);
     };
 
     const renderProvider = (data): React.ReactNode => {
@@ -44,12 +34,6 @@ const UserSlotsSelectionFeature = () => {
 
         const { signature, json } = data.provider;
         const { name, street, zipCode, city, accessible, email, description, website, phone } = json;
-
-        const handleOfferClick = (clickedOffer: Slot, clickedVaccine: Vaccine) => {
-            // eslint-disable-next-line no-console
-            console.log({ clickedOffer, clickedVaccine });
-            toggleSlot(clickedOffer.id);
-        };
 
         return (
             <ProviderSlotsCard
@@ -64,7 +48,7 @@ const UserSlotsSelectionFeature = () => {
                 phone={phone}
                 isAccessible={accessible}
                 slots={slots}
-                onClickOffer={handleOfferClick}
+                onSlotsSubmit={handleSlotsSubmit}
             />
         );
     };
@@ -72,9 +56,8 @@ const UserSlotsSelectionFeature = () => {
     return (
         <div className="container mx-auto 2xl:pt-24 pt-12">
             <HeroTitle title="Aktuelle Impfangebote" className="mx-auto 2xl:mb-24 mb-12" />
-            <div className="grid grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-8 p-4">
-                {providerOffers.map(renderProvider)}
-            </div>
+            {/* For when we support multiple docs: "grid grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2" */}
+            <div className="gap-8 p-4">{providerOffers.map(renderProvider)}</div>
         </div>
     );
 };

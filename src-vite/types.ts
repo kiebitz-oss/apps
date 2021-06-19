@@ -1,6 +1,11 @@
 export type Entity = 'user' | 'provider' | 'mediator';
 
-export type Vaccine = 'biontech' | 'astra-zeneca' | 'johnson-and-johnson' | 'moderna';
+export enum Vaccine {
+    COMIRNATY_BIONTECH_PFIZER = 'biontech',
+    VAXZEVRIA_ASTRAZENECA = 'astrazeneca',
+    JANSSEN_JOHNSON_AND_JOHNSON = 'johnson-johnson',
+    COVID_19_VACCINE_MODERNA_MODERNA = 'moderna',
+}
 
 export interface Slot {
     id: string;

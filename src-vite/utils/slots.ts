@@ -1,22 +1,33 @@
 import { Slot, Vaccine } from '@/types';
 
-// TODO: Actually map the available vaccines.
-export const getSlotFromOffer = (offer: any): Slot => ({
-    id: offer.id,
-    date: new Date(`${offer.date} ${offer.time}`),
-    vaccines: ['biontech'],
-    duration: offer.duration,
-});
+export const getSlotFromOffer = (offer: any): Slot => {
+    const vaccines: Vaccine[] = [];
+
+    for (const [key, value] of Object.entries(Vaccine)) {
+        if (offer[value]) {
+            vaccines.push(Vaccine[key]);
+        }
+    }
+
+    return {
+        id: offer.id,
+        date: new Date(`${offer.date} ${offer.time}`),
+        vaccines,
+        duration: offer.duration,
+    };
+};
 
 export const getReadableVaccine = (vaccine: Vaccine) => {
     switch (vaccine) {
-        case 'biontech':
+        case Vaccine.COMIRNATY_BIONTECH_PFIZER:
             return 'Comirnaty (BioNTech/Pfizer)';
-        case 'astra-zeneca':
+        case Vaccine.VAXZEVRIA_ASTRAZENECA:
             return 'Vaxzevria® (AstraZeneca)';
-        case 'johnson-and-johnson':
+        case Vaccine.JANSSEN_JOHNSON_AND_JOHNSON:
             return 'Janssen® (Johnson & Johnson)';
-        case 'moderna':
+        case Vaccine.COVID_19_VACCINE_MODERNA_MODERNA:
             return 'COVID-19 Vaccine Moderna® (Moderna)';
+        default:
+            return 'getReadableVaccine...💩';
     }
 };
