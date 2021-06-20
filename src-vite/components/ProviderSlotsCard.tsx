@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
-import ProviderSlots from '@/components/ProviderSlots';
-import { Slot } from '@/types';
+import ProviderSlotsDay from '@/components/ProviderSlotsDay';
 import { Button } from '@/components/Button';
 import { SlotsByDay } from '@/hooks/useAvailableUserSlots';
 
@@ -36,8 +35,9 @@ const ProviderSlotsCard: React.FC<ProviderOffersCardProps> = (props) => {
     };
 
     const renderSlots = ([day, slotsByTime]) => {
+        console.log(day);
         return (
-            <ProviderSlots
+            <ProviderSlotsDay
                 key={day}
                 date={new Date(day)}
                 slots={slotsByTime}
