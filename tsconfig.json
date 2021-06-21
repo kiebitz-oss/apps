@@ -37,7 +37,9 @@
             "@/components": ["./src-vite/components"],
             "@/components/*": ["./src-vite/components/*"],
             "@/types": ["./src-vite/types"],
-            "@/types/*": ["./src-vite/types/*"]
+            "@/types/*": ["./src-vite/types/*"],
+            "@/helpers": ["./src/helpers"],
+            "@/helpers/*": ["./src/helpers/*"],
         }
     },
     "include": ["kiebitz", "src", "src-vite", "custom.d.ts"]

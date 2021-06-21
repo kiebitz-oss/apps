@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
 import ProviderSlotsDay from '@/components/ProviderSlotsDay';
 import { Button } from '@/components/Button';
 import { SlotsByDay } from '@/hooks/useAvailableUserSlots';
+import useRankedSlots, { RankedSlotsByDay } from '@/hooks/useRankedSlots';
 
 interface ProviderOffersCardProps extends React.HTMLAttributes<HTMLDivElement> {
     name: string;
@@ -21,34 +22,21 @@ interface ProviderOffersCardProps extends React.HTMLAttributes<HTMLDivElement> {
 const ProviderSlotsCard: React.FC<ProviderOffersCardProps> = (props) => {
     const { name, street, zip, city, email, phone, website, desc, isAccessible, slots = [], onSlotsSubmit } = props;
 
-    const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
+    const [rankedSlots, rankedSlotsIds, toggleSlot, resetRankedSlots] = useRankedSlots(slots);
 
-    const toggleSlot = (slotId: string) => {
-        const index = selectedSlotIds.indexOf(slotId);
-        const exists = index !== -1;
-        if (exists) {
-            selectedSlotIds.splice(index, 1);
-            setSelectedSlotIds([...selectedSlotIds]);
-        } else {
-            setSelectedSlotIds([...selectedSlotIds, slotId]);
-        }
-    };
-
-    const renderSlots = ([day, slotsByTime]) => {
-        console.log(day);
+    const renderRankedSlot = ([day, slotsByTime]: RankedSlotsByDay) => {
         return (
             <ProviderSlotsDay
-                key={day}
-                date={new Date(day)}
+                key={day.toLocaleDateString()}
+                date={day}
                 slots={slotsByTime}
-                selectedSlotIds={selectedSlotIds}
                 onClickSlot={(slot) => toggleSlot(slot.id)}
             />
         );
     };
 
     const handleSubmit = () => {
-        onSlotsSubmit(selectedSlotIds);
+        onSlotsSubmit(rankedSlotsIds);
     };
 
     return (
@@ -92,17 +80,19 @@ const ProviderSlotsCard: React.FC<ProviderOffersCardProps> = (props) => {
                 </div>
             </div>
             <form>
-                <div className="grid lg:grid-rows-1 lg:grid-cols-5 grid-cols-1 gap-8">{slots.map(renderSlots)}</div>
+                <div className="grid lg:grid-rows-1 lg:grid-cols-5 grid-cols-1 gap-8">
+                    {rankedSlots.map(renderRankedSlot)}
+                </div>
                 <div className="flex justify-end">
                     <Button
                         scheme="user"
-                        onClick={() => setSelectedSlotIds([])}
+                        onClick={() => resetRankedSlots()}
                         className="mr-2"
-                        disabled={!selectedSlotIds.length}
+                        disabled={!rankedSlotsIds.length}
                     >
                         Zurücksetzen
                     </Button>
-                    <Button scheme="user" disabled={!selectedSlotIds.length} onClick={handleSubmit}>
+                    <Button scheme="user" disabled={!rankedSlotsIds.length} onClick={handleSubmit}>
                         Auswählen
                     </Button>
                 </div>

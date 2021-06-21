@@ -1,15 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Slot } from '@/types';
-import ProviderSlot from '@/components/ProviderSlot';
 import { getReadableDateFromDate } from '../utils/intl';
-import { SlotsByTime } from '@/hooks/useAvailableUserSlots';
 import ProviderSlotsTime from '@/components/ProviderSlotsTime';
+import { RankedSlotsByDay, RankedSlotsByTime } from '@/hooks/useRankedSlots';
 
 export interface ProviderSlotsProps extends React.HTMLAttributes<HTMLDivElement> {
     date: Date;
-    slots: SlotsByTime[];
-    selectedSlotIds: string[];
+    slots: RankedSlotsByTime[];
     onClickSlot: (slot: Slot) => void;
 }
 
@@ -23,9 +21,22 @@ const ProviderSlotsDay: React.FC<ProviderSlotsProps> = (props) => {
         const isLast = arr.length - 1 === i;
         const { date, vaccines, duration } = slot;*/
 
-    const renderSlot = ([, slotsByDuration]: SlotsByTime): React.ReactNode => {
+    const renderRankedSlotsByTime = (
+        [time, slotsByDuration]: RankedSlotsByTime,
+        i: number,
+        arr: RankedSlotsByTime[]
+    ): React.ReactNode => {
+        const isLast = i === arr.length - 1;
         const handleClickSlot = (slot: Slot) => onClickSlot(slot);
-        return <ProviderSlotsTime date={date} slots={slotsByDuration} onClickSlot={handleClickSlot} />;
+        return (
+            <ProviderSlotsTime
+                className={classNames(isLast ? 'mb-0' : 'mb-8')}
+                key={time.toLocaleTimeString()}
+                date={time}
+                slots={slotsByDuration}
+                onClickSlot={handleClickSlot}
+            />
+        );
     };
 
     const readableDate = getReadableDateFromDate(date, 'de-DE', {
@@ -37,7 +48,7 @@ const ProviderSlotsDay: React.FC<ProviderSlotsProps> = (props) => {
     return (
         <div className="w-full mt-10">
             <h4 className="mb-2 font-semibold text-xl uppercase text-brand-user">{readableDate}</h4>
-            {slots.map(renderSlot)}
+            {slots.map(renderRankedSlotsByTime)}
         </div>
     );
 };

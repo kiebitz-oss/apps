@@ -3,11 +3,13 @@ import { Slot } from '@/types';
 import { getReadableTimeFromDate } from '../utils/intl';
 import classNames from 'classnames';
 import { FiClock } from 'react-icons/fi';
+import ProviderSlot from '@/components/ProviderSlot';
+import { RankedSlot } from '@/hooks/useRankedSlots';
 
 export interface ProviderSlotsDurationProps extends React.HTMLAttributes<HTMLDivElement> {
     date: Date;
     duration: number;
-    slots: Slot[];
+    slots: RankedSlot[];
     onClickSlot: (slot: Slot) => Promise<void> | void;
 }
 
@@ -22,12 +24,24 @@ const ProviderSlotsDuration: React.FC<ProviderSlotsDurationProps> = (props) => {
         minute: '2-digit',
     });
 
-    const handleRenderSlot = (slot: Slot) => {
-        return null;
+    const handleRenderSlot = (slot: RankedSlot, i: number, arr: RankedSlot[]) => {
+        const isLast = i === arr.length - 1;
+
+        const handleClickSlot = () => onClickSlot(slot);
+        return (
+            <ProviderSlot
+                className={classNames(isLast ? 'mb-0' : 'mb-2')}
+                key={slot.id}
+                _id={slot.id}
+                rank={slot.rank}
+                vaccines={slot.vaccines}
+                onClickSlot={handleClickSlot}
+            />
+        );
     };
 
     return (
-        <div className={classNames(className)} {...divProps}>
+        <div className={className} {...divProps}>
             <div className="flex items-center w-full p-2 mb-4 rounded bg-brand-user">
                 <FiClock className="mr-2 text-xl text-white" />
                 <h5 className="text-base font-semibold text-white">

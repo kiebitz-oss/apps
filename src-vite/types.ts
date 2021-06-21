@@ -12,4 +12,7 @@ export interface Slot {
     date: Date;
     vaccines: Vaccine[];
     duration: number;
+    // TODO: These are confirmation relevant details that need to be typed.
+    slotData: any;
+    grants: any;
 }
