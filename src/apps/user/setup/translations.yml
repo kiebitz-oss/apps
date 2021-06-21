@@ -81,7 +81,7 @@ contact-data:
     label:
       de: "Maximale Entfernung zum Impfort in Kilometern (km)"
     notice:
-      de: " "
+      de: "Achtung: Du kannst den Radius derzeit nur 1x einstellen und nicht mehr ändern!"
     option:
       de: "{distance} km"
   not-given:
