@@ -314,6 +314,7 @@ export async function sendInvitations(
 
                     const userData = {
                         provider: verifiedProviderData.signedData,
+                        createdAt: new Date().toISOString(),
                         offers: Array.from(Object.values(appointments)),
                     };
 
