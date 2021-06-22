@@ -184,10 +184,9 @@ export async function sendInvitations(
                     if (new Date(token.expiresAt) < new Date())
                         continue
 
-                    let hasBookedSlot = false;
-
                     if (token.grantID === undefined)
                         token.grantID = randomBytes(32);
+
                     if (token.slotIDs === undefined) {
                         token.slotIDs = [];
                         // we always add the booked slot (we can remove this for the next version, just for backwards-compatibility)
@@ -198,16 +197,6 @@ export async function sendInvitations(
                             ) {
                                 token.slotIDs.push(slot.id);
                             }
-                        }
-                    }
-
-                    for (const slot of Object.values(slotsById)) {
-                        if (
-                            slot.token !== undefined &&
-                            slot.token.token === token.token
-                        ) {
-                            hasBookedSlot = true;
-                            break;
                         }
                     }
 

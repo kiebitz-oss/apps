@@ -121,6 +121,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                     new Date().getTime() +
                                         1000 * 60 * 60 * 8
                                 );
+                                openToken.grantID = undefined;
                                 // we replace the slot
                                 appointment.slotData.push(createSlot());
                             }
