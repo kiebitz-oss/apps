@@ -117,6 +117,10 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 appointment.slotData = appointment.slotData.filter(
                                     sl => sl.id !== slotData.id
                                 );
+                                openToken.expiresAt = new Date(
+                                    new Date().getTime() +
+                                        1000 * 60 * 60 * 8
+                                );
                                 // we replace the slot
                                 appointment.slotData.push(createSlot());
                             }
@@ -127,6 +131,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             );
                             slotData.open = false;
                             slotData.token = openToken;
+                            openToken.expiresAt = new Date(appointment.timestamp);
                             slotData.userData = decryptedData;
                         }
                     } catch (e) {
