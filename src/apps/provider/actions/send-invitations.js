@@ -47,7 +47,7 @@ export async function sendInvitations(
     // we keep offers valid for a given number of seconds
     const EXP_SECONDS = 60*60*4;
     // we regard tokens as 'fresh' for a given number of seconds
-    const FRESH_SECONDS = 60*15;
+    const FRESH_SECONDS = 60*60;
     // we give a grace period before expiring tokens (so that we're able to
     // catch bookings made just before the expiration date)
     const GRACE_SECONDS = 60*15;
