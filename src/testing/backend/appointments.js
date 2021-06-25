@@ -419,7 +419,7 @@ export default class AppointmentsBackend {
     async returnTokens({ tokens }, keyPair) {}
 
     // get n tokens from the given queue IDs
-    async getQueueTokens({ capacities }, keyPair) {
+    async getQueueTokens({ expiration, capacities }, keyPair) {
         const providerKeyData = this._getProviderKeyData(keyPair.publicKey);
 
         if (providerKeyData === null) return null;

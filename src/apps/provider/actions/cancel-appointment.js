@@ -2,8 +2,6 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { randomBytes, ephemeralECDHEncrypt } from 'helpers/crypto';
-
 export async function cancelSlots(backend, slots, tokens) {
     if (backend !== undefined)
         tokens = backend.local.get('provider::tokens::open', []);
@@ -14,8 +12,8 @@ export async function cancelSlots(backend, slots, tokens) {
             );
             if (existingToken !== undefined) {
                 // we renew the grant IDs for the token, so the user can book another appointment
-                existingToken.grantID = randomBytes(32);
-                existingToken.cancelGrantID = randomBytes(32);
+                existingToken.grantID = undefined;
+                existingToken.expiresAt = undefined;
             }
         }
     }

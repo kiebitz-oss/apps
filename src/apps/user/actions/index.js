@@ -17,3 +17,4 @@ export * from './confirm-deletion';
 export * from './cancel-invitation';
 export * from './grant-id';
 export * from './slot-infos';
+export * from './renew-token';

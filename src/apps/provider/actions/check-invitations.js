@@ -45,8 +45,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             for (const appointment of openAppointments
                 .slice(currentIndex, currentIndex + N)
                 .filter(oa => oa.slots > 0)) {
-                const timestamp = new Date(appointment.timestamp);
-                //if (timestamp < new Date()) continue;
                 for (const slotData of appointment.slotData) {
                     ids.push(slotData.id);
                     appointments.push(appointment);
@@ -67,8 +65,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             if (results.length !== ids.length) {
                 throw 'lengths do not match';
             }
-
-            for (const [i, result] of results.entries()) {
+            processAppointments: for (const [i, result] of results.entries()) {
                 const appointment = appointments[i];
                 if (result === null) continue;
                 // we try to decrypt this data with the private key of each token
@@ -83,6 +80,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                     openToken.encryptedData.publicKey;
                                 break;
                             case '0.2':
+                            case '0.3':
                                 tokenPublicKey =
                                     openToken.data.encryptionPublicKey;
                                 break;
@@ -96,7 +94,23 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 openToken.keyPair.privateKey
                             )
                         );
-                        if (decryptedData === null) continue; // not the right token....
+
+                        const cancel = async slotData => {
+                            // the user wants to cancel this appointment
+                            await cancelSlots(
+                                undefined,
+                                [slotData],
+                                openTokens
+                            );
+                            // we remove the canceled slot
+                            appointment.slotData = appointment.slotData.filter(
+                                sl => sl.id !== slotData.id
+                            );
+                            openToken.expiresAt = undefined;
+                            openToken.grantID = undefined;
+                            // we replace the slot
+                            appointment.slotData.push(createSlot());
+                        };
 
                         const slotData = appointment.slotData.find(
                             sl =>
@@ -104,26 +118,16 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 sl.token.token === openToken.token
                         );
 
+                        if (decryptedData === null) {
+                            // if the slot data is defined, we cancel the slot
+                            if (slotData !== undefined) await cancel(slotData);
+                            continue; // something went wrong with the decryption...
+                        }
+
                         if (slotData !== undefined) {
                             slotData.userData = decryptedData;
                             if (decryptedData.cancel === true) {
-                                // the user wants to cancel this appointment
-                                await cancelSlots(
-                                    undefined,
-                                    [slotData],
-                                    openTokens
-                                );
-                                // we remove the canceled slot
-                                appointment.slotData = appointment.slotData.filter(
-                                    sl => sl.id !== slotData.id
-                                );
-                                openToken.expiresAt = new Date(
-                                    new Date().getTime() +
-                                        1000 * 60 * 60 * 8
-                                );
-                                openToken.grantID = undefined;
-                                // we replace the slot
-                                appointment.slotData.push(createSlot());
+                                await cancel(slotData);
                             }
                         } else {
                             // we get the slot data for the token
@@ -132,9 +136,12 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             );
                             slotData.open = false;
                             slotData.token = openToken;
-                            openToken.expiresAt = new Date(appointment.timestamp);
+                            openToken.expiresAt = new Date(
+                                appointment.timestamp
+                            );
                             slotData.userData = decryptedData;
                         }
+                        continue processAppointments;
                     } catch (e) {
                         console.error(e);
                         continue;

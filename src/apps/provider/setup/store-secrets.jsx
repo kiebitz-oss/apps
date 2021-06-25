@@ -108,7 +108,7 @@ function padNumber(number, n) {
 function formatDate(date) {
     const [year, month, day, hours, minutes] = [
         date.getFullYear(),
-        padNumber(date.getMonth(), 2),
+        padNumber(date.getMonth() + 1, 2),
         padNumber(date.getDate(), 2),
         padNumber(date.getHours(), 2),
         padNumber(date.getMinutes(), 2),

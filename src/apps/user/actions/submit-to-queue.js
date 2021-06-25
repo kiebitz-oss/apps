@@ -13,6 +13,7 @@ import {
 async function hashContactData(data) {
     const hashData = {
         name: data.name,
+        grantSeed: data.grantSeed,
         nonce: randomBytes(32),
     };
 
@@ -80,7 +81,8 @@ export async function submitToQueue(
                 // this weakens the key a bit but the provider has access to all
                 // of the user's appointment data anyway...
                 code: userSecret.slice(0, 4),
-                version: '0.2',
+                version: '0.3',
+                createdAt: new Date().toISOString(),
                 publicKey: signingKeyPair.publicKey, // the signing key to control the ID
                 encryptionPublicKey: encryptionKeyPair.publicKey,
                 id: randomBytes(32), // the ID where we want to receive data
