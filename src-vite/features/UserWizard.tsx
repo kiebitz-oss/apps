@@ -69,7 +69,7 @@ const UserWizard = () => {
     return (
         <div className="container mx-auto min-h-screen 2xl:pt-24 py-12 2xl:w-1/4 lg:w-1/2">
             <Card className="lg:rounded-lg">
-                <h1 className="text-4xl text-brand-user">Willkommen</h1>
+                <h1 className="text-4xl mb-2 text-brand-user">Willkommen</h1>
                 <p>Hier kannst Du Dich mit wenigen Angaben für freie Impftermine in Deiner Nähe registrieren.</p>
                 <Form
                     key={hash}

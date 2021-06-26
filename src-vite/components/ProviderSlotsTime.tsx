@@ -14,13 +14,10 @@ export interface ProviderSlotsTimeProps extends React.HTMLAttributes<HTMLDivElem
 const ProviderSlotsTime: React.FC<ProviderSlotsTimeProps> = (props) => {
     const { date, slots, onClickSlot, className, ...divProps } = props;
 
-    const handleRenderSlot = ([duration, slots]: SlotsByDuration, i: number, arr: SlotsByDuration[]) => {
-        const isLast = i === arr.length - 1;
-
+    const handleRenderSlot = ([duration, slots]: SlotsByDuration) => {
         const handleClickSlot = (slot: Slot) => onClickSlot(slot);
         return (
             <ProviderSlotsDuration
-                className={classNames(isLast ? 'mb-0' : 'mb-8')}
                 key={duration}
                 date={date}
                 duration={duration}
@@ -31,7 +28,7 @@ const ProviderSlotsTime: React.FC<ProviderSlotsTimeProps> = (props) => {
     };
 
     return (
-        <div className={classNames(className)} {...divProps}>
+        <div className={classNames('space-y-4', className)} {...divProps}>
             {slots.map(handleRenderSlot)}
         </div>
     );

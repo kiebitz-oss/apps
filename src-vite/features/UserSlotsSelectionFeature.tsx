@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import ProviderSlotsCard from '@/components/ProviderSlotsCard';
+import ProviderSlots from '@/components/ProviderSlots';
 import { HeroTitle } from '@/components/HeroTitle';
 import useAvailableUserSlots, { SlotsByDay } from '@/hooks/useAvailableUserSlots';
 import useUserSecret from '@/hooks/useUserSecret';
@@ -8,6 +8,7 @@ import useUserTokenData from '@/hooks/useUserTokenData';
 import useUserSetupGuard from '@/hooks/useUserSetupGuard';
 import { confirmUserOffers } from '@/kiebitz/user/invitation';
 import { ephemeralECDHEncrypt } from '@/helpers/crypto';
+import Card from '@/components/Card';
 
 const UserSlotsSelectionFeature = () => {
     const [userSecret] = useUserSecret();
@@ -52,19 +53,17 @@ const UserSlotsSelectionFeature = () => {
 
         const { provider, slots } = data;
         const { signature, json } = provider;
-        const { name, street, zipCode, city, accessible, email, description, website, phone } = json;
+        const { name, street, zipCode, city, accessible, description, website } = json;
 
         return (
-            <ProviderSlotsCard
+            <ProviderSlots
                 key={signature}
                 name={name}
                 street={street}
                 zip={zipCode}
                 city={city}
-                email={email}
                 desc={description}
                 website={website}
-                phone={phone}
                 isAccessible={accessible}
                 slots={slots}
                 onSlotsSubmit={handleSlotsSubmit}
@@ -73,10 +72,17 @@ const UserSlotsSelectionFeature = () => {
     };
 
     return (
-        <div className="container mx-auto 2xl:pt-24 pt-12">
-            <HeroTitle title="Aktuelle Impfangebote" className="mx-auto 2xl:mb-24 mb-12" />
-            {/* For when we support multiple docs: "grid grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2" */}
-            <div className="gap-8 p-4">{availableProviders.map(renderAvailableProvider)}</div>
+        <div className="container mx-auto min-h-screen 2xl:pt-24 py-12 2xl:w-1/4 lg:w-1/2">
+            <Card className="lg:rounded-lg">
+                <h1 className="text-4xl mb-2 text-brand-user">Aktuelle Impfangebote</h1>
+                <p>
+                    Im folgenden siehst du aktuelle Impfangebote eines Arztes, aufgeteilt nach Tag, Uhrzeit und Dauer.
+                    Du kannst zwischen verschiedenen Impfstoffen auswählen, welche jeweils mit dem Eigennamen und den
+                    Herstellern angegeben sind.
+                </p>
+                <div className="divider" />
+                {availableProviders.map(renderAvailableProvider)}
+            </Card>
         </div>
     );
 };

@@ -31,14 +31,15 @@ const withSourceMap = function (url) {
 //we collect static files from various places
 const staticPaths = ['web/static/'];
 const copyPlugins = staticPaths.map(function (path) {
-    return new CopyWebpackPlugin([
-        {
-            from: path,
-            to: '../',
-            toType: 'dir',
-            flatten: false,
-        },
-    ]);
+    return new CopyWebpackPlugin({
+        patterns: [
+            {
+                from: path,
+                to: '../[name][ext]',
+                toType: 'dir',
+            },
+        ],
+    });
 });
 
 let config = {

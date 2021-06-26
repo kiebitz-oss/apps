@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.divider {
+  @apply my-4 border-t border-gray-300;
+}
+
 .loader {
   border-top-color: #3498db;
   -webkit-animation: spinner 1.5s linear infinite;

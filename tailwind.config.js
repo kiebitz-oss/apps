@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 module.exports = {
     mode: 'jit',
     purge: ['./index.html', './src-vite/**/*.tsx'],
@@ -6,10 +8,10 @@ module.exports = {
         extend: {
             colors: {
                 'brand-user': '#49A4BC',
-                'brand-user-light': '#88C3D3',
+                'brand-user-light': colors.cyan['600'],
                 'brand-user-light-2': '#DFF4F6',
                 'brand-user-light-3': '#E2F0F3',
-                'brand-user-dark': '#2A5A6F',
+                'brand-user-dark': colors.cyan['800'],
                 'brand-provider': '#E55381',
                 'brand-provider-light': '#F4B8CB',
                 'brand-provider-light-2': '#FCF2F2',

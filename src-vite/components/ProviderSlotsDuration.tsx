@@ -24,13 +24,10 @@ const ProviderSlotsDuration: React.FC<ProviderSlotsDurationProps> = (props) => {
         minute: '2-digit',
     });
 
-    const handleRenderSlot = (slot: RankedSlot, i: number, arr: RankedSlot[]) => {
-        const isLast = i === arr.length - 1;
-
+    const handleRenderSlot = (slot: RankedSlot) => {
         const handleClickSlot = () => onClickSlot(slot);
         return (
             <ProviderSlot
-                className={classNames(isLast ? 'mb-0' : 'mb-2')}
                 key={slot.id}
                 _id={slot.id}
                 rank={slot.rank}
@@ -41,16 +38,14 @@ const ProviderSlotsDuration: React.FC<ProviderSlotsDurationProps> = (props) => {
     };
 
     return (
-        <div className={className} {...divProps}>
-            <div className="flex items-center w-full p-2 mb-4 rounded bg-brand-user">
-                <FiClock className="mr-2 text-xl text-white" />
-                <h5 className="text-base font-semibold text-white">
+        <div className={classNames(className, 'space-y-4')} {...divProps}>
+            <div className="flex items-center w-full mb-4 text-brand-user-dark">
+                <FiClock className="mr-2 text-2xl" />
+                <h5 className="text-lg font-semibold">
                     {readableStartTime} Uhr - {readableEndTime} Uhr
                 </h5>
             </div>
-
-            <h6 className="mb-2 text-xs font-semibold text-gray-500 tracking-wide uppercase md:text-sm">Impfstoffe:</h6>
-            {slots.map(handleRenderSlot)}
+            <div className="space-y-2">{slots.map(handleRenderSlot)}</div>
         </div>
     );
 };
