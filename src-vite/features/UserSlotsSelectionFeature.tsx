@@ -43,7 +43,7 @@ const UserSlotsSelectionFeature = () => {
         }
 
         await confirmUserOffers(offers, encryptedProviderData, invitation, userTokenData);
-        history.push('/user/appointments/success');
+        history.push('/user/appointments/status?success=true');
     };
 
     const renderAvailableProvider = (data: { provider: any; slots: SlotsByDay[] }): React.ReactNode => {
