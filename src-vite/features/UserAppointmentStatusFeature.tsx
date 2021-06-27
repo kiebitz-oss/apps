@@ -4,8 +4,11 @@ import { FaRegCheckCircle } from 'react-icons/fa';
 import Card from '../components/Card';
 import { getUserInvitationAccepted } from '@/kiebitz/user/invitation';
 import useUserSecret from '@/hooks/useUserSecret';
+import ProviderDisplay from '@/components/ProviderDisplay';
+import { getReadableVaccine, getSlotFromOffer } from '../utils/slots';
+import { getReadableDateFromDate, getReadableTimeFromDate } from '../utils/intl';
 
-const UserAppointmentsSuccess = () => {
+const UserAppointmentStatusFeature = () => {
     const [userSecret] = useUserSecret();
 
     const [invitation, setInvitation] = useState<any>();
@@ -14,26 +17,43 @@ const UserAppointmentsSuccess = () => {
         setInvitation(_invitation);
     }, []);
 
-    console.log(invitation);
+    const { name, description, street, zipCode, city, website, accessible } =
+        invitation?.invitation?.provider?.json ?? {};
+    const slot = invitation?.offer ? getSlotFromOffer(invitation?.offer) : null;
 
     return (
-        <div className="container mx-auto 2xl:pt-24 pt-12 flex justify-center">
-            <Card className="lg:w-1/2">
+        <div className="container mx-auto min-h-screen 2xl:pt-24 py-12 2xl:w-1/4 lg:w-1/2">
+            <Card className="lg:rounded-lg">
                 <Alert type="success" className="flex items-center justify-center flex-col rounded-lg mb-6">
                     <FaRegCheckCircle className="h-12 w-12 mb-4" />
                     <p>Deine Buchung war erfolgreich!</p>
                 </Alert>
                 <div className="mb-4">
+                    <h1 className="text-2xl font-bold mb-2">Dein Buchungscode</h1>
+                    <div className="rounded-xl bg-red-600 text-white flex items-center justify-center p-8">
+                        <p className="text-4xl font-semibold tracking-widest">{userSecret.slice(0, 4).toUpperCase()}</p>
+                    </div>
+                </div>
+                <div className="mb-4">
+                    <h1 className="text-2xl font-bold mb-2">Wann?</h1>
+                    <p>
+                        {slot && getReadableDateFromDate(slot.date)}
+                        {slot && getReadableTimeFromDate(slot.date)}
+                    </p>
+                    <p>{slot && getReadableVaccine(slot.vaccines[0])}</p>
+                    {slot && `Dauer: ${slot.duration} Minuten`}
+                </div>
+                <div className="mb-4">
                     <h1 className="text-2xl font-bold mb-2">Wo?</h1>
-                    <pre>{JSON.stringify(invitation?.invitation?.provider?.json, null, 2)}</pre>
-                </div>
-                <div className="mb-4">
-                    <h1 className="text-2xl font-bold mb-2">Was?</h1>
-                    <pre>{JSON.stringify(invitation?.offer, null, 2)}</pre>
-                </div>
-                <div className="mb-4">
-                    <h1 className="text-2xl font-bold mb-2">Wie?</h1>
-                    <pre>{JSON.stringify({ code: userSecret.slice(0, 4).toUpperCase() }, null, 2)}</pre>
+                    <ProviderDisplay
+                        name={name}
+                        desc={description}
+                        street={street}
+                        zip={zipCode}
+                        city={city}
+                        isAccessible={accessible}
+                        website={website}
+                    />
                 </div>
 
                 <div className="mt-8">
@@ -58,4 +78,4 @@ const UserAppointmentsSuccess = () => {
     );
 };
 
-export default UserAppointmentsSuccess;
+export default UserAppointmentStatusFeature;

@@ -16,6 +16,7 @@ module.exports = {
                 'brand-provider-light': '#F4B8CB',
                 'brand-provider-light-2': '#FCF2F2',
                 'brand-provider-light-3': '#FCEDF2',
+                'brand-provider-dark': colors.pink['800'],
             },
         },
     },

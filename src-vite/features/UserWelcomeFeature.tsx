@@ -2,7 +2,7 @@ import React from 'react';
 import Card from '../components/Card';
 import { Button } from '../components/Button';
 
-const UserWelcome = () => {
+const UserWelcomeFeature = () => {
     return (
         <div className="container mx-auto 2xl:pt-24 pt-12 flex items-center justify-center flex-col">
             <Card className="lg:w-1/2 w-full lg:rounded-lg mb-4">
@@ -31,4 +31,4 @@ const UserWelcome = () => {
     );
 };
 
-export default UserWelcome;
+export default UserWelcomeFeature;

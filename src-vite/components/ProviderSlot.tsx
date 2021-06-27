@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { MouseEventHandler, ReactNode } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import classNames from 'classnames';
 import { Slot, Vaccine } from '@/types';
@@ -14,13 +14,18 @@ export interface ProviderSlotProps extends React.HTMLAttributes<HTMLDivElement> 
 const ProviderSlot: React.FC<ProviderSlotProps> = (props) => {
     const { _id, vaccines, rank, onClickSlot, className, ...divProps } = props;
 
+    const handleClickSlot: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.preventDefault();
+        onClickSlot();
+    };
+
     const renderVaccine = (vaccine: Vaccine): ReactNode => {
         return (
-            <div
+            <button
                 key={`${_id}_${vaccine}`}
-                onClick={onClickSlot}
+                onClick={handleClickSlot}
                 className={classNames(
-                    'flex items-center justify-between p-2 px-4 transition-all duration-100 ease-in-out rounded cursor-pointer group hover:bg-brand-user-dark',
+                    'flex items-center justify-between lg:py-4 py-2 px-4 transition-all duration-100 ease-in-out rounded cursor-pointer group hover:bg-brand-user-dark w-full',
                     rank ? 'bg-brand-user-dark' : 'bg-brand-user'
                 )}
             >
@@ -28,7 +33,7 @@ const ProviderSlot: React.FC<ProviderSlotProps> = (props) => {
                     {rank ? `${rank}.` : ''} {getReadableVaccine(vaccine)}
                 </p>
                 {rank ? <FaCheck className="text-white text-xl" /> : <p className="text-white">Auswählen</p>}
-            </div>
+            </button>
         );
     };
 

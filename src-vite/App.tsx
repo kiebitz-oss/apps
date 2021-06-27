@@ -4,10 +4,10 @@ import { Route, Switch } from 'react-router-dom';
 import './kiebitz/setup';
 
 import DefaultLayout from './layouts/DefaultLayout';
-import UserWelcome from './features/UserWelcome';
-import UserWizard from './features/UserWizard';
+import UserWelcomeFeature from './features/UserWelcomeFeature';
+import UserProfileFeature from './features/UserProfileFeature';
 import UserSlotsSelectionFeature from './features/UserSlotsSelectionFeature';
-import UserAppointmentsSuccess from './features/UserAppointmentsSuccess';
+import UserAppointmentStatusFeature from './features/UserAppointmentStatusFeature';
 import ProviderAppointmentCreate from './features/ProviderAppointmentCreate';
 
 import './index.css';
@@ -18,16 +18,16 @@ const App = () => {
             <DefaultLayout entity="user">
                 <Switch>
                     <Route path="/user/setup">
-                        <UserWizard />
+                        <UserProfileFeature />
                     </Route>
                     <Route path="/user/appointments/success">
-                        <UserAppointmentsSuccess />
+                        <UserAppointmentStatusFeature />
                     </Route>
                     <Route path="/user/appointments">
                         <UserSlotsSelectionFeature />
                     </Route>
                     <Route path="/user/">
-                        <UserWelcome />
+                        <UserWelcomeFeature />
                     </Route>
                     <Route path="/provider/appointments/create">
                         <ProviderAppointmentCreate />

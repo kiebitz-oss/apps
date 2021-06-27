@@ -32,7 +32,7 @@ const ProviderSlotsDay: React.FC<ProviderSlotsProps> = (props) => {
     });
 
     return (
-        <div className="rounded-lg bg-brand-user-light-3 p-8 w-full">
+        <div className="rounded-lg bg-brand-user-light-3 lg:p-8 p-4 w-full">
             <h4 className="mb-2 font-semibold text-xl uppercase text-brand-user-dark">{readableDate}</h4>
             <div className="space-y-6">{slots.map(renderRankedSlotsByTime)}</div>
         </div>

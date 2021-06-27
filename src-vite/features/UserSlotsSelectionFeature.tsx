@@ -1,7 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import ProviderSlots from '@/components/ProviderSlots';
-import { HeroTitle } from '@/components/HeroTitle';
 import useAvailableUserSlots, { SlotsByDay } from '@/hooks/useAvailableUserSlots';
 import useUserSecret from '@/hooks/useUserSecret';
 import useUserTokenData from '@/hooks/useUserTokenData';
@@ -9,6 +8,7 @@ import useUserSetupGuard from '@/hooks/useUserSetupGuard';
 import { confirmUserOffers } from '@/kiebitz/user/invitation';
 import { ephemeralECDHEncrypt } from '@/helpers/crypto';
 import Card from '@/components/Card';
+import FeatureHeading from '@/components/FeatureHeading';
 
 const UserSlotsSelectionFeature = () => {
     const [userSecret] = useUserSecret();
@@ -72,18 +72,17 @@ const UserSlotsSelectionFeature = () => {
     };
 
     return (
-        <div className="container mx-auto min-h-screen 2xl:pt-24 py-12 2xl:w-1/4 lg:w-1/2">
-            <Card className="lg:rounded-lg">
-                <h1 className="text-4xl mb-2 text-brand-user">Aktuelle Impfangebote</h1>
-                <p>
-                    Im folgenden siehst du aktuelle Impfangebote eines Arztes, aufgeteilt nach Tag, Uhrzeit und Dauer.
-                    Du kannst zwischen verschiedenen Impfstoffen auswählen, welche jeweils mit dem Eigennamen und den
-                    Herstellern angegeben sind.
-                </p>
-                <div className="divider" />
-                {availableProviders.map(renderAvailableProvider)}
-            </Card>
-        </div>
+        <>
+            <FeatureHeading
+                title="Aktuelle Impfangebote"
+                desc="Bitte wähle alle für Dich passenden Termine aus und bestätige anschließend Deine Auswahl."
+            />
+            <div className="container mx-auto min-h-screen 2xl:w-1/4 lg:w-1/2 2xl:pt-12 py-6">
+                <Card className="lg:rounded-lg">
+                    <div>{availableProviders.map(renderAvailableProvider)}</div>
+                </Card>
+            </div>
+        </>
     );
 };
 
