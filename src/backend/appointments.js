@@ -80,8 +80,12 @@ class AppointmentsBackend extends JSONRPCBackend {
     }
 
     // get n tokens from the given queue IDs
-    async getQueueTokens({ capacities }, keyPair) {
-        return await this.call('getQueueTokens', { capacities }, keyPair);
+    async getQueueTokens({ expiration, capacities }, keyPair) {
+        return await this.call(
+            'getQueueTokens',
+            { capacities, expiration },
+            keyPair
+        );
     }
 
     async storeProviderData({ id, encryptedData, code }, keyPair) {

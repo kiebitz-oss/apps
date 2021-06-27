@@ -55,6 +55,7 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
                 signedTokenData: tokenData.signedToken,
             });
 
+            // TODO: use `setUserTokenData`.
             backend.local.set('user::tokenData', tokenData);
             return tokenData;
         } else {
@@ -68,14 +69,15 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
                 // this weakens the key a bit but the provider has access to all
                 // of the user's appointment data anyway...
                 code: userSecret.slice(0, 4),
-                version: '0.2',
+                version: '0.3',
+                createdAt: new Date().toISOString(),
                 publicKey: signingKeyPair.publicKey, // the signing key to control the ID
                 encryptionPublicKey: encryptionKeyPair.publicKey,
                 id: randomBytes(32), // the ID where we want to receive data
             };
 
             // we encrypt the token data so the provider can decrypt it...
-            const [encryptedTokenData, privateKey] = await ephemeralECDHEncrypt(
+            const [encryptedTokenData] = await ephemeralECDHEncrypt(
                 JSON.stringify(userToken),
                 queue.publicKey
             );
@@ -107,11 +109,11 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
                 queueData: queueData,
                 keyPair: encryptionKeyPair,
                 hashNonce: nonce,
-                privateKey: privateKey,
                 dataHash: dataHash,
                 tokenData: userToken,
             };
 
+            // TODO: use `setUserTokenData`.
             backend.local.set('user::tokenData', newTokenData);
             return newTokenData;
         }

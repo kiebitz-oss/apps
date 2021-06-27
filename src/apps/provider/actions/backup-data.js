@@ -50,6 +50,7 @@ export async function backupData(state, keyStore, settings, keyPairs, secret) {
                 JSON.stringify(state.referenceData) ===
                 JSON.stringify(referenceData)
             ) {
+                console.log('not modified');
                 return state;
             }
         }

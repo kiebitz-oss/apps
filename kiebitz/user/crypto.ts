@@ -29,6 +29,7 @@ export const decryptInvitationData = async (signedData: any, keys: any, tokenDat
 export const hashContactData = async (data: any): Promise<any> => {
     const hashData = {
         name: data.name,
+        grantSeed: data.grantSeed,
         nonce: randomBytes(32),
     };
 

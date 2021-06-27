@@ -7,11 +7,13 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 import Settings from './settings';
 import Appointments from './appointments';
 
-import { keys } from 'apps/provider/actions';
+import { keys, queues } from 'apps/provider/actions';
 import {
     userSecret,
     backupData,
     tokenData,
+    queueData,
+    renewToken,
     invitation,
     checkInvitationData,
 } from 'apps/user/actions';
@@ -54,6 +56,12 @@ const Dashboard = withRouter(
                     invitationAction,
                     checkInvitationData,
                     checkInvitationDataAction,
+                    renewToken,
+                    renewTokenAction,
+                    queueData,
+                    queueDataAction,
+                    queues,
+                    queuesAction,
                     tokenData,
                     tokenDataAction,
                 }) => {
@@ -77,6 +85,32 @@ const Dashboard = withRouter(
                             tokenDataAction().then(td => {
                                 if (td === undefined || td.data === null)
                                     return;
+                                const { queueData: qd } = td.data;
+
+                                const qa = queuesAction(
+                                    qd.zipCode,
+                                    qd.distance
+                                );
+
+                                qa.then(qq => {
+                                    if (qq.status === 'failed') {
+                                        // to do: error handling
+                                        return;
+                                    }
+                                    if (qq.data.length === 0) {
+                                        // to do: error handling
+                                        return;
+                                    }
+
+                                    renewTokenAction(
+                                        qd,
+                                        qq.data[0],
+                                        userSecret.data
+                                    ).then(hd => {
+                                        backupDataAction(userSecret.data);
+                                    });
+                                });
+
                                 checkInvitationDataAction(
                                     kd.data,
                                     td.data
@@ -138,6 +172,9 @@ const Dashboard = withRouter(
                 keys,
                 checkInvitationData,
                 invitation,
+                queueData,
+                queues,
+                renewToken,
                 userSecret,
                 backupData,
             ]
