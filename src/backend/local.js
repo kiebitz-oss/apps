@@ -22,11 +22,13 @@ export default class LocalBackend {
         this._locked = false;
     }
 
-    async lock() {
+    async lock(to) {
+        if (to === undefined)
+            to = 5
         let i = 0;
         while (this._locked) {
             await timeout(10);
-            if (i++ > 100) {
+            if (i++ > 100*to) {
                 throw 'still locked';
             }
         }
