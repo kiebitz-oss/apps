@@ -827,7 +827,9 @@ const NewAppointment = withSettings(
                     );
 
                     const durations = [
+                        5,
                         10,
+                        15,
                         20,
                         30,
                         45,
@@ -859,7 +861,7 @@ const NewAppointment = withSettings(
                             waiting={saving}
                             onCancel={cancel}
                             onClose={cancel}
-                            title={<T t={t} k="new-appointment.title" />}
+                            title={<T t={t} k={appointment !== undefined ? "edit-appointment.title" : "new-appointment.title"} />}
                         >
                             <FormComponent>
                                 <FieldSet>

@@ -96,7 +96,8 @@ const Settings = withActions(
                 const logOut = () => {
                     setLoggingOut(true);
 
-                    keyPairsAction().then(kp =>
+                    const kpa = keyPairsAction()
+                    kpa.then(kp =>
                         providerSecretAction().then(ps => {
                             const ba = backupDataAction(kp.data, ps.data)
                             ba.then(() => {
@@ -107,6 +108,7 @@ const Settings = withActions(
                             ba.finally(() => setLoggingOut(false))
                         })
                     );
+                    kpa.catch(() => setLoggingOut(false))
                 };
 
                 if (action === 'backup') {

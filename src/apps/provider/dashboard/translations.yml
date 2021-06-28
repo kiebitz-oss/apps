@@ -115,6 +115,9 @@ day-6:
   de: Samstag
 day-7:
   de: Sonntag
+edit-appointment:
+  title:
+    de: Termin bearbeiten
 new-appointment:
   too-many-slots:
     de: Bitte wählen Sie maximal 50 Terminslots

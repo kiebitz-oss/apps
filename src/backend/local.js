@@ -24,7 +24,7 @@ export default class LocalBackend {
 
     async lock(to) {
         if (to === undefined)
-            to = 5
+            to = 10
         let i = 0;
         while (this._locked) {
             await timeout(10);
