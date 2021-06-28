@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaSearch } from 'react-icons/fa';
 import { useHistory } from 'react-router-dom';
 import ProviderSlots from '@/components/ProviderSlots';
 import useAvailableUserSlots, { SlotsByDay } from '@/hooks/useAvailableUserSlots';
@@ -22,7 +23,7 @@ const UserSlotsSelectionFeature = () => {
 
     // `_offers` is only used for offer confirmation.
     const [slots, invitation] = useAvailableUserSlots();
-    const availableProviders = [{ provider: invitation?.provider, slots }];
+    const availableProviders = invitation ? [{ provider: invitation?.provider, slots }] : [];
 
     const history = useHistory();
 
@@ -79,7 +80,14 @@ const UserSlotsSelectionFeature = () => {
             />
             <div className="container mx-auto min-h-screen 2xl:w-1/4 lg:w-1/2 2xl:pt-12 py-6">
                 <Card className="lg:rounded-lg">
-                    <div>{availableProviders.map(renderAvailableProvider)}</div>
+                    {availableProviders.length ? (
+                        <div>{availableProviders.map(renderAvailableProvider)}</div>
+                    ) : (
+                        <div className="flex justify-center items-center animate-pulse gap-2">
+                            <FaSearch className="text-xl" />
+                            <span className="text-xl font-semibold">Suche nach passenden Impfangeboten...</span>
+                        </div>
+                    )}
                 </Card>
             </div>
         </>
