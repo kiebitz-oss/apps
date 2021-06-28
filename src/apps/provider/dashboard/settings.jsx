@@ -97,14 +97,15 @@ const Settings = withActions(
                     setLoggingOut(true);
 
                     keyPairsAction().then(kp =>
-                        providerSecretAction().then(ps =>
-                            backupDataAction(kp.data, ps.data).then(() => {
+                        providerSecretAction().then(ps => {
+                            const ba = backupDataAction(kp.data, ps.data)
+                            ba.then(() => {
                                 const backend = settings.get('backend');
                                 backend.local.deleteAll('provider::');
-                                setLoggingOut(false);
                                 router.navigateToUrl('/provider/logged-out');
                             })
-                        )
+                            ba.finally(() => setLoggingOut(false))
+                        })
                     );
                 };
 
