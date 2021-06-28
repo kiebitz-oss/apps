@@ -11,7 +11,7 @@ import { ephemeralECDHEncrypt } from '@/helpers/crypto';
 import Card from '@/components/Card';
 import FeatureHeading from '@/components/FeatureHeading';
 
-const UserSlotsSelectionFeature = () => {
+const UserSlotsSelectionFeature: React.FC = () => {
     const [userSecret] = useUserSecret();
     const [userTokenData] = useUserTokenData();
 

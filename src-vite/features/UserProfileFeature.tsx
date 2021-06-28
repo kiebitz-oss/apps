@@ -26,7 +26,7 @@ type FormSubmitData = {
     accessible: boolean;
 };
 
-const UserProfileFeature = () => {
+const UserProfileFeature: React.FC = () => {
     const [userSecret] = useUserSecret();
     const [userTokenData] = useUserTokenData();
 

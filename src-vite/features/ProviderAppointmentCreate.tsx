@@ -1,12 +1,12 @@
 import React from 'react';
 import { CalendarOutline } from 'heroicons-react';
 
-import { Button } from '../components/Button';
-import { DateInput } from '../components/DateInput';
-import { HeroTitle } from '../components/HeroTitle';
-import { Input } from '../components/Input';
+import { Button } from '@/components/Button';
+import { DateInput } from '@/components/DateInput';
+import { HeroTitle } from '@/components/HeroTitle';
+import { Input } from '@/components/Input';
 
-const ProviderAppointmentCreate = () => {
+const ProviderAppointmentCreate: React.FC = () => {
     return (
         <div className="container mx-auto 2xl:pt-24 pt-12">
             <HeroTitle
