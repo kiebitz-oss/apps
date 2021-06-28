@@ -120,7 +120,7 @@ export async function sendInvitations(
                 console.log(`Trying to get ${n} new tokens...`);
                 // to do: get appointments by type
                 const newTokens = await backend.appointments.getQueueTokens(
-                    { expiration: EXP_SECONDS, capacities: [{ n: n, open: openSlots, booked: bookedSlots, properties: {} }] },
+                    { expiration: EXP_SECONDS, capacities: [{ n: n, tokens: openTokens.length, open: openSlots, booked: bookedSlots, properties: {} }] },
                     keyPairs.signing
                 );
                 if (newTokens === null)
