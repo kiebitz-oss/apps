@@ -15,7 +15,7 @@ export async function checkVerifiedProviderData(
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('checkVerifiedProviderData');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -51,7 +51,7 @@ export async function checkVerifiedProviderData(
             return { status: 'failed' };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('checkVerifiedProviderData');
     }
 }
 

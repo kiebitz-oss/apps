@@ -17,7 +17,7 @@ export async function submitProviderData(
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('submitProviderData');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -68,7 +68,7 @@ export async function submitProviderData(
             );
 
             data.submitted = true;
-            data.version = '0.2';
+            data.version = '0.3';
             backend.local.set('provider::data', data);
             return {
                 status: 'succeeded',
@@ -79,7 +79,7 @@ export async function submitProviderData(
             return { status: 'failed', error: e };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('submitProviderData');
     }
 }
 

@@ -10,7 +10,7 @@ export async function providerSecret(state, keyStore, settings, data) {
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('providerSecret');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -27,7 +27,7 @@ export async function providerSecret(state, keyStore, settings, data) {
             data: data,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('providerSecret');
     }
 }
 

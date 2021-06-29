@@ -27,7 +27,7 @@ export async function renewToken(state, keyStore, settings, queueData, queue) {
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('renewToken');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -63,7 +63,7 @@ export async function renewToken(state, keyStore, settings, queueData, queue) {
             };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('renewToken');
     }
 }
 

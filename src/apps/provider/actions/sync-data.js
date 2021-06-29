@@ -11,7 +11,7 @@ export async function syncData(state, keyStore, settings, keyPairs) {
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('syncData');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -47,7 +47,7 @@ export async function syncData(state, keyStore, settings, keyPairs) {
             error: e,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('syncData');
     }
 }
 

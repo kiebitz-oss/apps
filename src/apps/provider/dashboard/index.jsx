@@ -110,7 +110,7 @@ const Dashboard = withRouter(
                                     ) {
                                         router.navigateToUrl('/provider/setup');
                                         return;
-                                    } else if (pd.data.submitted !== true || pd.data.version !== '0.2') {
+                                    } else if (pd.data.submitted !== true || pd.data.version !== '0.3') {
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,

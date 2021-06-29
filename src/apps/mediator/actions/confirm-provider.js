@@ -14,7 +14,7 @@ export async function confirmProvider(
     const backend = settings.get('backend');
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('confirmProvider');
 
         const keyHashesData = {
             signing: providerData.publicKeys.signing,
@@ -85,7 +85,7 @@ export async function confirmProvider(
             data: result,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('confirmProvider');
     }
 }
 
