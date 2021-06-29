@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { ephemeralECDHEncrypt, sign } from 'helpers/crypto';
+import { ecdhEncrypt, generateECDHKeyPair, sign } from 'helpers/crypto';
 
 // store the provider data for validation in the backend
 export async function submitProviderData(
@@ -25,6 +25,13 @@ export async function submitProviderData(
     try {
         const dataToEncrypt = Object.assign({}, data);
 
+        let keyPair = backend.local.get('provider::data::encryptionKeyPair');
+
+        if (keyPair === null){
+            keyPair = await generateECDHKeyPair();
+            backend.local.set('provider::data::encryptionKeyPair', keyPair);
+        }
+
         try {
             const queues = await backend.appointments.getQueues({
                 zipCode: data.data.zipCode,
@@ -44,13 +51,11 @@ export async function submitProviderData(
         // we convert the data to JSON
         const jsonData = JSON.stringify(dataToEncrypt);
 
-        const [encryptedData, privateKey] = await ephemeralECDHEncrypt(
+        const encryptedData = await ecdhEncrypt(
             jsonData,
-            providerDataKey
+            keyPair,
+            providerDataKey,
         );
-
-        // we store the provider data key so we can decrypt the data later
-        backend.local.set('provider::data::encryptionKey', privateKey);
 
         try {
             const result = await backend.appointments.storeProviderData(
@@ -63,7 +68,7 @@ export async function submitProviderData(
             );
 
             data.submitted = true;
-            data.version = '0.1';
+            data.version = '0.2';
             backend.local.set('provider::data', data);
             return {
                 status: 'succeeded',

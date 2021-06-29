@@ -26,13 +26,15 @@ export async function checkVerifiedProviderData(
             keyPairs.signing
         );
         if (verifiedData === null) return { status: 'not-found' };
-        const encryptionKey = backend.local.get(
-            'provider::data::encryptionKey'
-        );
+        const keyPair = backend.local.get('provider::data::encryptionKeyPair');
+        if (keyPair === null)
+            return {
+                status: 'failed',
+            }
         try {
             const decryptedJSONData = await ecdhDecrypt(
                 verifiedData,
-                encryptionKey
+                keyPair.privateKey,
             );
             if (decryptedJSONData === null) {
                 // can't decrypt
@@ -42,6 +44,7 @@ export async function checkVerifiedProviderData(
             decryptedData.signedData.json = JSON.parse(
                 decryptedData.signedData.data
             );
+
             backend.local.set('provider::data::verified', decryptedData);
             return { status: 'loaded', data: decryptedData };
         } catch (e) {

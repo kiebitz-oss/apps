@@ -110,7 +110,7 @@ const Dashboard = withRouter(
                                     ) {
                                         router.navigateToUrl('/provider/setup');
                                         return;
-                                    } else if (pd.data.submitted !== true || pd.data.version !== '0.1') {
+                                    } else if (pd.data.submitted !== true || pd.data.version !== '0.2') {
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,
@@ -118,7 +118,6 @@ const Dashboard = withRouter(
                                             ks.data
                                         );
                                     }
-
                                     // we always check for updates in the verified provider data
                                     checkVerifiedProviderDataAction(
                                             pd.data,
