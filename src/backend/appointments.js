@@ -41,6 +41,18 @@ export default class AppointmentsBackend extends JSONRPCBackend {
 
     // public endpoints
 
+    async getStats({ id, metric, type, n, filter, from, to }) {
+        return await this.call('getStats', {
+            id,
+            metric,
+            type,
+            n,
+            from,
+            to,
+            filter,
+        });
+    }
+
     async getQueues({ zipCode, radius }) {
         return await this.call('getQueues', { zipCode, radius });
     }

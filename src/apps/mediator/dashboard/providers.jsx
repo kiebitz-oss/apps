@@ -199,7 +199,10 @@ const Providers = withTimer(
                                                         />
                                                     </td>
                                                     <td>
-                                                        {provider.data.queues.length}
+                                                        {
+                                                            provider.data.queues
+                                                                .length
+                                                        }
                                                     </td>
                                                 </tr>
                                             </tbody>

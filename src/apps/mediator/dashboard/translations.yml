@@ -1,3 +1,8 @@
+stats:
+  title:
+    de: Statistiken
+dateSpan:
+  de: Zeige Daten von {from} bis {to}.
 providers:
   pending:
     de: Unbestätigt
@@ -53,3 +58,13 @@ upload-key-pairs:
     de: Bitte laden Sie die Datei mit ihren geheimen Vermittlerschlüsseln.
   upload:
     de: Datei laden
+open:
+  de: Offene Termine
+booked:
+  de: Gebuchte Termine
+active:
+  de: Aktive Anbieter
+bookingRate:
+  de: Buchungsrate
+summary:
+  de: Überblick

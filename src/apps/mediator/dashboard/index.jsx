@@ -6,6 +6,7 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
 import Providers from './providers';
+import Stats from './stats';
 
 import {
     withSettings,
@@ -127,6 +128,9 @@ const Dashboard = withActions(
                     case 'providers':
                         content = <Providers action={action} id={id} />;
                         break;
+                    case 'stats':
+                        content = <Stats action={action} id={id} />;
+                        break;
                 }
             }
 
@@ -149,6 +153,12 @@ const Dashboard = withActions(
                                 href="/mediator/providers"
                             >
                                 <T t={t} k="providers.title" />
+                            </Tab>
+                            <Tab
+                                active={tab === 'stats'}
+                                href="/mediator/stats"
+                            >
+                                <T t={t} k="stats.title" />
                             </Tab>
                             <Tab
                                 active={tab === 'settings'}

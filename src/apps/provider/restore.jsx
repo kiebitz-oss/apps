@@ -179,7 +179,12 @@ export default withForm(
                                             )}
                                         </label>
                                         <span className="kip-retracting-label-input">
-                                            <p className="kip-description"><T t={t} k="load-backup.input.description" /></p>
+                                            <p className="kip-description">
+                                                <T
+                                                    t={t}
+                                                    k="load-backup.input.description"
+                                                />
+                                            </p>
                                         </span>
                                         <h3>
                                             <T

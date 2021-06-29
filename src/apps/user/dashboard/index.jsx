@@ -109,14 +109,10 @@ const Dashboard = withRouter(
                                     );
                                 });
 
-                                checkInvitationDataAction(
-                                    kd.data,
-                                    td.data
-                                );
+                                checkInvitationDataAction(kd.data, td.data);
 
                                 backupDataAction(userSecret.data);
                                 invitationAction();
-
                             })
                         );
                     });

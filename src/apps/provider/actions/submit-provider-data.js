@@ -27,7 +27,7 @@ export async function submitProviderData(
 
         let keyPair = backend.local.get('provider::data::encryptionKeyPair');
 
-        if (keyPair === null){
+        if (keyPair === null) {
             keyPair = await generateECDHKeyPair();
             backend.local.set('provider::data::encryptionKeyPair', keyPair);
         }
@@ -54,7 +54,7 @@ export async function submitProviderData(
         const encryptedData = await ecdhEncrypt(
             jsonData,
             keyPair,
-            providerDataKey,
+            providerDataKey
         );
 
         try {

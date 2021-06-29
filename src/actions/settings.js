@@ -62,10 +62,9 @@ export default class Settings extends BaseActions {
                     else {
                         reject(data);
                     }
-                } catch(e){
-                    reject({error: {message: 'not a JSON object'}})
+                } catch (e) {
+                    reject({ error: { message: 'not a JSON object' } });
                 }
-
             };
             xhr.onerror = () => {
                 reject({

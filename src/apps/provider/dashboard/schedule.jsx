@@ -861,7 +861,16 @@ const NewAppointment = withSettings(
                             waiting={saving}
                             onCancel={cancel}
                             onClose={cancel}
-                            title={<T t={t} k={appointment !== undefined ? "edit-appointment.title" : "new-appointment.title"} />}
+                            title={
+                                <T
+                                    t={t}
+                                    k={
+                                        appointment !== undefined
+                                            ? 'edit-appointment.title'
+                                            : 'new-appointment.title'
+                                    }
+                                />
+                            }
                         >
                             <FormComponent>
                                 <FieldSet>

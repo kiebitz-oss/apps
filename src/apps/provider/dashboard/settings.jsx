@@ -96,19 +96,19 @@ const Settings = withActions(
                 const logOut = () => {
                     setLoggingOut(true);
 
-                    const kpa = keyPairsAction()
+                    const kpa = keyPairsAction();
                     kpa.then(kp =>
                         providerSecretAction().then(ps => {
-                            const ba = backupDataAction(kp.data, ps.data)
+                            const ba = backupDataAction(kp.data, ps.data);
                             ba.then(() => {
                                 const backend = settings.get('backend');
                                 backend.local.deleteAll('provider::');
                                 router.navigateToUrl('/provider/logged-out');
-                            })
-                            ba.finally(() => setLoggingOut(false))
+                            });
+                            ba.finally(() => setLoggingOut(false));
                         })
                     );
-                    kpa.catch(() => setLoggingOut(false))
+                    kpa.catch(() => setLoggingOut(false));
                 };
 
                 if (action === 'backup') {

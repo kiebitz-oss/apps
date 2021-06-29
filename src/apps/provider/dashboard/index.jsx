@@ -110,7 +110,10 @@ const Dashboard = withRouter(
                                     ) {
                                         router.navigateToUrl('/provider/setup');
                                         return;
-                                    } else if (pd.data.submitted !== true || pd.data.version !== '0.3') {
+                                    } else if (
+                                        pd.data.submitted !== true ||
+                                        pd.data.version !== '0.3'
+                                    ) {
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,
@@ -120,9 +123,9 @@ const Dashboard = withRouter(
                                     }
                                     // we always check for updates in the verified provider data
                                     checkVerifiedProviderDataAction(
-                                            pd.data,
-                                            kp.data
-                                        );
+                                        pd.data,
+                                        kp.data
+                                    );
                                 });
                             })
                         );

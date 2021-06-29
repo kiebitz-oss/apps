@@ -30,11 +30,11 @@ export async function checkVerifiedProviderData(
         if (keyPair === null)
             return {
                 status: 'failed',
-            }
+            };
         try {
             const decryptedJSONData = await ecdhDecrypt(
                 verifiedData,
-                keyPair.privateKey,
+                keyPair.privateKey
             );
             if (decryptedJSONData === null) {
                 // can't decrypt

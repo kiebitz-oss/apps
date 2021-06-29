@@ -20,33 +20,29 @@ export default class LocalBackend {
     }
 
     unlock(task) {
-        if (this._tasks.length === 0)
-            throw 'should not happen'
-        if (this._tasks[0][0] !== task)
-            throw 'wrong task'
-        this._tasks = this._tasks.slice(1)
-        console.log(`Finished task ${task}...`)
-
+        if (this._tasks.length === 0) throw 'should not happen';
+        if (this._tasks[0][0] !== task) throw 'wrong task';
+        this._tasks = this._tasks.slice(1);
+        console.log(`Finished task ${task}...`);
     }
 
     async lock(task) {
-        if (this._tasks.find(t => t[0] === task) !== undefined){
-            throw 'already queued up' // there's already a task queued up
+        if (this._tasks.find(t => t[0] === task) !== undefined) {
+            throw 'already queued up'; // there's already a task queued up
         }
 
-        this._tasks.push([task, new Date()])
+        this._tasks.push([task, new Date()]);
 
         while (true) {
-            if (this._tasks.length === 0)
-                throw 'should not happen'
-            const [t, dt] = this._tasks[0]
-            if (t === task)
-                break // it's our turn
-            if (new Date() - dt > 1000*60*5) // tasks time out after 5 minutes
-                this._tasks = this._tasks.slice(1)
+            if (this._tasks.length === 0) throw 'should not happen';
+            const [t, dt] = this._tasks[0];
+            if (t === task) break; // it's our turn
+            if (new Date() - dt > 1000 * 60 * 5)
+                // tasks time out after 5 minutes
+                this._tasks = this._tasks.slice(1);
             await timeout(10);
         }
-        console.log(`Executing task ${task}...`)
+        console.log(`Executing task ${task}...`);
         // now we go...
     }
 
