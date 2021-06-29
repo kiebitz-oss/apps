@@ -1,6 +1,6 @@
 backup-modal:
   download-backup:
-    de: Backup-Datei herunterladen
+    de: Sicherungsdatei herunterladen
   close:
     de: Schließen
   backing-up-test:
@@ -74,7 +74,7 @@ schedule:
   booking-list:
     de: Buchungliste
   updating:
-    de: "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}" 
+    de: "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}"
   title:
     de: Terminplan
 appointments-overview:
@@ -152,7 +152,7 @@ provider-data:
   title:
     de: Ihre Daten
   verified-vs-unverifired-desc:
-    de: Ihre Daten unterlaufen einer Überprüfung unsererseits. Sobald Ihre Daten überprüft wurden, werden Sie Impfwilligen angezeigt. Führen Sie nach der Überprüfung Ihrer Daten noch Änderungen dieser durch, so müssen diese erneut Überprüft werden und werden entsprechend erst nach erfolgreicher Überprüfung Impfwilligen angezeigt. Daher differenzieren wir zwischen verifizierten und unverifizierten Daten. 
+    de: Ihre Daten unterlaufen einer Überprüfung unsererseits. Sobald Ihre Daten überprüft wurden, werden Sie Impfwilligen angezeigt. Führen Sie nach der Überprüfung Ihrer Daten noch Änderungen dieser durch, so müssen diese erneut Überprüft werden und werden entsprechend erst nach erfolgreicher Überprüfung Impfwilligen angezeigt. Daher differenzieren wir zwischen verifizierten und unverifizierten Daten.
   invalid-name:
     de: Bitte gegen Sie einen gültigen Namen an
   name:
