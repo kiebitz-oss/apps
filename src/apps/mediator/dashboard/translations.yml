@@ -20,6 +20,8 @@ providers:
 provider-data:
   field:
     de: Feld
+  queues:
+    de: Anzahl PLZ-Präfixe (z.B. 10, 66, ...)
   value:
     de: Wert
   name:

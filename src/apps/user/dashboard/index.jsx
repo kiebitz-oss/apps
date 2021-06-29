@@ -106,18 +106,17 @@ const Dashboard = withRouter(
                                         qd,
                                         qq.data[0],
                                         userSecret.data
-                                    ).then(hd => {
-                                        backupDataAction(userSecret.data);
-                                    });
+                                    );
                                 });
 
                                 checkInvitationDataAction(
                                     kd.data,
                                     td.data
-                                ).then(() => {
-                                    backupDataAction(userSecret.data);
-                                    invitationAction();
-                                });
+                                );
+
+                                backupDataAction(userSecret.data);
+                                invitationAction();
+
                             })
                         );
                     });

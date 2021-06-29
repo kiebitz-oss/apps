@@ -191,6 +191,17 @@ const Providers = withTimer(
                                                         {provider.data.phone}
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.queues"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.queues.length}
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
