@@ -108,7 +108,7 @@ export async function sendInvitations(
 
         try {
             // how many more users we invite than we have slots
-            const overbookingFactor = 3;
+            const overbookingFactor = 10;
             console.log(
                 `Got ${openSlots} open slots and ${freshTokens.length} fresh tokens (${openTokens.length} tokens in total), overbooking factor is ${overbookingFactor}...`
             );
