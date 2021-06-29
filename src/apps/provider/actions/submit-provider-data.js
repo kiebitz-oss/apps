@@ -63,6 +63,7 @@ export async function submitProviderData(
             );
 
             data.submitted = true;
+            data.version = '0.1';
             backend.local.set('provider::data', data);
             return {
                 status: 'succeeded',
