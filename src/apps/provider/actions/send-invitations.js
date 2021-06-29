@@ -210,7 +210,7 @@ export async function sendInvitations(
                                 return // we try 10 different IDs at most 
                             resultToken.dataN++
                             // we rotate the ID for this token...
-                            resultToken.dataID = (await deriveSecrets(b642buf(resultToken.dataID), 32, resultToken.dataN))[resultToken.dataN-1]
+                            resultToken.dataID = (await deriveSecrets(b642buf(resultToken.data.id), 32, resultToken.dataN))[resultToken.dataN-1]
                         }
 
                     }
