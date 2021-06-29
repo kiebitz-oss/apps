@@ -110,19 +110,20 @@ const Dashboard = withRouter(
                                     ) {
                                         router.navigateToUrl('/provider/setup');
                                         return;
-                                    } else if (pd.data.submitted !== true || pd.data.version != '0.1') {
+                                    } else if (pd.data.submitted !== true || pd.data.version !== '0.1') {
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,
                                             kp.data,
                                             ks.data
                                         );
-                                    } else if (!pd.data.data.verified) {
-                                        checkVerifiedProviderDataAction(
+                                    }
+
+                                    // we always check for updates in the verified provider data
+                                    checkVerifiedProviderDataAction(
                                             pd.data,
                                             kp.data
                                         );
-                                    }
                                 });
                             })
                         );
