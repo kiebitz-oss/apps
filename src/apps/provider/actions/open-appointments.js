@@ -30,7 +30,8 @@ export async function openAppointments(state, keyStore, settings) {
             }
         }
 
-        if (changed) backend.local.set('provider::appointments::open', []);
+        if (changed)
+            backend.local.set('provider::appointments::open', appointments);
 
         try {
             return {

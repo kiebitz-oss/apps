@@ -2,7 +2,8 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { hash, verify, ecdhDecrypt } from 'helpers/crypto';
+import { hash, verify, ecdhDecrypt, deriveSecrets } from 'helpers/crypto';
+import { b642buf } from 'helpers/conversion';
 
 // to do: verify the provider data
 async function verifyProviderData(providerData, keys) {}
@@ -44,29 +45,40 @@ export async function checkInvitationData(
 
     try {
         try {
-            const data = await backend.appointments.getData(
-                { id: tokenData.tokenData.id },
+            const dataIDs = await deriveSecrets(
+                b642buf(tokenData.tokenData.id),
+                32,
+                20
+            );
+
+            const dataList = await backend.appointments.bulkGetData(
+                { ids: dataIDs },
                 tokenData.signingKeyPair
             );
-            if (data === null)
-                return {
-                    status: 'not-found',
-                };
 
-            const decryptedData = await decryptInvitationData(
-                data,
-                keys,
-                tokenData
-            );
+            backend.local.set('user::invitation', dataList);
 
-            verifyProviderData(decryptedData.provider);
+            const decryptedDataList = [];
 
-            backend.local.set('user::invitation', data);
-            backend.local.set('user::invitation::verified', decryptedData);
+            for (const data of dataList) {
+                if (data === null) continue;
+                try {
+                    const decryptedData = await decryptInvitationData(
+                        data,
+                        keys,
+                        tokenData
+                    );
+                    verifyProviderData(decryptedData.provider);
+                    decryptedDataList.push(decryptedData);
+                } catch (e) {
+                    continue;
+                }
+            }
 
+            backend.local.set('user::invitation::verified', decryptedDataList);
             return {
                 status: 'loaded',
-                data: decryptedData,
+                data: decryptedDataList,
             };
         } catch (e) {
             console.error(e);

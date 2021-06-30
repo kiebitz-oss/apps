@@ -45,12 +45,14 @@ export async function sendInvitations(
     // we store at most MN tokens in the app
     const MN = 800;
     // we keep offers valid for a given number of seconds
-    const EXP_SECONDS = 60 * 60 * 4;
+    const EXP_SECONDS = 60 * 60;
     // we regard tokens as 'fresh' for a given number of seconds
     const FRESH_SECONDS = 60 * 15;
     // we give a grace period before expiring tokens (so that we're able to
     // catch bookings made just before the expiration date)
     const GRACE_SECONDS = 60 * 15;
+    // how many more users we invite than we have slots
+    const OVERBOOKING_FACTOR = 50;
 
     try {
         let openAppointments = backend.local.get(
@@ -106,17 +108,15 @@ export async function sendInvitations(
         });
 
         try {
-            // how many more users we invite than we have slots
-            const overbookingFactor = 10;
             console.log(
-                `Got ${openSlots} open slots and ${freshTokens.length} fresh tokens (${openTokens.length} tokens in total), overbooking factor is ${overbookingFactor}...`
+                `Got ${openSlots} open slots and ${freshTokens.length} fresh tokens (${openTokens.length} tokens in total), overbooking factor is ${OVERBOOKING_FACTOR}...`
             );
             const n = Math.floor(
                 Math.min(
                     Math.max(0, MN - openTokens.length),
                     Math.max(
                         0,
-                        openSlots * overbookingFactor - freshTokens.length
+                        openSlots * OVERBOOKING_FACTOR - freshTokens.length
                     )
                 )
             );
@@ -126,7 +126,7 @@ export async function sendInvitations(
                 // to do: get appointments by type
                 const newTokens = await backend.appointments.getQueueTokens(
                     {
-                        expiration: EXP_SECONDS,
+                        expiration: FRESH_SECONDS,
                         capacities: [
                             {
                                 n: n,
