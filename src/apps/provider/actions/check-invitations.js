@@ -70,6 +70,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 if (result === null) continue;
 
                 const cancel = async slotData => {
+                    console.log("Canceling slot")
                     // the user wants to cancel this appointment
                     await cancelSlots(undefined, [slotData], openTokens);
                     // we remove the canceled slot
@@ -160,6 +161,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         continue processAppointments;
                     }
                 }
+                continue;
                 // no open token matches this slot data, we discard it
                 try {
                     const invalidSlotData = appointment.slotData.find(
