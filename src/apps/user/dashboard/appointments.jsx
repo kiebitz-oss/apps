@@ -631,7 +631,7 @@ const Appointments = withActions(
                 return <NoInvitations tokenData={tokenData.data} />;
 
             const details = invitations.map(data => (
-                <InvitationDetails tokenData={tokenData} data={data} />
+                <InvitationDetails tokenData={tokenData} data={data} key={data.provider.signature} />
             ));
 
             return <F>{details}</F>;
