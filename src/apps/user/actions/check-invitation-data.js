@@ -52,7 +52,7 @@ export async function checkInvitationData(
             );
 
             const dataList = await backend.appointments.bulkGetData(
-                { ids: dataIDs },
+                { ids: [tokenData.tokenData.id, ...dataIDs] },
                 tokenData.signingKeyPair
             );
 
