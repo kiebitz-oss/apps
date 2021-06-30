@@ -174,7 +174,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                     ...pastAppointments,
                     ...newlyPastAppointments,
                 ]);
-            }*/
+            }
 
             // we mark the successful tokens
             const newlyUsedTokens = newlyPastAppointments
@@ -211,6 +211,9 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             );
 
             backend.local.set('provider::tokens::open', openTokens);
+
+            */
+
 
             return {
                 status: 'loaded',
