@@ -114,9 +114,9 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 sl.token.token === openToken.token
                         );
 
-                        if (decryptedData === null) {
+                        if (decryptedData === null && slotData === undefined) {
                             console.log(
-                                'Cannot decrypt data, discarding slot...'
+                                'Cannot decrypt data and slot is empty, discarding slot...'
                             );
 
                             const invalidSlotData = appointment.slotData.find(
@@ -161,6 +161,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         continue processAppointments;
                     }
                 }
+
                 continue;
                 // no open token matches this slot data, we discard it
                 try {
