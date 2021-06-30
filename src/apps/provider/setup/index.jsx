@@ -17,7 +17,10 @@ const Setup = withRouter(
             useEffect(() => {
                 if (initialized) return;
                 setInitialized(true);
-                providerDataAction().then(pd => {
+                let data
+                if (Object.keys(route.hashParams).length > 0)
+                    data = route.hashParams;
+                providerDataAction(data).then(pd => {
                     if (
                         route.handler.props.page === undefined &&
                         pd.data !== undefined &&
@@ -25,9 +28,6 @@ const Setup = withRouter(
                     )
                         router.navigateToUrl('/provider/schedule');
                 });
-                if (Object.keys(route.hashParams).length > 0) {
-                    providerDataAction(route.hashParams);
-                }
             });
 
             return (
