@@ -611,10 +611,10 @@ const Appointments = withActions(
                 invitation.data !== null
             ) {
                 const ai = invitation.data.find(
-                    inv =>
-                        inv.publicKey ===
-                        acceptedInvitation.data.invitation.publicKey
-                );
+                    inv => {
+                        return inv.provider.signature ===
+                        acceptedInvitation.data.invitation.provider.signature
+                });
                 return <AcceptedInvitation offers={ai.offers} />;
             }
 
