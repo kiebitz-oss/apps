@@ -91,7 +91,8 @@ export async function sendInvitations(
         // we give a grace period before we remove the token
         const now = new Date(new Date().getTime() - 1000 * GRACE_SECONDS);
         openTokens = openTokens.filter(
-            token => now < new Date(token.expiresAt)
+            token =>
+                token.expiresAt === undefined || now < new Date(token.expiresAt)
         );
 
         let freshTokens = openTokens.filter(

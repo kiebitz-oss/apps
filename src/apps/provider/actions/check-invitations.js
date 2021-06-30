@@ -70,7 +70,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 if (result === null) continue;
 
                 const cancel = async slotData => {
-                    console.log("Canceling slot")
+                    console.log('Canceling slot');
                     // the user wants to cancel this appointment
                     await cancelSlots(undefined, [slotData], openTokens);
                     // we remove the canceled slot
@@ -125,7 +125,10 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
                             // if the slot data is defined, we cancel the slot (as someone
                             // might have put invalid data there so we can't read it anymore...)
-                            if (invalidSlotData !== undefined) {
+                            if (
+                                invalidSlotData !== undefined &&
+                                invalidSlotData.token === undefined
+                            ) {
                                 await cancel(invalidSlotData);
                                 openToken.expiresAt = undefined;
                                 openToken.grantID = undefined;
@@ -151,7 +154,8 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             openToken.expiresAt = new Date(
                                 appointment.timestamp
                             );
-                            slotData.userData = decryptedData;
+                            if (decryptedData !== null)
+                                slotData.userData = decryptedData;
                         }
                         console.log('processed appointment');
                         // we continue with the next appointment
@@ -162,12 +166,13 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                     }
                 }
 
-                continue;
                 // no open token matches this slot data, we discard it
                 try {
                     const invalidSlotData = appointment.slotData.find(
                         sl => sl.id === ids[i]
                     );
+
+                    if (invalidSlotData.token !== undefined) continue; // if this slot has an associated token so we never delete it
 
                     // if the slot data is defined, we cancel the slot (as someone
                     // might have put invalid data there so we can't read it anymore...)
