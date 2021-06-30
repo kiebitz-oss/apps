@@ -149,6 +149,9 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 }
             }
 
+
+            /*
+
             const isExpired = oa =>
                 new Date(oa.timestamp) <
                 new Date(new Date().getTime() - 1000 * 60 * 60 * 2);
@@ -171,7 +174,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                     ...pastAppointments,
                     ...newlyPastAppointments,
                 ]);
-            }
+            }*/
 
             // we mark the successful tokens
             const newlyUsedTokens = newlyPastAppointments
