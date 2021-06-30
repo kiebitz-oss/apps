@@ -494,7 +494,11 @@ const InvitationDetails = withSettings(
                             onClick={doConfirmOffers}
                             disabled={
                                 confirming ||
-                                Object.keys(toggleOffers.data.filter(id => data.offers.find(of => of.id === id))).length === 0
+                                Object.keys(
+                                    toggleOffers.data.filter(id =>
+                                        data.offers.find(of => of.id === id)
+                                    )
+                                ).length === 0
                             }
                             type="success"
                         >
@@ -610,10 +614,11 @@ const Appointments = withActions(
                 invitation !== undefined &&
                 invitation.data !== null
             ) {
-                const ai = invitation.data.find(
-                    inv => {
-                        return inv.provider.signature ===
+                const ai = invitation.data.find(inv => {
+                    return (
+                        inv.provider.signature ===
                         acceptedInvitation.data.invitation.provider.signature
+                    );
                 });
                 return <AcceptedInvitation offers={ai.offers} />;
             }
@@ -631,7 +636,11 @@ const Appointments = withActions(
                 return <NoInvitations tokenData={tokenData.data} />;
 
             const details = invitations.map(data => (
-                <InvitationDetails tokenData={tokenData} data={data} key={data.provider.signature} />
+                <InvitationDetails
+                    tokenData={tokenData}
+                    data={data}
+                    key={data.provider.signature}
+                />
             ));
 
             return <F>{details}</F>;

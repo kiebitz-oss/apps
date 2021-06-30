@@ -68,6 +68,18 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             processAppointments: for (const [i, result] of results.entries()) {
                 const appointment = appointments[i];
                 if (result === null) continue;
+
+                const cancel = async slotData => {
+                    // the user wants to cancel this appointment
+                    await cancelSlots(undefined, [slotData], openTokens);
+                    // we remove the canceled slot
+                    appointment.slotData = appointment.slotData.filter(
+                        sl => sl.id !== slotData.id
+                    );
+                    // we replace the slot
+                    appointment.slotData.push(createSlot());
+                };
+
                 // we try to decrypt this data with the private key of each token
                 for (const openToken of openTokens) {
                     try {
@@ -95,23 +107,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             )
                         );
 
-                        const cancel = async slotData => {
-                            // the user wants to cancel this appointment
-                            await cancelSlots(
-                                undefined,
-                                [slotData],
-                                openTokens
-                            );
-                            // we remove the canceled slot
-                            appointment.slotData = appointment.slotData.filter(
-                                sl => sl.id !== slotData.id
-                            );
-                            openToken.expiresAt = undefined;
-                            openToken.grantID = undefined;
-                            // we replace the slot
-                            appointment.slotData.push(createSlot());
-                        };
-
                         const slotData = appointment.slotData.find(
                             sl =>
                                 sl.token !== undefined &&
@@ -119,15 +114,31 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         );
 
                         if (decryptedData === null) {
-                            // if the slot data is defined, we cancel the slot
-                            if (slotData !== undefined) await cancel(slotData);
-                            continue; // something went wrong with the decryption...
+                            console.log(
+                                'Cannot decrypt data, discarding slot...'
+                            );
+
+                            const invalidSlotData = appointment.slotData.find(
+                                sl => sl.id === ids[i]
+                            );
+
+                            // if the slot data is defined, we cancel the slot (as someone
+                            // might have put invalid data there so we can't read it anymore...)
+                            if (invalidSlotData !== undefined) {
+                                await cancel(invalidSlotData);
+                                openToken.expiresAt = undefined;
+                                openToken.grantID = undefined;
+                            }
+                            continue processAppointments; // something went wrong with the decryption...
                         }
 
                         if (slotData !== undefined) {
                             slotData.userData = decryptedData;
                             if (decryptedData.cancel === true) {
+                                // the user requested a cancellation
                                 await cancel(slotData);
+                                openToken.expiresAt = undefined;
+                                openToken.grantID = undefined;
                             }
                         } else {
                             // we get the slot data for the token
@@ -141,14 +152,29 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             );
                             slotData.userData = decryptedData;
                         }
+                        console.log('processed appointment');
+                        // we continue with the next appointment
                         continue processAppointments;
                     } catch (e) {
                         console.error(e);
-                        continue;
+                        continue processAppointments;
                     }
                 }
-            }
+                // no open token matches this slot data, we discard it
+                try {
+                    const invalidSlotData = appointment.slotData.find(
+                        sl => sl.id === ids[i]
+                    );
 
+                    // if the slot data is defined, we cancel the slot (as someone
+                    // might have put invalid data there so we can't read it anymore...)
+                    if (invalidSlotData !== undefined)
+                        await cancel(invalidSlotData);
+                } catch (e) {
+                    console.log(e);
+                    continue;
+                }
+            }
 
             /*
 
@@ -213,7 +239,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
             backend.local.set('provider::appointments::open', openAppointments);
             backend.local.set('provider::tokens::open', openTokens);
-
 
             return {
                 status: 'loaded',

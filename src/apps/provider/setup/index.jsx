@@ -17,7 +17,7 @@ const Setup = withRouter(
             useEffect(() => {
                 if (initialized) return;
                 setInitialized(true);
-                let data
+                let data;
                 if (Object.keys(route.hashParams).length > 0)
                     data = route.hashParams;
                 providerDataAction(data).then(pd => {
