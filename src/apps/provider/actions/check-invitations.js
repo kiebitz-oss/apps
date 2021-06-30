@@ -163,7 +163,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
             // only keep appointments that are in the future
             openAppointments = openAppointments.filter(oa => !isExpired(oa));
-            backend.local.set('provider::appointments::open', openAppointments);
 
             if (newlyPastAppointments.length > 0) {
                 const pastAppointments = backend.local.get(
@@ -210,9 +209,10 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 ot => !newlyUsedTokens.some(pt => pt.token === ot.token)
             );
 
-            backend.local.set('provider::tokens::open', openTokens);
-
             */
+
+            backend.local.set('provider::appointments::open', openAppointments);
+            backend.local.set('provider::tokens::open', openTokens);
 
 
             return {
