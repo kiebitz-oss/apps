@@ -132,13 +132,14 @@ export const BackupDataLink = withSettings(
         }) => {
             const [initialized, setInitialized] = useState(false);
 
-            let providerName
+            let providerName;
 
             try {
-                providerName = providerData.data.data.name.replaceAll(" ", "-").replaceAll(".", "-").toLowerCase()
-            } catch(e){
-
-            }
+                providerName = providerData.data.data.name
+                    .replaceAll(' ', '-')
+                    .replaceAll('.', '-')
+                    .toLowerCase();
+            } catch (e) {}
 
             useEffect(() => {
                 if (initialized) return;

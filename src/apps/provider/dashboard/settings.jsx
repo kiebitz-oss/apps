@@ -99,7 +99,14 @@ const Settings = withActions(
                     const kpa = keyPairsAction();
                     kpa.then(kp =>
                         providerSecretAction().then(ps => {
-                            const ba = backupDataAction(kp.data, ps.data);
+                            // we give the backup data action a different name to avoid it being rejected
+                            // in case there's already a backup in progress... It will still be queued
+                            // up to ensure no conflicts can occur.
+                            const ba = backupDataAction(
+                                kp.data,
+                                ps.data,
+                                'logout'
+                            );
                             ba.then(() => {
                                 const backend = settings.get('backend');
                                 backend.local.deleteAll('provider::');

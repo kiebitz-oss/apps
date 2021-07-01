@@ -351,7 +351,10 @@ export async function sendInvitations(
                                     singleUse: true,
                                     expiresAt: expiresAt.toISOString(),
                                     // data will expire one hour after the appointment
-                                    dataExpiresAt: new Date(new Date(oa.timestamp).getTime()+1000*60*60).toISOString(),
+                                    dataExpiresAt: new Date(
+                                        new Date(oa.timestamp).getTime() +
+                                            1000 * 60 * 60
+                                    ).toISOString(),
                                     permissions: [
                                         {
                                             rights: ['read', 'write', 'delete'],
@@ -420,7 +423,9 @@ export async function sendInvitations(
                         id: token.dataID,
                         data: signedEncryptedUserData,
                         // data will expire with the token
-                        expiresAt: new Date(new Date(token.expiresAt).getTime()+1000*60*60).toISOString(),
+                        expiresAt: new Date(
+                            new Date(token.expiresAt).getTime() + 1000 * 60 * 60
+                        ).toISOString(),
                         permissions: [
                             {
                                 rights: ['read'],

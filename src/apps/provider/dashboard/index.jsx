@@ -122,8 +122,7 @@ const Dashboard = withRouter(
                                     }
 
                                     verifiedProviderDataAction().then(vd => {
-                                        if (vd === undefined)
-                                            return
+                                        if (vd === undefined) return;
                                         if (vd.data === null)
                                             // no verified provider data, we submit the data again
                                             submitProviderDataAction(

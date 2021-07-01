@@ -134,7 +134,8 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             // if the slot data is defined, we cancel the slot (as someone
                             // might have put invalid data there so we can't read it anymore...)
                             if (invalidSlotData !== undefined) {
-                                invalidSlotData.cancelReason = 'decryptionError';
+                                invalidSlotData.cancelReason =
+                                    'decryptionError';
                                 await cancel(invalidSlotData);
                                 openToken.expiresAt = undefined;
                                 openToken.grantID = undefined;
@@ -145,7 +146,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         if (slotData !== undefined) {
                             slotData.userData = decryptedData;
                             if (decryptedData.cancel === true) {
-                                console.log("User requested cancellation...")
+                                console.log('User requested cancellation...');
                                 // the user requested a cancellation
                                 slotData.cancelReason = 'userRequest';
                                 await cancel(slotData);
@@ -181,7 +182,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                     );
 
                     if (invalidSlotData !== undefined) {
-                        console.log("No token for this slot, canceling...")
+                        console.log('No token for this slot, canceling...');
                         // if this slot has an associated token so we never delete it
                         if (invalidSlotData.token !== undefined) {
                             const missingToken = invalidSlotData.token;
@@ -264,7 +265,10 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
             backend.local.set('provider::appointments::open', openAppointments);
             backend.local.set('provider::tokens::open', openTokens);
-            backend.local.set('provider::appointments::slots::canceled', canceledSlots);
+            backend.local.set(
+                'provider::appointments::slots::canceled',
+                canceledSlots
+            );
 
             return {
                 status: 'loaded',
