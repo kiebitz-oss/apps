@@ -4,7 +4,7 @@
 
 export async function invitation(state, keyStore, settings, data) {
     const backend = settings.get('backend');
-    let invitations = backend.local.get('user::invitation::verified');
+    let invitations = backend.local.get('user::invitation::verified', []);
     if (!(invitations instanceof Array)) {
         invitations = [invitations];
     }
