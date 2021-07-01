@@ -4,9 +4,9 @@
 
 export async function invitation(state, keyStore, settings, data) {
     const backend = settings.get('backend');
-    const invitations =  backend.local.get('user::invitation::verified');
-    if (!(invitations instanceof Array)){
-        invitations = [invitations]
+    let invitations = backend.local.get('user::invitation::verified');
+    if (!(invitations instanceof Array)) {
+        invitations = [invitations];
     }
     return {
         status: 'loaded',
