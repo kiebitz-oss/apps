@@ -4,17 +4,29 @@
 
 export async function queueData(state, keyStore, settings, data) {
     const backend = settings.get('backend');
-    // we just store the data...
-    if (data !== undefined) backend.temporary.set('user::queueData', data);
-    data = backend.temporary.get('user::queueData');
-    if (data === null)
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('queueData');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
+        // we just store the data...
+        if (data !== undefined) backend.temporary.set('user::queueData', data);
+        data = backend.temporary.get('user::queueData');
+        if (data === null)
+            return {
+                status: 'failed',
+            };
         return {
-            status: 'failed',
+            status: 'loaded',
+            data: data,
         };
-    return {
-        status: 'loaded',
-        data: data,
-    };
+    } finally {
+        backend.local.unlock('queueData');
+    }
 }
 
 queueData.actionName = 'queueData';

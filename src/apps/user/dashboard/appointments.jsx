@@ -615,13 +615,14 @@ const Appointments = withActions(
                 invitation.data !== null
             ) {
                 const ai = invitation.data.find(inv => {
-                    if (inv === null)
-                        return false
+                    if (inv === null) return false;
                     return (
                         inv.provider.signature ===
                         acceptedInvitation.data.invitation.provider.signature
                     );
                 });
+                if (ai === undefined)
+                    return <NoInvitations tokenData={tokenData.data} />;
                 return <AcceptedInvitation offers={ai.offers} />;
             }
 

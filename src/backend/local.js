@@ -28,6 +28,7 @@ export default class LocalBackend {
 
     async lock(task) {
         if (this._tasks.find(t => t[0] === task) !== undefined) {
+            console.log(`task ${task} is already in queue, aborting...`, task);
             throw 'already queued up'; // there's already a task queued up
         }
 

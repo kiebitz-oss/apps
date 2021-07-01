@@ -51,6 +51,7 @@ const Dashboard = withRouter(
                     keys,
                     router,
                     userSecret,
+                    userSecretAction,
                     keysAction,
                     backupDataAction,
                     invitationAction,
@@ -66,54 +67,45 @@ const Dashboard = withRouter(
                     tokenDataAction,
                 }) => {
                     const [tv, setTv] = useState(-2);
-                    const [initialized, setInitialized] = useState(false);
-
-                    useEffect(() => {
-                        if (initialized) return;
-                        setInitialized(true);
-                        tokenDataAction().then(td => {
-                            if (td === undefined || td.data === null)
-                                router.navigateToUrl('/user');
-                        });
-                    });
 
                     useEffect(() => {
                         // we do this only once per timer interval...
                         if (timer === tv) return;
                         setTv(timer);
-                        keysAction().then(kd =>
-                            tokenDataAction().then(td => {
-                                if (td === undefined || td.data === null)
-                                    return;
-                                const { queueData: qd } = td.data;
-
-                                const qa = queuesAction(
-                                    qd.zipCode,
-                                    qd.distance
-                                );
-
-                                qa.then(qq => {
-                                    if (qq.status === 'failed') {
-                                        // to do: error handling
+                        userSecretAction().then(us =>
+                            keysAction().then(kd =>
+                                tokenDataAction().then(td => {
+                                    if (td === undefined || td.data === null)
                                         return;
-                                    }
-                                    if (qq.data.length === 0) {
-                                        // to do: error handling
-                                        return;
-                                    }
+                                    const { queueData: qd } = td.data;
 
-                                    renewTokenAction(
-                                        qd,
-                                        qq.data[0],
-                                        userSecret.data
+                                    const qa = queuesAction(
+                                        qd.zipCode,
+                                        qd.distance
                                     );
-                                });
 
-                                checkInvitationDataAction(kd.data, td.data);
+                                    qa.then(qq => {
+                                        if (qq.status === 'failed') {
+                                            // to do: error handling
+                                            return;
+                                        }
+                                        if (qq.data.length === 0) {
+                                            // to do: error handling
+                                            return;
+                                        }
 
-                                backupDataAction(userSecret.data);
-                                invitationAction();
-                            })
+                                        renewTokenAction(
+                                            qd,
+                                            qq.data[0],
+                                            us.data
+                                        );
+                                    });
+
+                                    checkInvitationDataAction(kd.data, td.data);
+                                    backupDataAction(us.data);
+                                    invitationAction();
+                                })
+                            )
                         );
                     });
 

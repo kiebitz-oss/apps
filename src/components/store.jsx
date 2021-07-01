@@ -113,7 +113,14 @@ export function withActions(Component, actionNames, keyList, noStore) {
                                 keyStore,
                                 settings
                             );
-                            store.set(key, initialValue);
+                            if (initialValue instanceof Promise) {
+                                initialValue.then(value => {
+                                    if (value !== undefined)
+                                        store.set(key, value);
+                                });
+                            } else if (initialValue !== undefined) {
+                                store.set(key, initialValue);
+                            }
                         }
                         const wrapper = function() {
                             const state = store.get(key);
