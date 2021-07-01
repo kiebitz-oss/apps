@@ -68,3 +68,9 @@ bookingRate:
   de: Buchungsrate
 summary:
   de: Überblick
+
+titles:
+  booked:
+    de: '{n} Termine wurden zwischen dem {from} und {to} als gebucht gemeldet'
+  open:
+    de: '{n} Termine wurden zwischen dem {from} und {to} als offen gemeldet'
