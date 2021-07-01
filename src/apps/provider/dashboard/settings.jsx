@@ -112,7 +112,7 @@ const Settings = withActions(
                                 backend.local.deleteAll('provider::');
                                 router.navigateToUrl('/provider/logged-out');
                             });
-                            ba.finally(() => setLoggingOut(false));
+                            ba.catch(() => setLoggingOut(false));
                         })
                     );
                     kpa.catch(() => setLoggingOut(false));

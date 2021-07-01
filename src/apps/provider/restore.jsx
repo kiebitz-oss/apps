@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Fragment as F } from 'react';
 import {
     withActions,
     withSettings,
@@ -186,38 +186,44 @@ export default withForm(
                                                 />
                                             </p>
                                         </span>
-                                        <h3>
-                                            <T
-                                                t={t}
-                                                k="load-backup.advanced-options"
-                                            />
-                                        </h3>
-
-                                        <ul className="kip-properties">
-                                            <li className="kip-property">
-                                                <Switch
-                                                    id="localOnly"
-                                                    checked={
-                                                        data.localOnly !==
-                                                        undefined
-                                                            ? data.localOnly
-                                                            : false
-                                                    }
-                                                    onChange={value =>
-                                                        set('localOnly', value)
-                                                    }
-                                                >
-                                                    &nbsp;
-                                                </Switch>
-
-                                                <label htmlFor="localOnly">
+                                        {false && (
+                                            <F>
+                                                <h3>
                                                     <T
                                                         t={t}
-                                                        k="load-backup.local-only.label"
+                                                        k="load-backup.advanced-options"
                                                     />
-                                                </label>
-                                            </li>
-                                        </ul>
+                                                </h3>
+                                                <ul className="kip-properties">
+                                                    <li className="kip-property">
+                                                        <Switch
+                                                            id="localOnly"
+                                                            checked={
+                                                                data.localOnly !==
+                                                                undefined
+                                                                    ? data.localOnly
+                                                                    : false
+                                                            }
+                                                            onChange={value =>
+                                                                set(
+                                                                    'localOnly',
+                                                                    value
+                                                                )
+                                                            }
+                                                        >
+                                                            &nbsp;
+                                                        </Switch>
+
+                                                        <label htmlFor="localOnly">
+                                                            <T
+                                                                t={t}
+                                                                k="load-backup.local-only.label"
+                                                            />
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </F>
+                                        )}
                                     </FieldSet>
                                 </FormComponent>
                             </CardContent>
