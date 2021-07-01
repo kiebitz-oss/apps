@@ -17,7 +17,7 @@ import {
     T,
     A,
 } from 'components';
-import { providerSecret, keyPairs, backupData } from '../actions';
+import { providerSecret, providerData, keyPairs, backupData } from '../actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
@@ -123,6 +123,7 @@ export const BackupDataLink = withSettings(
             settings,
             keyPairs,
             downloadText,
+            providerData,
             keyPairsAction,
             providerSecret,
             providerSecretAction,
@@ -130,6 +131,14 @@ export const BackupDataLink = withSettings(
             backupDataAction,
         }) => {
             const [initialized, setInitialized] = useState(false);
+
+            let providerName
+
+            try {
+                providerName = providerData.data.data.name.replaceAll(" ", "-").replaceAll(".", "-").toLowerCase()
+            } catch(e){
+
+            }
 
             useEffect(() => {
                 if (initialized) return;
@@ -153,7 +162,7 @@ export const BackupDataLink = withSettings(
 
             const dateString = formatDate(new Date());
 
-            const filename = `${title}-backup-${dateString}.enc`;
+            const filename = `${title}-backup-${dateString}-${providerName}.enc`;
 
             if (blob !== undefined)
                 return (
@@ -176,7 +185,7 @@ export const BackupDataLink = withSettings(
                 </Message>
             );
         },
-        [providerSecret, backupData, keyPairs]
+        [providerSecret, backupData, keyPairs, providerData]
     )
 );
 

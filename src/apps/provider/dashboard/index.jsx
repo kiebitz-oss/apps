@@ -94,7 +94,6 @@ const Dashboard = withRouter(
                         if (timer === tv) return;
                         setTv(timer);
                         setLastUpdated(new Date().toLocaleTimeString());
-                        verifiedProviderDataAction();
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
@@ -121,6 +120,19 @@ const Dashboard = withRouter(
                                             ks.data
                                         );
                                     }
+
+                                    verifiedProviderDataAction().then(vd => {
+                                        if (vd === undefined)
+                                            return
+                                        if (vd.data === null)
+                                            // no verified provider data, we submit the data again
+                                            submitProviderDataAction(
+                                                pd.data,
+                                                kp.data,
+                                                ks.data
+                                            );
+                                    });
+
                                     // we always check for updates in the verified provider data
                                     checkVerifiedProviderDataAction(
                                         pd.data,

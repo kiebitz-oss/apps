@@ -10,6 +10,7 @@ export const localKeys = ['keyPairs'];
 export const cloudKeys = [
     'data',
     'appointments::open',
+    'appointments::slots::canceled',
     'appointments::past',
     'data::verified',
     'tokens::open',

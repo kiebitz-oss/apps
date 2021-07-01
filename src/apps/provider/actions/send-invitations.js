@@ -350,6 +350,8 @@ export async function sendInvitations(
                                     grantID: token.grantID,
                                     singleUse: true,
                                     expiresAt: expiresAt.toISOString(),
+                                    // data will expire one hour after the appointment
+                                    dataExpiresAt: new Date(new Date(oa.timestamp).getTime()+1000*60*60).toISOString(),
                                     permissions: [
                                         {
                                             rights: ['read', 'write', 'delete'],
@@ -417,6 +419,8 @@ export async function sendInvitations(
                     const submitData = {
                         id: token.dataID,
                         data: signedEncryptedUserData,
+                        // data will expire with the token
+                        expiresAt: new Date(new Date(token.expiresAt).getTime()+1000*60*60).toISOString(),
                         permissions: [
                             {
                                 rights: ['read'],
@@ -435,7 +439,7 @@ export async function sendInvitations(
                     continue;
                 }
 
-                if (dataToSubmit.length > 100) {
+                if (dataToSubmit.length >= 100) {
                     await doSubmitData();
                 }
             }

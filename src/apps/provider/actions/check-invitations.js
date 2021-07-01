@@ -27,6 +27,12 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             []
         );
 
+        // we keep a list of canceled slots so that we can restore them. Just in case...
+        let canceledSlots = backend.local.get(
+            'provider::appointments::slots::canceled',
+            []
+        );
+
         const currentIndex = backend.local.get(
             'provider::appointments::check::index',
             0
@@ -65,12 +71,14 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             if (results.length !== ids.length) {
                 throw 'lengths do not match';
             }
+
             processAppointments: for (const [i, result] of results.entries()) {
                 const appointment = appointments[i];
                 if (result === null) continue;
 
                 const cancel = async slotData => {
                     console.log('Canceling slot');
+                    canceledSlots.push(slotData);
                     // the user wants to cancel this appointment
                     await cancelSlots(undefined, [slotData], openTokens);
                     // we remove the canceled slot
@@ -101,6 +109,12 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
                         if (result.publicKey !== tokenPublicKey) continue;
 
+                        const slotData = appointment.slotData.find(
+                            sl =>
+                                sl.token !== undefined &&
+                                sl.token.token === openToken.token
+                        );
+
                         const decryptedData = JSON.parse(
                             await ecdhDecrypt(
                                 result,
@@ -108,15 +122,9 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             )
                         );
 
-                        const slotData = appointment.slotData.find(
-                            sl =>
-                                sl.token !== undefined &&
-                                sl.token.token === openToken.token
-                        );
-
-                        if (decryptedData === null && slotData === undefined) {
+                        if (decryptedData === null) {
                             console.log(
-                                'Cannot decrypt data and slot is empty, discarding slot...'
+                                'Cannot decrypt data, discarding slot...'
                             );
 
                             const invalidSlotData = appointment.slotData.find(
@@ -125,10 +133,8 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
                             // if the slot data is defined, we cancel the slot (as someone
                             // might have put invalid data there so we can't read it anymore...)
-                            if (
-                                invalidSlotData !== undefined &&
-                                invalidSlotData.token === undefined
-                            ) {
+                            if (invalidSlotData !== undefined) {
+                                invalidSlotData.cancelReason = 'decryptionError';
                                 await cancel(invalidSlotData);
                                 openToken.expiresAt = undefined;
                                 openToken.grantID = undefined;
@@ -139,7 +145,9 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         if (slotData !== undefined) {
                             slotData.userData = decryptedData;
                             if (decryptedData.cancel === true) {
+                                console.log("User requested cancellation...")
                                 // the user requested a cancellation
+                                slotData.cancelReason = 'userRequest';
                                 await cancel(slotData);
                                 openToken.expiresAt = undefined;
                                 openToken.grantID = undefined;
@@ -172,12 +180,21 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         sl => sl.id === ids[i]
                     );
 
-                    if (invalidSlotData.token !== undefined) continue; // if this slot has an associated token so we never delete it
-
-                    // if the slot data is defined, we cancel the slot (as someone
-                    // might have put invalid data there so we can't read it anymore...)
-                    if (invalidSlotData !== undefined)
+                    if (invalidSlotData !== undefined) {
+                        console.log("No token for this slot, canceling...")
+                        // if this slot has an associated token so we never delete it
+                        if (invalidSlotData.token !== undefined) {
+                            const missingToken = invalidSlotData.token;
+                            missingToken.expiresAt = undefined;
+                            missingToken.grantID = undefined;
+                            openTokens.push(missingToken);
+                            continue;
+                        }
+                        // there's not token associated with this slot, so we
+                        // delete it...
+                        invalidSlotData.cancelReason = 'noMatchingToken';
                         await cancel(invalidSlotData);
+                    }
                 } catch (e) {
                     console.log(e);
                     continue;
@@ -247,6 +264,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
             backend.local.set('provider::appointments::open', openAppointments);
             backend.local.set('provider::tokens::open', openTokens);
+            backend.local.set('provider::appointments::slots::canceled', canceledSlots);
 
             return {
                 status: 'loaded',
