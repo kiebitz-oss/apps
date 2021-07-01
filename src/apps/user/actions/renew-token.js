@@ -10,18 +10,6 @@ import {
     hashString,
 } from 'helpers/crypto';
 
-async function hashContactData(data) {
-    const hashData = {
-        name: data.name,
-        grantSeed: data.grantSeed,
-        nonce: randomBytes(32),
-    };
-
-    const hashDataJSON = JSON.stringify(hashData);
-    const dataHash = await hashString(hashDataJSON);
-    return [dataHash, hashData.nonce];
-}
-
 export async function renewToken(state, keyStore, settings, queueData, queue) {
     const backend = settings.get('backend');
 
