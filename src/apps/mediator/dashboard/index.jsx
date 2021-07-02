@@ -135,8 +135,7 @@ const Dashboard = withActions(
                         content = (
                             <Providers
                                 action={action}
-                                secondaryAction={secondaryAction}
-                                id={id}
+                                id={secondaryAction}
                             />
                         );
                         break;
