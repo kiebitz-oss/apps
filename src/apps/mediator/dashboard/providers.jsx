@@ -55,8 +55,8 @@ const Providers = withTimer(
                 const [view, setView] = useState('pending');
 
                 const getData = t => {
-                    setLastRun(t);
                     if (keyPairs !== undefined && keyPairs.data !== undefined) {
+                        setLastRun(t);
                         pendingProvidersAction(keyPairs.data);
                         verifiedProvidersAction(keyPairs.data);
                     }
