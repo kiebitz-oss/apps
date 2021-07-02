@@ -5,6 +5,11 @@
 import { ecdhDecrypt } from 'helpers/crypto';
 import { cancelSlots } from './cancel-appointment';
 import { createSlot } from './create-appointment';
+import { MN } from './send-invitations';
+
+// we give a grace period before expiring tokens (so that we're able to
+// catch bookings made just before the expiration date)
+const GRACE_SECONDS = 60 * 15;
 
 // checks invitations
 export async function checkInvitations(state, keyStore, settings, keyPairs) {
@@ -26,6 +31,14 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             'provider::appointments::open',
             []
         );
+        let bookings = backend.local.get('provider::bookings', 0);
+
+        let openSlots = 0;
+        openAppointments
+            .filter(oa => new Date(oa.timestamp) > new Date())
+            .forEach(ap => {
+                openSlots += ap.slotData.filter(sl => sl.open).length;
+            });
 
         // we keep a list of canceled slots so that we can restore them. Just in case...
         let canceledSlots = backend.local.get(
@@ -37,8 +50,13 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             'provider::appointments::check::index',
             0
         );
+
+        const relevantAppointments = openAppointments
+            .filter(oa => new Date(oa.timestamp) > new Date())
+            .filter(oa => oa.slots > 0);
+
         let newIndex = currentIndex + N;
-        if (newIndex >= openAppointments.length) newIndex = 0; // we start from the beginning
+        if (newIndex >= relevantAppointments.length) newIndex = 0; // we start from the beginning
         backend.local.set('provider::appointments::check::index', newIndex);
 
         console.log(
@@ -48,9 +66,11 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
         try {
             const ids = [];
             let appointments = [];
-            for (const appointment of openAppointments
-                .slice(currentIndex, currentIndex + N)
-                .filter(oa => oa.slots > 0)) {
+            // we only check appointments that are in the future
+            for (const appointment of relevantAppointments.slice(
+                currentIndex,
+                currentIndex + N
+            )) {
                 for (const slotData of appointment.slotData) {
                     ids.push(slotData.id);
                     appointments.push(appointment);
@@ -138,6 +158,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                     'decryptionError';
                                 await cancel(invalidSlotData);
                                 openToken.expiresAt = undefined;
+                                openToken.expirationCount = undefined;
                                 openToken.grantID = undefined;
                             }
                             continue processAppointments; // something went wrong with the decryption...
@@ -151,9 +172,11 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                                 slotData.cancelReason = 'userRequest';
                                 await cancel(slotData);
                                 openToken.expiresAt = undefined;
+                                openToken.expirationCount = undefined;
                                 openToken.grantID = undefined;
                             }
                         } else {
+                            bookings++;
                             // we get the slot data for the token
                             const slotData = appointment.slotData.find(
                                 sl => sl.id === ids[i]
@@ -183,11 +206,11 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
 
                     if (invalidSlotData !== undefined) {
                         console.log('No token for this slot, canceling...');
-                        // if this slot has an associated token so we never delete it
+                        // if this slot has an associated token we never delete it
                         if (invalidSlotData.token !== undefined) {
                             const missingToken = invalidSlotData.token;
                             missingToken.expiresAt = undefined;
-                            missingToken.grantID = undefined;
+                            missingToken.expirationCount = undefined;
                             openTokens.push(missingToken);
                             continue;
                         }
@@ -202,69 +225,79 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 }
             }
 
-            /*
-
-            const isExpired = oa =>
-                new Date(oa.timestamp) <
-                new Date(new Date().getTime() - 1000 * 60 * 60 * 2);
-
-            // remove appointments that are in the past (with a 2 hour grace period)
-            const newlyPastAppointments = openAppointments.filter(oa =>
-                isExpired(oa)
-            );
-
-            // only keep appointments that are in the future
-            openAppointments = openAppointments.filter(oa => !isExpired(oa));
-
-            if (newlyPastAppointments.length > 0) {
-                const pastAppointments = backend.local.get(
-                    'provider::appointments::past',
-                    []
-                );
-                backend.local.set('provider::appointments::past', [
-                    ...pastAppointments,
-                    ...newlyPastAppointments,
-                ]);
+            if (newIndex === 0) {
+                openTokens.forEach(token => {
+                    if (
+                        token.expiresAt !== undefined &&
+                        new Date() > new Date(token.expiresAt)
+                    ) {
+                        if (token.expirationCount === undefined)
+                            token.expirationCount = 1;
+                        else token.expirationCount++;
+                    }
+                });
             }
 
-            // we mark the successful tokens
-            const newlyUsedTokens = newlyPastAppointments
-                .map(pa =>
-                    pa.slotData
-                        .filter(sl => sl.token !== undefined)
-                        .map(sl => sl.token)
-                )
-                .flat();
+            // we give a grace period before we remove the tokens
+            const now = new Date(new Date().getTime() - 1000 * GRACE_SECONDS);
 
-            // we send the signed, encrypted data to the backend
-            if (newlyUsedTokens.length > 0) {
-                const usedTokens = backend.local.get(
-                    'provider::tokens::used',
+            // a token is expired if the expiration count is greater than 10
+            // and the expiration date is in the past (minus grace period)
+            const isExpired = token =>
+                !(
+                    token.expiresAt === undefined ||
+                    now < new Date(token.expiresAt) ||
+                    token.expirationCount === undefined ||
+                    token.expirationCount < 10
+                );
+
+            // if we have too many tokens we need to get rid of some first
+            // before we can get more... Also if we don't have any open
+            // slots anymore...
+            // to do: sort tokens by expiration date and only remove as many
+            // as necessary?
+            if (openTokens.length > 0.7 * MN || openSlots === 0) {
+                // we filter out all expired tokens...
+
+                let expiredTokens = openTokens.filter(isExpired);
+                let alreadyExpiredTokens = backend.local.get(
+                    'provider::tokens::expired',
                     []
                 );
-                backend.local.set('provider::tokens::used', [
-                    ...usedTokens,
-                    ...newlyUsedTokens,
-                ]);
-                try {
-                    await backend.appointments.markTokensAsUsed(
-                        { tokens: newlyUsedTokens.map(token => token.token) },
-                        keyPairs.signing
-                    );
-                } catch (e) {
-                    console.error(e);
-                }
+                alreadyExpiredTokens = [
+                    ...alreadyExpiredTokens,
+                    ...expiredTokens,
+                ];
+                // we keep the most recent tokens in the list and age out the oldest ones...
+                const index = Math.max(alreadyExpiredTokens.length - MN, 0);
+                alreadyExpiredTokens = alreadyExpiredTokens.slice(
+                    index,
+                    index + MN
+                );
+                backend.local.set(
+                    'provider::tokens::expired',
+                    alreadyExpiredTokens
+                );
+
+                // here's the dangerous part: we delete expired tokens!
+                openTokens = openTokens.filter(token => !isExpired(token));
+            } else {
+                // if we still have room we just prolong existing tokens...
+                openTokens.forEach(token => {
+                    // we prolong the life of expired tokens...
+                    if (
+                        token.expiresAt !== undefined &&
+                        new Date() > new Date(token.expiresAt)
+                    ) {
+                        token.expiresAt = undefined;
+                        token.expirationCount = undefined;
+                    }
+                });
             }
-
-            // we remove the past tokens from the list of open tokens...
-            openTokens = openTokens.filter(
-                ot => !newlyUsedTokens.some(pt => pt.token === ot.token)
-            );
-
-            */
 
             backend.local.set('provider::appointments::open', openAppointments);
             backend.local.set('provider::tokens::open', openTokens);
+            backend.local.set('provider::bookings', bookings);
             backend.local.set(
                 'provider::appointments::slots::canceled',
                 canceledSlots

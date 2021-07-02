@@ -11,6 +11,7 @@ export default class LocalBackend {
     constructor(settings, store) {
         this.settings = settings;
         this.store = store;
+        this._taskId = 0;
         this._tasks = [];
         this._locked = false;
     }
@@ -28,16 +29,17 @@ export default class LocalBackend {
 
     async lock(task) {
         if (this._tasks.find(t => t[0] === task) !== undefined) {
-            console.log(`task ${task} is already in queue, aborting...`, task);
+            console.log(`task ${task} is already in queue, aborting...`);
             throw 'already queued up'; // there's already a task queued up
         }
 
-        this._tasks.push([task, new Date()]);
+        const taskId = this._taskId++;
+        this._tasks.push([task, new Date(), taskId]);
 
         while (true) {
             if (this._tasks.length === 0) throw 'should not happen';
-            const [t, dt] = this._tasks[0];
-            if (t === task) break; // it's our turn
+            const [t, dt, id] = this._tasks[0];
+            if (id === taskId) break; // it's our turn
             if (new Date() - dt > 1000 * 60 * 5)
                 // tasks time out after 5 minutes
                 this._tasks = this._tasks.slice(1);

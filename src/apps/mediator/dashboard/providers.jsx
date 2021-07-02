@@ -17,6 +17,7 @@ import {
     withTimer,
     Message,
     Modal,
+    CardContent,
     WithLoader,
     List,
     Icon,
@@ -45,7 +46,6 @@ const Providers = withTimer(
                 confirmProvider,
                 confirmProviderAction,
                 keyPairs,
-                keyPairsAction,
                 pendingProviders,
                 pendingProvidersAction,
                 verifiedProviders,
@@ -56,10 +56,10 @@ const Providers = withTimer(
 
                 const getData = t => {
                     setLastRun(t);
-                    keyPairsAction().then(keyPairs => {
+                    if (keyPairs !== undefined && keyPairs.data !== undefined) {
                         pendingProvidersAction(keyPairs.data);
                         verifiedProvidersAction(keyPairs.data);
-                    });
+                    }
                 };
 
                 useEffect(() => {
@@ -231,41 +231,43 @@ const Providers = withTimer(
                         ));
 
                     return (
-                        <div className="kip-providers">
-                            {modal}
-                            <DropdownMenu
-                                title={
-                                    <F>
-                                        <Icon icon="check-circle" />
-                                        <T t={t} k={`providers.${view}`} />
-                                    </F>
-                                }
-                            >
-                                <DropdownMenuItem
-                                    icon="check-circle"
-                                    onClick={() => setView('verified')}
+                        <CardContent>
+                            <div className="kip-providers">
+                                {modal}
+                                <DropdownMenu
+                                    title={
+                                        <F>
+                                            <Icon icon="check-circle" />
+                                            <T t={t} k={`providers.${view}`} />
+                                        </F>
+                                    }
                                 >
-                                    <T t={t} k="providers.verified" />
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    icon="exclamation-circle"
-                                    onClick={() => setView('pending')}
-                                >
-                                    <T t={t} k="providers.pending" />
-                                </DropdownMenuItem>
-                            </DropdownMenu>
-                            <List>
-                                <ListHeader>
-                                    <ListColumn size="md">
-                                        <T t={t} k="providers.name" />
-                                    </ListColumn>
-                                    <ListColumn size="md">
-                                        <T t={t} k="providers.address" />
-                                    </ListColumn>
-                                </ListHeader>
-                                {providerItems}
-                            </List>
-                        </div>
+                                    <DropdownMenuItem
+                                        icon="check-circle"
+                                        onClick={() => setView('verified')}
+                                    >
+                                        <T t={t} k="providers.verified" />
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        icon="exclamation-circle"
+                                        onClick={() => setView('pending')}
+                                    >
+                                        <T t={t} k="providers.pending" />
+                                    </DropdownMenuItem>
+                                </DropdownMenu>
+                                <List>
+                                    <ListHeader>
+                                        <ListColumn size="md">
+                                            <T t={t} k="providers.name" />
+                                        </ListColumn>
+                                        <ListColumn size="md">
+                                            <T t={t} k="providers.address" />
+                                        </ListColumn>
+                                    </ListHeader>
+                                    {providerItems}
+                                </List>
+                            </div>
+                        </CardContent>
                     );
                 };
                 return (

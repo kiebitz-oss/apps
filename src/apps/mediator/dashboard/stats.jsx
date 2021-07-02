@@ -245,9 +245,11 @@ class Stats extends React.Component {
             );
         }
         return (
-            <div className="bulma-columns bulma-is-multiline bulma-is-desktop">
-                {content}
-            </div>
+            <CardContent>
+                <div className="bulma-columns bulma-is-multiline bulma-is-desktop">
+                    {content}
+                </div>
+            </CardContent>
         );
     };
 

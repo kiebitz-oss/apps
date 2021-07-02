@@ -616,7 +616,13 @@ const Appointments = withActions(
             ) {
                 const ai = invitation.data.find(inv => {
                     if (inv === null) return false;
-                    return inv.offers.some(offer => offer.slotData.some(sla => acceptedInvitation.data.offer.slotData.some(slb => slb.id === sla.id)))
+                    return inv.offers.some(offer =>
+                        offer.slotData.some(sla =>
+                            acceptedInvitation.data.offer.slotData.some(
+                                slb => slb.id === sla.id
+                            )
+                        )
+                    );
                 });
                 if (ai === undefined)
                     return <NoInvitations tokenData={tokenData.data} />;

@@ -44,8 +44,6 @@ export async function restoreFromBackup(
                 },
             };
 
-        console.log(dd);
-
         // to do: remove as soon as everyone's on the new versioned schema
         if (dd.version === undefined || dd.version === '0.1') {
             // this is an old backup file, we restore data from it...

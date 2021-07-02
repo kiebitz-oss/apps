@@ -110,7 +110,7 @@ const Dashboard = withRouter(
                                         router.navigateToUrl('/provider/setup');
                                         return;
                                     } else if (
-                                        pd.data.submitted !== true ||
+                                        pd.data.submittedAt === undefined ||
                                         pd.data.version !== '0.3'
                                     ) {
                                         // we try to submit the data...
@@ -119,18 +119,32 @@ const Dashboard = withRouter(
                                             kp.data,
                                             ks.data
                                         );
+                                    } else {
+                                        verifiedProviderDataAction().then(
+                                            vd => {
+                                                if (vd === undefined) return;
+                                                if (
+                                                    vd.data === null &&
+                                                    pd.data.submittedAt !==
+                                                        undefined &&
+                                                    new Date(
+                                                        pd.data.submittedAt
+                                                    ) <
+                                                        new Date(
+                                                            new Date().getTime() -
+                                                                1000 * 60 * 15
+                                                        )
+                                                ) {
+                                                    // no verified provider data yet, we submit the data again
+                                                    submitProviderDataAction(
+                                                        pd.data,
+                                                        kp.data,
+                                                        ks.data
+                                                    );
+                                                }
+                                            }
+                                        );
                                     }
-
-                                    verifiedProviderDataAction().then(vd => {
-                                        if (vd === undefined) return;
-                                        if (vd.data === null)
-                                            // no verified provider data, we submit the data again
-                                            submitProviderDataAction(
-                                                pd.data,
-                                                kp.data,
-                                                ks.data
-                                            );
-                                    });
 
                                     // we always check for updates in the verified provider data
                                     checkVerifiedProviderDataAction(

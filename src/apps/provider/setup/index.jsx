@@ -24,7 +24,7 @@ const Setup = withRouter(
                     if (
                         route.handler.props.page === undefined &&
                         pd.data !== undefined &&
-                        pd.data.submitted === true
+                        pd.data.submittedAt !== undefined
                     )
                         router.navigateToUrl('/provider/schedule');
                 });

@@ -13,6 +13,8 @@ export const cloudKeys = [
     'appointments::slots::canceled',
     'appointments::past',
     'data::verified',
+    'bookings',
+    'bookings::reported',
     'tokens::open',
     'tokens::expired',
     'tokens::used',

@@ -22,6 +22,17 @@ function getQueuePrivateKey(queueID, verifiedProviderData) {
     return null;
 }
 
+// we process at most N tokens during one invocation of this function
+const N = 500;
+// we store at most MN tokens in the app
+export const MN = 600;
+// we keep offers valid for a given number of seconds
+const EXP_SECONDS = 60 * 60;
+// we regard tokens as 'fresh' for a given number of seconds
+const FRESH_SECONDS = 60 * 15;
+// how many more users we invite than we have slots
+const OVERBOOKING_FACTOR = 50;
+
 // regularly checks open appointment slots
 export async function sendInvitations(
     state,
@@ -40,25 +51,19 @@ export async function sendInvitations(
         throw null; // we throw a null exception (which won't affect the store state)
     }
 
-    // we process at most N tokens during one invocation of this function
-    const N = 500;
-    // we store at most MN tokens in the app
-    const MN = 800;
-    // we keep offers valid for a given number of seconds
-    const EXP_SECONDS = 60 * 60;
-    // we regard tokens as 'fresh' for a given number of seconds
-    const FRESH_SECONDS = 60 * 15;
-    // we give a grace period before expiring tokens (so that we're able to
-    // catch bookings made just before the expiration date)
-    const GRACE_SECONDS = 60 * 15;
-    // how many more users we invite than we have slots
-    const OVERBOOKING_FACTOR = 50;
-
     try {
+        // we do not save the appointments!
         let openAppointments = backend.local.get(
             'provider::appointments::open',
             []
         );
+
+        let bookings = backend.local.get('provider::bookings', 0);
+        let reportedBookings = backend.local.get(
+            'provider::bookings::reported',
+            0
+        );
+        backend.local.set('provider::bookings::reported', bookings);
 
         if (openAppointments.length === 0)
             // we don't have any new appointments to give out
@@ -67,33 +72,19 @@ export async function sendInvitations(
             };
 
         // only offer appointments that are in the future
-        openAppointments = openAppointments.filter(oa => {
-            const timestamp = new Date(oa.timestamp);
-            const inOneHour = new Date(new Date().getTime() + 1000 * 60 * 60);
-            return timestamp > new Date();
-        });
+        openAppointments = openAppointments.filter(
+            oa => new Date(oa.timestamp) > new Date()
+        );
 
         let openTokens = backend.local.get('provider::tokens::open', []);
 
         openTokens.forEach(token => {
             if (token.expiresAt === undefined) {
-                if (token.createdAt !== undefined)
-                    token.expiresAt = new Date(
-                        new Date(token.createdAt).getTime() + 1000 * EXP_SECONDS
-                    );
-                else
-                    token.expiresAt = new Date(
-                        new Date().getTime() + 1000 * EXP_SECONDS
-                    );
+                token.expiresAt = new Date(
+                    new Date().getTime() + 1000 * EXP_SECONDS
+                );
             }
         });
-
-        // we give a grace period before we remove the token
-        const now = new Date(new Date().getTime() - 1000 * GRACE_SECONDS);
-        openTokens = openTokens.filter(
-            token =>
-                token.expiresAt === undefined || now < new Date(token.expiresAt)
-        );
 
         let freshTokens = openTokens.filter(
             token =>
@@ -132,6 +123,7 @@ export async function sendInvitations(
                             {
                                 n: n,
                                 tokens: openTokens.length,
+                                bookings: bookings - reportedBookings,
                                 open: openSlots,
                                 booked: bookedSlots,
                                 properties: {},
@@ -184,7 +176,8 @@ export async function sendInvitations(
                     }
                     openTokens = [...openTokens, ...validTokens];
                 }
-                // we update the list of open tokens
+                // we update the list of open tokens before we do anything else
+                // to ensure we never lose token information...
                 backend.local.set('provider::tokens::open', openTokens);
             }
 
@@ -226,7 +219,7 @@ export async function sendInvitations(
                     for (const [i, result] of results.entries()) {
                         if (result !== null) {
                             const resultToken = tokensToSubmit[i];
-                            if (resultToken.dataN > 10) return; // we try 10 different IDs at most
+                            if (resultToken.dataN >= 19) return; // we try 20 different IDs at most
                             resultToken.dataN++;
                             // we rotate the ID for this token...
                             resultToken.dataID = (

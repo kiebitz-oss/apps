@@ -1,7 +1,12 @@
-_t:
-  path: apps/hd/translations.yml
 dashboard:
   en: Dashboard
 title:
   _ignore_unused: true
   en: Mediator App
+logged-out:
+  log-in-again:
+    de: Einloggen
+  title:
+    de: Erfolgreich abgemeldet.
+  notice:
+    de: Sie wurden erfolgreich abgemeldet. Sie können sich jederzeit mit Ihrer Schlüsseldatei wieder anmelden.

@@ -58,6 +58,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
                 <T t={t} k="upload-key-pairs.invalid-file" />
             </Message>
         );
+    else notice = <T t={t} k="upload-key-pairs.notice" />;
 
     const footer = (
         <Form>
@@ -81,7 +82,6 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
             title={<T t={t} k="upload-key-pairs.title" />}
         >
             {notice}
-            <T t={t} k="upload-key-pairs.notice" />
         </Modal>
     );
 };
@@ -91,7 +91,7 @@ const Dashboard = withActions(
         ({
             route: {
                 handler: {
-                    props: { tab, action, id },
+                    props: { tab, action, secondaryAction, id },
                 },
             },
             settings,
@@ -123,13 +123,31 @@ const Dashboard = withActions(
             if (keyPairs !== undefined) {
                 switch (tab) {
                     case 'settings':
-                        content = <Settings />;
+                        content = (
+                            <Settings
+                                action={action}
+                                secondaryAction={secondaryAction}
+                                id={id}
+                            />
+                        );
                         break;
                     case 'providers':
-                        content = <Providers action={action} id={id} />;
+                        content = (
+                            <Providers
+                                action={action}
+                                secondaryAction={secondaryAction}
+                                id={id}
+                            />
+                        );
                         break;
                     case 'stats':
-                        content = <Stats action={action} id={id} />;
+                        content = (
+                            <Stats
+                                action={action}
+                                secondaryAction={secondaryAction}
+                                id={id}
+                            />
+                        );
                         break;
                 }
             }
@@ -168,10 +186,8 @@ const Dashboard = withActions(
                             </Tab>
                         </Tabs>
                     </CardHeader>
-                    <CardContent>
-                        {modal}
-                        {content}
-                    </CardContent>
+                    {modal}
+                    {content}
                 </CenteredCard>
             );
         }

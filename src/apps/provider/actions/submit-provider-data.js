@@ -24,7 +24,6 @@ export async function submitProviderData(
 
     try {
         const dataToEncrypt = Object.assign({}, data);
-
         let keyPair = backend.local.get('provider::data::encryptionKeyPair');
 
         if (keyPair === null) {
@@ -67,7 +66,7 @@ export async function submitProviderData(
                 keyPairs.signing
             );
 
-            data.submitted = true;
+            data.submittedAt = new Date().toISOString();
             data.version = '0.3';
             backend.local.set('provider::data', data);
             return {
