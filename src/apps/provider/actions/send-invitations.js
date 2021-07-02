@@ -23,15 +23,15 @@ function getQueuePrivateKey(queueID, verifiedProviderData) {
 }
 
 // we process at most N tokens during one invocation of this function
-const N = 500;
+const N = 200;
 // we store at most MN tokens in the app
-export const MN = 600;
+export const MN = 300;
 // we keep offers valid for a given number of seconds
 const EXP_SECONDS = 60 * 60;
 // we regard tokens as 'fresh' for a given number of seconds
-const FRESH_SECONDS = 60 * 15;
+const FRESH_SECONDS = 60 * 30;
 // how many more users we invite than we have slots
-const OVERBOOKING_FACTOR = 50;
+const OVERBOOKING_FACTOR = 10;
 
 // regularly checks open appointment slots
 export async function sendInvitations(
@@ -377,7 +377,14 @@ export async function sendInvitations(
 
                         const appointment = appointments[oa.id];
 
-                        appointment.slotData.push(slot);
+                        const slotCopy = { ...slot };
+
+                        // we remove the token information (only delivered to the user
+                        // but it's not used currently and there's no reason for the user to see it...)
+                        delete slotCopy.token;
+                        delete slotCopy.userData;
+
+                        appointment.slotData.push(slotCopy);
                         appointment.grants.push(grantsData[i]);
                     });
 

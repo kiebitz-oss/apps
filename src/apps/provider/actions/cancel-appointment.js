@@ -14,6 +14,7 @@ export async function cancelSlots(backend, slots, tokens) {
                 // we renew the grant IDs for the token, so the user can book another appointment
                 existingToken.grantID = undefined;
                 existingToken.expiresAt = undefined;
+                existingToken.expirationCount = undefined;
             }
         }
     }

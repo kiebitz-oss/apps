@@ -133,10 +133,7 @@ const Dashboard = withActions(
                         break;
                     case 'providers':
                         content = (
-                            <Providers
-                                action={action}
-                                id={secondaryAction}
-                            />
+                            <Providers action={action} id={secondaryAction} />
                         );
                         break;
                     case 'stats':

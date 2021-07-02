@@ -186,8 +186,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                             openToken.expiresAt = new Date(
                                 appointment.timestamp
                             );
-                            if (decryptedData !== null)
-                                slotData.userData = decryptedData;
+                            slotData.userData = decryptedData;
                         }
                         console.log('processed appointment');
                         // we continue with the next appointment
@@ -209,8 +208,27 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                         // if this slot has an associated token we never delete it
                         if (invalidSlotData.token !== undefined) {
                             const missingToken = invalidSlotData.token;
+
+                            if (
+                                openTokens.some(
+                                    openToken =>
+                                        openToken.token === missingToken.token
+                                )
+                            ) {
+                                continue; // we already have this token
+                            }
+
                             missingToken.expiresAt = undefined;
                             missingToken.expirationCount = undefined;
+                            missingToken.grantID = undefined;
+                            if (
+                                missingToken.slotIDs !== undefined &&
+                                missingToken.slotIDs.find(
+                                    id => id === invalidSlotData.id
+                                ) === undefined
+                            ) {
+                                missingToken.slotIDs.push(invalidSlotData.id);
+                            }
                             openTokens.push(missingToken);
                             continue;
                         }
