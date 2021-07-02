@@ -1,8 +1,8 @@
 {
     "title":"sofort-impfen",
     "commitSHA" : "abcdsssssssefsddss",
-    "storageApi" : "https://storage.sofort-impfen.de/jsonrpc",
-    "appointmentsApi" : "https://appointments.sofort-impfen.de/jsonrpc",
+    "storageApi" : "http://localhost:9999/jsonrpc",
+    "appointmentsApi" : "http://localhost:8888/jsonrpc",
     "termsUrl" : "http://localhost:8111/resources/terms.html",
     "privacyUrl" : "https://localhost:8111/resources/privacy.html"
 }
