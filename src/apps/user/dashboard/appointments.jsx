@@ -60,17 +60,45 @@ const ProviderDetails = ({ data }) => {
 
 const OfferDetails = withSettings(({ settings, offer }) => {
     // we disable this for now (until the texts are ready)
-    return <div />;
     const lang = settings.get('lang');
     const notices = [];
     const properties = settings.get('appointmentProperties');
     for (const [category, values] of Object.entries(properties)) {
         for (const [k, v] of Object.entries(values.values)) {
-            if (offer[k] === true)
+            if (
+                offer[k] === true &&
+                v.notice !== undefined &&
+                v.infosUrl !== undefined &&
+                v.anamnesisUrl !== undefined
+            )
                 notices.push(
-                    <li key={k} className={`kip-tag kip-is-${k}`}>
-                        {v.notice[lang]}
-                    </li>
+                    <F key="k">
+                        <p>{v.notice[lang]}</p>
+                        <p>
+                            <T
+                                t={t}
+                                k="offer-notice-text"
+                                info={
+                                    <a
+                                        key="infos"
+                                        target="_blank"
+                                        href={v.infosUrl[lang]}
+                                    >
+                                        <T t={t} k="info" />
+                                    </a>
+                                }
+                                anamnesis={
+                                    <a
+                                        key="anamnesis"
+                                        target="_blank"
+                                        href={v.anamnesisUrl[lang]}
+                                    >
+                                        <T t={t} k="anamnesis" />
+                                    </a>
+                                }
+                            />
+                        </p>
+                    </F>
                 );
         }
     }

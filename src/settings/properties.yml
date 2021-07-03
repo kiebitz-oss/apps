@@ -4,31 +4,47 @@ vaccine-types:
   title:
     de: Impfstofftyp
   values:
-    biontech:
+    moderna:
+      anamnesisUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Einwilligung-de.pdf?__blob=publicationFile
+      infosUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Aufklaerungsbogen-de.pdf?__blob=publicationFile
       notice:
-        de: Das ist der Hinweistext für Biontech
+        de: ""
+      tag:
+        de: MD
+      de: Moderna
+      _default: true
+    biontech:
+      anamnesisUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Einwilligung-de.pdf?__blob=publicationFile
+      infosUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Aufklaerungsbogen-de.pdf?__blob=publicationFile
+      notice:
+        de: ""
       tag:
         de: BT
       de: Biontech Pfizer (Comirnaty)
       _default: true
     astrazeneca:
+      anamnesisUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Einwilligung-de.pdf?__blob=publicationFile
+      infosUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Aufklaerungsbogen-de.pdf?__blob=publicationFile
       notice:
-        de: Das ist der Hinweistext für Astra Zeneca
+        de: ""
       tag:
         de: AZ
       de: Astra Zeneca (Vaxzevria)
       _default: true
     johnson-johnson:
+      anamnesisUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Einwilligung-de.pdf?__blob=publicationFile
+      infosUrl:
+        de: https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Aufklaerungsbogen-de.pdf?__blob=publicationFile
       notice:
-        de: Das ist der Hinweistext für Johnson & Johnson
+        de: ""
       tag:
         de: JJ
       de: Johnson & Johnson
-      _default: true
-    moderna:
-      notice:
-        de: Das ist der Hinweistext für Moderna
-      tag:
-        de: MD
-      de: Moderna
       _default: true
