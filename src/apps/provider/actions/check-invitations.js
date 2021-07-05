@@ -9,7 +9,7 @@ import { MN } from './send-invitations';
 
 // we give a grace period before expiring tokens (so that we're able to
 // catch bookings made just before the expiration date)
-const GRACE_SECONDS = 60 * 15;
+const GRACE_SECONDS = 60 * 5;
 
 // checks invitations
 export async function checkInvitations(state, keyStore, settings, keyPairs) {
@@ -266,7 +266,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                     token.expiresAt === undefined ||
                     now < new Date(token.expiresAt) ||
                     token.expirationCount === undefined ||
-                    token.expirationCount < 10
+                    token.expirationCount < 3
                 );
 
             // if we have too many tokens we need to get rid of some first
