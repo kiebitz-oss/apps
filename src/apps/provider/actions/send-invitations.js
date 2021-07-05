@@ -31,7 +31,7 @@ const EXP_SECONDS = 60 * 60;
 // we regard tokens as 'fresh' for a given number of seconds
 const FRESH_SECONDS = 60 * 30;
 // how many more users we invite than we have slots
-const OVERBOOKING_FACTOR = 10;
+const OVERBOOKING_FACTOR = 50;
 
 // regularly checks open appointment slots
 export async function sendInvitations(
