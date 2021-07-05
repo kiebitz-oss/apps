@@ -456,7 +456,7 @@ const InvitationDetails = withSettings(
                         >
                             <td>{selected ? pref : '-'}</td>
                             <td>
-                                {d.toLocaleString(undefined, {
+                                {d.toLocaleString('de-DE', {
                                     month: '2-digit',
                                     day: '2-digit',
                                     year: '2-digit',
