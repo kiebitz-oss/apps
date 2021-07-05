@@ -25,7 +25,7 @@ function getQueuePrivateKey(queueID, verifiedProviderData) {
 // we process at most N tokens during one invocation of this function
 const N = 200;
 // we store at most MN tokens in the app
-export const MN = 300;
+export const MN = 500;
 // we keep offers valid for a given number of seconds
 const EXP_SECONDS = 60 * 60;
 // we regard tokens as 'fresh' for a given number of seconds

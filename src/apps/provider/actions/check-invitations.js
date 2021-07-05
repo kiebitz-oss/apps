@@ -274,7 +274,7 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
             // slots anymore...
             // to do: sort tokens by expiration date and only remove as many
             // as necessary?
-            if (openTokens.length > 0.7 * MN || openSlots === 0) {
+            if (openTokens.length > 0.7 * MN || openSlots === 0 || true) {
                 // we filter out all expired tokens...
 
                 let expiredTokens = openTokens.filter(isExpired);
