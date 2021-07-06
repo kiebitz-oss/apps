@@ -1,5 +1,5 @@
 import settings from 'helpers/settings';
-import { verifyProviderData, decryptInvitationData } from './crypto';
+import { verifyProviderData, decryptInvitationData, deriveSecrets, b642buf } from './crypto';
 
 // TODO: Should be defined and exported somewhere in settings, since it's a
 // settings relevant key.
@@ -37,13 +37,8 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
         // TODO: If fails throw null error.
         await backend.local.lock('checkInvitationData');
 
-        const dataIDs = await deriveSecrets(
-            b642buf(tokenData.tokenData.id),
-            32,
-            20
-        );
+        const dataIDs = await deriveSecrets(b642buf(tokenData.tokenData.id), 32, 20);
 
-        
         const dataList = await backend.appointments.bulkGetData(
             { ids: [tokenData.tokenData.id, ...dataIDs] },
             tokenData.signingKeyPair
@@ -55,11 +50,7 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
         for (const data of dataList) {
             if (data === null) continue;
             try {
-                const decryptedData = await decryptInvitationData(
-                    data,
-                    keys,
-                    tokenData
-                );
+                const decryptedData = await decryptInvitationData(data, keys, tokenData);
                 verifyProviderData(decryptedData.provider);
                 decryptedDataList = [...decryptedDataList, decryptedData];
             } catch (e) {
@@ -67,10 +58,8 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
             }
         }
 
-        
         await setUserInvitationVerified(decryptedDataList);
         return decryptedDataList;
-        
     } finally {
         backend.local.unlock();
     }
@@ -83,11 +72,10 @@ export const confirmUserOffer = async (slotData, encryptedProviderData, grant, t
         {
             id: slotData.id,
             data: encryptedProviderData,
-            grant: grant,
+            grant: grant
         },
         tokenData.signingKeyPair
     );
-   
 };
 
 export const confirmUserOffers = async (offers, encryptedProviderData, invitation, tokenData) => {
@@ -106,7 +94,7 @@ export const confirmUserOffers = async (offers, encryptedProviderData, invitatio
                     if (slotData.failed || !slotData.open) {
                         continue;
                     }
-                    const grant = offer.grants.find((grant) => {
+                    const grant = offer.grants.find(grant => {
                         const data = JSON.parse(grant.data);
                         return data.objectID === slotData.id;
                     });
@@ -117,23 +105,20 @@ export const confirmUserOffers = async (offers, encryptedProviderData, invitatio
                     if (grant === undefined) continue;
                     const grantData = JSON.parse(grant.data);
                     if (grantID !== null && grantData.grantID === grantID) {
-                       continue; // this belongs to an old grant ID
+                        continue; // this belongs to an old grant ID
                     }
-    
+
                     try {
                         await confirmUserOffer(slotData, encryptedProviderData, grant, tokenData);
                     } catch (e) {
-                        if (
-                            typeof e === 'object' &&
-                            e.name === 'RPCException'
-                        ) {
+                        if (typeof e === 'object' && e.name === 'RPCException') {
                             if (e.error.code === 401) {
                                 slotInfos[slotData.id] = {
-                                    status: 'taken',
+                                    status: 'taken'
                                 };
                             } else {
                                 slotInfos[slotData.id] = {
-                                    status: 'error',
+                                    status: 'error'
                                 };
                             }
                         }
@@ -146,20 +131,14 @@ export const confirmUserOffers = async (offers, encryptedProviderData, invitatio
                         offer,
                         invitation,
                         slotData,
-                        grant,
+                        grant
                     });
-    
-                    backend.local.set(
-                        'user::invitation::grantID',
-                        grantData.grantID
-                    );
-    
-                    
-                    
-                    
+
+                    backend.local.set('user::invitation::grantID', grantData.grantID);
+
                     return {
                         offer,
-                        slotData,
+                        slotData
                     };
                 }
             } catch (error) {
@@ -170,5 +149,5 @@ export const confirmUserOffers = async (offers, encryptedProviderData, invitatio
         backend.local.set('user::invitation::slots', slotInfos);
 
         backend.local.unlock('confirmOffers');
-    }    
+    }
 };
