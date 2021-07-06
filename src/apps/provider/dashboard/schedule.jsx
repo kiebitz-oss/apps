@@ -639,7 +639,21 @@ const NewAppointment = withSettings(
                         );
                     });
 
-                    const durations = [10, 20, 30, 45, 60, 90, 120, 150, 180, 210, 240].map((v) => ({
+                    const durations = [
+                        5,
+                        10,
+                        15,
+                        20,
+                        30,
+                        45,
+                        60,
+                        90,
+                        120,
+                        150,
+                        180,
+                        210,
+                        240,
+                    ].map(v => ({
                         value: v,
                         title: <T t={t} k={`schedule.appointment.duration.title`} duration={v} />,
                     }));
@@ -654,7 +668,16 @@ const NewAppointment = withSettings(
                             waiting={saving}
                             onCancel={cancel}
                             onClose={cancel}
-                            title={<T t={t} k="new-appointment.title" />}
+                            title={
+                                <T
+                                    t={t}
+                                    k={
+                                        appointment !== undefined
+                                            ? 'edit-appointment.title'
+                                            : 'new-appointment.title'
+                                    }
+                                />
+                            }
                         >
                             <FormComponent>
                                 <FieldSet>

@@ -33,6 +33,12 @@ appointments-notice:
   de: Bitte wähle alle für Dich passenden Termine aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum geannten Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.
 confirm-appointment:
   de: Terminauswahl bestätigen
+anamnesis:
+  de: die Anamnese- und Einwilligungserklärung
+info:
+  de: das Aufklärungsmerkblatt
+offer-notice-text:
+  de: Bitte füllen Sie möglichst {anamnesis} sowie {info} aus und bringen Sie diese unterschrieben mit zur Impfung.
 offer-expired:
   de: Das Angebot ist leider abgelaufen. Falls wieder Termine verfügbar sind in deiner Umgebung erhälst du eventuell ein neues Angebot.
 offer-expires-at:

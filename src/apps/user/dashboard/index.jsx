@@ -13,7 +13,7 @@ import {
     backupData,
     tokenData,
     queueData,
-    renewToken,
+    getAppointments,
     invitation,
     checkInvitationData,
 } from 'apps/user/actions';
@@ -51,13 +51,14 @@ const Dashboard = withRouter(
                     keys,
                     router,
                     userSecret,
+                    userSecretAction,
                     keysAction,
                     backupDataAction,
                     invitationAction,
                     checkInvitationData,
                     checkInvitationDataAction,
-                    renewToken,
-                    renewTokenAction,
+                    getAppointments,
+                    getAppointmentsAction,
                     queueData,
                     queueDataAction,
                     queues,
@@ -66,59 +67,25 @@ const Dashboard = withRouter(
                     tokenDataAction,
                 }) => {
                     const [tv, setTv] = useState(-2);
-                    const [initialized, setInitialized] = useState(false);
-
-                    useEffect(() => {
-                        if (initialized) return;
-                        setInitialized(true);
-                        tokenDataAction().then(td => {
-                            if (td === undefined || td.data === null)
-                                router.navigateToUrl('/user');
-                        });
-                    });
 
                     useEffect(() => {
                         // we do this only once per timer interval...
                         if (timer === tv) return;
                         setTv(timer);
-                        keysAction().then(kd =>
-                            tokenDataAction().then(td => {
-                                if (td === undefined || td.data === null)
-                                    return;
-                                const { queueData: qd } = td.data;
-
-                                const qa = queuesAction(
-                                    qd.zipCode,
-                                    qd.distance
-                                );
-
-                                qa.then(qq => {
-                                    if (qq.status === 'failed') {
-                                        // to do: error handling
+                        userSecretAction().then(us =>
+                            keysAction().then(kd =>
+                                tokenDataAction().then(td => {
+                                    if (td === undefined || td.data === null)
                                         return;
-                                    }
-                                    if (qq.data.length === 0) {
-                                        // to do: error handling
-                                        return;
-                                    }
+                                    const { queueData: qd } = td.data;
 
-                                    renewTokenAction(
-                                        qd,
-                                        qq.data[0],
-                                        userSecret.data
-                                    ).then(hd => {
-                                        backupDataAction(userSecret.data);
-                                    });
-                                });
+                                    getAppointmentsAction(qd);
 
-                                checkInvitationDataAction(
-                                    kd.data,
-                                    td.data
-                                ).then(() => {
-                                    backupDataAction(userSecret.data);
+                                    checkInvitationDataAction(kd.data, td.data);
+                                    backupDataAction(us.data);
                                     invitationAction();
-                                });
-                            })
+                                })
+                            )
                         );
                     });
 
@@ -174,7 +141,7 @@ const Dashboard = withRouter(
                 invitation,
                 queueData,
                 queues,
-                renewToken,
+                getAppointments,
                 userSecret,
                 backupData,
             ]

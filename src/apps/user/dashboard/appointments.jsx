@@ -57,17 +57,45 @@ const ProviderDetails = ({ data }) => {
 
 const OfferDetails = withSettings(({ settings, offer }) => {
     // we disable this for now (until the texts are ready)
-    return <div />;
     const lang = settings.get('lang');
     const notices = [];
     const properties = settings.get('appointmentProperties');
     for (const [category, values] of Object.entries(properties)) {
         for (const [k, v] of Object.entries(values.values)) {
-            if (offer[k] === true)
+            if (
+                offer[k] === true &&
+                v.notice !== undefined &&
+                v.infosUrl !== undefined &&
+                v.anamnesisUrl !== undefined
+            )
                 notices.push(
-                    <li key={k} className={`kip-tag kip-is-${k}`}>
-                        {v.notice[lang]}
-                    </li>
+                    <F key="k">
+                        <p>{v.notice[lang]}</p>
+                        <p>
+                            <T
+                                t={t}
+                                k="offer-notice-text"
+                                info={
+                                    <a
+                                        key="infos"
+                                        target="_blank"
+                                        href={v.infosUrl[lang]}
+                                    >
+                                        <T t={t} k="info" />
+                                    </a>
+                                }
+                                anamnesis={
+                                    <a
+                                        key="anamnesis"
+                                        target="_blank"
+                                        href={v.anamnesisUrl[lang]}
+                                    >
+                                        <T t={t} k="anamnesis" />
+                                    </a>
+                                }
+                            />
+                        </p>
+                    </F>
                 );
         }
     }
@@ -290,7 +318,6 @@ const InvitationDetails = withSettings(
             slotInfos,
             slotInfosAction,
             toggleOffersAction,
-            acceptedInvitation,
             acceptedInvitationAction,
             confirmOffers,
             confirmOffersAction,
@@ -329,71 +356,7 @@ const InvitationDetails = withSettings(
                 });
             };
 
-            if (data !== null && acceptedInvitation.data !== null) {
-                return <AcceptedInvitation offers={data.offers} />;
-            }
-
             let content;
-
-            let expiresAt;
-            let noOpenSlots = false;
-            if (data !== null) {
-                // we get the latest expiration time for all grants
-                data.offers.forEach((offer) =>
-                    offer.grants.forEach((grant) => {
-                        const grantData = JSON.parse(grant.data);
-                        const grantExpiresAt = new Date(grantData.expiresAt);
-                        if (expiresAt === undefined || grantExpiresAt > expiresAt) expiresAt = grantExpiresAt;
-                    })
-                );
-
-                noOpenSlots = !data.offers
-                    .map((offer) => offer.slotData)
-                    .flat()
-                    .some((sl) => {
-                        if (sl.open && !sl.canceled) {
-                            if (slotInfos !== undefined && slotInfos.data !== null) {
-                                const slotInfo = slotInfos.data[sl.id];
-                                if (slotInfo !== undefined) {
-                                    if (slotInfo.status === 'taken') {
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true;
-                        }
-                        return false;
-                    });
-            } else noOpenSlots = true;
-
-            let oldGrant = true;
-            let oldGrantID;
-
-            if (grantID !== undefined && grantID.data !== null) oldGrantID = grantID.data;
-
-            if (oldGrantID !== undefined) {
-                if (!noOpenSlots) {
-                    const grant = data.offers[0].grants[0];
-                    try {
-                        const grantData = JSON.parse(grant.data);
-                        if (grantData.grantID !== oldGrantID) oldGrant = false;
-                    } catch (e) {
-                        console.error(e);
-                    }
-                }
-            } else {
-                oldGrant = false;
-            }
-
-            if (data === null || data.offers === null || noOpenSlots || oldGrant)
-                return (
-                    <NoInvitations
-                        tokenData={tokenData.data}
-                        noOpenSlots={noOpenSlots}
-                        oldGrant={oldGrant}
-                        data={tokenData}
-                    />
-                );
 
             const properties = settings.get('appointmentProperties');
 
@@ -431,7 +394,7 @@ const InvitationDetails = withSettings(
                         >
                             <td>{selected ? pref : '-'}</td>
                             <td>
-                                {d.toLocaleString(undefined, {
+                                {d.toLocaleString('de-DE', {
                                     month: '2-digit',
                                     day: '2-digit',
                                     year: '2-digit',
@@ -478,45 +441,14 @@ const InvitationDetails = withSettings(
                     </table>
                 );
 
-            let expiresAtNotice;
-
-            if (expiresAt !== undefined) {
-                const duration = expiresAt - new Date();
-
-                if (expiresAt < new Date()) {
-                    offerDetails = undefined;
-                    expiresAtNotice = (
-                        <Message type="danger" waiting>
-                            <T t={t} k="offer-expired" />
-                        </Message>
-                    );
-                } else {
-                    expiresAtNotice = (
-                        <Message type="info" waiting>
-                            <T
-                                t={t}
-                                k="offer-expires-at"
-                                time={expiresAt.toLocaleTimeString()}
-                                date={expiresAt.toLocaleDateString()}
-                                duration={formatDuration(Math.floor(duration / 1000 / 60), settings, t)}
-                            />
-                        </Message>
-                    );
-                }
-            }
-
             return (
                 <F>
                     <CardContent>
                         <div className="kip-invitation-details">
-                            <h2>
-                                <T t={t} k="invitation-received.title" />
-                            </h2>
                             <ProviderDetails data={data.provider} />
                             <p>
                                 <T t={t} k="appointments-notice" />
                             </p>
-                            {expiresAtNotice}
                             {offerDetails}
                         </div>
                     </CardContent>
@@ -524,7 +456,14 @@ const InvitationDetails = withSettings(
                         <Button
                             waiting={confirming}
                             onClick={doConfirmOffers}
-                            disabled={confirming || Object.keys(toggleOffers.data).length === 0}
+                            disabled={
+                                confirming ||
+                                Object.keys(
+                                    toggleOffers.data.filter(id =>
+                                        data.offers.find(of => of.id === id)
+                                    )
+                                ).length === 0
+                            }
                             type="success"
                         >
                             <T t={t} k="confirm-appointment" />
@@ -537,15 +476,146 @@ const InvitationDetails = withSettings(
     )
 );
 
+const filterInvitations = (invitation, grantID, slotInfos) => {
+    if (invitation.offers === null) return false;
+
+    let expired = true;
+    invitation.offers.forEach(offer =>
+        offer.grants.forEach(grant => {
+            const grantData = JSON.parse(grant.data);
+            const grantExpiresAt = new Date(grantData.expiresAt);
+            if (new Date() < grantExpiresAt) {
+                expired = false;
+            }
+        })
+    );
+
+    if (expired) {
+        return false;
+    }
+
+    let noOpenSlots = false;
+    noOpenSlots = !invitation.offers
+        .map(offer => offer.slotData)
+        .flat()
+        .some(sl => {
+            if (sl.open && !sl.canceled) {
+                if (slotInfos !== undefined && slotInfos.data !== null) {
+                    const slotInfo = slotInfos.data[sl.id];
+                    if (slotInfo !== undefined) {
+                        if (slotInfo.status === 'taken') {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        });
+
+    if (noOpenSlots) {
+        return false;
+    }
+
+    let oldGrant = true;
+    let oldGrantID;
+
+    if (grantID !== undefined && grantID.data !== null)
+        oldGrantID = grantID.data;
+
+    if (oldGrantID !== undefined) {
+        if (!noOpenSlots) {
+            const grant = invitation.offers[0].grants[0];
+            try {
+                const grantData = JSON.parse(grant.data);
+                if (grantData.grantID !== oldGrantID) oldGrant = false;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    } else {
+        oldGrant = false;
+    }
+
+    if (oldGrant) {
+        return false;
+    }
+
+    return true;
+};
+
 const Appointments = withActions(
-    ({ settings, invitation, tokenData }) => {
-        let content;
+    ({
+        settings,
+        invitation,
+        slotInfos,
+        grantID,
+        grantIDAction,
+        slotInfosAction,
+        acceptedInvitation,
+        tokenData,
+    }) => {
+        const [initialized, setInitialized] = useState(false);
+
+        useEffect(() => {
+            if (initialized) return;
+            setInitialized(true);
+            slotInfosAction();
+            grantIDAction();
+        });
+
         const render = () => {
-            return <InvitationDetails tokenData={tokenData} data={invitation.data} />;
+            if (
+                acceptedInvitation !== undefined &&
+                acceptedInvitation.data !== null &&
+                invitation !== undefined &&
+                invitation.data !== null
+            ) {
+                const ai = invitation.data.find(inv => {
+                    if (inv === null) return false;
+                    return inv.offers.some(offer =>
+                        offer.slotData.some(sla =>
+                            acceptedInvitation.data.offer.slotData.some(
+                                slb => slb.id === sla.id
+                            )
+                        )
+                    );
+                });
+                if (ai === undefined)
+                    return <NoInvitations tokenData={tokenData.data} />;
+                return <AcceptedInvitation offers={ai.offers} />;
+            }
+
+            // no data returned
+            if (invitation.data === null)
+                return <NoInvitations tokenData={tokenData.data} />;
+
+            // we only show relevant invitations
+            const invitations = invitation.data.filter(inv =>
+                filterInvitations(inv, grantID, slotInfos, acceptedInvitation)
+            );
+
+            if (invitations.length === 0)
+                return <NoInvitations tokenData={tokenData.data} />;
+
+            const details = invitations.map(data => (
+                <InvitationDetails
+                    tokenData={tokenData}
+                    data={data}
+                    key={data.provider.signature}
+                />
+            ));
+
+            return <F>{details}</F>;
         };
-        return <WithLoader resources={[tokenData, invitation]} renderLoaded={render} />;
+        return (
+            <WithLoader
+                resources={[tokenData, invitation, grantID, slotInfos]}
+                renderLoaded={render}
+            />
+        );
     },
-    [tokenData, invitation]
+    [tokenData, invitation, acceptedInvitation, slotInfos, grantID]
 );
 
 export default Appointments;

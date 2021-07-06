@@ -10,7 +10,7 @@ export async function providerData(state, keyStore, settings, data) {
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('providerData');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -23,6 +23,15 @@ export async function providerData(state, keyStore, settings, data) {
                 verifiedID: randomBytes(32),
                 data: {},
             };
+        } else {
+            // to do: remove once it's migrated
+            if (
+                providerData.data !== undefined &&
+                providerData.data.submitted
+            ) {
+                providerData.data.submittedAt = new Date().toISOString();
+                delete providerData.data.submitted;
+            }
         }
         if (data !== undefined) {
             providerData.data = data;
@@ -33,7 +42,7 @@ export async function providerData(state, keyStore, settings, data) {
             data: providerData,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('providerData');
     }
 }
 

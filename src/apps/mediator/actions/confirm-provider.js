@@ -12,10 +12,15 @@ export async function confirmProvider(
     keyPairs
 ) {
     const backend = settings.get('backend');
+
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('confirmProvider');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
 
+    try {
         const keyHashesData = {
             signing: providerData.publicKeys.signing,
             encryption: providerData.publicKeys.encryption,
@@ -27,6 +32,10 @@ export async function confirmProvider(
         };
 
         const keysJSONData = JSON.stringify(keyHashesData);
+
+        // we remove the 'code' field from the provider
+        if (providerData.data.code !== undefined) delete providerData.data.code;
+
         const providerJSONData = JSON.stringify(providerData.data);
 
         const signedKeyData = await sign(
@@ -75,6 +84,7 @@ export async function confirmProvider(
                 id: providerData.id, // the ID of the unverified data
                 verifiedID: providerData.verifiedID, // the ID to store the data under
                 encryptedProviderData: encryptedProviderData,
+                publicProviderData: signedProviderData,
                 signedKeyData: signedKeyData,
             },
             keyPairs.signing
@@ -85,7 +95,7 @@ export async function confirmProvider(
             data: result,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('confirmProvider');
     }
 }
 

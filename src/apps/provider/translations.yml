@@ -39,6 +39,8 @@ load-backup:
       de: Sicherungsdatei wählen
     change:
       de: "{filename}"
+    description:
+      de: Bitte laden Sie hier Ihre Sicherungsdatei (sofort-impfen-backup-2021[Datum&Uhrzeit].enc) hoch.
     de: Sicherungsdatei wählen
 show-help:
   de: Hilfe anzeigen

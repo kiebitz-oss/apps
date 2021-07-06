@@ -11,12 +11,14 @@ import {
 import { markAsLoading } from 'helpers/actions';
 
 // make sure the signing and encryption key pairs exist
-export async function keyPairs(state, keyStore, settings) {
+export async function keyPairs(state, keyStore, settings, lockName) {
     const backend = settings.get('backend');
+
+    if (lockName === undefined) lockName = 'keyPairs';
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock(lockName);
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -60,7 +62,7 @@ export async function keyPairs(state, keyStore, settings) {
             };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock(lockName);
     }
 }
 

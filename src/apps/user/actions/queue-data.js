@@ -5,22 +5,36 @@
 import { getUserTemporaryQueueData, setUserTemporaryQueueData } from '../../../../kiebitz/user/queue';
 
 export async function queueData(state, keyStore, settings, data) {
-    if (data !== undefined) {
-        await setUserTemporaryQueueData(data);
+    const backend = settings.get('backend');
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('queueData');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
     }
+    
+    try {
 
-    data = await getUserTemporaryQueueData();
+        if (data !== undefined) {
+            await setUserTemporaryQueueData(data);
+        }
+    
+        data = await getUserTemporaryQueueData();
 
-    if (data === null) {
+        if (data === null) {
+            return {
+                status: 'failed',
+            };
+        }
+
         return {
-            status: 'failed',
+            status: 'loaded',
+            data: data,
         };
+    }  finally {
+        backend.local.unlock('queueData');
     }
-
-    return {
-        status: 'loaded',
-        data,
-    };
 }
 
 queueData.actionName = 'queueData';

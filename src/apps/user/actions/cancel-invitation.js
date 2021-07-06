@@ -15,7 +15,7 @@ export async function cancelInvitation(
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('cancelInvitation');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -59,13 +59,28 @@ export async function cancelInvitation(
             error: e,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('cancelInvitation');
     }
 }
 
-cancelInvitation.init = (ks, settings) => ({
-    status: 'loaded',
-    data: settings.get('backend').local.get('user::invitation::accepted'),
-});
+cancelInvitation.init = async (ks, settings) => {
+    const backend = settings.get('backend');
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('initCancelInvitation');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
+        return {
+            status: 'loaded',
+            data: backend.local.get('user::invitation::accepted'),
+        };
+    } finally {
+        backend.local.unlock('initCancelInvitation');
+    }
+};
 
 cancelInvitation.actionName = 'cancelInvitation';

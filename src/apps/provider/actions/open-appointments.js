@@ -11,7 +11,7 @@ export async function openAppointments(state, keyStore, settings) {
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('openAppointments');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -30,7 +30,8 @@ export async function openAppointments(state, keyStore, settings) {
             }
         }
 
-        if (changed) backend.local.set('provider::appointments::open', []);
+        if (changed)
+            backend.local.set('provider::appointments::open', appointments);
 
         try {
             return {
@@ -42,7 +43,7 @@ export async function openAppointments(state, keyStore, settings) {
             console.error(e);
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('openAppointments');
     }
 }
 

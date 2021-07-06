@@ -11,6 +11,9 @@ export async function restoreFromBackup(state, keyStore, settings, secret) {
         // TODO: What is `dd`?
         // TODO: Throw null error if locking fails.
         const dd = await initLocalStorageFromSecret(secret, backupKeys);
+   
+        backend.local.set('user::secret', secret);
+
         return {
             status: 'succeeded',
             data: dd,

@@ -14,6 +14,7 @@ export async function cancelSlots(backend, slots, tokens) {
                 // we renew the grant IDs for the token, so the user can book another appointment
                 existingToken.grantID = undefined;
                 existingToken.expiresAt = undefined;
+                existingToken.expirationCount = undefined;
             }
         }
     }
@@ -31,7 +32,7 @@ export async function cancelAppointment(
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('canceledAppointment');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -72,7 +73,7 @@ export async function cancelAppointment(
             data: otherAppointments,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('canceledAppointment');
     }
 }
 

@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { ephemeralECDHEncrypt, sign } from 'helpers/crypto';
+import { ecdhEncrypt, generateECDHKeyPair, sign } from 'helpers/crypto';
 
 // store the provider data for validation in the backend
 export async function submitProviderData(
@@ -17,13 +17,19 @@ export async function submitProviderData(
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('submitProviderData');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
 
     try {
         const dataToEncrypt = Object.assign({}, data);
+        let keyPair = backend.local.get('provider::data::encryptionKeyPair');
+
+        if (keyPair === null) {
+            keyPair = await generateECDHKeyPair();
+            backend.local.set('provider::data::encryptionKeyPair', keyPair);
+        }
 
         try {
             const queues = await backend.appointments.getQueues({
@@ -44,13 +50,11 @@ export async function submitProviderData(
         // we convert the data to JSON
         const jsonData = JSON.stringify(dataToEncrypt);
 
-        const [encryptedData, privateKey] = await ephemeralECDHEncrypt(
+        const encryptedData = await ecdhEncrypt(
             jsonData,
+            keyPair,
             providerDataKey
         );
-
-        // we store the provider data key so we can decrypt the data later
-        backend.local.set('provider::data::encryptionKey', privateKey);
 
         try {
             const result = await backend.appointments.storeProviderData(
@@ -62,7 +66,8 @@ export async function submitProviderData(
                 keyPairs.signing
             );
 
-            data.submitted = true;
+            data.submittedAt = new Date().toISOString();
+            data.version = '0.4';
             backend.local.set('provider::data', data);
             return {
                 status: 'succeeded',
@@ -73,7 +78,7 @@ export async function submitProviderData(
             return { status: 'failed', error: e };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('submitProviderData');
     }
 }
 

@@ -10,12 +10,12 @@ import {
     hashString,
 } from 'helpers/crypto';
 
-export async function renewToken(state, keyStore, settings, queueData, queue) {
+export async function getAppointments(state, keyStore, settings, queueData) {
     const backend = settings.get('backend');
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock('renewToken');
+        await backend.local.lock('getAppointments');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -32,13 +32,11 @@ export async function renewToken(state, keyStore, settings, queueData, queue) {
 
         try {
             // we already have a token, we just renew it
-            await backend.appointments.getToken({
-                hash: tokenData.dataHash,
-                encryptedData: tokenData.encryptedTokenData,
-                queueID: queue.id,
-                queueData: queueData,
-                signedTokenData: tokenData.signedToken,
+            const result = await backend.appointments.getAppointmentsByZipCode({
+                zipCode: queueData.zipCode,
             });
+
+            console.log(result);
 
             return {
                 data: tokenData,
@@ -51,10 +49,10 @@ export async function renewToken(state, keyStore, settings, queueData, queue) {
             };
         }
     } finally {
-        backend.local.unlock('renewToken');
+        backend.local.unlock('getAppointments');
     }
 }
 
-renewToken.reset = () => ({ status: 'initialized' });
+getAppointments.reset = () => ({ status: 'initialized' });
 
-renewToken.actionName = 'renewToken';
+getAppointments.actionName = 'getAppointments';

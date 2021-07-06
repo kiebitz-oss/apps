@@ -7,11 +7,11 @@ import { getUserDecryptedInvitationData } from '../../../../kiebitz/user/invitat
 export async function checkInvitationData(state, keyStore, settings, keys, tokenData) {
     try {
         // TODO: If locking fails, throw null error.
-        const decryptedData = await getUserDecryptedInvitationData(keys, tokenData);
+        const decryptedDataList = await getUserDecryptedInvitationData(keys, tokenData);
 
         return {
             status: 'loaded',
-            data: decryptedData,
+            data: decryptedDataList,
         };
     } catch (error) {
         console.error(error);

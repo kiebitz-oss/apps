@@ -28,7 +28,7 @@ export async function restoreFromBackup(
 
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('restoreFromBackup');
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
@@ -43,8 +43,6 @@ export async function restoreFromBackup(
                     message: 'decryption failed',
                 },
             };
-
-        console.log(dd);
 
         // to do: remove as soon as everyone's on the new versioned schema
         if (dd.version === undefined || dd.version === '0.1') {
@@ -79,7 +77,7 @@ export async function restoreFromBackup(
                 );
 
                 for (const key of cloudKeys) {
-                    if (ddCloud[key] !== undefined)
+                    if (ddCloud[key] !== undefined && ddCloud[key] !== null)
                         backend.local.set(`provider::${key}`, ddCloud[key]);
                 }
             } catch (e) {
@@ -100,7 +98,8 @@ export async function restoreFromBackup(
             error: e,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.set('provider::loggedOut', false);
+        backend.local.unlock('restoreFromBackup');
     }
 }
 

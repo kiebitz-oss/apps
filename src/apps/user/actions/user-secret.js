@@ -5,31 +5,59 @@
 import { getUserSecret, initUserSecret, setUserSecret } from '../../../../kiebitz/user/user-secret';
 
 export async function userSecret(state, keyStore, settings, data) {
-    if (data !== undefined) {
-        setUserSecret(data);
+    const backend = settings.get('backend');
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('userSecret');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
     }
 
-    data = getUserSecret();
+    try {
+        if (data !== undefined) {
+            setUserSecret(data);
+        }
 
-    if (data === null) {
+        data = getUserSecret();
+
+        if (data === null) {
+            return {
+                status: 'failed',
+            };
+        }
+
         return {
-            status: 'failed',
+            status: 'loaded',
+            data,
         };
+
+    } finally {
+        backend.local.unlock('userSecret');
+    }
+}
+userSecret.init = (keyStore, settings) => {
+    const backend = settings.get('backend');
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('initUserSecret');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
     }
 
-    return {
-        status: 'loaded',
-        data,
-    };
-}
-
-userSecret.init = (keyStore, settings) => {
-    const data = initUserSecret();
-
-    return {
-        status: 'loaded',
-        data,
-    };
+    try {
+        
+        
+        const data = initUserSecret();
+        
+        return {
+            status: 'loaded',
+            data,
+        };
+    } finally {
+        backend.local.unlock('initUserSecret');
+    }
 };
 
 userSecret.actionName = 'userSecret';

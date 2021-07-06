@@ -46,7 +46,7 @@ const Settings = withActions(
                     setLoggingOut(true);
                     const backend = settings.get('backend');
                     // we perform a backup before logging the user out...
-                    backupDataAction(userSecret.data).then(() => {
+                    backupDataAction(userSecret.data, 'logout').then(() => {
                         backend.local.deleteAll('user::');
                         setLoggingOut(false);
                         router.navigateToUrl('/user/logged-out');
@@ -100,11 +100,13 @@ const Settings = withActions(
                                 />
                             </p>
                             <hr />
-                            <StoreOnline
-                                secret={userSecret.data}
-                                embedded={true}
-                                hideNotice={true}
-                            />
+                            {userSecret !== undefined && (
+                                <StoreOnline
+                                    secret={userSecret.data}
+                                    embedded={true}
+                                    hideNotice={true}
+                                />
+                            )}
                         </Modal>
                     );
                 }

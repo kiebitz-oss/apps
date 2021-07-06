@@ -10,7 +10,7 @@ const KEY_BACKEND = 'backend';
 export const initLocalStorageFromSecret = async (secret: any, keys: string[]): Promise<any> => {
     const backend = settings.get(KEY_BACKEND);
     try {
-        await backend.local.lock();
+        await backend.local.lock('restoreFromBackup');
 
         const [id, key] = await deriveSecrets(base322buf(secret), 32, 2);
         const data = await backend.storage.getSettings({ id });
@@ -22,7 +22,7 @@ export const initLocalStorageFromSecret = async (secret: any, keys: string[]): P
 
         return dd;
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('restoreFromBackup');
     }
 };
 

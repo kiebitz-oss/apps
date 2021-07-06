@@ -55,12 +55,15 @@ export default class Settings extends BaseActions {
                         errors: {},
                     });
 
-                const data = JSON.parse(xhr.response);
-
-                if (xhr.status >= 200 && xhr.status < 300)
-                    resolve({ data, response: xhr.response });
-                else {
-                    reject(data);
+                try {
+                    const data = JSON.parse(xhr.response);
+                    if (xhr.status >= 200 && xhr.status < 300)
+                        resolve({ data, response: xhr.response });
+                    else {
+                        reject(data);
+                    }
+                } catch (e) {
+                    reject({ error: { message: 'not a JSON object' } });
                 }
             };
             xhr.onerror = () => {

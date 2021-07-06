@@ -6,6 +6,7 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
 import Providers from './providers';
+import Stats from './stats';
 
 import {
     withSettings,
@@ -57,6 +58,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
                 <T t={t} k="upload-key-pairs.invalid-file" />
             </Message>
         );
+    else notice = <T t={t} k="upload-key-pairs.notice" />;
 
     const footer = (
         <Form>
@@ -80,7 +82,6 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
             title={<T t={t} k="upload-key-pairs.title" />}
         >
             {notice}
-            <T t={t} k="upload-key-pairs.notice" />
         </Modal>
     );
 };
@@ -90,7 +91,7 @@ const Dashboard = withActions(
         ({
             route: {
                 handler: {
-                    props: { tab, action, id },
+                    props: { tab, action, secondaryAction, id },
                 },
             },
             settings,
@@ -122,10 +123,27 @@ const Dashboard = withActions(
             if (keyPairs !== undefined) {
                 switch (tab) {
                     case 'settings':
-                        content = <Settings />;
+                        content = (
+                            <Settings
+                                action={action}
+                                secondaryAction={secondaryAction}
+                                id={id}
+                            />
+                        );
                         break;
                     case 'providers':
-                        content = <Providers action={action} id={id} />;
+                        content = (
+                            <Providers action={action} id={secondaryAction} />
+                        );
+                        break;
+                    case 'stats':
+                        content = (
+                            <Stats
+                                action={action}
+                                secondaryAction={secondaryAction}
+                                id={id}
+                            />
+                        );
                         break;
                 }
             }
@@ -151,6 +169,12 @@ const Dashboard = withActions(
                                 <T t={t} k="providers.title" />
                             </Tab>
                             <Tab
+                                active={tab === 'stats'}
+                                href="/mediator/stats"
+                            >
+                                <T t={t} k="stats.title" />
+                            </Tab>
+                            <Tab
                                 active={tab === 'settings'}
                                 href="/mediator/settings"
                             >
@@ -158,10 +182,8 @@ const Dashboard = withActions(
                             </Tab>
                         </Tabs>
                     </CardHeader>
-                    <CardContent>
-                        {modal}
-                        {content}
-                    </CardContent>
+                    {modal}
+                    {content}
                 </CenteredCard>
             );
         }

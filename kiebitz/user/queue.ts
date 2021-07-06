@@ -41,7 +41,7 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
     const backend = settings.get(KEY_BACKEND);
 
     try {
-        await backend.local.lock();
+        await backend.local.lock('submitting');
 
         const tokenData = await getUserTokenData();
         if (tokenData !== null) {
@@ -94,6 +94,7 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
 
             const signedToken = await backend.appointments.getToken({
                 hash: dataHash,
+                publicKey: signingKeyPair.publicKey,
                 code: contactData.code,
                 encryptedData: encryptedTokenData,
                 queueID: queue.id,
@@ -118,6 +119,6 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
             return newTokenData;
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('submitting');
     }
 };

@@ -11,10 +11,27 @@ class AppointmentsBackend extends JSONRPCBackend {
         this.settings = settings;
     }
 
-    async confirmProvider({ id, verifiedID, key, encryptedProviderData, signedKeyData }, keyPair) {
+    async confirmProvider(
+        {
+            id,
+            verifiedID,
+            key,
+            encryptedProviderData,
+            publicProviderData,
+            signedKeyData,
+        },
+        keyPair
+    ) {
         return await this.call(
             'confirmProvider',
-            { id, verifiedID, key, encryptedProviderData, signedKeyData },
+            {
+                id,
+                verifiedID,
+                key,
+                encryptedProviderData,
+                publicProviderData,
+                signedKeyData,
+            },
             keyPair
         );
     }
@@ -25,6 +42,24 @@ class AppointmentsBackend extends JSONRPCBackend {
     }
 
     // public endpoints
+
+    async getAppointmentsByZipCode({ zipCode }) {
+        return await this.call('getAppointmentsByZipCode', {
+            zipCode,
+        });
+    }
+
+    async getStats({ id, metric, type, n, filter, from, to }) {
+        return await this.call('getStats', {
+            id,
+            metric,
+            type,
+            n,
+            from,
+            to,
+            filter,
+        });
+    }
 
     async getQueues({ zipCode, radius }) {
         return await this.call('getQueues', { zipCode, radius });
@@ -77,6 +112,20 @@ class AppointmentsBackend extends JSONRPCBackend {
     // get n tokens from the given queue IDs
     async returnTokens({ tokens }, keyPair) {
         return await this.call('returnTokens', { tokens }, keyPair);
+    }
+
+    // get n tokens from the given queue IDs
+    async publishAppointments({ appointments }, keyPair) {
+        return await this.call(
+            'publishAppointments',
+            { appointments },
+            keyPair
+        );
+    }
+
+    // get n tokens from the given queue IDs
+    async getBookedAppointments({}, keyPair) {
+        return await this.call('getBookedAppointments', {}, keyPair);
     }
 
     // get n tokens from the given queue IDs

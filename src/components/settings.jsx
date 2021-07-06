@@ -62,7 +62,7 @@ class ExtSettings extends React.Component {
     }
     render() {
         const { externalSettings } = this.props;
-        if (externalSettings.status !== 'loaded') return <div />;
+        if (externalSettings.status === 'initialized') return <div />;
         return this.props.children;
     }
 }

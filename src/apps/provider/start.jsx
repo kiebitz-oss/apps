@@ -28,7 +28,7 @@ export default withActions(
                         if (
                             pd !== undefined &&
                             pd.data !== undefined &&
-                            pd.data.submitted
+                            pd.data.submittedAt !== undefined
                         )
                             router.navigateToUrl('/provider/schedule');
                     });

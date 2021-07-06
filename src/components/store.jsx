@@ -105,9 +105,22 @@ export function withActions(Component, actionNames, keyList, noStore) {
                 if (actions[actionKey] === undefined) {
                     if (functional) {
                         const keyStore = new KeyStore(store, key);
-                        if (ActionProvider.init !== undefined && keyStore.get() === undefined) {
-                            const initialValue = ActionProvider.init(keyStore, settings);
-                            store.set(key, initialValue);
+                        if (
+                            ActionProvider.init !== undefined &&
+                            keyStore.get() === undefined
+                        ) {
+                            const initialValue = ActionProvider.init(
+                                keyStore,
+                                settings
+                            );
+                            if (initialValue instanceof Promise) {
+                                initialValue.then(value => {
+                                    if (value !== undefined)
+                                        store.set(key, value);
+                                });
+                            } else if (initialValue !== undefined) {
+                                store.set(key, initialValue);
+                            }
                         }
                         const wrapper = function () {
                             const state = store.get(key);

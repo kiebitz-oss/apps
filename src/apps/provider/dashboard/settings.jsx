@@ -96,16 +96,31 @@ const Settings = withActions(
                 const logOut = () => {
                     setLoggingOut(true);
 
-                    keyPairsAction().then(kp =>
-                        providerSecretAction().then(ps =>
-                            backupDataAction(kp.data, ps.data).then(() => {
+                    const kpa = keyPairsAction('logoutKeyPairs');
+                    kpa.then(kp => {
+                        const psa = providerSecretAction(
+                            undefined,
+                            'logoutProviderSecret'
+                        );
+                        psa.then(ps => {
+                            // we give the backup data action a different name to avoid it being rejected
+                            // in case there's already a backup in progress... It will still be queued
+                            // up to ensure no conflicts can occur.
+                            const ba = backupDataAction(
+                                kp.data,
+                                ps.data,
+                                'logout'
+                            );
+                            ba.then(() => {
                                 const backend = settings.get('backend');
                                 backend.local.deleteAll('provider::');
-                                setLoggingOut(false);
                                 router.navigateToUrl('/provider/logged-out');
-                            })
-                        )
-                    );
+                            });
+                            ba.catch(() => setLoggingOut(false));
+                        });
+                        psa.catch(() => setLoggingOut(false));
+                    });
+                    kpa.catch(() => setLoggingOut(false));
                 };
 
                 if (action === 'backup') {
@@ -274,12 +289,14 @@ const Settings = withActions(
                                     >
                                         <T t={t} k="log-out" />
                                     </Button>
-                                    <Button
-                                        type="danger"
-                                        href="/provider/settings/delete"
-                                    >
-                                        <T t={t} k="delete" />
-                                    </Button>
+                                    {false && (
+                                        <Button
+                                            type="danger"
+                                            href="/provider/settings/delete"
+                                        >
+                                            <T t={t} k="delete" />
+                                        </Button>
+                                    )}
                                 </div>
                             </CardFooter>
                         </div>
