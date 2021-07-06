@@ -77,7 +77,7 @@ export async function restoreFromBackup(
                 );
 
                 for (const key of cloudKeys) {
-                    if (ddCloud[key] !== undefined)
+                    if (ddCloud[key] !== undefined && ddCloud[key] !== null)
                         backend.local.set(`provider::${key}`, ddCloud[key]);
                 }
             } catch (e) {
@@ -98,6 +98,7 @@ export async function restoreFromBackup(
             error: e,
         };
     } finally {
+        backend.local.set('provider::loggedOut', false)
         backend.local.unlock('restoreFromBackup');
     }
 }

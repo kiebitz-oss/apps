@@ -27,6 +27,10 @@ export default class LocalBackend {
         console.log(`Finished task ${task}...`);
     }
 
+    clearLocks(){
+        this._tasks = [];
+    }
+
     async lock(task) {
         if (this._tasks.find(t => t[0] === task) !== undefined) {
             console.log(`task ${task} is already in queue, aborting...`);

@@ -43,6 +43,12 @@ export async function backupData(
 
     try {
         const data = {};
+
+        const loggedOut = backend.local.get('provider::loggedOut', false)
+
+        if (loggedOut)
+            return;
+
         for (const key of localKeys) {
             data[key] = backend.local.get(`provider::${key}`);
         }
@@ -104,7 +110,14 @@ export async function backupData(
             error: e,
         };
     } finally {
-        backend.local.unlock(lockName);
+
+        if (lockName === 'logout'){
+            backend.local.set('provider::loggedOut', true);
+            // we make sure not other tasks are executed after this task
+            backend.local.clearLocks();
+        } else {
+            backend.local.unlock(lockName);
+        }
     }
 }
 
