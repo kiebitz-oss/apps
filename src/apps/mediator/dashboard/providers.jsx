@@ -57,8 +57,11 @@ const Providers = withTimer(
                 const getData = t => {
                     if (keyPairs !== undefined && keyPairs.data !== undefined) {
                         setLastRun(t);
-                        pendingProvidersAction(keyPairs.data);
-                        verifiedProvidersAction(keyPairs.data);
+                        pendingProvidersAction(keyPairs.data).then(pd =>
+                            verifiedProvidersAction(keyPairs.data).then(vp => {
+                                console.log(pd, vd);
+                            })
+                        );
                     }
                 };
 
