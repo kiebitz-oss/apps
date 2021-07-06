@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { randomBytes } from 'helpers/crypto';
+import { randomBytes, sign } from 'helpers/crypto';
 
 export async function publishAppointments(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
@@ -21,12 +21,10 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
             []
         );
 
-        const convertedAppointments = [];
+        const signedAppointments = [];
         const relevantAppointments = openAppointments.filter(
-            oa =>
-                new Date(oa.timestamp) > new Date() &&
-                oa.slotData.length > 0
-        )
+            oa => new Date(oa.timestamp) > new Date() && oa.slotData.length > 0
+        );
 
         for (const appointment of relevantAppointments) {
             try {
@@ -37,9 +35,10 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                     publicKey: keyPairs.encryption.publicKey,
                     properties: {},
                     // to do: remove filter once everything's on the new mechanism
-                    slots: appointment.slotData
-                        .filter(sl => sl.open)
-                        .map(sl => ({ id: sl.id })),
+                    slots: appointment.slotData.map(sl => ({
+                        id: sl.id,
+                        open: sl.open,
+                    })),
                 };
                 for (const [k, v] of Object.entries(properties)) {
                     for (const [kk] of Object.entries(v.values)) {
@@ -47,21 +46,24 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                             convertedAppointment.properties[k] = kk;
                     }
                 }
-                convertedAppointments.push(convertedAppointment);                
-            } catch(e){
-                console.error(e)
-                continue
+                // we sign each appointment individually so that the client can
+                // verify that they've been posted by a valid provider
+                const signedAppointment = await sign(
+                    keyPairs.signing.privateKey, JSON.stringify(convertedAppointment), keyPairs.signing.publicKey)
+
+                signedAppointments.push(signedAppointment);
+            } catch (e) {
+                console.error(e);
+                continue;
             }
         }
 
         const result = await backend.appointments.publishAppointments(
             {
-                appointments: convertedAppointments,
+                appointments: signedAppointments,
             },
             keyPairs.signing
         );
-
-        console.log(result);
 
         return {
             status: 'succeeded',
