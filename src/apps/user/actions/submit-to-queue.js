@@ -48,6 +48,7 @@ export async function submitToQueue(
                 // we already have a token, we just submit to another queue
                 const signedToken = await backend.appointments.getToken({
                     hash: tokenData.dataHash,
+                    publicKey: tokenData.signingKeyPair.publicKey,
                     code: contactData.code,
                     encryptedData: tokenData.encryptedTokenData,
                     queueID: queue.id,
@@ -106,6 +107,7 @@ export async function submitToQueue(
 
             const signedToken = await backend.appointments.getToken({
                 hash: dataHash,
+                publicKey: signingKeyPair.publicKey,
                 code: contactData.code,
                 encryptedData: encryptedTokenData,
                 queueID: queue.id,

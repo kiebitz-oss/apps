@@ -98,7 +98,7 @@ export async function restoreFromBackup(
             error: e,
         };
     } finally {
-        backend.local.set('provider::loggedOut', false)
+        backend.local.set('provider::loggedOut', false);
         backend.local.unlock('restoreFromBackup');
     }
 }

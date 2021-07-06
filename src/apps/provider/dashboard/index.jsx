@@ -13,6 +13,7 @@ import {
     validKeyPairs,
     providerData,
     backupData,
+    publishAppointments,
     sendInvitations,
     providerSecret,
     openAppointments,
@@ -53,6 +54,8 @@ const Dashboard = withRouter(
                     settings,
                     openAppointments,
                     openAppointmentsAction,
+                    sendInvitations,
+                    sendInvitationsAction,
                     providerData,
                     providerDataAction,
                     checkInvitations,
@@ -68,8 +71,8 @@ const Dashboard = withRouter(
                     backupDataAction,
                     providerSecretAction,
                     keysAction,
-                    sendInvitations,
-                    sendInvitationsAction,
+                    publishAppointments,
+                    publishAppointmentsAction,
                     keyPairs,
                     keyPairsAction,
                     validKeyPairs,
@@ -167,7 +170,12 @@ const Dashboard = withRouter(
                         sendInvitationsAction(
                             keyPairs.data,
                             verifiedProviderData.data
-                        ).finally(() => checkInvitationsAction(keyPairs.data));
+                        );
+
+                        // we send invitations and then check invitation data
+                        publishAppointmentsAction(keyPairs.data).finally(() =>
+                            checkInvitationsAction(keyPairs.data)
+                        );
                     });
 
                     let content;
@@ -208,7 +216,18 @@ const Dashboard = withRouter(
                     return (
                         <CenteredCard size="fullwidth" tight>
                             <CardHeader>
-                                <div style={{ padding: '1rem', background: 'green', color: 'white', textAlign: 'center', marginBottom: '1rem' }}>Bitte eingeloggt bleiben, Termine werden aktiv vermittelt!</div>
+                                <div
+                                    style={{
+                                        padding: '1rem',
+                                        background: 'green',
+                                        color: 'white',
+                                        textAlign: 'center',
+                                        marginBottom: '1rem',
+                                    }}
+                                >
+                                    Bitte eingeloggt bleiben, Termine werden
+                                    aktiv vermittelt!
+                                </div>
                                 <Tabs>
                                     <Tab
                                         active={tab === 'schedule'}
@@ -242,10 +261,11 @@ const Dashboard = withRouter(
         ),
         [
             verifiedProviderData,
-            sendInvitations,
+            publishAppointments,
             keyPairs,
             keys,
             validKeyPairs,
+            sendInvitations,
             backupData,
             providerSecret,
             providerData,

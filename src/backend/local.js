@@ -27,7 +27,7 @@ export default class LocalBackend {
         console.log(`Finished task ${task}...`);
     }
 
-    clearLocks(){
+    clearLocks() {
         this._tasks = [];
     }
 

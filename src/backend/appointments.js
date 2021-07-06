@@ -24,12 +24,26 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     async confirmProvider(
-        { id, verifiedID, key, encryptedProviderData, signedKeyData },
+        {
+            id,
+            verifiedID,
+            key,
+            encryptedProviderData,
+            publicProviderData,
+            signedKeyData,
+        },
         keyPair
     ) {
         return await this.call(
             'confirmProvider',
-            { id, verifiedID, key, encryptedProviderData, signedKeyData },
+            {
+                id,
+                verifiedID,
+                key,
+                encryptedProviderData,
+                publicProviderData,
+                signedKeyData,
+            },
             keyPair
         );
     }
@@ -40,6 +54,12 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     // public endpoints
+
+    async getAppointmentsByZipCode({ zipCode }) {
+        return await this.call('getAppointmentsByZipCode', {
+            zipCode,
+        });
+    }
 
     async getStats({ id, metric, type, n, filter, from, to }) {
         return await this.call('getStats', {
@@ -115,6 +135,20 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     // get n tokens from the given queue IDs
     async returnTokens({ tokens }, keyPair) {
         return await this.call('returnTokens', { tokens }, keyPair);
+    }
+
+    // get n tokens from the given queue IDs
+    async publishAppointments({ appointments }, keyPair) {
+        return await this.call(
+            'publishAppointments',
+            { appointments },
+            keyPair
+        );
+    }
+
+    // get n tokens from the given queue IDs
+    async getBookedAppointments({}, keyPair) {
+        return await this.call('getBookedAppointments', {}, keyPair);
     }
 
     // get n tokens from the given queue IDs

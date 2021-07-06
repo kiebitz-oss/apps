@@ -84,6 +84,7 @@ export async function confirmProvider(
                 id: providerData.id, // the ID of the unverified data
                 verifiedID: providerData.verifiedID, // the ID to store the data under
                 encryptedProviderData: encryptedProviderData,
+                publicProviderData: signedProviderData,
                 signedKeyData: signedKeyData,
             },
             keyPairs.signing

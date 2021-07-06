@@ -13,7 +13,7 @@ import {
     backupData,
     tokenData,
     queueData,
-    renewToken,
+    getAppointments,
     invitation,
     checkInvitationData,
 } from 'apps/user/actions';
@@ -57,8 +57,8 @@ const Dashboard = withRouter(
                     invitationAction,
                     checkInvitationData,
                     checkInvitationDataAction,
-                    renewToken,
-                    renewTokenAction,
+                    getAppointments,
+                    getAppointmentsAction,
                     queueData,
                     queueDataAction,
                     queues,
@@ -79,27 +79,7 @@ const Dashboard = withRouter(
                                         return;
                                     const { queueData: qd } = td.data;
 
-                                    const qa = queuesAction(
-                                        qd.zipCode,
-                                        qd.distance
-                                    );
-
-                                    qa.then(qq => {
-                                        if (qq.status === 'failed') {
-                                            // to do: error handling
-                                            return;
-                                        }
-                                        if (qq.data.length === 0) {
-                                            // to do: error handling
-                                            return;
-                                        }
-
-                                        renewTokenAction(
-                                            qd,
-                                            qq.data[0],
-                                            us.data
-                                        );
-                                    });
+                                    getAppointmentsAction(qd);
 
                                     checkInvitationDataAction(kd.data, td.data);
                                     backupDataAction(us.data);
@@ -161,7 +141,7 @@ const Dashboard = withRouter(
                 invitation,
                 queueData,
                 queues,
-                renewToken,
+                getAppointments,
                 userSecret,
                 backupData,
             ]

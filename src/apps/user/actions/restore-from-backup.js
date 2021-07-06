@@ -28,8 +28,6 @@ export async function restoreFromBackup(state, keyStore, settings, secret) {
 
         backend.local.set('user::secret', secret);
 
-        console.log(secret);
-
         return {
             status: 'succeeded',
             data: dd,

@@ -21,3 +21,4 @@ export * from './restore-from-backup';
 export * from './update-appointment';
 export * from './cancel-appointment';
 export * from './past-appointments';
+export * from './publish-appointments';

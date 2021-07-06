@@ -1,6 +1,6 @@
 # this data is used in the "new appointment" dialogue of the provider app, as
 # well as in the "invitation received" view of the user app.
-vaccine-types:
+vaccine:
   title:
     de: Impfstofftyp
   values:
