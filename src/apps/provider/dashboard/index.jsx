@@ -208,6 +208,7 @@ const Dashboard = withRouter(
                     return (
                         <CenteredCard size="fullwidth" tight>
                             <CardHeader>
+                                <div style={{ padding: '1rem', background: 'green', color: 'white', textAlign: 'center', marginBottom: '1rem' }}>Bitte eingeloggt bleiben, Termine werden aktiv vermittelt!</div>
                                 <Tabs>
                                     <Tab
                                         active={tab === 'schedule'}
