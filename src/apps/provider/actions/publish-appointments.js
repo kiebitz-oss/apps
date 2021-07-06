@@ -22,29 +22,37 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
         );
 
         const convertedAppointments = [];
+        const relevantAppointments = openAppointments.filter(
+            oa =>
+                new Date(oa.timestamp) > new Date() &&
+                oa.slotData.length > 0
+        )
 
-        for (const appointment of openAppointments) {
-            const convertedAppointment = {
-                id: appointment.id,
-                duration: appointment.duration,
-                timestamp: appointment.timestamp,
-                publicKey: keyPairs.encryption.publicKey,
-                properties: {},
-                // to do: remove filter once everything's on the new mechanism
-                slots: appointment.slotData
-                    .filter(sl => sl.open)
-                    .map(sl => ({ id: sl.id })),
-            };
-            for (const [k, v] of Object.entries(properties)) {
-                for (const [kk] of Object.entries(v.values)) {
-                    if (appointment[kk] === true)
-                        convertedAppointment.properties[k] = kk;
+        for (const appointment of relevantAppointments) {
+            try {
+                const convertedAppointment = {
+                    id: appointment.id,
+                    duration: appointment.duration,
+                    timestamp: appointment.timestamp,
+                    publicKey: keyPairs.encryption.publicKey,
+                    properties: {},
+                    // to do: remove filter once everything's on the new mechanism
+                    slots: appointment.slotData
+                        .filter(sl => sl.open)
+                        .map(sl => ({ id: sl.id })),
+                };
+                for (const [k, v] of Object.entries(properties)) {
+                    for (const [kk] of Object.entries(v.values)) {
+                        if (appointment[kk] === true)
+                            convertedAppointment.properties[k] = kk;
+                    }
                 }
+                convertedAppointments.push(convertedAppointment);                
+            } catch(e){
+                console.error(e)
+                continue
             }
-            convertedAppointments.push(convertedAppointment);
         }
-
-        console.log(convertedAppointments);
 
         const result = await backend.appointments.publishAppointments(
             {
