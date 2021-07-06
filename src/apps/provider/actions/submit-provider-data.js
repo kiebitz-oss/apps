@@ -67,7 +67,7 @@ export async function submitProviderData(
             );
 
             data.submittedAt = new Date().toISOString();
-            data.version = '0.3';
+            data.version = '0.4';
             backend.local.set('provider::data', data);
             return {
                 status: 'succeeded',

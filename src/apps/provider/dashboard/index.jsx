@@ -114,7 +114,7 @@ const Dashboard = withRouter(
                                         return;
                                     } else if (
                                         pd.data.submittedAt === undefined ||
-                                        pd.data.version !== '0.3'
+                                        pd.data.version !== '0.4'
                                     ) {
                                         // we try to submit the data...
                                         submitProviderDataAction(
