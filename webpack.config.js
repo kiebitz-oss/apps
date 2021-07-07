@@ -24,9 +24,12 @@ switch (APP_ENV) {
         break;
 }
 
-const withSourceMap = function (url) {
-    return APP_ENV !== 'production' ? url + '?sourceMap' : url;
-};
+const withSourceMap = (loader) => ({
+    loader,
+    options: {
+        sourceMap: APP_ENV !== 'production',
+    },
+});
 
 //we collect static files from various places
 const staticPaths = ['web/static/'];
