@@ -36,6 +36,15 @@ export async function confirmProvider(
         // we remove the 'code' field from the provider
         if (providerData.data.code !== undefined) delete providerData.data.code;
 
+        const publicProviderData = {
+            name: providerData.data.name,
+            street: providerData.data.street,
+            city: providerData.data.city,
+            zipCode: providerData.data.zipCode,
+            website: providerData.data.website,
+        };
+
+        const publicProviderJSONData = JSON.stringify(publicProviderData);
         const providerJSONData = JSON.stringify(providerData.data);
 
         const signedKeyData = await sign(
@@ -68,9 +77,16 @@ export async function confirmProvider(
             keyPairs.signing.publicKey
         );
 
+        const signedPublicProviderData = await sign(
+            keyPairs.signing.privateKey,
+            publicProviderJSONData,
+            keyPairs.signing.publicKey
+        );
+
         const fullData = {
             queuePrivateKeys: queuePrivateKeys,
             signedData: signedProviderData,
+            signedPublicData: signedPublicProviderData,
         };
 
         // we encrypt the data with the public key supplied by the provider
@@ -84,7 +100,7 @@ export async function confirmProvider(
                 id: providerData.id, // the ID of the unverified data
                 verifiedID: providerData.verifiedID, // the ID to store the data under
                 encryptedProviderData: encryptedProviderData,
-                publicProviderData: signedProviderData,
+                publicProviderData: signedPublicProviderData,
                 signedKeyData: signedKeyData,
             },
             keyPairs.signing

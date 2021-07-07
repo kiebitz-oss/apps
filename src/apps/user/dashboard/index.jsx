@@ -15,6 +15,7 @@ import {
     queueData,
     getAppointments,
     invitation,
+    appointments,
     checkInvitationData,
 } from 'apps/user/actions';
 import {
@@ -55,6 +56,7 @@ const Dashboard = withRouter(
                     keysAction,
                     backupDataAction,
                     invitationAction,
+                    appointmentsAction,
                     checkInvitationData,
                     checkInvitationDataAction,
                     getAppointments,
@@ -79,11 +81,12 @@ const Dashboard = withRouter(
                                         return;
                                     const { queueData: qd } = td.data;
 
-                                    getAppointmentsAction(qd);
+                                    getAppointmentsAction(qd, kd.data);
 
                                     checkInvitationDataAction(kd.data, td.data);
                                     backupDataAction(us.data);
                                     invitationAction();
+                                    appointmentsAction();
                                 })
                             )
                         );
@@ -139,6 +142,7 @@ const Dashboard = withRouter(
                 keys,
                 checkInvitationData,
                 invitation,
+                appointments,
                 queueData,
                 queues,
                 getAppointments,

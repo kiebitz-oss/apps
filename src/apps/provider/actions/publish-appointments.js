@@ -35,7 +35,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                     publicKey: keyPairs.encryption.publicKey,
                     properties: {},
                     // to do: remove filter once everything's on the new mechanism
-                    slots: appointment.slotData.map(sl => ({
+                    slotData: appointment.slotData.map(sl => ({
                         id: sl.id,
                         open: sl.open,
                     })),
@@ -49,7 +49,10 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                 // we sign each appointment individually so that the client can
                 // verify that they've been posted by a valid provider
                 const signedAppointment = await sign(
-                    keyPairs.signing.privateKey, JSON.stringify(convertedAppointment), keyPairs.signing.publicKey)
+                    keyPairs.signing.privateKey,
+                    JSON.stringify(convertedAppointment),
+                    keyPairs.signing.publicKey
+                );
 
                 signedAppointments.push(signedAppointment);
             } catch (e) {
@@ -60,7 +63,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
 
         const result = await backend.appointments.publishAppointments(
             {
-                appointments: signedAppointments,
+                offers: signedAppointments,
             },
             keyPairs.signing
         );

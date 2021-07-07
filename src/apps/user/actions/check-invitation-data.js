@@ -6,7 +6,18 @@ import { hash, verify, ecdhDecrypt, deriveSecrets } from 'helpers/crypto';
 import { b642buf } from 'helpers/conversion';
 
 // to do: verify the provider data
-async function verifyProviderData(providerData, keys) {}
+async function verifyProviderData(providerData, keys) {
+    let found = false;
+    for (const mediatorKeys of keys.lists.mediators) {
+        if (mediatorKeys.json.signing === providerData.publicKey) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) throw 'invalid key';
+    const result = await verify([providerData.publicKey], providerData);
+    if (!result) throw 'invalid signature';
+}
 
 async function decryptInvitationData(signedData, keys, tokenData) {
     let found = false;
@@ -68,7 +79,8 @@ export async function checkInvitationData(
                         keys,
                         tokenData
                     );
-                    verifyProviderData(decryptedData.provider);
+                    verifyProviderData(decryptedData.provider, keys);
+                    decryptedData.legacy = true;
                     decryptedDataList.push(decryptedData);
                 } catch (e) {
                     continue;

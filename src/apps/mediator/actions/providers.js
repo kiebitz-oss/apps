@@ -55,6 +55,7 @@ async function providers(state, keyStore, settings, keyPairs, loader) {
         const decryptedProviderList = [];
         for (const entry of providersList) {
             try {
+                console.log(entry);
                 const decryptedJSONData = await ecdhDecrypt(
                     entry.encryptedData,
                     keyPairs.provider.privateKey
