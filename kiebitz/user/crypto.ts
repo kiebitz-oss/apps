@@ -1,4 +1,5 @@
-import { verify, ecdhDecrypt, randomBytes, hashString, deriveSecrets, b642buf } from 'helpers/crypto';
+import { verify, ecdhDecrypt, randomBytes, hashString, deriveSecrets } from 'helpers/crypto';
+import { b642buf } from 'helpers/conversion';
 
 // TODO: Verify the provider data.
 export const verifyProviderData = async (providerData: any, keys?: any): Promise<void> => {
@@ -30,7 +31,7 @@ export const hashContactData = async (data: any): Promise<any> => {
     const hashData = {
         name: data.name,
         grantSeed: data.grantSeed,
-        nonce: randomBytes(32)
+        nonce: randomBytes(32),
     };
 
     const hashDataJSON = JSON.stringify(hashData);
