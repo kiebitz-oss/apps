@@ -31,12 +31,11 @@ export async function userSecret(state, keyStore, settings, data) {
             status: 'loaded',
             data,
         };
-
     } finally {
         backend.local.unlock('userSecret');
     }
 }
-userSecret.init = (keyStore, settings) => {
+userSecret.init = async (keyStore, settings) => {
     const backend = settings.get('backend');
 
     try {
@@ -47,10 +46,8 @@ userSecret.init = (keyStore, settings) => {
     }
 
     try {
-        
-        
         const data = initUserSecret();
-        
+
         return {
             status: 'loaded',
             data,
