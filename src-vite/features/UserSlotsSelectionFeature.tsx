@@ -22,33 +22,41 @@ const UserSlotsSelectionFeature: React.FC = () => {
     // TODO: useUserInvitationConfirmedGuard();
 
     // `_offers` is only used for offer confirmation.
-    const [slots, invitation] = useAvailableUserSlots();
-    const availableProviders = invitation ? [{ provider: invitation?.provider, slots }] : [];
+    const [slotsList, invitations] = useAvailableUserSlots();
+
+    const availableProviders = invitations.length
+        ? slotsList.map((slots, i) => ({ provider: invitations[i]?.provider, slots }))
+        : [];
 
     const history = useHistory();
 
     // TODO: This needs to be able to handle multiple providers in the future.
+    // TODO: It currently just assumes we're using the first list item.
     const handleSlotsSubmit = async (slotIds: string[]) => {
         const providerData = {
             signedToken: userTokenData.signedToken,
             userData: userTokenData.hashData,
         };
 
-        const [encryptedProviderData] = await ephemeralECDHEncrypt(JSON.stringify(providerData), invitation.publicKey);
+        const [encryptedProviderData] = await ephemeralECDHEncrypt(
+            JSON.stringify(providerData),
+            invitations[0].publicKey
+        );
 
-        const offers = (invitation?.offers ?? []).filter((offer) => !!slotIds.find((id) => id === offer.id));
+        const offers = (invitations[0]?.offers ?? []).filter((offer) => !!slotIds.find((id) => id === offer.id));
 
         if (!offers.length) {
             console.error('Please choose offers.');
             return;
         }
 
-        await confirmUserOffers(offers, encryptedProviderData, invitation, userTokenData);
+        await confirmUserOffers(offers, encryptedProviderData, invitations[0], userTokenData);
         history.push('/user/appointments/status?success=true');
     };
 
-    const renderAvailableProvider = (data: { provider: any; slots: SlotsByDay[] }): React.ReactNode => {
-        if (!data.provider) {
+    const renderAvailableProvider = (data: { provider: any; slots: SlotsByDay[] }, i): React.ReactNode => {
+        // TODO: We currently deliberately only show one provider. Change this!
+        if (!data.provider || i !== 0) {
             return null;
         }
 

@@ -29,7 +29,7 @@ export const getUserInvitationVerified = (): any => {
     return backend.local.get(KEY_USER_INVITATION_VERIFIED);
 };
 
-export const getUserDecryptedInvitationData = async (keys: any, tokenData: any): Promise<any> => {
+export const getUserDecryptedInvitationData = async (keys: any, tokenData: any): Promise<any[]> => {
     const backend = settings.get(KEY_BACKEND);
     // Make sure we don't have any data races.
 
@@ -48,12 +48,16 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
 
         let decryptedDataList: any[] = [];
         for (const data of dataList) {
-            if (data === null) continue;
+            if (data === null) {
+                continue;
+            }
+
             try {
                 const decryptedData = await decryptInvitationData(data, keys, tokenData);
-                verifyProviderData(decryptedData.provider);
+                await verifyProviderData(decryptedData.provider);
                 decryptedDataList = [...decryptedDataList, decryptedData];
-            } catch (e) {
+            } catch (error) {
+                console.error(error);
                 continue;
             }
         }
@@ -61,7 +65,7 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
         await setUserInvitationVerified(decryptedDataList);
         return decryptedDataList;
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('checkInvitationData');
     }
 };
 
@@ -72,7 +76,7 @@ export const confirmUserOffer = async (slotData, encryptedProviderData, grant, t
         {
             id: slotData.id,
             data: encryptedProviderData,
-            grant: grant
+            grant: grant,
         },
         tokenData.signingKeyPair
     );
@@ -94,7 +98,7 @@ export const confirmUserOffers = async (offers, encryptedProviderData, invitatio
                     if (slotData.failed || !slotData.open) {
                         continue;
                     }
-                    const grant = offer.grants.find(grant => {
+                    const grant = offer.grants.find((grant) => {
                         const data = JSON.parse(grant.data);
                         return data.objectID === slotData.id;
                     });
@@ -114,11 +118,11 @@ export const confirmUserOffers = async (offers, encryptedProviderData, invitatio
                         if (typeof e === 'object' && e.name === 'RPCException') {
                             if (e.error.code === 401) {
                                 slotInfos[slotData.id] = {
-                                    status: 'taken'
+                                    status: 'taken',
                                 };
                             } else {
                                 slotInfos[slotData.id] = {
-                                    status: 'error'
+                                    status: 'error',
                                 };
                             }
                         }
@@ -131,14 +135,14 @@ export const confirmUserOffers = async (offers, encryptedProviderData, invitatio
                         offer,
                         invitation,
                         slotData,
-                        grant
+                        grant,
                     });
 
                     backend.local.set('user::invitation::grantID', grantData.grantID);
 
                     return {
                         offer,
-                        slotData
+                        slotData,
                     };
                 }
             } catch (error) {

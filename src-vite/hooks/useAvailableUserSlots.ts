@@ -6,10 +6,9 @@ import { getUserDecryptedInvitationData } from '@/kiebitz/user/invitation';
 import { getSlotFromOffer, mergeMultiDimensionalTupleMap } from '../utils/slots';
 import { Slot } from '@/types';
 
-const getInvitationForTokenData = async (tokenData): Promise<any> => {
+const getInvitationsForTokenData = async (tokenData): Promise<any[]> => {
     const keys = await getKeys();
-    const invitation = await getUserDecryptedInvitationData(keys, tokenData);
-    return invitation.data;
+    return await getUserDecryptedInvitationData(keys, tokenData);
 };
 
 export type SlotsByDuration = [duration: number, slots: Slot[]];
@@ -43,22 +42,26 @@ export const getSlotsFromOffers = (offers: any[]): SlotsByDay[] => {
     }, []);
 };
 
-const useAvailableUserSlots = (): [SlotsByDay[], any] => {
-    const [invitation, setInvitation] = useState<any>();
-    const slotsByDay = useMemo<SlotsByDay[]>(() => getSlotsFromOffers(invitation?.offers ?? []), [invitation]);
+const useAvailableUserSlots = (): [SlotsByDay[][], any[]] => {
+    const [invitations, setInvitations] = useState<any>([]);
+
+    const slotsByDayList = useMemo<SlotsByDay[][]>(
+        () => invitations.map((invitation) => getSlotsFromOffers(invitation?.offers ?? [])),
+        [invitations]
+    );
 
     useEffect(() => {
         const tokenData = getUserTokenData();
 
         const runAndSet = async () => {
-            const _invitation = await getInvitationForTokenData(tokenData);
-            setInvitation(_invitation);
+            const _invitations = await getInvitationsForTokenData(tokenData);
+            setInvitations(_invitations);
         };
 
         runAndSet();
     }, []);
 
-    return [slotsByDay, invitation];
+    return [slotsByDayList, invitations];
 };
 
 export default useAvailableUserSlots;
