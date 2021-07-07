@@ -103,12 +103,35 @@ const OfferDetails = withSettings(({ settings, offer }) => {
     return <div className="kip-offer-details">{notices}</div>;
 });
 
+const InvitationDeleted = withActions(({
+    confirmDeletionAction,
+    acceptedInvitationAction,
+}) => {
+    return <F>
+        <Message type="danger">
+            <T t={t} k="invitation-accepted.deleted" />
+        </Message>
+        <CardFooter>
+            <Button
+                type="warning"
+                onClick={() =>
+                    confirmDeletionAction().then(
+                        acceptedInvitationAction
+                    )
+                }
+            >
+                <T t={t} k="invitation-accepted.confirm-deletion" />
+            </Button>
+        </CardFooter>
+    </F>
+
+}, [confirmDeletion, acceptedInvitation])
+
 const AcceptedInvitation = withActions(
     ({
         tokenData,
         acceptedInvitation,
         acceptedInvitationAction,
-        confirmDeletionAction,
         cancelInvitation,
         invitationAction,
         cancelInvitationAction,
@@ -135,37 +158,28 @@ const AcceptedInvitation = withActions(
         let currentSlotData;
         if (currentOffer !== undefined) currentSlotData = currentOffer.slotData.find((sl) => sl.id === slotData.id);
         let notice;
-        if (currentOffer === undefined || currentSlotData === undefined)
-            return (
+        let changed = false;
+        for (const [k, v] of Object.entries(currentOffer)) {
+            if (
+                k === 'open' ||
+                k === 'slotData' ||
+                k === 'grants' ||
+                k === 'slots'
+            )
+                continue;
+            if (offer[k] !== v) {
+                changed = true;
+                break;
+            }
+        }
+        if (changed)
+            notice = (
                 <F>
                     <Message type="danger">
-                        <T t={t} k="invitation-accepted.deleted" />
+                        <T t={t} k="invitation-accepted.changed" />
                     </Message>
-                    <CardFooter>
-                        <Button type="warning" onClick={() => confirmDeletionAction().then(acceptedInvitationAction)}>
-                            <T t={t} k="invitation-accepted.confirm-deletion" />
-                        </Button>
-                    </CardFooter>
                 </F>
             );
-        else {
-            let changed = false;
-            for (const [k, v] of Object.entries(currentOffer)) {
-                if (k === 'open' || k === 'slotData' || k === 'grants' || k === 'slots') continue;
-                if (offer[k] !== v) {
-                    changed = true;
-                    break;
-                }
-            }
-            if (changed)
-                notice = (
-                    <F>
-                        <Message type="danger">
-                            <T t={t} k="invitation-accepted.changed" />
-                        </Message>
-                    </F>
-                );
-        }
         const d = new Date(currentOffer.timestamp);
 
         let modal;
@@ -217,7 +231,15 @@ const AcceptedInvitation = withActions(
             </F>
         );
     },
-    [userSecret, confirmDeletion, acceptedInvitation, cancelInvitation, invitation, grantID, slotInfos, tokenData]
+    [
+        userSecret,
+        acceptedInvitation,
+        cancelInvitation,
+        invitation,
+        grantID,
+        slotInfos,
+        tokenData,
+    ]
 );
 
 const NoInvitations = ({ tokenData, oldGrant }) => {
@@ -582,7 +604,7 @@ const Appointments = withActions(
                     );
                 });
                 if (ai === undefined)
-                    return <NoInvitations tokenData={tokenData.data} />;
+                    return <InvitationDeleted />;
                 return <AcceptedInvitation offers={ai.offers} />;
             }
 
