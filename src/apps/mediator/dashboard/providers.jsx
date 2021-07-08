@@ -119,7 +119,7 @@ const Providers = withTimer(
                                             t={t}
                                             k="providers.reconfirmProgressText"
                                             i={reconfirmProviders.i}
-                                            i={reconfirmProviders.n}
+                                            n={reconfirmProviders.n}
                                         />
                                     )) || (
                                         <T t={t} k="providers.reconfirmText" />
