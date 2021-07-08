@@ -29,6 +29,12 @@ dateSpan:
 log-out:
   de: Abmelden
 providers:
+  reconfirmText:
+    de: Wollen Sie alle bestätigten Anbieter neu bestätigen?
+  reconfirmProgressText:
+    de: Bestätige Anbieter {i} von {n}...
+  reconfirm:
+    de: Alle neu bestätigen
   pending:
     de: Unbestätigt
   verified:
