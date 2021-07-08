@@ -75,7 +75,7 @@ export async function getAppointments(
                     const verifiedOffers = [];
                     for (const offer of item.offers) {
                         const verifiedOffer = await verifyOffer(offer, keys);
-                        console.log(verifiedOffer)
+                        console.log(verifiedOffer);
                         for (const slot of verifiedOffer.slotData) {
                             if (item.booked.some(id => id === slot.id))
                                 slot.open = false;
@@ -86,10 +86,14 @@ export async function getAppointments(
                     item.offers = verifiedOffers;
                     verifiedAppointments.push(item);
                 } catch (e) {
-                    console.log(e)
+                    console.log(e);
                     continue;
                 }
             }
+
+            verifiedAppointments.sort((a, b) =>
+                a.provider.json.name > b.provider.json.name ? 1 : -1
+            );
 
             backend.local.set(
                 'user::appointments::verified',
