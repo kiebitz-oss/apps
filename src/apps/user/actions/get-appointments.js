@@ -75,6 +75,7 @@ export async function getAppointments(
                     const verifiedOffers = [];
                     for (const offer of item.offers) {
                         const verifiedOffer = await verifyOffer(offer, keys);
+                        console.log(verifiedOffer)
                         for (const slot of verifiedOffer.slotData) {
                             if (item.booked.some(id => id === slot.id))
                                 slot.open = false;
@@ -85,6 +86,7 @@ export async function getAppointments(
                     item.offers = verifiedOffers;
                     verifiedAppointments.push(item);
                 } catch (e) {
+                    console.log(e)
                     continue;
                 }
             }
