@@ -23,7 +23,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
 
         const signedAppointments = [];
         const relevantAppointments = openAppointments.filter(
-            oa => new Date(oa.timestamp) > new Date()
+            oa => new Date(oa.timestamp) > new Date(new Date().getTime()-1000*60*60*4)
         );
 
         for (const appointment of relevantAppointments) {
