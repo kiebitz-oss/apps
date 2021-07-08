@@ -21,14 +21,6 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
             []
         );
 
-        const openTokens = backend.local.get('provider::tokens::open', []);
-
-        // if there are still open tokens we don't publish appointments...
-        if (openTokens.length > 0)
-            return {
-                status: 'failed',
-            };
-
         const signedAppointments = [];
         const relevantAppointments = openAppointments.filter(
             oa => new Date(oa.timestamp) > new Date()
@@ -43,10 +35,16 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                     publicKey: keyPairs.encryption.publicKey,
                     properties: {},
                     // to do: remove filter once everything's on the new mechanism
-                    slotData: appointment.slotData.map(sl => ({
-                        id: sl.id,
-                        open: sl.open,
-                    })),
+                    // currently we filter out slots that have been booked through the old mechanism
+                    slotData: appointment.slotData
+                        .filter(
+                            sl =>
+                                sl.token === undefined ||
+                                sl.token.expiresAt === undefined
+                        )
+                        .map(sl => ({
+                            id: sl.id,
+                        })),
                 };
                 for (const [k, v] of Object.entries(properties)) {
                     for (const [kk] of Object.entries(v.values)) {

@@ -654,11 +654,7 @@ const Appointments = withActions(
         const render = () => {
             let invitations = [];
 
-            if (
-                appointments !== undefined &&
-                appointments.data !== null &&
-                false
-            )
+            if (appointments !== undefined && appointments.data !== null)
                 for (const appointment of appointments.data)
                     invitations.push(appointment);
 

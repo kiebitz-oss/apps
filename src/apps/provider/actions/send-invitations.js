@@ -112,74 +112,6 @@ export async function sendInvitations(
                     )
                 )
             );
-            // we don't have enough tokens for our open appointments, we generate more
-            if (n > 0 || true) {
-                console.log(`Trying to get ${n} new tokens...`);
-                // to do: get appointments by type
-                const newTokens = await backend.appointments.getQueueTokens(
-                    {
-                        expiration: FRESH_SECONDS,
-                        capacities: [
-                            {
-                                n: 0,
-                                tokens: openTokens.length,
-                                bookings: bookings - reportedBookings,
-                                open: openSlots,
-                                booked: bookedSlots,
-                                properties: {},
-                            },
-                        ],
-                    },
-                    keyPairs.signing
-                );
-                if (newTokens === null)
-                    return {
-                        status: 'failed',
-                    };
-                const validTokens = [];
-                for (const tokenList of newTokens) {
-                    console.log(`New tokens received: ${tokenList.length}`);
-                    for (const token of tokenList) {
-                        const privateKey = getQueuePrivateKey(
-                            token.queue,
-                            verifiedProviderData
-                        );
-                        try {
-                            token.data = JSON.parse(
-                                await ecdhDecrypt(
-                                    token.encryptedData,
-                                    privateKey
-                                )
-                            );
-                            if (token.data === null) continue;
-                        } catch (e) {
-                            console.error(e);
-                            continue;
-                        }
-                        if (
-                            openTokens.some(
-                                openToken => openToken.token === token.token
-                            )
-                        ) {
-                            continue; // we already have this token
-                        }
-                        token.keyPair = await generateECDHKeyPair();
-                        // the initial offer is always done using the token, to prevent the
-                        // user from booking an unlimited number of appointments...
-                        token.grantID = randomBytes(32);
-                        token.slotIDs = [];
-                        token.createdAt = new Date().toISOString();
-                        token.expiresAt = new Date(
-                            new Date().getTime() + 1000 * EXP_SECONDS
-                        );
-                        validTokens.push(token);
-                    }
-                    openTokens = [...openTokens, ...validTokens];
-                }
-                // we update the list of open tokens before we do anything else
-                // to ensure we never lose token information...
-                backend.local.set('provider::tokens::open', openTokens);
-            }
 
             const selectedAppointments = openAppointments.filter(
                 oa =>
@@ -254,68 +186,18 @@ export async function sendInvitations(
 
                     if (token.slotIDs === undefined) {
                         token.slotIDs = [];
-                        // we always add the booked slot (we can remove this for the next version, just for backwards-compatibility)
-                        for (const slot of Object.values(slotsById)) {
-                            if (
-                                slot.token !== undefined &&
-                                slot.token.token === token.token
-                            ) {
-                                token.slotIDs.push(slot.id);
-                            }
-                        }
                     }
 
                     token.slotIDs = token.slotIDs.filter(id => {
                         const slot = slotsById[id];
-                        // we remove slots that have been deleted e.g. because
-                        // the appointment has been deleted
                         if (slot === undefined) return false;
-                        // we remove slots taken by other users as the user
-                        // won't be able to book them anymore...
-                        if (!slot.open && slot.token.token !== token.token)
-                            return false;
-                        return true;
+                        if (
+                            slot.token !== undefined &&
+                            slot.token.token === token.token
+                        )
+                            return true;
+                        return false;
                     });
-
-                    addSlots: while (token.slotIDs.length < 20) {
-                        let addedSlots = 0;
-                        // we shuffle the open appointments to distribute them
-                        // evenly over all tokens
-                        shuffle(selectedAppointments);
-                        for (const oa of selectedAppointments) {
-                            const openSlots = oa.slotData.filter(sl => sl.open);
-                            // we shuffle the open slots to distribute them
-                            // evenly over all tokens
-                            shuffle(openSlots);
-                            const existingSlots = token.slotIDs.filter(
-                                id =>
-                                    oa.slotData.find(osl => osl.id === id) !==
-                                    undefined
-                            ).length;
-                            if (existingSlots >= 3) continue; // the user already has 3 slots for this appointment, that's all we give out...
-                            // we add three slots per appointment offer
-                            for (
-                                let i = 0;
-                                i < Math.min(3, openSlots.length);
-                                i++
-                            ) {
-                                // we check if the slot is already associated
-                                // with this token
-                                if (
-                                    token.slotIDs.find(
-                                        id => id === openSlots[i].id
-                                    ) === undefined
-                                ) {
-                                    addedSlots++;
-                                    token.slotIDs.push(openSlots[i].id);
-                                }
-                                if (token.slotIDs.length >= 12) break addSlots;
-                            }
-                        }
-                        // seems there are no more slots left, we break out
-                        // of the loop
-                        if (addedSlots === 0) break;
-                    }
 
                     if (token.createdAt === undefined)
                         token.createdAt = new Date().toISOString();

@@ -94,6 +94,8 @@ export async function getAppointments(
                 verifiedAppointments
             );
 
+            backend.local.set('user::invitation::slots', {});
+
             return {
                 data: verifiedAppointments,
                 status: 'suceeded',
