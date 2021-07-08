@@ -2,14 +2,6 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import {
-    generateECDSAKeyPair,
-    generateECDHKeyPair,
-    ephemeralECDHEncrypt,
-    randomBytes,
-    hashString,
-} from 'helpers/crypto';
-
 export async function getAppointments(state, keyStore, settings, queueData) {
     const backend = settings.get('backend');
 
@@ -22,7 +14,7 @@ export async function getAppointments(state, keyStore, settings, queueData) {
 
     try {
         keyStore.set({ status: 'submitting' });
-        let tokenData = backend.local.get('user::tokenData');
+        const tokenData = backend.local.get('user::tokenData');
 
         if (tokenData === null) {
             return {
