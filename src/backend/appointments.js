@@ -111,8 +111,12 @@ export default class AppointmentsBackend extends JSONRPCBackend {
 
     // user endpoints
 
-    async cancelSlot({ providerID, id }, keyPair) {
-        return await this.call('cancelSlot', { providerID, id }, keyPair);
+    async cancelSlot({ providerID, id, signedTokenData }, keyPair) {
+        return await this.call(
+            'cancelSlot',
+            { providerID, id, signedTokenData },
+            keyPair
+        );
     }
 
     async bookSlot(
@@ -131,6 +135,7 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         hash,
         encryptedData,
         queueID,
+        publicKey,
         code,
         queueData,
         signedTokenData,
@@ -138,6 +143,7 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('getToken', {
             hash: hash,
             code: code,
+            publicKey: publicKey,
             encryptedData: encryptedData,
             queueID: queueID,
             queueData: queueData,
@@ -155,6 +161,10 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     // get n tokens from the given queue IDs
     async publishAppointments({ offers }, keyPair) {
         return await this.call('publishAppointments', { offers }, keyPair);
+    }
+
+    async cancelBooking({ id }, keyPair) {
+        return await this.call('cancelBooking', {}, keyPair);
     }
 
     // get n tokens from the given queue IDs

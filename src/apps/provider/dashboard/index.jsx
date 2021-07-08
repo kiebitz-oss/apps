@@ -13,6 +13,7 @@ import {
     validKeyPairs,
     providerData,
     backupData,
+    getBookings,
     publishAppointments,
     sendInvitations,
     providerSecret,
@@ -71,6 +72,8 @@ const Dashboard = withRouter(
                     backupDataAction,
                     providerSecretAction,
                     keysAction,
+                    getBookings,
+                    getBookingsAction,
                     publishAppointments,
                     publishAppointmentsAction,
                     keyPairs,
@@ -100,19 +103,20 @@ const Dashboard = withRouter(
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
+                                // we send invitations and then check invitation data
+                                publishAppointmentsAction(kp.data).finally(
+                                    () => {
+                                        getBookingsAction(kp.data, ks.data);
+                                        checkInvitationsAction(kp.data);
+                                    }
+                                );
+
                                 providerSecretAction().then(ps =>
                                     backupDataAction(kp.data, ps.data)
                                 );
                                 validKeyPairsAction(kp.data, ks.data);
                                 providerDataAction().then(pd => {
                                     if (
-                                        pd === undefined ||
-                                        pd.data === undefined ||
-                                        Object.keys(pd.data.data).length === 0
-                                    ) {
-                                        router.navigateToUrl('/provider/setup');
-                                        return;
-                                    } else if (
                                         pd.data.submittedAt === undefined ||
                                         pd.data.version !== '0.4'
                                     ) {
@@ -170,11 +174,6 @@ const Dashboard = withRouter(
                         sendInvitationsAction(
                             keyPairs.data,
                             verifiedProviderData.data
-                        );
-
-                        // we send invitations and then check invitation data
-                        publishAppointmentsAction(keyPairs.data).finally(() =>
-                            checkInvitationsAction(keyPairs.data)
                         );
                     });
 
@@ -264,6 +263,7 @@ const Dashboard = withRouter(
             publishAppointments,
             keyPairs,
             keys,
+            getBookings,
             validKeyPairs,
             sendInvitations,
             backupData,

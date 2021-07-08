@@ -120,6 +120,7 @@ export async function submitToQueue(
                 signingKeyPair: signingKeyPair,
                 encryptedTokenData: encryptedTokenData,
                 encryptedContactData: encryptedContactData,
+                queueID: queue.id,
                 queueData: queueData,
                 keyPair: encryptionKeyPair,
                 hashNonce: nonce,

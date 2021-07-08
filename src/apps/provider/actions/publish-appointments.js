@@ -21,9 +21,17 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
             []
         );
 
+        const openTokens = backend.local.get('provider::tokens::open', []);
+
+        // if there are still open tokens we don't publish appointments...
+        if (openTokens.length > 0)
+            return {
+                status: 'failed',
+            };
+
         const signedAppointments = [];
         const relevantAppointments = openAppointments.filter(
-            oa => new Date(oa.timestamp) > new Date() && oa.slotData.length > 0
+            oa => new Date(oa.timestamp) > new Date()
         );
 
         for (const appointment of relevantAppointments) {

@@ -121,7 +121,7 @@ export async function sendInvitations(
                         expiration: FRESH_SECONDS,
                         capacities: [
                             {
-                                n: n,
+                                n: 0,
                                 tokens: openTokens.length,
                                 bookings: bookings - reportedBookings,
                                 open: openSlots,

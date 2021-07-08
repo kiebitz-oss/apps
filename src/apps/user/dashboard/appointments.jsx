@@ -334,7 +334,7 @@ toggleOffers.actionName = 'toggleOffers';
 
 const PropertyTags = ({ appointment }) => {
     let props;
-    if (appointment.legacy) {
+    if (appointment.grants !== undefined) {
         props = Object.entries(appointment)
             .filter(([k, v]) => v === true)
             .map(([k, v]) => <PropertyTag key={k} property={k} />)
@@ -428,7 +428,7 @@ const InvitationDetails = withSettings(
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
                     const openSlots = offer.slotData.filter(sl => {
-                        if (offer.legacy) {
+                        if (offer.grants !== undefined) {
                             const grant = offer.grants.find(
                                 grant =>
                                     JSON.parse(grant.data).objectID === sl.id
@@ -654,7 +654,11 @@ const Appointments = withActions(
         const render = () => {
             let invitations = [];
 
-            if (appointments !== undefined && appointments.data !== null)
+            if (
+                appointments !== undefined &&
+                appointments.data !== null &&
+                false
+            )
                 for (const appointment of appointments.data)
                     invitations.push(appointment);
 
@@ -671,8 +675,7 @@ const Appointments = withActions(
 
             if (
                 acceptedInvitation !== undefined &&
-                acceptedInvitation.data !== null &&
-                invitations.length > 0
+                acceptedInvitation.data !== null
             ) {
                 const ai = invitations.find(inv => {
                     if (inv === null) return false;

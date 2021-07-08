@@ -27,7 +27,8 @@ export async function confirmOffers(
     try {
         const providerData = {
             signedToken: tokenData.signedToken,
-            userData: tokenData.hashData,
+            tokenData: tokenData.tokenData,
+            contactData: tokenData.encryptedContactData,
         };
 
         const encryptedProviderData = await ecdhEncrypt(

@@ -50,6 +50,7 @@ export async function cancelInvitation(
                 const result = await backend.appointments.cancelSlot(
                     {
                         id: id,
+                        signedTokenData: tokenData.signedToken,
                         providerID: acceptedInvitation.invitation.provider.id,
                     },
                     tokenData.signingKeyPair
