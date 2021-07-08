@@ -56,8 +56,6 @@ export async function getBookings(state, keyStore, settings, keyPairs, keys) {
                 }
             }
 
-            console.log(bookingsById);
-
             for (const appointment of appointments) {
                 for (const slotData of appointment.slotData) {
                     if (
