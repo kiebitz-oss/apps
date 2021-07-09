@@ -42,6 +42,7 @@ export async function confirmProvider(
             city: providerData.data.city,
             zipCode: providerData.data.zipCode,
             website: providerData.data.website,
+            description: providerData.data.description,
         };
 
         const publicProviderJSONData = JSON.stringify(publicProviderData);
