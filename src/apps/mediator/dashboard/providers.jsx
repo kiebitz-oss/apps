@@ -63,7 +63,7 @@ const Providers = withTimer(
                         setLastRun(t);
                         pendingProvidersAction(keyPairs.data).then(pd =>
                             verifiedProvidersAction(keyPairs.data).then(vp => {
-                                console.log(pd, vp);
+                                // do something
                             })
                         );
                     }
@@ -237,6 +237,17 @@ const Providers = withTimer(
                                                     </td>
                                                     <td>
                                                         {provider.data.phone}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.description"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.description}
                                                     </td>
                                                 </tr>
                                                 <tr>

@@ -54,6 +54,8 @@ providers:
   confirmText:
     de: Wollen Sie den Anbieter wirklich freischalten?
 provider-data:
+  description:
+    de: Beschreibung
   field:
     de: Feld
   queues:
