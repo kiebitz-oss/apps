@@ -61,14 +61,15 @@ const ProviderDetails = ({ data }) => {
 };
 
 const OfferDetails = withSettings(({ settings, offer }) => {
-    // we disable this for now (until the texts are ready)
     const lang = settings.get('lang');
     const notices = [];
     const properties = settings.get('appointmentProperties');
     for (const [category, values] of Object.entries(properties)) {
         for (const [k, v] of Object.entries(values.values)) {
             if (
-                offer[k] === true &&
+                (offer[k] === true ||
+                    (offer.properties !== undefined &&
+                        offer.properties[category] === k)) &&
                 v.notice !== undefined &&
                 v.infosUrl !== undefined &&
                 v.anamnesisUrl !== undefined
@@ -80,6 +81,9 @@ const OfferDetails = withSettings(({ settings, offer }) => {
                             <T
                                 t={t}
                                 k="offer-notice-text"
+                                vaccine={
+                                    <strong key="vaccine">{v[lang]}</strong>
+                                }
                                 info={
                                     <a
                                         key="infos"
