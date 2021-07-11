@@ -6,7 +6,7 @@ import './kiebitz/setup';
 import DefaultLayout from './layouts/DefaultLayout';
 import UserWelcomeFeature from './features/UserWelcomeFeature';
 import UserProfileFeature from './features/UserProfileFeature';
-import UserSlotsSelectionFeature from './features/UserSlotsSelectionFeature';
+import UserSlotsSelectionFeature from './features/user-slots-selection-feature/UserSlotsSelectionFeature';
 import UserAppointmentStatusFeature from './features/UserAppointmentStatusFeature';
 import ProviderAppointmentCreate from './features/ProviderAppointmentCreate';
 

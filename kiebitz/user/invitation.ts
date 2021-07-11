@@ -82,6 +82,89 @@ export const confirmUserOffer = async (slotData, encryptedProviderData, grant, t
     );
 };
 
+export interface ConfirmMultipleUserOfferEntry {
+    offer: any;
+    encryptedProviderData: any;
+    invitation: any;
+}
+
+export const confirmMultipleUserOffers = async (entries: ConfirmMultipleUserOfferEntry[], tokenData): Promise<any> => {
+    const backend = settings.get(KEY_BACKEND);
+
+    const slotInfos = backend.local.get('user::invitation::slots', {});
+    const grantID = backend.local.get('user::invitation::grantID');
+
+    try {
+        await backend.local.lock('confirmOffers');
+
+        for (const entry of entries) {
+            const { offer, encryptedProviderData, invitation } = entry;
+
+            // Loop over slot data of a given offer
+            try {
+                for (let i = 0; i < offer.slotData.length; i++) {
+                    const slotData = offer.slotData[i];
+                    if (slotData.failed || !slotData.open) {
+                        continue;
+                    }
+                    const grant = offer.grants.find((grant) => {
+                        const data = JSON.parse(grant.data);
+                        return data.objectID === slotData.id;
+                    });
+                    const slotInfo = slotInfos[slotData.id];
+                    if (slotInfo !== undefined) {
+                        if (slotInfo.status === 'taken') continue; // this slot is taken already, we skip it
+                    }
+                    if (grant === undefined) continue;
+                    const grantData = JSON.parse(grant.data);
+                    if (grantID !== null && grantData.grantID === grantID) {
+                        continue; // this belongs to an old grant ID
+                    }
+
+                    try {
+                        await confirmUserOffer(slotData, encryptedProviderData, grant, tokenData);
+                    } catch (e) {
+                        if (typeof e === 'object' && e.name === 'RPCException') {
+                            if (e.error.code === 401) {
+                                slotInfos[slotData.id] = {
+                                    status: 'taken',
+                                };
+                            } else {
+                                slotInfos[slotData.id] = {
+                                    status: 'error',
+                                };
+                            }
+                        }
+                        // we can't use this slot, we try the next...
+                        console.error(e);
+                        continue;
+                    }
+                    // we store the information about the offer which we've accepted
+                    backend.local.set(KEY_USER_INVITATION_ACCEPTED, {
+                        offer,
+                        invitation,
+                        slotData,
+                        grant,
+                    });
+
+                    backend.local.set('user::invitation::grantID', grantData.grantID);
+
+                    return {
+                        offer,
+                        slotData,
+                    };
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    } finally {
+        backend.local.set('user::invitation::slots', slotInfos);
+
+        backend.local.unlock('confirmOffers');
+    }
+};
+
 export const confirmUserOffers = async (offers, encryptedProviderData, invitation, tokenData) => {
     const backend = settings.get(KEY_BACKEND);
 
