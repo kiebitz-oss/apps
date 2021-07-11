@@ -41,13 +41,14 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
     const backend = settings.get(KEY_BACKEND);
 
     try {
-        await backend.local.lock('submitting');
-
+        await backend.local.lock('submitToQueue');
+    
         const tokenData = await getUserTokenData();
         if (tokenData !== null) {
             // We already have a token, so we submit to another queue.
             tokenData.signedToken = await backend.appointments.getToken({
                 hash: tokenData.dataHash,
+                publicKey: tokenData.signingKeyPair.publicKey,
                 code: contactData.code,
                 encryptedData: tokenData.encryptedTokenData,
                 queueID: queue.id,
@@ -107,6 +108,7 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
                 signingKeyPair: signingKeyPair,
                 encryptedTokenData: encryptedTokenData,
                 encryptedContactData: encryptedContactData,
+                queueID: queue.id,
                 queueData: queueData,
                 keyPair: encryptionKeyPair,
                 hashNonce: nonce,
@@ -119,6 +121,6 @@ export const getUserAppointmentsTokenDataWithSignedToken = async (
             return newTokenData;
         }
     } finally {
-        backend.local.unlock('submitting');
+        backend.local.unlock('submitToQueue');
     }
 };

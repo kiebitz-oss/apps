@@ -3,8 +3,18 @@ import { b642buf } from 'helpers/conversion';
 
 // TODO: Verify the provider data.
 export const verifyProviderData = async (providerData: any, keys?: any): Promise<void> => {
-    // eslint-disable-next-line no-console
-    console.log('TODO: Implement `verifyProviderData`.', providerData, keys);
+    let found = false;
+    for (const mediatorKeys of keys.lists.mediators) {
+        if (mediatorKeys.json.signing === providerData.publicKey) {
+            found = true;
+            break;
+        }
+    }
+    // TODO: Make Error.
+    if (!found) throw 'invalid key';
+    const result = await verify([providerData.publicKey], providerData);
+    // TODO: Make Error.
+    if (!result) throw 'invalid signature';
 };
 
 export const decryptInvitationData = async (signedData: any, keys: any, tokenData: any) => {

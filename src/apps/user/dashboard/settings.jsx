@@ -25,21 +25,12 @@ const Settings = withActions(
     withSettings(
         withRouter(
             ({ settings, action, router, userSecret, backupDataAction }) => {
-                const [deleting, setDeleting] = useState(false);
                 const [loggingOut, setLoggingOut] = useState(false);
 
-                let deleteModal, logOutModal;
+                let logOutModal;
 
                 const cancel = () => {
                     router.navigateToUrl('/user/settings');
-                };
-
-                const deleteData = () => {
-                    setDeleting(true);
-                    const backend = settings.get('backend');
-                    backend.local.deleteAll('user::');
-                    setDeleting(false);
-                    router.navigateToUrl('/user/deleted');
                 };
 
                 const logOut = () => {
@@ -53,31 +44,7 @@ const Settings = withActions(
                     });
                 };
 
-                if (action === 'delete') {
-                    deleteModal = (
-                        <Modal
-                            onClose={cancel}
-                            save={<T t={t} k="delete" />}
-                            disabled={deleting}
-                            waiting={deleting}
-                            title={<T t={t} k="delete-modal.title" />}
-                            onCancel={cancel}
-                            onSave={deleteData}
-                            saveType="danger"
-                        >
-                            <p>
-                                <T
-                                    t={t}
-                                    k={
-                                        deleting
-                                            ? 'delete-modal.deleting-text'
-                                            : 'delete-modal.text'
-                                    }
-                                />
-                            </p>
-                        </Modal>
-                    );
-                } else if (action === 'logout') {
+                if (action === 'logout') {
                     logOutModal = (
                         <Modal
                             onClose={cancel}
@@ -115,7 +82,6 @@ const Settings = withActions(
                     <F>
                         <CardContent>
                             <div className="kip-user-settings">
-                                {deleteModal}
                                 {logOutModal}
                                 <h2>
                                     <T t={t} k="user-data.title" />
@@ -132,12 +98,6 @@ const Settings = withActions(
                                     href="/user/settings/logout"
                                 >
                                     <T t={t} k="log-out" />
-                                </Button>
-                                <Button
-                                    type="danger"
-                                    href="/user/settings/delete"
-                                >
-                                    <T t={t} k="delete" />
                                 </Button>
                             </div>
                         </CardFooter>

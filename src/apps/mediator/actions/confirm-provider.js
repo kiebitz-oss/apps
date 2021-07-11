@@ -4,6 +4,96 @@
 
 import { sign, ecdhDecrypt, ephemeralECDHEncrypt } from 'helpers/crypto';
 
+export async function confirmSingleProvider(providerData, keyPairs, backend) {
+    const keyHashesData = {
+        signing: providerData.publicKeys.signing,
+        encryption: providerData.publicKeys.encryption,
+        queueData: {
+            zipCode: providerData.data.zipCode,
+            accessible: providerData.data.accessible,
+        },
+        queues: providerData.data.queues, // so we know which queues the provider can query
+    };
+
+    const keysJSONData = JSON.stringify(keyHashesData);
+
+    // we remove the 'code' field from the provider
+    if (providerData.data.code !== undefined) delete providerData.data.code;
+
+    const publicProviderData = {
+        name: providerData.data.name,
+        street: providerData.data.street,
+        city: providerData.data.city,
+        zipCode: providerData.data.zipCode,
+        website: providerData.data.website,
+        description: providerData.data.description,
+    };
+
+    console.log(publicProviderData);
+
+    const publicProviderJSONData = JSON.stringify(publicProviderData);
+    const providerJSONData = JSON.stringify(providerData.data);
+
+    const signedKeyData = await sign(
+        keyPairs.signing.privateKey,
+        keysJSONData,
+        keyPairs.signing.publicKey
+    );
+
+    const queues = await backend.appointments.getQueuesForProvider(
+        { queueIDs: providerData.data.queues },
+        keyPairs.signing
+    );
+
+    const queuePrivateKeys = [];
+    for (const queue of queues) {
+        const queuePrivateKey = await ecdhDecrypt(
+            queue.encryptedPrivateKey,
+            keyPairs.queue.privateKey
+        );
+        queuePrivateKeys.push({
+            privateKey: queuePrivateKey,
+            id: queue.id,
+        });
+    }
+
+    // this will be stored for the provider, so we add the public key data
+    const signedProviderData = await sign(
+        keyPairs.signing.privateKey,
+        providerJSONData,
+        keyPairs.signing.publicKey
+    );
+
+    const signedPublicProviderData = await sign(
+        keyPairs.signing.privateKey,
+        publicProviderJSONData,
+        keyPairs.signing.publicKey
+    );
+
+    const fullData = {
+        queuePrivateKeys: queuePrivateKeys,
+        signedData: signedProviderData,
+        signedPublicData: signedPublicProviderData,
+    };
+
+    // we encrypt the data with the public key supplied by the provider
+    const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
+        JSON.stringify(fullData),
+        providerData.entry.encryptedData.publicKey
+    );
+
+    const result = await backend.appointments.confirmProvider(
+        {
+            id: providerData.id, // the ID of the unverified data
+            verifiedID: providerData.verifiedID, // the ID to store the data under
+            encryptedProviderData: encryptedProviderData,
+            publicProviderData: signedPublicProviderData,
+            signedKeyData: signedKeyData,
+        },
+        keyPairs.signing
+    );
+}
+
 export async function confirmProvider(
     state,
     keyStore,
@@ -21,73 +111,10 @@ export async function confirmProvider(
     }
 
     try {
-        const keyHashesData = {
-            signing: providerData.publicKeys.signing,
-            encryption: providerData.publicKeys.encryption,
-            queueData: {
-                zipCode: providerData.data.zipCode,
-                accessible: providerData.data.accessible,
-            },
-            queues: providerData.data.queues, // so we know which queues the provider can query
-        };
-
-        const keysJSONData = JSON.stringify(keyHashesData);
-
-        // we remove the 'code' field from the provider
-        if (providerData.data.code !== undefined) delete providerData.data.code;
-
-        const providerJSONData = JSON.stringify(providerData.data);
-
-        const signedKeyData = await sign(
-            keyPairs.signing.privateKey,
-            keysJSONData,
-            keyPairs.signing.publicKey
-        );
-
-        const queues = await backend.appointments.getQueuesForProvider(
-            { queueIDs: providerData.data.queues },
-            keyPairs.signing
-        );
-
-        const queuePrivateKeys = [];
-        for (const queue of queues) {
-            const queuePrivateKey = await ecdhDecrypt(
-                queue.encryptedPrivateKey,
-                keyPairs.queue.privateKey
-            );
-            queuePrivateKeys.push({
-                privateKey: queuePrivateKey,
-                id: queue.id,
-            });
-        }
-
-        // this will be stored for the provider, so we add the public key data
-        const signedProviderData = await sign(
-            keyPairs.signing.privateKey,
-            providerJSONData,
-            keyPairs.signing.publicKey
-        );
-
-        const fullData = {
-            queuePrivateKeys: queuePrivateKeys,
-            signedData: signedProviderData,
-        };
-
-        // we encrypt the data with the public key supplied by the provider
-        const [encryptedProviderData, _] = await ephemeralECDHEncrypt(
-            JSON.stringify(fullData),
-            providerData.entry.encryptedData.publicKey
-        );
-
-        const result = await backend.appointments.confirmProvider(
-            {
-                id: providerData.id, // the ID of the unverified data
-                verifiedID: providerData.verifiedID, // the ID to store the data under
-                encryptedProviderData: encryptedProviderData,
-                publicProviderData: signedProviderData,
-                signedKeyData: signedKeyData,
-            },
-            keyPairs.signing
+        const result = await confirmSingleProvider(
+            providerData,
+            keyPairs,
+            backend
         );
 
         return {

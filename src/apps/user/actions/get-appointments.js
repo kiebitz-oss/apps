@@ -2,7 +2,43 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-export async function getAppointments(state, keyStore, settings, queueData) {
+import { verify } from 'helpers/crypto';
+
+async function verifyOffer(offer, keys) {
+    let found = false;
+    for (const providerKeys of keys.lists.providers) {
+        if (providerKeys.json.signing === offer.publicKey) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) throw 'invalid key';
+    const result = await verify([offer.publicKey], offer);
+    if (!result) throw 'invalid signature';
+    return JSON.parse(offer.data);
+}
+
+async function verifyProviderData(providerData, keys) {
+    let found = false;
+    for (const mediatorKeys of keys.lists.mediators) {
+        if (mediatorKeys.json.signing === providerData.publicKey) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) throw 'invalid key';
+    const result = await verify([providerData.publicKey], providerData);
+    if (!result) throw 'invalid signature';
+    return JSON.parse(providerData.data);
+}
+
+export async function getAppointments(
+    state,
+    keyStore,
+    settings,
+    queueData,
+    keys
+) {
     const backend = settings.get('backend');
 
     try {
@@ -28,10 +64,45 @@ export async function getAppointments(state, keyStore, settings, queueData) {
                 zipCode: queueData.zipCode,
             });
 
-            console.log(result);
+            const verifiedAppointments = [];
+
+            for (const item of result) {
+                try {
+                    item.provider.json = await verifyProviderData(
+                        item.provider,
+                        keys
+                    );
+                    const verifiedOffers = [];
+                    for (const offer of item.offers) {
+                        const verifiedOffer = await verifyOffer(offer, keys);
+                        for (const slot of verifiedOffer.slotData) {
+                            if (item.booked.some(id => id === slot.id))
+                                slot.open = false;
+                            else slot.open = true;
+                        }
+                        verifiedOffers.push(verifiedOffer);
+                    }
+                    item.offers = verifiedOffers;
+                    verifiedAppointments.push(item);
+                } catch (e) {
+                    console.log(e);
+                    continue;
+                }
+            }
+
+            verifiedAppointments.sort((a, b) =>
+                a.provider.json.name > b.provider.json.name ? 1 : -1
+            );
+
+            backend.local.set(
+                'user::appointments::verified',
+                verifiedAppointments
+            );
+
+            backend.local.set('user::invitation::slots', {});
 
             return {
-                data: tokenData,
+                data: verifiedAppointments,
                 status: 'suceeded',
             };
         } catch (e) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useHistory } from 'react-router-dom';
-import { ephemeralECDHEncrypt } from 'helpers/crypto';
+import { ecdhEncrypt } from 'helpers/crypto';
 import useAvailableUserSlots from '@/hooks/useAvailableUserSlots';
 import useUserSecret from '@/hooks/useUserSecret';
 import useUserTokenData from '@/hooks/useUserTokenData';
@@ -38,6 +38,7 @@ const UserSlotsSelectionFeature: React.FC = () => {
         const dataForProvider = {
             signedToken: userTokenData.signedToken,
             userData: userTokenData.hashData,
+            contactData: userTokenData.encryptedContactData,
         };
 
         const entries: ConfirmMultipleUserOfferEntry[] = await Promise.all(
@@ -47,14 +48,16 @@ const UserSlotsSelectionFeature: React.FC = () => {
 
                 const offer = invitation.offers.find((offer) => offer.id === slotId);
 
-                const [encryptedProviderData] = await ephemeralECDHEncrypt(
+                const encryptedProviderData = await ecdhEncrypt(
                     JSON.stringify(dataForProvider),
+                    userTokenData.keyPair,
                     invitation.publicKey
                 );
 
                 return {
                     offer,
                     encryptedProviderData,
+                    dataForProvider,
                     invitation,
                 };
             })

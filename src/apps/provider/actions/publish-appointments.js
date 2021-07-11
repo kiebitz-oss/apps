@@ -23,7 +23,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
 
         const signedAppointments = [];
         const relevantAppointments = openAppointments.filter(
-            oa => new Date(oa.timestamp) > new Date() && oa.slotData.length > 0
+            oa => new Date(oa.timestamp) > new Date(new Date().getTime()-1000*60*60*4)
         );
 
         for (const appointment of relevantAppointments) {
@@ -35,10 +35,16 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                     publicKey: keyPairs.encryption.publicKey,
                     properties: {},
                     // to do: remove filter once everything's on the new mechanism
-                    slots: appointment.slotData.map(sl => ({
-                        id: sl.id,
-                        open: sl.open,
-                    })),
+                    // currently we filter out slots that have been booked through the old mechanism
+                    slotData: appointment.slotData
+                        .filter(
+                            sl =>
+                                sl.token === undefined ||
+                                sl.token.expiresAt === undefined
+                        )
+                        .map(sl => ({
+                            id: sl.id,
+                        })),
                 };
                 for (const [k, v] of Object.entries(properties)) {
                     for (const [kk] of Object.entries(v.values)) {
@@ -49,7 +55,10 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                 // we sign each appointment individually so that the client can
                 // verify that they've been posted by a valid provider
                 const signedAppointment = await sign(
-                    keyPairs.signing.privateKey, JSON.stringify(convertedAppointment), keyPairs.signing.publicKey)
+                    keyPairs.signing.privateKey,
+                    JSON.stringify(convertedAppointment),
+                    keyPairs.signing.publicKey
+                );
 
                 signedAppointments.push(signedAppointment);
             } catch (e) {
@@ -60,7 +69,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
 
         const result = await backend.appointments.publishAppointments(
             {
-                appointments: signedAppointments,
+                offers: signedAppointments,
             },
             keyPairs.signing
         );

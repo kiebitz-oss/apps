@@ -95,11 +95,39 @@ class AppointmentsBackend extends JSONRPCBackend {
 
     // user endpoints
 
+    async cancelSlot({ providerID, id, signedTokenData }, keyPair) {
+        return await this.call(
+            'cancelSlot',
+            { providerID, id, signedTokenData },
+            keyPair
+        );
+    }
+
+    async bookSlot(
+        { providerID, id, encryptedData, signedTokenData },
+        keyPair
+    ) {
+        return await this.call(
+            'bookSlot',
+            { providerID, id, encryptedData, signedTokenData },
+            keyPair
+        );
+    }
+
     // get a token for a given queue
-    async getToken({ hash, encryptedData, queueID, code, queueData, signedTokenData }) {
+    async getToken({
+        hash,
+        encryptedData,
+        queueID,
+        publicKey,
+        code,
+        queueData,
+        signedTokenData,
+    }) {
         return await this.call('getToken', {
             hash: hash,
             code: code,
+            publicKey: publicKey,
             encryptedData: encryptedData,
             queueID: queueID,
             queueData: queueData,
@@ -115,12 +143,12 @@ class AppointmentsBackend extends JSONRPCBackend {
     }
 
     // get n tokens from the given queue IDs
-    async publishAppointments({ appointments }, keyPair) {
-        return await this.call(
-            'publishAppointments',
-            { appointments },
-            keyPair
-        );
+    async publishAppointments({ offers }, keyPair) {
+        return await this.call('publishAppointments', { offers }, keyPair);
+    }
+
+    async cancelBooking({ id }, keyPair) {
+        return await this.call('cancelBooking', {}, keyPair);
     }
 
     // get n tokens from the given queue IDs

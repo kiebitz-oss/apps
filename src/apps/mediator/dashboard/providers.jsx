@@ -6,6 +6,7 @@ import React, { useState, useEffect, Fragment as F } from 'react';
 import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
 import Form from 'helpers/form';
 import {
+    reconfirmProviders,
     pendingProviders,
     verifiedProviders,
     keyPairs,
@@ -19,6 +20,7 @@ import {
     Modal,
     CardContent,
     WithLoader,
+    A,
     List,
     Icon,
     ListHeader,
@@ -45,6 +47,8 @@ const Providers = withTimer(
                 timer,
                 confirmProvider,
                 confirmProviderAction,
+                reconfirmProviders,
+                reconfirmProvidersAction,
                 keyPairs,
                 pendingProviders,
                 pendingProvidersAction,
@@ -59,7 +63,7 @@ const Providers = withTimer(
                         setLastRun(t);
                         pendingProvidersAction(keyPairs.data).then(pd =>
                             verifiedProvidersAction(keyPairs.data).then(vp => {
-                                console.log(pd, vd);
+                                // do something
                             })
                         );
                     }
@@ -82,6 +86,47 @@ const Providers = withTimer(
 
                     const closeModal = () =>
                         router.navigateToUrl('/mediator/providers');
+
+                    const closeReconfirmModal = () => {
+                        if (reconfirmProviders.status === 'inProgress') return;
+                        router.navigateToUrl('/mediator/providers');
+                    };
+
+                    const doReconfirmProviders = () => {
+                        reconfirmProvidersAction(
+                            verifiedProviders.data,
+                            keyPairs.data
+                        );
+                    };
+
+                    if (action === 'reconfirm')
+                        modal = (
+                            <Modal
+                                title={<T t={t} k="providers.reconfirm" />}
+                                save={<T t={t} k="providers.reconfirm" />}
+                                onSave={doReconfirmProviders}
+                                saveType="success"
+                                disabled={
+                                    reconfirmProviders.status === 'inProgress'
+                                }
+                                onClose={closeModal}
+                                onCancel={closeModal}
+                            >
+                                <div className="kip-provider-data">
+                                    {(reconfirmProviders.status ===
+                                        'inProgress' && (
+                                        <T
+                                            t={t}
+                                            k="providers.reconfirmProgressText"
+                                            i={reconfirmProviders.i}
+                                            n={reconfirmProviders.n}
+                                        />
+                                    )) || (
+                                        <T t={t} k="providers.reconfirmText" />
+                                    )}
+                                </div>
+                            </Modal>
+                        );
 
                     if (action === 'show' && id !== undefined) {
                         const base64Id = buf2b64(hex2buf(id));
@@ -198,6 +243,17 @@ const Providers = withTimer(
                                                     <td>
                                                         <T
                                                             t={t}
+                                                            k="provider-data.description"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.description}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
                                                             k="provider-data.queues"
                                                         />
                                                     </td>
@@ -258,6 +314,9 @@ const Providers = withTimer(
                                         <T t={t} k="providers.pending" />
                                     </DropdownMenuItem>
                                 </DropdownMenu>
+                                <A href="/mediator/providers/reconfirm">
+                                    <T t={t} k="providers.reconfirm" />
+                                </A>
                                 <List>
                                     <ListHeader>
                                         <ListColumn size="md">
@@ -284,7 +343,13 @@ const Providers = withTimer(
                     />
                 );
             },
-            [pendingProviders, verifiedProviders, keyPairs, confirmProvider]
+            [
+                pendingProviders,
+                reconfirmProviders,
+                verifiedProviders,
+                keyPairs,
+                confirmProvider,
+            ]
         )
     ),
     10000

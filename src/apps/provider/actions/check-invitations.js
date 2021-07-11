@@ -97,7 +97,6 @@ export async function checkInvitations(state, keyStore, settings, keyPairs) {
                 if (result === null) continue;
 
                 const cancel = async slotData => {
-                    console.log('Canceling slot');
                     canceledSlots.push(slotData);
                     // the user wants to cancel this appointment
                     await cancelSlots(undefined, [slotData], openTokens);

@@ -57,6 +57,8 @@ export async function restoreFromBackup(
             backend.local.set(`provider::${key}`, dd[key]);
         }
 
+        console.log(dd);
+
         // if there's local data in the backup we restore it too...
         for (const key of cloudKeys) {
             if (dd[key] !== undefined)

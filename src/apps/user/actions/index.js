@@ -13,6 +13,7 @@ export * from './token-data';
 export * from './user-secret';
 export * from './queue-data';
 export * from './backup-data';
+export * from './appointments';
 export * from './confirm-deletion';
 export * from './cancel-invitation';
 export * from './grant-id';

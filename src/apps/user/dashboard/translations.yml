@@ -30,7 +30,7 @@ invitation-accepted:
 no-offers-anymore:
   de: Alle Terminangebote sind bereits abgelaufen. Bitte hab' etwas Geduld, du wirst voraussichtlich neue Angebote erhalten.
 appointments-notice:
-  de: Bitte wähle alle für Dich passenden Termine aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum geannten Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.
+  de: Bitte wähle alle für Dich passenden Termine aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.
 confirm-appointment:
   de: Terminauswahl bestätigen
 anamnesis:
@@ -38,7 +38,7 @@ anamnesis:
 info:
   de: das Aufklärungsmerkblatt
 offer-notice-text:
-  de: Bitte füllen Sie möglichst {anamnesis} sowie {info} aus und bringen Sie diese unterschrieben mit zur Impfung.
+  de: Bitte füllen Sie nach Möglichkeit {anamnesis} sowie {info} für den Impfstoff {vaccine} aus und bringen Sie diese unterschrieben mit zur Impfung (falls Sie keine Möglichkeit haben die Dokumente zu drucken können Sie diese auch vor Ort ausfüllen).
 offer-expired:
   de: Das Angebot ist leider abgelaufen. Falls wieder Termine verfügbar sind in deiner Umgebung erhälst du eventuell ein neues Angebot.
 offer-expires-at:
