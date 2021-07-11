@@ -1,5 +1,5 @@
 import settings from 'helpers/settings';
-import { ephemeralECDHEncrypt }from 'helpers/crypto';
+import { ephemeralECDHEncrypt } from 'helpers/crypto';
 import { verifyProviderData, decryptInvitationData, deriveSecrets, b642buf } from './crypto';
 
 // TODO: Should be defined and exported somewhere in settings, since it's a
@@ -55,7 +55,7 @@ export const getUserDecryptedInvitationData = async (keys: any, tokenData: any):
 
             try {
                 const decryptedData = await decryptInvitationData(data, keys, tokenData);
-                await verifyProviderData(decryptedData.provider);
+                await verifyProviderData(decryptedData.provider, keys);
                 decryptedData.legacy = true;
                 decryptedDataList = [...decryptedDataList, decryptedData];
             } catch (error) {
@@ -94,8 +94,6 @@ export interface ConfirmMultipleUserOfferEntry {
 export const confirmMultipleUserOffers = async (entries: ConfirmMultipleUserOfferEntry[], tokenData): Promise<any> => {
     const backend = settings.get(KEY_BACKEND);
 
-
-
     try {
         await backend.local.lock('confirmOffers');
 
@@ -103,7 +101,7 @@ export const confirmMultipleUserOffers = async (entries: ConfirmMultipleUserOffe
         const grantID = backend.local.get('user::invitation::grantID');
 
         for (const entry of entries) {
-            const { offer, encryptedProviderData, invitation, dataForProvider} = entry;
+            const { offer, encryptedProviderData, invitation, dataForProvider } = entry;
 
             // Loop over slot data of a given offer
             try {
@@ -122,7 +120,7 @@ export const confirmMultipleUserOffers = async (entries: ConfirmMultipleUserOffe
                             const data = JSON.parse(grant.data);
                             return data.objectID === slotData.id;
                         });
-                        
+
                         if (grant === undefined) continue;
                         const grantData = JSON.parse(grant.data);
                         if (grantID !== null && grantData.grantID === grantID) {
@@ -178,10 +176,7 @@ export const confirmMultipleUserOffers = async (entries: ConfirmMultipleUserOffe
                                 tokenData.signingKeyPair
                             );
                         } catch (e) {
-                            if (
-                                typeof e === 'object' &&
-                                e.name === 'RPCException'
-                            ) {
+                            if (typeof e === 'object' && e.name === 'RPCException') {
                                 if (e.error.code === 401) {
                                     slotInfos[slotData.id] = {
                                         status: 'taken',
