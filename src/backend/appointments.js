@@ -158,7 +158,12 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('returnTokens', { tokens }, keyPair);
     }
 
-    // get n tokens from the given queue IDs
+    // get all published appointments from the backend
+    async getAppointments({}, keyPair) {
+        return await this.call('getProviderAppointments', {}, keyPair);
+    }
+
+    // publish all local appointments to the backend
     async publishAppointments({ offers }, keyPair) {
         return await this.call('publishAppointments', { offers }, keyPair);
     }

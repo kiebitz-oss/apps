@@ -704,6 +704,9 @@ const NewAppointment = withSettings(
                     const save = () => {
                         let action;
                         setSaving(true);
+                        // we remove unnecessary fields like 'time' and 'date'
+                        delete data.time;
+                        delete data.date;
                         if (appointment !== undefined)
                             action = updateAppointmentAction;
                         else action = createAppointmentAction;
@@ -724,8 +727,8 @@ const NewAppointment = withSettings(
                         setInitialized(true);
                         if (appointment !== undefined) {
                             const appointmentData = {
-                                time: appointment.time,
-                                date: appointment.date,
+                                time: formatTime(appointment.timestamp),
+                                date: formatDate(appointment.timestamp),
                                 slots: appointment.slots,
                                 duration: appointment.duration,
                             };

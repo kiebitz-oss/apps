@@ -14,6 +14,7 @@ import {
     providerData,
     backupData,
     getBookings,
+    getAppointments,
     publishAppointments,
     sendInvitations,
     providerSecret,
@@ -76,6 +77,8 @@ const Dashboard = withRouter(
                     getBookingsAction,
                     publishAppointments,
                     publishAppointmentsAction,
+                    getAppointments,
+                    getAppointmentsAction,
                     keyPairs,
                     keyPairsAction,
                     validKeyPairs,
@@ -103,6 +106,11 @@ const Dashboard = withRouter(
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
+                                // we send invitations and then check invitation data
+                                getAppointmentsAction(kp.data).finally(data => {
+                                    console.log(data);
+                                });
+
                                 // we send invitations and then check invitation data
                                 publishAppointmentsAction(kp.data).finally(
                                     () => {
@@ -215,18 +223,6 @@ const Dashboard = withRouter(
                     return (
                         <CenteredCard size="fullwidth" tight>
                             <CardHeader>
-                                <div
-                                    style={{
-                                        padding: '1rem',
-                                        background: 'green',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        marginBottom: '1rem',
-                                    }}
-                                >
-                                    Bitte eingeloggt bleiben, Termine werden
-                                    aktiv vermittelt!
-                                </div>
                                 <Tabs>
                                     <Tab
                                         active={tab === 'schedule'}
@@ -260,6 +256,7 @@ const Dashboard = withRouter(
         ),
         [
             verifiedProviderData,
+            getAppointments,
             publishAppointments,
             keyPairs,
             keys,

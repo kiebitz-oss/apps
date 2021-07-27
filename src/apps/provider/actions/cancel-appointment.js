@@ -10,7 +10,10 @@ export async function cancelSlots(backend, slots, tokens) {
             const existingToken = tokens.find(
                 token => token.token === slot.token.token
             );
-            if (existingToken !== undefined) {
+            if (
+                existingToken !== undefined &&
+                existingToken.expiresAt !== undefined
+            ) {
                 // we renew the grant IDs for the token, so the user can book another appointment
                 existingToken.grantID = undefined;
                 existingToken.expiresAt = undefined;
