@@ -1,10 +1,15 @@
 @import 'scss/variables.scss';
 
-.kip-restore-from-backup {
+.kip-user-restore-from-backup {
 
 	.bulma-message {
 		margin-bottom: map-get($kip-space, md);
 	}
+
+    #secret {
+		text-transform: uppercase;
+		letter-spacing: 2px;
+    }
 
 	label {
 		padding: map-get($kip-space, md);

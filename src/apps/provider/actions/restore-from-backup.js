@@ -8,12 +8,12 @@ import { localKeys, cloudKeys } from './backup-data';
 
 // to support old backup versions
 const dataMap = {
-    keyPairs: 'provider::keyPairs',
-    providerData: 'provider::data',
-    appointments: 'provider::appointments::open',
-    verifiedProviderData: 'provider::data::verified',
-    openTokens: 'provider::tokens::open',
-    providerDataEncryptionKey: 'provider::data::encryptionKey',
+    keyPairs: 'keyPairs',
+    providerData: 'data',
+    appointments: 'appointments::open',
+    verifiedProviderData: 'data::verified',
+    openTokens: 'tokens::open',
+    providerDataEncryptionKey: 'data::encryptionKey',
 };
 
 export async function restoreFromBackup(
@@ -21,12 +21,19 @@ export async function restoreFromBackup(
     keyStore,
     settings,
     secret,
-    data
+    data,
+    localOnly // if true, only local data will be imported
 ) {
     const backend = settings.get('backend');
-    try {
-        await backend.local.lock();
 
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('restoreFromBackup');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         const dd = JSON.parse(await aesDecrypt(data, base322buf(secret)));
 
         if (dd === null)
@@ -38,32 +45,49 @@ export async function restoreFromBackup(
             };
 
         // to do: remove as soon as everyone's on the new versioned schema
-        if (dd.version === undefined){
-            // this is an old backup file
-            for(const [k,v] of Object.entries(dataMap)){
-                backend.local.set(v, dd[k])
+        if (dd.version === undefined || dd.version === '0.1') {
+            // this is an old backup file, we restore data from it...
+            for (const [k, v] of Object.entries(dataMap)) {
+                if (dd[k] !== undefined)
+                    backend.local.set(`provider::${v}`, dd[k]);
             }
-            return {
-                status: 'succeeded',
-                data: dd,
-            }
-        } else {
-            for (const key of localKeys) {
-                backend.local.set(`provider::${key}`, dd[key]);
-            }            
         }
 
+        for (const key of localKeys) {
+            backend.local.set(`provider::${key}`, dd[key]);
+        }
+
+        console.log(dd);
+
+        // if there's local data in the backup we restore it too...
+        for (const key of cloudKeys) {
+            if (dd[key] !== undefined)
+                backend.local.set(`provider::${key}`, dd[key]);
+        }
+
+        if (dd.keyPairs.sync !== undefined && localOnly !== true) {
+            const [id, key] = await deriveSecrets(
+                b642buf(dd.keyPairs.sync),
+                32,
+                2
+            );
+
+            try {
+                const cloudData = await backend.storage.getSettings({ id: id });
+                const ddCloud = JSON.parse(
+                    await aesDecrypt(cloudData, b642buf(key))
+                );
+
+                for (const key of cloudKeys) {
+                    if (ddCloud[key] !== undefined && ddCloud[key] !== null)
+                        backend.local.set(`provider::${key}`, ddCloud[key]);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
 
         backend.local.set('provider::secret', secret);
-
-        const [id, key] = await deriveSecrets(b642buf(dd.keyPairs.sync), 32, 2);
-
-        const cloudData = await backend.storage.getSettings({ id: id });
-        const ddCloud = JSON.parse(await aesDecrypt(cloudData, b642buf(key)));
-
-        for (const key of cloudKeys) {
-            backend.local.set(`provider::${key}`, ddCloud[key]);
-        }
 
         return {
             status: 'succeeded',
@@ -76,7 +100,8 @@ export async function restoreFromBackup(
             error: e,
         };
     } finally {
-        backend.local.unlock();
+        backend.local.set('provider::loggedOut', false);
+        backend.local.unlock('restoreFromBackup');
     }
 }
 

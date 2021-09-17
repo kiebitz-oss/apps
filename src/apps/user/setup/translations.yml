@@ -54,13 +54,13 @@ wizard:
     hi:
       de: Los geht's!
     enter-contact-data:
-      de: Kontaktdaten eingeben
+      de: Registrierungsdaten eingeben
     store-secrets:
       de: Sicherheitscode notieren
     save-contact-data:
       de: Kontakdaten angeben
     finalize:
-      de: Weitere Angaben
+      de: Daten zu Impfung eingeben
     verify:
       de: Kontaktdaten prüfen
 contact-data:
@@ -81,7 +81,7 @@ contact-data:
     label:
       de: "Maximale Entfernung zum Impfort in Kilometern (km)"
     notice:
-      de: " "
+      de: "Achtung: Du kannst den Radius derzeit nur 1x einstellen und nicht mehr ändern!"
     option:
       de: "{distance} km"
   not-given:

@@ -39,13 +39,3 @@ export function format(str: string, ...rest: any[]): any[] {
     }
     return splits;
 }
-
-export function formatDuration(minutes, settings, t){
-    if (minutes < 60)
-        return settings.t(t, 'minute-string', {minutes: minutes})
-    const hours = Math.floor(minutes/60)
-    const remainingMinutes = minutes % 60
-    if (remainingMinutes === 0)
-        return settings.t(t, 'hour-string', {hours: hours})
-    return settings.t(t, 'hour-minute-string', {hours: hours, minutes: remainingMinutes})
-}

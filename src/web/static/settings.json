@@ -1,6 +1,6 @@
 {
     "title":"sofort-impfen",
-    "commitSHA" : "abcdefsddss",
+    "commitSHA" : "abcdef",
     "storageApi" : "http://localhost:9999/jsonrpc",
     "appointmentsApi" : "http://localhost:8888/jsonrpc",
     "termsUrl" : "http://localhost:8111/resources/terms.html",

@@ -2,10 +2,22 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { hash, verify, ecdhDecrypt } from 'helpers/crypto';
+import { hash, verify, ecdhDecrypt, deriveSecrets } from 'helpers/crypto';
+import { b642buf } from 'helpers/conversion';
 
 // to do: verify the provider data
-async function verifyProviderData(providerData, keys) {}
+async function verifyProviderData(providerData, keys) {
+    let found = false;
+    for (const mediatorKeys of keys.lists.mediators) {
+        if (mediatorKeys.json.signing === providerData.publicKey) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) throw 'invalid key';
+    const result = await verify([providerData.publicKey], providerData);
+    if (!result) throw 'invalid signature';
+}
 
 async function decryptInvitationData(signedData, keys, tokenData) {
     let found = false;
@@ -20,7 +32,7 @@ async function decryptInvitationData(signedData, keys, tokenData) {
     if (!result) throw 'invalid signature';
     signedData.json = JSON.parse(signedData.data);
     const decryptedData = JSON.parse(
-        await ecdhDecrypt(signedData.json, tokenData.privateKey)
+        await ecdhDecrypt(signedData.json, tokenData.keyPair.privateKey)
     );
     // we store the public key as we need it to reply to the invitation
     decryptedData.publicKey = signedData.json.publicKey;
@@ -34,33 +46,51 @@ export async function checkInvitationData(
     tokenData
 ) {
     const backend = settings.get('backend');
+
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('checkInvitationData');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         try {
-            const data = await backend.appointments.getData(
-                { id: tokenData.tokenData.id },
+            const dataIDs = await deriveSecrets(
+                b642buf(tokenData.tokenData.id),
+                32,
+                20
+            );
+
+            const dataList = await backend.appointments.bulkGetData(
+                { ids: [tokenData.tokenData.id, ...dataIDs] },
                 tokenData.signingKeyPair
             );
-            if (data === null)
-                return {
-                    status: 'not-found',
-                };
 
-            const decryptedData = await decryptInvitationData(
-                data,
-                keys,
-                tokenData
-            );
+            backend.local.set('user::invitation', dataList);
 
-            verifyProviderData(decryptedData.provider);
+            const decryptedDataList = [];
 
-            backend.local.set('user::invitation', data);
-            backend.local.set('user::invitation::verified', decryptedData);
+            for (const data of dataList) {
+                if (data === null) continue;
+                try {
+                    const decryptedData = await decryptInvitationData(
+                        data,
+                        keys,
+                        tokenData
+                    );
+                    verifyProviderData(decryptedData.provider, keys);
+                    decryptedData.legacy = true;
+                    decryptedDataList.push(decryptedData);
+                } catch (e) {
+                    continue;
+                }
+            }
 
+            backend.local.set('user::invitation::verified', decryptedDataList);
             return {
                 status: 'loaded',
-                data: decryptedData,
+                data: decryptedDataList,
             };
         } catch (e) {
             console.error(e);
@@ -70,7 +100,7 @@ export async function checkInvitationData(
             };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('checkInvitationData');
     }
 }
 

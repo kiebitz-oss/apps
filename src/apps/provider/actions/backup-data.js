@@ -10,24 +10,55 @@ export const localKeys = ['keyPairs'];
 export const cloudKeys = [
     'data',
     'appointments::open',
+    'appointments::slots::canceled',
+    'appointments::past',
     'data::verified',
+    'bookings',
+    'bookings::reported',
     'tokens::open',
+    'tokens::expired',
+    'tokens::used',
     'data::encryptionKey',
 ];
 
 // make sure the signing and encryption key pairs exist
-export async function backupData(state, keyStore, settings, keyPairs, secret) {
+export async function backupData(
+    state,
+    keyStore,
+    settings,
+    keyPairs,
+    secret,
+    lockName
+) {
     const backend = settings.get('backend');
+
+    if (lockName === undefined) lockName = 'backupData';
+
     try {
-        await backend.local.lock();
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock(lockName);
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         const data = {};
+
+        const loggedOut = backend.local.get('provider::loggedOut', false);
+
+        if (loggedOut) return;
+
         for (const key of localKeys) {
             data[key] = backend.local.get(`provider::${key}`);
         }
 
         const cloudData = {};
         for (const key of cloudKeys) {
-            cloudData[key] = backend.local.get(`provider::${key}`);
+            const v = backend.local.get(`provider::${key}`);
+            cloudData[key] = v;
+            // we also store the data locally so that we can restore it from
+            // there in case something goes wrong with the cloud backup...
+            data[key] = v;
         }
 
         const referenceData = { local: { ...data }, cloud: { ...cloudData } };
@@ -36,14 +67,15 @@ export async function backupData(state, keyStore, settings, keyPairs, secret) {
                 JSON.stringify(state.referenceData) ===
                 JSON.stringify(referenceData)
             ) {
+                console.log('not modified');
                 return state;
             }
         }
 
-        cloudData.version = '0.1';
+        cloudData.version = '0.2';
         cloudData.createdAt = new Date().toISOString();
 
-        data.version = '0.1';
+        data.version = '0.2';
         data.createdAt = new Date().toISOString();
 
         // locally stored data
@@ -77,7 +109,13 @@ export async function backupData(state, keyStore, settings, keyPairs, secret) {
             error: e,
         };
     } finally {
-        backend.local.unlock();
+        if (lockName === 'logout') {
+            backend.local.set('provider::loggedOut', true);
+            // we make sure not other tasks are executed after this task
+            backend.local.clearLocks();
+        } else {
+            backend.local.unlock(lockName);
+        }
     }
 }
 

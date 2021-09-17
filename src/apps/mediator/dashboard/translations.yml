@@ -1,4 +1,40 @@
+stats:
+  title:
+    de: Statistiken
+test-queues:
+  text:
+    de: Hier können Sie Queues-Dateien testen, die Sie mit dem "kiebitz" Tool erstellt haben. Hierdurch können Sie sicherstellen, dass die Dateien korrekt sind, bevor Sie diese in ein Backend hochladen.
+  title:
+    de: Queue-Datei testen
+  button:
+    de: Testen
+log-out-modal:
+  title:
+    de: Abmelden
+  text:
+    de: Wollen Sie sich wirklich abmelden?
+upload-queues:
+  title:
+    de: Queues-Datei laden
+  notice:
+    de: Bitte laden Sie die Queues-Datei, die mit dem "kiebitz" Kommando erstellt wurde. Die Datei wird dann auf Korrektheit geprüft.
+  input:
+    de: Datei wählen
+  valid-file:
+    de: Die erzeugten Queue-Schlüssel sind korrekt und können mit Ihrem Vermittler-Schlüssel entschlüsselt werden.
+  invalid-file:
+    de: Die erzeugten Queue-Schlüssel sind nicht korrekt und können mit Ihrem Vermittler-Schlüssel nicht entschlüsselt werden.
+dateSpan:
+  de: Zeige Daten von {from} bis {to}.
+log-out:
+  de: Abmelden
 providers:
+  reconfirmText:
+    de: Wollen Sie alle bestätigten Anbieter neu bestätigen?
+  reconfirmProgressText:
+    de: Bestätige Anbieter {i} von {n}...
+  reconfirm:
+    de: Alle neu bestätigen
   pending:
     de: Unbestätigt
   verified:
@@ -18,8 +54,12 @@ providers:
   confirmText:
     de: Wollen Sie den Anbieter wirklich freischalten?
 provider-data:
+  description:
+    de: Beschreibung
   field:
     de: Feld
+  queues:
+    de: Anzahl PLZ-Präfixe (z.B. 10, 66, ...)
   value:
     de: Wert
   name:
@@ -51,3 +91,19 @@ upload-key-pairs:
     de: Bitte laden Sie die Datei mit ihren geheimen Vermittlerschlüsseln.
   upload:
     de: Datei laden
+open:
+  de: Offene Termine
+booked:
+  de: Gebuchte Termine
+active:
+  de: Aktive Anbieter
+bookingRate:
+  de: Buchungsrate
+summary:
+  de: Überblick
+
+titles:
+  booked:
+    de: '{n} Termine wurden zwischen dem {from} und {to} als gebucht gemeldet'
+  open:
+    de: '{n} Termine wurden zwischen dem {from} und {to} als offen gemeldet'

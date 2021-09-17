@@ -13,6 +13,9 @@ import {
     validKeyPairs,
     providerData,
     backupData,
+    getBookings,
+    getAppointments,
+    publishAppointments,
     sendInvitations,
     providerSecret,
     openAppointments,
@@ -48,10 +51,13 @@ const Dashboard = withRouter(
                             props: { tab, action, secondaryAction, id },
                         },
                     },
+                    route,
                     router,
                     settings,
                     openAppointments,
                     openAppointmentsAction,
+                    sendInvitations,
+                    sendInvitationsAction,
                     providerData,
                     providerDataAction,
                     checkInvitations,
@@ -67,8 +73,12 @@ const Dashboard = withRouter(
                     backupDataAction,
                     providerSecretAction,
                     keysAction,
-                    sendInvitations,
-                    sendInvitationsAction,
+                    getBookings,
+                    getBookingsAction,
+                    publishAppointments,
+                    publishAppointmentsAction,
+                    getAppointments,
+                    getAppointmentsAction,
                     keyPairs,
                     keyPairsAction,
                     validKeyPairs,
@@ -93,35 +103,69 @@ const Dashboard = withRouter(
                         if (timer === tv) return;
                         setTv(timer);
                         setLastUpdated(new Date().toLocaleTimeString());
-                        verifiedProviderDataAction();
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
+                                // we send invitations and then check invitation data
+                                getAppointmentsAction(kp.data).finally(data => {
+                                    console.log(data);
+                                });
+
+                                // we send invitations and then check invitation data
+                                publishAppointmentsAction(kp.data).finally(
+                                    () => {
+                                        getBookingsAction(kp.data, ks.data);
+                                        checkInvitationsAction(kp.data);
+                                    }
+                                );
+
                                 providerSecretAction().then(ps =>
                                     backupDataAction(kp.data, ps.data)
                                 );
                                 validKeyPairsAction(kp.data, ks.data);
                                 providerDataAction().then(pd => {
                                     if (
-                                        pd === undefined ||
-                                        pd.data === undefined ||
-                                        Object.keys(pd.data.data).length === 0
+                                        pd.data.submittedAt === undefined ||
+                                        pd.data.version !== '0.4'
                                     ) {
-                                        router.navigateToUrl('/provider/setup');
-                                        return;
-                                    } else if (pd.data.submitted !== true) {
                                         // we try to submit the data...
                                         submitProviderDataAction(
                                             pd.data,
                                             kp.data,
                                             ks.data
                                         );
-                                    } else if (!pd.data.data.verified) {
-                                        checkVerifiedProviderDataAction(
-                                            pd.data,
-                                            kp.data
+                                    } else {
+                                        verifiedProviderDataAction().then(
+                                            vd => {
+                                                if (vd === undefined) return;
+                                                if (
+                                                    vd.data === null &&
+                                                    pd.data.submittedAt !==
+                                                        undefined &&
+                                                    new Date(
+                                                        pd.data.submittedAt
+                                                    ) <
+                                                        new Date(
+                                                            new Date().getTime() -
+                                                                1000 * 60 * 15
+                                                        )
+                                                ) {
+                                                    // no verified provider data yet, we submit the data again
+                                                    submitProviderDataAction(
+                                                        pd.data,
+                                                        kp.data,
+                                                        ks.data
+                                                    );
+                                                }
+                                            }
                                         );
                                     }
+
+                                    // we always check for updates in the verified provider data
+                                    checkVerifiedProviderDataAction(
+                                        pd.data,
+                                        kp.data
+                                    );
                                 });
                             })
                         );
@@ -138,7 +182,7 @@ const Dashboard = withRouter(
                         sendInvitationsAction(
                             keyPairs.data,
                             verifiedProviderData.data
-                        ).finally(() => checkInvitationsAction(keyPairs.data));
+                        );
                     });
 
                     let content;
@@ -153,6 +197,7 @@ const Dashboard = withRouter(
                             content = (
                                 <Schedule
                                     action={action}
+                                    route={route}
                                     secondaryAction={secondaryAction}
                                     id={id}
                                     key="schedule"
@@ -211,10 +256,13 @@ const Dashboard = withRouter(
         ),
         [
             verifiedProviderData,
-            sendInvitations,
+            getAppointments,
+            publishAppointments,
             keyPairs,
             keys,
+            getBookings,
             validKeyPairs,
+            sendInvitations,
             backupData,
             providerSecret,
             providerData,

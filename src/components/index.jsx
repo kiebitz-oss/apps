@@ -28,6 +28,7 @@ export * from './message';
 export * from './loader';
 export * from './main-error-boundary';
 export * from './retracting-label-input';
+export * from './charts/bar';
 
 // these are helper classes that work with the context mechanism
 export * from './store';

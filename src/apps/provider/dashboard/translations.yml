@@ -1,4 +1,8 @@
 backup-modal:
+  download-backup:
+    de: Sicherungsdatei herunterladen
+  close:
+    de: Schließen
   backing-up-test:
     de: Bitte warten, Datenbackup wird erstellt...
   title:
@@ -20,6 +24,9 @@ delete-modal:
   deleting-text:
     de: Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.
 appointment-overview:
+  edit:
+    button:
+      de: Bearbeiten
   delete:
     confirm:
       de: Löschen bestätigen
@@ -44,6 +51,9 @@ appointment-overview:
       de: Keine gebuchten Slots bisher. Sobald Buchungen vorhanden sind werden hier die Buchungscodes angezeigt.
   title:
     de: Terminübersicht
+appointments-list:
+  title:
+    de: Buchungen
 schedule:
   backward:
     de: vorherige Woche
@@ -59,13 +69,12 @@ schedule:
       de: Terminserie
     add:
       de: Termin erstellen
-  view:
-    calendar:
-      de: Kalenderansicht
-    list:
-      de: Listenansicht
+  calendar:
+    de: Kalenderansicht
+  booking-list:
+    de: Buchungliste
   updating:
-    de: "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}" 
+    de: "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}"
   title:
     de: Terminplan
 appointments-overview:
@@ -106,6 +115,9 @@ day-6:
   de: Samstag
 day-7:
   de: Sonntag
+edit-appointment:
+  title:
+    de: Termin bearbeiten
 new-appointment:
   too-many-slots:
     de: Bitte wählen Sie maximal 50 Terminslots
@@ -140,7 +152,7 @@ provider-data:
   title:
     de: Ihre Daten
   verified-vs-unverifired-desc:
-    de: Ihre Daten unterlaufen einer Überprüfung unsererseits. Sobald Ihre Daten überprüft wurden, werden Sie Impfwilligen angezeigt. Führen Sie nach der Überprüfung Ihrer Daten noch Änderungen dieser durch, so müssen diese erneut Überprüft werden und werden entsprechend erst nach erfolgreicher Überprüfung Impfwilligen angezeigt. Daher differenzieren wir zwischen verifizierten und unverifizierten Daten. 
+    de: Ihre Daten unterlaufen einer Überprüfung unsererseits. Sobald Ihre Daten überprüft wurden, werden Sie Impfwilligen angezeigt. Führen Sie nach der Überprüfung Ihrer Daten noch Änderungen dieser durch, so müssen diese erneut Überprüft werden und werden entsprechend erst nach erfolgreicher Überprüfung Impfwilligen angezeigt. Daher differenzieren wir zwischen verifizierten und unverifizierten Daten.
   invalid-name:
     de: Bitte gegen Sie einen gültigen Namen an
   name:

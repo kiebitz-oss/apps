@@ -1,17 +1,41 @@
 @import 'scss/variables.scss';
 
-.kip-restore-from-backup {
+.kip-provider-restore-from-backup {
 
 	.bulma-message {
 		margin-bottom: map-get($kip-space, md);
 	}
 
-	label {
+    #secret {
+		text-transform: uppercase;
+		letter-spacing: 2px;
+    }
+
+    .kip-properties {
+
+        .kip-property {
+            margin-bottom: map-get($kip-space, md);
+            display: flex;
+            align-items: center;
+            fieldset {
+                display: inline-block;
+            }
+            label {
+                flex-grow: 1;
+                display: inline-block;
+                padding-left: map-get($kip-space, md);
+            }
+
+        }
+    }   
+
+	label.kip-custom-file-upload {
+		margin-top: map-get($kip-space, lg);
 		padding: map-get($kip-space, md);
 		border-radius: $kip-border-radius;
 	    display: inline-block;
 	    cursor: pointer;
-	    background: $kip-green;
+	    background: $kip-blue;
 	    color: #fff;
 		input[type=file].bulma-input {
 			display: none;

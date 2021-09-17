@@ -11,31 +11,46 @@ export default class LocalBackend {
     constructor(settings, store) {
         this.settings = settings;
         this.store = store;
+        this._taskId = 0;
+        this._tasks = [];
         this._locked = false;
-        this._lock_requested = false;
     }
 
     get(key, defaultValue) {
         return this.store.get(key, defaultValue);
     }
 
-    async unlock() {
-        this._locked = false;
+    unlock(task) {
+        if (this._tasks.length === 0) throw 'should not happen';
+        if (this._tasks[0][0] !== task) throw 'wrong task';
+        this._tasks = this._tasks.slice(1);
+        console.log(`Finished task ${task}...`);
     }
 
-    async lock() {
-        let i = 0;
-        if (this._lock_requested) return;
-        this._lock_requested = true;
-        while (this._locked) {
-            await timeout(10);
-            if (i++ > 100) {
-                throw 'still locked';
-            }
+    clearLocks() {
+        this._tasks = [];
+    }
+
+    async lock(task) {
+        if (this._tasks.find(t => t[0] === task) !== undefined) {
+            console.log(`task ${task} is already in queue, aborting...`);
+            throw 'already queued up'; // there's already a task queued up
         }
-        if (!this._lock_requested) throw 'race';
-        this._lock_requested = false;
-        this._locked = true;
+
+        const taskId = this._taskId++;
+        this._tasks.push([task, new Date(), taskId]);
+
+        while (true) {
+            if (this._tasks.length === 0) throw 'should not happen';
+            const [t, dt, id] = this._tasks[0];
+            if (id === taskId) break; // it's our turn
+            if (new Date() - dt > 1000 * 60 * 5)
+                // tasks time out after 5 minutes
+                this._tasks = this._tasks.slice(1);
+            await timeout(10);
+        }
+        console.log(`Executing task ${task}...`);
+        // now we go...
     }
 
     set(key, data) {

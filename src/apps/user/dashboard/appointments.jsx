@@ -6,12 +6,19 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
 import { keys } from 'apps/provider/actions';
-import { formatDuration } from 'helpers/format';
+import { formatDuration, formatDate, formatTime } from 'helpers/time';
+import classNames from 'helpers/classnames';
 import {
     tokenData,
+    grantID,
+    slotInfos,
     userSecret,
     invitation,
+    appointments,
     confirmOffers,
+    getAppointments,
+    cancelInvitation,
+    confirmDeletion,
     acceptedInvitation,
 } from 'apps/user/actions';
 import {
@@ -20,6 +27,7 @@ import {
     ButtonIcon,
     Button,
     Card,
+    Modal,
     CardContent,
     CardHeader,
     CardFooter,
@@ -52,17 +60,179 @@ const ProviderDetails = ({ data }) => {
     );
 };
 
+const OfferDetails = withSettings(({ settings, offer }) => {
+    const lang = settings.get('lang');
+    const notices = [];
+    const properties = settings.get('appointmentProperties');
+    for (const [category, values] of Object.entries(properties)) {
+        for (const [k, v] of Object.entries(values.values)) {
+            if (
+                (offer[k] === true ||
+                    (offer.properties !== undefined &&
+                        offer.properties[category] === k)) &&
+                v.notice !== undefined &&
+                v.infosUrl !== undefined &&
+                v.anamnesisUrl !== undefined
+            )
+                notices.push(
+                    <F key="k">
+                        <p>{v.notice[lang]}</p>
+                        <p>
+                            <T
+                                t={t}
+                                k="offer-notice-text"
+                                vaccine={
+                                    <strong key="vaccine">{v[lang]}</strong>
+                                }
+                                info={
+                                    <a
+                                        key="infos"
+                                        target="_blank"
+                                        href={v.infosUrl[lang]}
+                                    >
+                                        <T t={t} k="info" />
+                                    </a>
+                                }
+                                anamnesis={
+                                    <a
+                                        key="anamnesis"
+                                        target="_blank"
+                                        href={v.anamnesisUrl[lang]}
+                                    >
+                                        <T t={t} k="anamnesis" />
+                                    </a>
+                                }
+                            />
+                        </p>
+                    </F>
+                );
+        }
+    }
+
+    return <div className="kip-offer-details">{notices}</div>;
+});
+
+const InvitationDeleted = withActions(
+    ({ confirmDeletionAction, acceptedInvitationAction }) => {
+        return (
+            <F>
+                <Message type="danger">
+                    <T t={t} k="invitation-accepted.deleted" />
+                </Message>
+                <CardFooter>
+                    <Button
+                        type="warning"
+                        onClick={() =>
+                            confirmDeletionAction().then(
+                                acceptedInvitationAction
+                            )
+                        }
+                    >
+                        <T t={t} k="invitation-accepted.confirm-deletion" />
+                    </Button>
+                </CardFooter>
+            </F>
+        );
+    },
+    [confirmDeletion, acceptedInvitation]
+);
+
 const AcceptedInvitation = withActions(
-    ({ data, userSecret }) => {
-        const d = new Date(data.offer.timestamp);
+    ({
+        tokenData,
+        acceptedInvitation,
+        acceptedInvitationAction,
+        cancelInvitation,
+        invitationAction,
+        cancelInvitationAction,
+        grantIDAction,
+        slotInfosAction,
+        offers,
+        userSecret,
+    }) => {
+        const [showDelete, setShowDelete] = useState(false);
+
+        const doDelete = () => {
+            setShowDelete(false);
+            cancelInvitationAction(
+                acceptedInvitation.data,
+                tokenData.data
+            ).then(() => {
+                // we reload the appointments
+                grantIDAction();
+                slotInfosAction();
+                invitationAction();
+                acceptedInvitationAction();
+            });
+        };
+
+        const {
+            offer,
+            invitation: invitationData,
+            slotData,
+        } = acceptedInvitation.data;
+        const currentOffer = offers.find(of => of.id == offer.id);
+        let currentSlotData;
+        if (currentOffer !== undefined)
+            currentSlotData = currentOffer.slotData.find(
+                sl => sl.id === slotData.id
+            );
+        let notice;
+        let changed = false;
+        for (const [k, v] of Object.entries(currentOffer)) {
+            if (
+                k === 'open' ||
+                k === 'slotData' ||
+                k === 'properties' ||
+                k === 'grants' ||
+                k === 'slots'
+            )
+                continue;
+            if (offer[k] !== v) {
+                changed = true;
+                break;
+            }
+        }
+        if (changed)
+            notice = (
+                <F>
+                    <Message type="danger">
+                        <T t={t} k="invitation-accepted.changed" />
+                    </Message>
+                </F>
+            );
+        const d = new Date(currentOffer.timestamp);
+
+        let modal;
+
+        if (showDelete)
+            return (
+                <Modal
+                    onSave={doDelete}
+                    onClose={() => setShowDelete(false)}
+                    onCancel={() => setShowDelete(false)}
+                    saveType="danger"
+                    save={<T t={t} k="invitation-accepted.delete.confirm" />}
+                    cancel={<T t={t} k="invitation-accepted.delete.cancel" />}
+                    title={<T t={t} k="invitation-accepted.delete.title" />}
+                    className="kip-appointment-overview"
+                >
+                    <p>
+                        <T t={t} k="invitation-accepted.delete.notice" />
+                    </p>
+                </Modal>
+            );
+
         return (
             <F>
                 <CardContent>
+                    {notice}
                     <div className="kip-accepted-invitation">
                         <h2>
                             <T t={t} k="invitation-accepted.title" />
                         </h2>
-                        <ProviderDetails data={data.invitation.provider} />
+                        <ProviderDetails data={invitationData.provider} />
+                        <OfferDetails offer={currentOffer} />
                         <p className="kip-appointment-date">
                             {d.toLocaleDateString()} ·{' '}
                             <u>{d.toLocaleTimeString()}</u>
@@ -79,28 +249,64 @@ const AcceptedInvitation = withActions(
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button type="warning">
+                    <Button type="warning" onClick={() => setShowDelete(true)}>
                         <T t={t} k="cancel-appointment" />
                     </Button>
                 </CardFooter>
             </F>
         );
     },
-    [userSecret]
+    [
+        userSecret,
+        acceptedInvitation,
+        cancelInvitation,
+        invitation,
+        grantID,
+        slotInfos,
+        tokenData,
+    ]
 );
 
-const NoInvitations = ({ tokenData }) => {
+const NoInvitations = ({ tokenData, oldGrant }) => {
+    let createdAt;
+
+    if (tokenData.createdAt !== undefined)
+        createdAt = new Date(tokenData.createdAt);
+
+    let content;
+
+    // in the first 10 minutes since the creation of the token we show a 'please wait'
+    // message, as it can take some time for appointments to show up...
+    if (
+        createdAt !== undefined &&
+        new Date(createdAt.getTime() + 1000 * 60 * 10) > new Date()
+    ) {
+        content = (
+            <F>
+                <Message type="success">
+                    <T t={t} k="no-invitations.please-wait" />
+                </Message>
+            </F>
+        );
+    } else {
+        content = (
+            <F>
+                {(oldGrant && (
+                    <Message type="warning">
+                        <T t={t} k="no-invitations.old-grant-notice" />
+                    </Message>
+                )) || (
+                    <Message type="warning">
+                        <T t={t} k="no-invitations.notice" />
+                    </Message>
+                )}
+            </F>
+        );
+    }
     return (
         <F>
             <CardContent>
-                <div className="kip-no-invitations">
-                    <h2>
-                        <T t={t} k="no-invitations.title" />
-                    </h2>
-                    <p className="kip-no-invitations-text">
-                        <T t={t} k="no-invitations.notice" />
-                    </p>
-                </div>
+                <div className="kip-no-invitations">{content}</div>
             </CardContent>
             <Message type="info">
                 <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
@@ -110,13 +316,17 @@ const NoInvitations = ({ tokenData }) => {
     );
 };
 
-async function toggleOffers(state, keyStore, settings, offer) {
+async function toggleOffers(state, keyStore, settings, offer, offers) {
     if (offer === null) return { data: [] };
-    if (state.data.find(i => i === offer.slotData[0].id) !== undefined) {
-        state.data = state.data.filter(i => i !== offer.slotData[0].id);
+    if (state.data.find(i => i === offer.id) !== undefined) {
+        state.data = state.data.filter(i => i !== offer.id);
     } else {
-        state.data.push(offer.slotData[0].id);
+        state.data.push(offer.id);
     }
+    // we remove non-existing offers
+    state.data = state.data.filter(i =>
+        offers.map(offer => offer.id).includes(i)
+    );
     return { data: state.data };
 }
 
@@ -127,10 +337,17 @@ toggleOffers.init = function() {
 toggleOffers.actionName = 'toggleOffers';
 
 const PropertyTags = ({ appointment }) => {
-    const props = Object.entries(appointment)
-        .filter(([k, v]) => v === true)
-        .map(([k, v]) => <PropertyTag key={k} property={k} />)
-        .filter(p => p !== undefined);
+    let props;
+    if (appointment.grants !== undefined) {
+        props = Object.entries(appointment)
+            .filter(([k, v]) => v === true)
+            .map(([k, v]) => <PropertyTag key={k} property={k} />)
+            .filter(p => p !== undefined);
+    } else {
+        props = Object.entries(appointment.properties)
+            .map(([, v]) => <PropertyTag key={v} property={v} />)
+            .filter(p => p !== undefined);
+    }
     return <F>{props}</F>;
 };
 
@@ -156,8 +373,11 @@ const InvitationDetails = withSettings(
             settings,
             userSecret,
             toggleOffers,
+            grantID,
+            grantIDAction,
+            slotInfos,
+            slotInfosAction,
             toggleOffersAction,
-            acceptedInvitation,
             acceptedInvitationAction,
             confirmOffers,
             confirmOffersAction,
@@ -169,10 +389,12 @@ const InvitationDetails = withSettings(
                 if (initialized) return;
                 setInitialized(true);
                 toggleOffersAction(null);
+                slotInfosAction();
+                grantIDAction();
             });
 
             const toggle = offer => {
-                toggleOffersAction(offer);
+                toggleOffersAction(offer, data.offers);
             };
 
             const doConfirmOffers = () => {
@@ -180,7 +402,7 @@ const InvitationDetails = withSettings(
                 // we add the selected offers in the order the user chose
                 for (const offerID of toggleOffers.data) {
                     const offer = data.offers.find(
-                        offer => offer.slotData[0].id === offerID
+                        offer => offer.id === offerID
                     );
                     selectedOffers.push(offer);
                 }
@@ -193,43 +415,65 @@ const InvitationDetails = withSettings(
                 p.then(() => {
                     acceptedInvitationAction();
                 });
-                p.finally(() => setConfirming(false));
+                p.finally(() => {
+                    setConfirming(false);
+                    toggleOffersAction(null);
+                    slotInfosAction();
+                });
             };
 
-            if (acceptedInvitation.data !== null) {
-                return <AcceptedInvitation data={acceptedInvitation.data} />;
-            }
-
             let content;
-            if (data === null || data.offers === null)
-                return <NoInvitations data={tokenData} />;
 
             const properties = settings.get('appointmentProperties');
-
             // to do: use something better than the index i for the key?
             const offers = data.offers
+                .filter(offer => offer.slotData.some(sl => sl.open))
                 .filter(a => new Date(a.timestamp) > new Date())
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
+                    const openSlots = offer.slotData.filter(sl => {
+                        if (offer.grants !== undefined) {
+                            const grant = offer.grants.find(
+                                grant =>
+                                    JSON.parse(grant.data).objectID === sl.id
+                            );
+                            // grant is already expired for this slot
+                            if (
+                                grant !== undefined &&
+                                new Date(JSON.parse(grant.data).expiresAt) <
+                                    new Date()
+                            ) {
+                                return false;
+                            }
+                        }
+                        if (
+                            slotInfos !== undefined &&
+                            slotInfos.data !== null
+                        ) {
+                            const sd = slotInfos.data[sl.id];
+                            if (sd !== undefined && sd.status === 'taken')
+                                return false;
+                        }
+                        return true;
+                    });
+
                     const d = new Date(offer.timestamp);
-                    const selected = toggleOffers.data.includes(
-                        offer.slotData[0].id
-                    );
+                    const selected = toggleOffers.data.includes(offer.id);
                     let pref;
                     if (selected)
-                        pref =
-                            toggleOffers.data.indexOf(offer.slotData[0].id) + 1;
+                        pref = toggleOffers.data.indexOf(offer.id) + 1;
                     return (
                         <tr
-                            key={offer.slotData[0].id}
-                            className={
-                                selected ? `kip-selected kip-pref-${pref}` : ''
-                            }
+                            key={offer.id}
+                            className={classNames(`kip-pref-${pref}`, {
+                                'kip-selected': selected,
+                                'kip-failed': openSlots.length === 0,
+                            })}
                             onClick={() => toggle(offer)}
                         >
                             <td>{selected ? pref : '-'}</td>
                             <td>
-                                {d.toLocaleString(undefined, {
+                                {d.toLocaleString('de-DE', {
                                     month: '2-digit',
                                     day: '2-digit',
                                     year: '2-digit',
@@ -282,14 +526,10 @@ const InvitationDetails = withSettings(
                 <F>
                     <CardContent>
                         <div className="kip-invitation-details">
-                            <h2>
-                                <T t={t} k="invitation-received.title" />
-                            </h2>
                             <ProviderDetails data={data.provider} />
                             <p>
                                 <T t={t} k="appointments-notice" />
                             </p>
-                            <hr />
                             {offerDetails}
                         </div>
                     </CardContent>
@@ -299,7 +539,11 @@ const InvitationDetails = withSettings(
                             onClick={doConfirmOffers}
                             disabled={
                                 confirming ||
-                                Object.keys(toggleOffers.data).length === 0
+                                Object.keys(
+                                    toggleOffers.data.filter(id =>
+                                        data.offers.find(of => of.id === id)
+                                    )
+                                ).length === 0
                             }
                             type="success"
                         >
@@ -309,29 +553,183 @@ const InvitationDetails = withSettings(
                 </F>
             );
         },
-        [toggleOffers, confirmOffers, acceptedInvitation, userSecret]
+        [
+            toggleOffers,
+            confirmOffers,
+            acceptedInvitation,
+            userSecret,
+            slotInfos,
+            grantID,
+        ]
     )
 );
 
+const filterInvitations = (invitation, grantID, slotInfos) => {
+    if (invitation.offers === null) return false;
+    let expired = true;
+    if (invitation.legacy) {
+        invitation.offers.forEach(offer =>
+            offer.grants.forEach(grant => {
+                const grantData = JSON.parse(grant.data);
+                const grantExpiresAt = new Date(grantData.expiresAt);
+                if (new Date() < grantExpiresAt) {
+                    expired = false;
+                }
+            })
+        );
+
+        if (expired) {
+            return false;
+        }
+    }
+
+    let noOpenSlots = false;
+    noOpenSlots = !invitation.offers
+        .map(offer => offer.slotData)
+        .flat()
+        .some(sl => {
+            if (sl.open && !sl.canceled) {
+                if (slotInfos !== undefined && slotInfos.data !== null) {
+                    const slotInfo = slotInfos.data[sl.id];
+                    if (slotInfo !== undefined) {
+                        if (slotInfo.status === 'taken') {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        });
+
+    if (noOpenSlots) {
+        return false;
+    }
+
+    if (invitation.legacy) {
+        let oldGrant = true;
+        let oldGrantID;
+
+        if (grantID !== undefined && grantID.data !== null)
+            oldGrantID = grantID.data;
+
+        if (oldGrantID !== undefined) {
+            if (!noOpenSlots) {
+                const grant = invitation.offers[0].grants[0];
+                try {
+                    const grantData = JSON.parse(grant.data);
+                    if (grantData.grantID !== oldGrantID) oldGrant = false;
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        } else {
+            oldGrant = false;
+        }
+
+        if (oldGrant) {
+            return false;
+        }
+    }
+    return true;
+};
+
 const Appointments = withActions(
-    ({ settings, invitation, tokenData }) => {
-        let content;
+    ({
+        settings,
+        invitation,
+        appointments,
+        slotInfos,
+        grantID,
+        grantIDAction,
+        slotInfosAction,
+        acceptedInvitation,
+        tokenData,
+    }) => {
+        const [initialized, setInitialized] = useState(false);
+
+        useEffect(() => {
+            if (initialized) return;
+            setInitialized(true);
+            slotInfosAction();
+            grantIDAction();
+        });
+
         const render = () => {
-            return (
+            let invitations = [];
+
+            if (appointments !== undefined && appointments.data !== null)
+                for (const appointment of appointments.data)
+                    invitations.push(appointment);
+
+            if (invitation !== undefined && invitation.data !== null)
+                for (const offer of invitation.data) {
+                    if (
+                        invitations.some(
+                            inv => inv.provider.name === offer.provider.name
+                        )
+                    )
+                        continue;
+                    invitations.push(offer);
+                }
+
+            if (
+                acceptedInvitation !== undefined &&
+                acceptedInvitation.data !== null
+            ) {
+                const ai = invitations.find(inv => {
+                    if (inv === null) return false;
+                    return inv.offers.some(offer =>
+                        offer.slotData.some(sla =>
+                            acceptedInvitation.data.offer.slotData.some(
+                                slb => slb.id === sla.id
+                            )
+                        )
+                    );
+                });
+                if (ai === undefined) return <InvitationDeleted />;
+                return <AcceptedInvitation offers={ai.offers} />;
+            }
+
+            // we only show relevant invitations
+            invitations = invitations.filter(inv =>
+                filterInvitations(inv, grantID, slotInfos, acceptedInvitation)
+            );
+
+            if (invitations.length === 0)
+                return <NoInvitations tokenData={tokenData.data} />;
+
+            const details = invitations.map(data => (
                 <InvitationDetails
                     tokenData={tokenData}
-                    data={invitation.data}
+                    data={data}
+                    key={data.provider.signature}
                 />
-            );
+            ));
+
+            return <F>{details}</F>;
         };
         return (
             <WithLoader
-                resources={[tokenData, invitation]}
+                resources={[
+                    tokenData,
+                    invitation,
+                    appointments,
+                    grantID,
+                    slotInfos,
+                ]}
                 renderLoaded={render}
             />
         );
     },
-    [tokenData, invitation]
+    [
+        tokenData,
+        invitation,
+        appointments,
+        acceptedInvitation,
+        slotInfos,
+        grantID,
+    ]
 );
 
 export default Appointments;

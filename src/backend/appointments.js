@@ -24,12 +24,26 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     async confirmProvider(
-        { id, verifiedID, key, encryptedProviderData, signedKeyData },
+        {
+            id,
+            verifiedID,
+            key,
+            encryptedProviderData,
+            publicProviderData,
+            signedKeyData,
+        },
         keyPair
     ) {
         return await this.call(
             'confirmProvider',
-            { id, verifiedID, key, encryptedProviderData, signedKeyData },
+            {
+                id,
+                verifiedID,
+                key,
+                encryptedProviderData,
+                publicProviderData,
+                signedKeyData,
+            },
             keyPair
         );
     }
@@ -40,6 +54,24 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     // public endpoints
+
+    async getAppointmentsByZipCode({ zipCode }) {
+        return await this.call('getAppointmentsByZipCode', {
+            zipCode,
+        });
+    }
+
+    async getStats({ id, metric, type, n, filter, from, to }) {
+        return await this.call('getStats', {
+            id,
+            metric,
+            type,
+            n,
+            from,
+            to,
+            filter,
+        });
+    }
 
     async getQueues({ zipCode, radius }) {
         return await this.call('getQueues', { zipCode, radius });
@@ -79,11 +111,31 @@ export default class AppointmentsBackend extends JSONRPCBackend {
 
     // user endpoints
 
+    async cancelSlot({ providerID, id, signedTokenData }, keyPair) {
+        return await this.call(
+            'cancelSlot',
+            { providerID, id, signedTokenData },
+            keyPair
+        );
+    }
+
+    async bookSlot(
+        { providerID, id, encryptedData, signedTokenData },
+        keyPair
+    ) {
+        return await this.call(
+            'bookSlot',
+            { providerID, id, encryptedData, signedTokenData },
+            keyPair
+        );
+    }
+
     // get a token for a given queue
     async getToken({
         hash,
         encryptedData,
         queueID,
+        publicKey,
         code,
         queueData,
         signedTokenData,
@@ -91,6 +143,7 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('getToken', {
             hash: hash,
             code: code,
+            publicKey: publicKey,
             encryptedData: encryptedData,
             queueID: queueID,
             queueData: queueData,
@@ -105,9 +158,32 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('returnTokens', { tokens }, keyPair);
     }
 
+    // get all published appointments from the backend
+    async getAppointments({}, keyPair) {
+        return await this.call('getProviderAppointments', {}, keyPair);
+    }
+
+    // publish all local appointments to the backend
+    async publishAppointments({ offers }, keyPair) {
+        return await this.call('publishAppointments', { offers }, keyPair);
+    }
+
+    async cancelBooking({ id }, keyPair) {
+        return await this.call('cancelBooking', {}, keyPair);
+    }
+
     // get n tokens from the given queue IDs
-    async getQueueTokens({ capacities }, keyPair) {
-        return await this.call('getQueueTokens', { capacities }, keyPair);
+    async getBookedAppointments({}, keyPair) {
+        return await this.call('getBookedAppointments', {}, keyPair);
+    }
+
+    // get n tokens from the given queue IDs
+    async getQueueTokens({ expiration, capacities }, keyPair) {
+        return await this.call(
+            'getQueueTokens',
+            { capacities, expiration },
+            keyPair
+        );
     }
 
     async storeProviderData({ id, encryptedData, code }, keyPair) {

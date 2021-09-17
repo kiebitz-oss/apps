@@ -4,11 +4,16 @@
 
 import {
     sign,
+    deriveSecrets,
     ecdhEncrypt,
     ecdhDecrypt,
     randomBytes,
     generateECDHKeyPair,
 } from 'helpers/crypto';
+
+import { b642buf } from 'helpers/conversion';
+
+import { shuffle } from 'helpers/lists';
 
 function getQueuePrivateKey(queueID, verifiedProviderData) {
     for (const queueKeys of verifiedProviderData.queuePrivateKeys) {
@@ -16,6 +21,17 @@ function getQueuePrivateKey(queueID, verifiedProviderData) {
     }
     return null;
 }
+
+// we process at most N tokens during one invocation of this function
+const N = 200;
+// we store at most MN tokens in the app
+export const MN = 500;
+// we keep offers valid for a given number of seconds
+const EXP_SECONDS = 60 * 60;
+// we regard tokens as 'fresh' for a given number of seconds
+const FRESH_SECONDS = 60 * 30;
+// how many more users we invite than we have slots
+const OVERBOOKING_FACTOR = 50;
 
 // regularly checks open appointment slots
 export async function sendInvitations(
@@ -26,14 +42,28 @@ export async function sendInvitations(
     verifiedProviderData
 ) {
     const backend = settings.get('backend');
+    // we lock the local backend to make sure we don't have any data races
+
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock('sendInvitations');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
 
+    try {
+        // we do not save the appointments!
         let openAppointments = backend.local.get(
             'provider::appointments::open',
             []
         );
+
+        let bookings = backend.local.get('provider::bookings', 0);
+        let reportedBookings = backend.local.get(
+            'provider::bookings::reported',
+            0
+        );
+        backend.local.set('provider::bookings::reported', bookings);
 
         if (openAppointments.length === 0)
             // we don't have any new appointments to give out
@@ -42,197 +72,227 @@ export async function sendInvitations(
             };
 
         // only offer appointments that are in the future
-        openAppointments = openAppointments.filter(oa => {
-            const timestamp = new Date(oa.timestamp);
-            const inOneHour = new Date(new Date().getTime() + 1000 * 60 * 60);
-            return timestamp > inOneHour;
-        });
+        openAppointments = openAppointments.filter(
+            oa => new Date(oa.timestamp) > new Date()
+        );
 
         let openTokens = backend.local.get('provider::tokens::open', []);
-        // we announce expired tokens to the backend
-        let expiredTokens = openTokens.filter(
-            token => new Date(token.expiresAt) <= new Date()
-        );
-        // we filter out any expired tokens...
 
-        // we send the signed, encrypted data to the backend
-        if (expiredTokens.length > 0)
-            await backend.appointments.returnTokens(
-                { tokens: expiredTokens.map(token => token.token) },
-                keyPairs.signing
-            );
+        openTokens.forEach(token => {
+            if (token.expiresAt === undefined) {
+                token.expiresAt = new Date(
+                    new Date().getTime() + 1000 * EXP_SECONDS
+                );
+            }
+        });
 
-        openTokens = openTokens.filter(
-            token => new Date(token.expiresAt) > new Date()
+        let freshTokens = openTokens.filter(
+            token =>
+                new Date(token.createdAt) >
+                new Date(new Date().getTime() - 1000 * FRESH_SECONDS)
         );
+
         let openSlots = 0;
+        let bookedSlots = 0;
         openAppointments.forEach(ap => {
             openSlots += ap.slotData.filter(sl => sl.open).length;
+            bookedSlots += ap.slotData.filter(sl => !sl.open).length;
         });
+
         try {
-            // how many more users we invite than we have slots
-            const overbookingFactor = 5;
-            const n = Math.floor(
-                Math.max(0, openSlots * overbookingFactor - openTokens.length)
+            console.log(
+                `Got ${openSlots} open slots and ${freshTokens.length} fresh tokens (${openTokens.length} tokens in total), overbooking factor is ${OVERBOOKING_FACTOR}...`
             );
-            // we don't have enough tokens for our open appointments, we generate more
-            if (n > 0) {
-                console.log(`Requesting ${n} new tokens...`);
-                // to do: get appointments by type
-                const newTokens = await backend.appointments.getQueueTokens(
-                    { capacities: [{ n: n, properties: {} }] },
-                    keyPairs.signing
-                );
-                if (newTokens === null)
-                    return {
-                        status: 'failed',
-                    };
-                const validTokens = [];
-                for (const tokenList of newTokens) {
-                    for (const token of tokenList) {
-                        const privateKey = getQueuePrivateKey(
-                            token.queue,
-                            verifiedProviderData
-                        );
-                        try {
-                            token.data = JSON.parse(
-                                await ecdhDecrypt(
-                                    token.encryptedData,
-                                    privateKey
-                                )
-                            );
-                        } catch (e) {
-                            console.error(e);
-                            continue;
-                        }
-                        token.keyPair = await generateECDHKeyPair();
-                        token.grantID = randomBytes(32);
-                        token.cancelGrantID = randomBytes(32);
-                        // users have 24 hours to respond
-                        token.expiresAt = new Date(
-                            new Date().getTime() + 1000 * 60 * 60 * 24
-                        ).toISOString();
-                        validTokens.push(token);
-                    }
-                    openTokens = [...openTokens, ...validTokens];
+            const n = Math.floor(
+                Math.min(
+                    Math.max(0, MN - openTokens.length),
+                    Math.max(
+                        0,
+                        openSlots * OVERBOOKING_FACTOR - freshTokens.length
+                    )
+                )
+            );
+
+            const selectedAppointments = openAppointments.filter(
+                oa =>
+                    new Date(oa.timestamp) > new Date() &&
+                    oa.slotData.length > 0
+            );
+            const appointmentsById = {};
+            const appointmentsBySlotId = {};
+            const slotsById = {};
+
+            for (const oa of selectedAppointments) {
+                appointmentsById[oa.id] = oa;
+                for (const slot of oa.slotData) {
+                    appointmentsBySlotId[slot.id] = oa;
+                    slotsById[slot.id] = slot;
                 }
-                // we update the list of open tokens
-                backend.local.set('provider::tokens::open', openTokens);
             }
-            const dataToSubmit = [];
+
+            const currentIndex = backend.local.get(
+                'provider::appointments::send::index',
+                0
+            );
+            let newIndex = currentIndex + N;
+            if (newIndex >= openTokens.length) newIndex = 0; // we start from the beginning
+            backend.local.set('provider::appointments::send::index', newIndex);
+
+            let tokensToSubmit = [];
+            let dataToSubmit = [];
+
+            const doSubmitData = async () => {
+                try {
+                    // we send the signed, encrypted data to the backend
+                    const results = await backend.appointments.bulkStoreData(
+                        { dataList: dataToSubmit },
+                        keyPairs.signing
+                    );
+                    for (const [i, result] of results.entries()) {
+                        if (result !== null) {
+                            const resultToken = tokensToSubmit[i];
+                            if (resultToken.dataN >= 19) return; // we try 20 different IDs at most
+                            resultToken.dataN++;
+                            // we rotate the ID for this token...
+                            resultToken.dataID = (
+                                await deriveSecrets(
+                                    b642buf(resultToken.data.id),
+                                    32,
+                                    resultToken.dataN
+                                )
+                            )[resultToken.dataN - 1];
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    dataToSubmit = [];
+                    tokensToSubmit = [];
+                }
+            };
+
             // we make sure all token holders can initialize all appointment data IDs
-            for (const [i, token] of openTokens.entries()) {
+            for (const [i, token] of openTokens
+                .slice(currentIndex, currentIndex + N)
+                .entries()) {
                 try {
                     if (token.grantID === undefined)
                         token.grantID = randomBytes(32);
-                    if (token.cancelGrantID === undefined)
-                        token.cancelGrantID = randomBytes(32);
-                    if (token.expiresAt === undefined)
-                        token.expiresAt = new Date(
-                            new Date().getTime() + 1000 * 60 * 60 * 24
-                        ).toISOString();
-                    // we generate grants for all appointments IDs.
+
+                    if (token.dataID === undefined) {
+                        token.dataID = token.data.id;
+                        token.dataN = 0;
+                    }
+
+                    if (token.slotIDs === undefined) {
+                        token.slotIDs = [];
+                    }
+
+                    token.slotIDs = token.slotIDs.filter(id => {
+                        const slot = slotsById[id];
+                        if (slot === undefined) return false;
+                        if (
+                            slot.token !== undefined &&
+                            slot.token.token === token.token
+                        )
+                            return true;
+                        return false;
+                    });
+
+                    if (token.createdAt === undefined)
+                        token.createdAt = new Date().toISOString();
+
+                    const slots = [];
+                    token.slotIDs.forEach(id => {
+                        const slot = slotsById[id];
+                        if (slot !== undefined) slots.push(slot);
+                    });
+
                     let grantsData = await Promise.all(
-                        openAppointments
-                            .filter(
-                                oa =>
-                                    oa.slotData.filter(sl => sl.open).length > 0
-                            )
-                            .map(
-                                async oa =>
-                                    await Promise.all(
-                                        oa.slotData
-                                            .filter(sl => sl.open)
-                                            .map(
-                                                async sl =>
-                                                    await Promise.all(
-                                                        [
-                                                            [
-                                                                sl.id,
-                                                                token.grantID,
-                                                            ],
-                                                            [
-                                                                sl.cancel,
-                                                                token.cancelGrantID,
-                                                            ],
-                                                        ].map(
-                                                            async ([
-                                                                id,
-                                                                grantID,
-                                                            ]) =>
-                                                                await sign(
-                                                                    keyPairs
-                                                                        .signing
-                                                                        .privateKey,
-                                                                    JSON.stringify(
-                                                                        {
-                                                                            objectID: id,
-                                                                            grantID: grantID,
-                                                                            singleUse: true,
-                                                                            expiresAt:
-                                                                                token.expiresAt,
-                                                                            permissions: [
-                                                                                {
-                                                                                    rights: [
-                                                                                        'read',
-                                                                                        'write',
-                                                                                        'delete',
-                                                                                    ],
-                                                                                    keys: [
-                                                                                        keyPairs
-                                                                                            .signing
-                                                                                            .publicKey,
-                                                                                    ],
-                                                                                },
-                                                                                {
-                                                                                    rights: [
-                                                                                        'write',
-                                                                                        'read',
-                                                                                        'delete',
-                                                                                    ],
-                                                                                    keys: [
-                                                                                        token
-                                                                                            .data
-                                                                                            .publicKey,
-                                                                                    ],
-                                                                                },
-                                                                            ],
-                                                                        }
-                                                                    ),
-                                                                    keyPairs
-                                                                        .signing
-                                                                        .publicKey
-                                                                )
-                                                        )
-                                                    )
-                                            )
-                                    )
-                            )
+                        slots.map(async slot => {
+                            const oa = appointmentsBySlotId[slot.id];
+                            // cancellation & booking max 15 minutes before appointment
+                            let expiresAt = new Date(
+                                new Date(oa.timestamp).getTime() -
+                                    1000 * 60 * 15
+                            );
+                            if (expiresAt > new Date(token.expiresAt))
+                                expiresAt = new Date(token.expiresAt);
+                            return await sign(
+                                keyPairs.signing.privateKey,
+                                JSON.stringify({
+                                    objectID: slot.id,
+                                    grantID: token.grantID,
+                                    singleUse: true,
+                                    expiresAt: expiresAt.toISOString(),
+                                    // data will expire one hour after the appointment
+                                    dataExpiresAt: new Date(
+                                        new Date(oa.timestamp).getTime() +
+                                            1000 * 60 * 60
+                                    ).toISOString(),
+                                    permissions: [
+                                        {
+                                            rights: ['read', 'write', 'delete'],
+                                            keys: [keyPairs.signing.publicKey],
+                                        },
+                                        {
+                                            rights: ['write', 'read', 'delete'],
+                                            keys: [token.data.publicKey],
+                                        },
+                                    ],
+                                }),
+                                keyPairs.signing.publicKey
+                            );
+                        })
                     );
-                    grantsData = grantsData.map(gd => gd.flat());
+
+                    const appointments = {};
+
+                    slots.forEach((slot, i) => {
+                        const oa = appointmentsBySlotId[slot.id];
+                        if (appointments[oa.id] === undefined)
+                            appointments[oa.id] = {
+                                ...oa,
+                                slotData: [],
+                                grants: [],
+                            };
+
+                        const appointment = appointments[oa.id];
+
+                        const slotCopy = { ...slot };
+
+                        // we remove the token information (only delivered to the user
+                        // but it's not used currently and there's no reason for the user to see it...)
+                        delete slotCopy.token;
+                        delete slotCopy.userData;
+
+                        appointment.slotData.push(slotCopy);
+                        appointment.grants.push(grantsData[i]);
+                    });
+
                     const userData = {
                         provider: verifiedProviderData.signedData,
-                        offers: openAppointments
-                            .filter(
-                                oa =>
-                                    oa.slotData.filter(sl => sl.open).length > 0
-                            )
-                            .map((oa, i) => {
-                                // to do: we should maybe not send all fields to the
-                                // user by default
-                                const on = { ...oa };
-                                // we only send information about the open slots to
-                                // the user...
-                                on.slotData = on.slotData.filter(sl => sl.open);
-                                on.grants = grantsData[i];
-                                return on;
-                            }),
+                        createdAt: new Date().toISOString(),
+                        offers: Array.from(Object.values(appointments)),
                     };
+
+                    let tokenPublicKey;
+
+                    switch (token.data.version) {
+                        case '0.1':
+                            tokenPublicKey = token.encryptedData.publicKey;
+                            break;
+                        case '0.2':
+                        case '0.3':
+                            tokenPublicKey = token.data.encryptionPublicKey;
+                            break;
+                    }
+
                     // we first encrypt the data
                     const encryptedUserData = await ecdhEncrypt(
                         JSON.stringify(userData),
                         token.keyPair,
-                        token.encryptedData.publicKey
+                        tokenPublicKey
                     );
                     // we sign the data with our private key
                     const signedEncryptedUserData = await sign(
@@ -240,9 +300,14 @@ export async function sendInvitations(
                         JSON.stringify(encryptedUserData),
                         keyPairs.signing.publicKey
                     );
+
                     const submitData = {
-                        id: token.data.id,
+                        id: token.dataID,
                         data: signedEncryptedUserData,
+                        // data will expire with the token
+                        expiresAt: new Date(
+                            new Date(token.expiresAt).getTime() + 1000 * 60 * 60
+                        ).toISOString(),
                         permissions: [
                             {
                                 rights: ['read'],
@@ -255,26 +320,32 @@ export async function sendInvitations(
                         ],
                     };
                     dataToSubmit.push(submitData);
+                    tokensToSubmit.push(token);
                 } catch (e) {
                     console.error(e);
                     continue;
                 }
-            }
-            backend.local.set('provider::tokens::open', openTokens);
 
-            // we send the signed, encrypted data to the backend
-            await backend.appointments.bulkStoreData(
-                { dataList: dataToSubmit },
-                keyPairs.signing
-            );
+                if (dataToSubmit.length >= 100) {
+                    await doSubmitData();
+                }
+            }
+
+            if (dataToSubmit.length > 0) {
+                await doSubmitData();
+            }
+
+            backend.local.set('provider::tokens::open', openTokens);
 
             return { status: 'succeeded' };
         } catch (e) {
             console.error(e);
             return { status: 'failed', error: e };
         }
+    } catch (e) {
+        console.error(e);
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('sendInvitations');
     }
 }
 

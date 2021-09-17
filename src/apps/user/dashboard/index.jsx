@@ -7,12 +7,15 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 import Settings from './settings';
 import Appointments from './appointments';
 
-import { keys } from 'apps/provider/actions';
+import { keys, queues } from 'apps/provider/actions';
 import {
     userSecret,
     backupData,
     tokenData,
+    queueData,
+    getAppointments,
     invitation,
+    appointments,
     checkInvitationData,
 } from 'apps/user/actions';
 import {
@@ -49,42 +52,43 @@ const Dashboard = withRouter(
                     keys,
                     router,
                     userSecret,
+                    userSecretAction,
                     keysAction,
                     backupDataAction,
                     invitationAction,
+                    appointmentsAction,
                     checkInvitationData,
                     checkInvitationDataAction,
+                    getAppointments,
+                    getAppointmentsAction,
+                    queueData,
+                    queueDataAction,
+                    queues,
+                    queuesAction,
                     tokenData,
                     tokenDataAction,
                 }) => {
                     const [tv, setTv] = useState(-2);
-                    const [initialized, setInitialized] = useState(false);
-
-                    useEffect(() => {
-                        if (initialized) return;
-                        setInitialized(true);
-                        tokenDataAction().then(td => {
-                            if (td === undefined || td.data === null)
-                                router.navigateToUrl('/user');
-                        });
-                    });
 
                     useEffect(() => {
                         // we do this only once per timer interval...
                         if (timer === tv) return;
                         setTv(timer);
-                        keysAction().then(kd =>
-                            tokenDataAction().then(td => {
-                                if (td === undefined || td.data === null)
-                                    return;
-                                checkInvitationDataAction(
-                                    kd.data,
-                                    td.data
-                                ).then(() => {
-                                    backupDataAction(userSecret.data);
+                        userSecretAction().then(us =>
+                            keysAction().then(kd =>
+                                tokenDataAction().then(td => {
+                                    if (td === undefined || td.data === null)
+                                        return;
+                                    const { queueData: qd } = td.data;
+
+                                    getAppointmentsAction(qd, kd.data);
+
+                                    checkInvitationDataAction(kd.data, td.data);
+                                    backupDataAction(us.data);
                                     invitationAction();
-                                });
-                            })
+                                    appointmentsAction();
+                                })
+                            )
                         );
                     });
 
@@ -138,11 +142,15 @@ const Dashboard = withRouter(
                 keys,
                 checkInvitationData,
                 invitation,
+                appointments,
+                queueData,
+                queues,
+                getAppointments,
                 userSecret,
                 backupData,
             ]
         ),
-        2000
+        10000
     )
 );
 

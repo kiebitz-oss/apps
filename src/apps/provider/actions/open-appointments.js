@@ -4,44 +4,17 @@
 
 import { buf2base32, b642buf } from 'helpers/conversion';
 import { randomBytes } from 'helpers/crypto';
-
-function enrichAppointments(appointments) {
-    const sortedAppointments = appointments
-        .sort(
-            (a, b) =>
-                new Date(a.timestamp).getTime() -
-                new Date(b.timestamp).getTime()
-        )
-        .map(oa => ({ ...oa }));
-    let activeAppointments = [];
-
-    for (const [i, oa] of sortedAppointments.entries()) {
-        oa.maxOverlap = 0;
-        oa.index = i;
-        oa.start = new Date(`${oa.timestamp}`);
-        // end of appointment (we calculate with 45 minute minimum duration)
-        oa.stop = new Date(oa.start.getTime() + 1000 * 60 * Math.max(45, oa.duration));
-        activeAppointments = activeAppointments.filter(
-            aa => aa.stop >= oa.start
-        );
-        oa.overlapsWith = [...activeAppointments];
-
-        for (const ova of oa.overlapsWith) {
-            ova.overlapsWith.push(oa);
-        }
-
-        activeAppointments.push(oa);
-
-        const na = activeAppointments.length - 1;
-        for (const aa of activeAppointments) {
-            if (na > aa.maxOverlap) aa.maxOverlap = na;
-        }
-    }
-    return sortedAppointments;
-}
+import { enrichAppointments } from './helpers';
 
 export async function openAppointments(state, keyStore, settings) {
     const backend = settings.get('backend');
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('openAppointments');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
 
     try {
         const appointments = backend.local.get(
@@ -57,7 +30,8 @@ export async function openAppointments(state, keyStore, settings) {
             }
         }
 
-        if (changed) backend.local.set('provider::appointments::open', []);
+        if (changed)
+            backend.local.set('provider::appointments::open', appointments);
 
         try {
             return {
@@ -69,7 +43,7 @@ export async function openAppointments(state, keyStore, settings) {
             console.error(e);
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('openAppointments');
     }
 }
 

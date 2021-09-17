@@ -26,6 +26,12 @@ import t from './translations.yml';
 import Form from 'helpers/form';
 import './restore.scss';
 
+function formatSecret(secret) {
+    const parts = secret.match(/.{1,4}/g);
+    if (parts === null) return secret;
+    return parts.join('  ');
+}
+
 class LoadBackupForm extends Form {
     validate() {
         const errors = {};
@@ -80,7 +86,7 @@ export default withForm(
                         );
 
                     return (
-                        <CenteredCard className="kip-restore-from-backup">
+                        <CenteredCard className="kip-user-restore-from-backup">
                             <CardHeader>
                                 <h1 className="bulma-subtitle">
                                     <T t={t} k="load-backup.title" />
@@ -90,12 +96,11 @@ export default withForm(
                                 {notice}
                                 <FormComponent>
                                     <FieldSet>
-                                        <ErrorFor
-                                            error={error}
-                                            field="secret"
-                                        />
                                         <RetractingLabelInput
-                                            value={data.secret || ''}
+                                            id="secret"
+                                            value={formatSecret(
+                                                data.secret || ''
+                                            )}
                                             onChange={value =>
                                                 set('secret', value)
                                             }

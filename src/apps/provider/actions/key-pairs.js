@@ -11,12 +11,19 @@ import {
 import { markAsLoading } from 'helpers/actions';
 
 // make sure the signing and encryption key pairs exist
-export async function keyPairs(state, keyStore, settings) {
+export async function keyPairs(state, keyStore, settings, lockName) {
     const backend = settings.get('backend');
+
+    if (lockName === undefined) lockName = 'keyPairs';
+
     try {
         // we lock the local backend to make sure we don't have any data races
-        await backend.local.lock();
+        await backend.local.lock(lockName);
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
 
+    try {
         const providerKeyPairs = backend.local.get('provider::keyPairs');
 
         markAsLoading(state, keyStore);
@@ -44,10 +51,10 @@ export async function keyPairs(state, keyStore, settings) {
             }
         } else {
             // to do: only to support old apps, remove in July 2021
-            if (providerKeyPairs.syncKey === undefined){
+            if (providerKeyPairs.sync === undefined) {
                 const syncKey = await generateSymmetricKey();
-                providerKeyPairs.syncKey = syncKey;
-                backend.local.set('provider::keyPairs', providerKeyPairs)
+                providerKeyPairs.sync = syncKey;
+                backend.local.set('provider::keyPairs', providerKeyPairs);
             }
             return {
                 status: 'loaded',
@@ -55,7 +62,7 @@ export async function keyPairs(state, keyStore, settings) {
             };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock(lockName);
     }
 }
 

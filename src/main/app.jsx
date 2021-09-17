@@ -63,11 +63,11 @@ class App extends React.Component {
         const { settings } = this.props;
         const checkSettings = () => {
             if (!this.mounted) return;
-            if (settings.get('commitSHA') !== this.commitSHA)
+            if (settings.get('commitSHA') !== this.commitSHA) {
+                setTimeout(() => location.reload(), 60000);
                 this.setState({ outdated: true });
-            else setTimeout(checkSettings, 60000);
+            } else setTimeout(checkSettings, 60000);
         };
-
         setTimeout(checkSettings, 60000);
     }
 

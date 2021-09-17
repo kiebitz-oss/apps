@@ -4,6 +4,7 @@
 
 import {
     generateECDSAKeyPair,
+    generateECDHKeyPair,
     ephemeralECDHEncrypt,
     randomBytes,
     hashString,
@@ -12,6 +13,7 @@ import {
 async function hashContactData(data) {
     const hashData = {
         name: data.name,
+        grantSeed: data.grantSeed,
         nonce: randomBytes(32),
     };
 
@@ -30,8 +32,15 @@ export async function submitToQueue(
     userSecret
 ) {
     const backend = settings.get('backend');
+
     try {
-        await backend.local.lock();
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('submitToQueue');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
         keyStore.set({ status: 'submitting' });
         let tokenData = backend.local.get('user::tokenData');
         if (tokenData !== null) {
@@ -39,6 +48,7 @@ export async function submitToQueue(
                 // we already have a token, we just submit to another queue
                 const signedToken = await backend.appointments.getToken({
                     hash: tokenData.dataHash,
+                    publicKey: tokenData.signingKeyPair.publicKey,
                     code: contactData.code,
                     encryptedData: tokenData.encryptedTokenData,
                     queueID: queue.id,
@@ -65,18 +75,22 @@ export async function submitToQueue(
             // we hash the user data to prove it didn't change later...
             const [dataHash, nonce] = await hashContactData(contactData);
             const signingKeyPair = await generateECDSAKeyPair();
+            const encryptionKeyPair = await generateECDHKeyPair();
 
             const userToken = {
                 // we use the user secrets first 4 digits as a code
                 // this weakens the key a bit but the provider has access to all
                 // of the user's appointment data anyway...
                 code: userSecret.slice(0, 4),
+                version: '0.3',
+                createdAt: new Date().toISOString(),
                 publicKey: signingKeyPair.publicKey, // the signing key to control the ID
+                encryptionPublicKey: encryptionKeyPair.publicKey,
                 id: randomBytes(32), // the ID where we want to receive data
             };
 
             // we encrypt the token data so the provider can decrypt it...
-            const [encryptedTokenData, privateKey] = await ephemeralECDHEncrypt(
+            const [encryptedTokenData, _] = await ephemeralECDHEncrypt(
                 JSON.stringify(userToken),
                 queue.publicKey
             );
@@ -93,6 +107,7 @@ export async function submitToQueue(
 
             const signedToken = await backend.appointments.getToken({
                 hash: dataHash,
+                publicKey: signingKeyPair.publicKey,
                 code: contactData.code,
                 encryptedData: encryptedTokenData,
                 queueID: queue.id,
@@ -100,12 +115,14 @@ export async function submitToQueue(
             });
 
             tokenData = {
+                createdAt: new Date().toISOString(),
                 signedToken: signedToken,
                 signingKeyPair: signingKeyPair,
                 encryptedTokenData: encryptedTokenData,
                 encryptedContactData: encryptedContactData,
+                queueID: queue.id,
                 queueData: queueData,
-                privateKey: privateKey,
+                keyPair: encryptionKeyPair,
                 hashNonce: nonce,
                 dataHash: dataHash,
                 tokenData: userToken,
@@ -120,7 +137,7 @@ export async function submitToQueue(
             return { status: 'failed', error: e };
         }
     } finally {
-        backend.local.unlock();
+        backend.local.unlock('submitToQueue');
     }
 }
 

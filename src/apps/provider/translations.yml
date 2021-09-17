@@ -8,10 +8,15 @@ title:
 what-to-do:
   de: Was möchten Sie tun?
 setup:
-  de: Als Arzt registriren
+  de: Als Arzt registrieren
 restore:
-  de: Daten wiederherstellen
+  de: Einloggen
 load-backup:
+  advanced-options:
+    de: Erweiterte Optionen
+  local-only:
+    label:
+      de: Nur lokale Daten laden (keine Cloud-Daten)
   failed:
     de: Das Laden Ihrer Daten ist leider fehlgeschlagen. Bitte prüfen Sie Ihren Datenschlüssel sowie die angegebene Datei.
   invalid-secret:
@@ -19,22 +24,24 @@ load-backup:
   missing-file:
     de: Bitte geben Sie einen Dateinamen an
   title:
-    de: Daten wiederherstellen
+    de: Einloggen
   load:
-    de: Daten wiederherstellen
+    de: Einloggen
   secret:
     label:
       de: Datenschlüssel
     description:
       de: Der Datenschlüssel, den Sie bei der Registrierung erhalten haben.
   invalid-file:
-    de: "Ungültige Backup-Datei. Hinweis: Der Name der Datei sollte '{title}.enc' sein."
+    de: "Ungültige Sicherheitsdatei. Hinweis: Der Name der Datei sollte '{title}.enc' sein."
   input:
     label:
-      de: Backup-Datei wählen
+      de: Sicherungsdatei wählen
     change:
       de: "{filename}"
-    de: Backup-Datei wählen
+    description:
+      de: Bitte laden Sie hier Ihre Sicherungsdatei (sofort-impfen-backup-2021[Datum&Uhrzeit].enc) hoch.
+    de: Sicherungsdatei wählen
 show-help:
   de: Hilfe anzeigen
 data-deleted:
@@ -43,8 +50,8 @@ thanks-for-using-us:
   de: Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie {service} genutzt haben!
 logged-out:
   log-in-again:
-    de: Daten wiederherstellen
+    de: Einloggen
   title:
     de: Erfolgreich abgemeldet.
   notice:
-    de: Sie wurden erfolgreich abgemeldet. Sie können Ihre Daten jederzeit mit Ihrem Datenschlüssel und Ihrer Backup-Datei wiederherstellen.
+    de: Sie wurden erfolgreich abgemeldet. Sie können Ihre Daten jederzeit mit Ihrem Datenschlüssel und Ihrer Sicherheitsdatei wiederherstellen.

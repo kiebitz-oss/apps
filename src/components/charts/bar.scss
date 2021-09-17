@@ -1,0 +1,26 @@
+.kip-bar-chart {
+
+    background: #fff;
+    padding: 0;
+    position: relative;
+    overflow-x: hidden;
+    max-width: 100%;
+    font-size: 0.8rem;
+    color: #AAA;
+
+    span.kip-bar {
+        background: #f70;
+    }
+
+    span.kip-refbar {
+        background: #eee;
+    }
+
+    span.kip-grid{
+        height: 1px;
+        position: absolute;
+        display: inline-block;
+        border-top: #ccc dashed 1px;
+        z-index: 1;
+    }
+}

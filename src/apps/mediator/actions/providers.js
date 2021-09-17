@@ -7,18 +7,42 @@ import { markAsLoading } from 'helpers/actions';
 
 export async function verifiedProviders(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
-    return await providers(state, keyStore, settings, keyPairs, (...args) =>
-        backend.appointments.getVerifiedProviderData(...args)
-    );
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('verifiedProviders');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
+        return await providers(state, keyStore, settings, keyPairs, (...args) =>
+            backend.appointments.getVerifiedProviderData(...args)
+        );
+    } finally {
+        backend.local.unlock('verifiedProviders');
+    }
 }
 
 verifiedProviders.actionName = 'verifiedProviders';
 
 export async function pendingProviders(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
-    return await providers(state, keyStore, settings, keyPairs, (...args) =>
-        backend.appointments.getPendingProviderData(...args)
-    );
+
+    try {
+        // we lock the local backend to make sure we don't have any data races
+        await backend.local.lock('pendingProviders');
+    } catch (e) {
+        throw null; // we throw a null exception (which won't affect the store state)
+    }
+
+    try {
+        return await providers(state, keyStore, settings, keyPairs, (...args) =>
+            backend.appointments.getPendingProviderData(...args)
+        );
+    } finally {
+        backend.local.unlock('pendingProviders');
+    }
 }
 
 pendingProviders.actionName = 'pendingProviders';

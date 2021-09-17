@@ -6,6 +6,7 @@ import React, { useState, useEffect, Fragment as F } from 'react';
 import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
 import Form from 'helpers/form';
 import {
+    reconfirmProviders,
     pendingProviders,
     verifiedProviders,
     keyPairs,
@@ -17,7 +18,9 @@ import {
     withTimer,
     Message,
     Modal,
+    CardContent,
     WithLoader,
+    A,
     List,
     Icon,
     ListHeader,
@@ -30,6 +33,10 @@ import {
 import t from './translations.yml';
 import './providers.scss';
 
+const sortProviderByDate = (a, b) => {
+    return new Date(b.entry.timestamp) - new Date(a.entry.timestamp);
+};
+
 const Providers = withTimer(
     withRouter(
         withActions(
@@ -40,8 +47,9 @@ const Providers = withTimer(
                 timer,
                 confirmProvider,
                 confirmProviderAction,
+                reconfirmProviders,
+                reconfirmProvidersAction,
                 keyPairs,
-                keyPairsAction,
                 pendingProviders,
                 pendingProvidersAction,
                 verifiedProviders,
@@ -51,11 +59,14 @@ const Providers = withTimer(
                 const [view, setView] = useState('pending');
 
                 const getData = t => {
-                    setLastRun(t);
-                    keyPairsAction().then(keyPairs => {
-                        pendingProvidersAction(keyPairs.data);
-                        verifiedProvidersAction(keyPairs.data);
-                    });
+                    if (keyPairs !== undefined && keyPairs.data !== undefined) {
+                        setLastRun(t);
+                        pendingProvidersAction(keyPairs.data).then(pd =>
+                            verifiedProvidersAction(keyPairs.data).then(vp => {
+                                // do something
+                            })
+                        );
+                    }
                 };
 
                 useEffect(() => {
@@ -75,6 +86,47 @@ const Providers = withTimer(
 
                     const closeModal = () =>
                         router.navigateToUrl('/mediator/providers');
+
+                    const closeReconfirmModal = () => {
+                        if (reconfirmProviders.status === 'inProgress') return;
+                        router.navigateToUrl('/mediator/providers');
+                    };
+
+                    const doReconfirmProviders = () => {
+                        reconfirmProvidersAction(
+                            verifiedProviders.data,
+                            keyPairs.data
+                        );
+                    };
+
+                    if (action === 'reconfirm')
+                        modal = (
+                            <Modal
+                                title={<T t={t} k="providers.reconfirm" />}
+                                save={<T t={t} k="providers.reconfirm" />}
+                                onSave={doReconfirmProviders}
+                                saveType="success"
+                                disabled={
+                                    reconfirmProviders.status === 'inProgress'
+                                }
+                                onClose={closeModal}
+                                onCancel={closeModal}
+                            >
+                                <div className="kip-provider-data">
+                                    {(reconfirmProviders.status ===
+                                        'inProgress' && (
+                                        <T
+                                            t={t}
+                                            k="providers.reconfirmProgressText"
+                                            i={reconfirmProviders.i}
+                                            n={reconfirmProviders.n}
+                                        />
+                                    )) || (
+                                        <T t={t} k="providers.reconfirmText" />
+                                    )}
+                                </div>
+                            </Modal>
+                        );
 
                     if (action === 'show' && id !== undefined) {
                         const base64Id = buf2b64(hex2buf(id));
@@ -187,6 +239,31 @@ const Providers = withTimer(
                                                         {provider.data.phone}
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.description"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {provider.data.description}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <T
+                                                            t={t}
+                                                            k="provider-data.queues"
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {
+                                                            provider.data.queues
+                                                                .length
+                                                        }
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -195,13 +272,7 @@ const Providers = withTimer(
                     }
 
                     const providerItems = providers.data
-                        .sort((a, b) =>
-                            a.data.name < b.data.name
-                                ? -1
-                                : a.data.name > b.data.name
-                                ? 1
-                                : 0
-                        )
+                        .sort(sortProviderByDate)
                         .map(provider => (
                             <ListItem
                                 onClick={() => showProvider(provider.id)}
@@ -219,41 +290,46 @@ const Providers = withTimer(
                         ));
 
                     return (
-                        <div className="kip-providers">
-                            {modal}
-                            <DropdownMenu
-                                title={
-                                    <F>
-                                        <Icon icon="check-circle" />
-                                        <T t={t} k={`providers.${view}`} />
-                                    </F>
-                                }
-                            >
-                                <DropdownMenuItem
-                                    icon="check-circle"
-                                    onClick={() => setView('verified')}
+                        <CardContent>
+                            <div className="kip-providers">
+                                {modal}
+                                <DropdownMenu
+                                    title={
+                                        <F>
+                                            <Icon icon="check-circle" />
+                                            <T t={t} k={`providers.${view}`} />
+                                        </F>
+                                    }
                                 >
-                                    <T t={t} k="providers.verified" />
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    icon="exclamation-circle"
-                                    onClick={() => setView('pending')}
-                                >
-                                    <T t={t} k="providers.pending" />
-                                </DropdownMenuItem>
-                            </DropdownMenu>
-                            <List>
-                                <ListHeader>
-                                    <ListColumn size="md">
-                                        <T t={t} k="providers.name" />
-                                    </ListColumn>
-                                    <ListColumn size="md">
-                                        <T t={t} k="providers.address" />
-                                    </ListColumn>
-                                </ListHeader>
-                                {providerItems}
-                            </List>
-                        </div>
+                                    <DropdownMenuItem
+                                        icon="check-circle"
+                                        onClick={() => setView('verified')}
+                                    >
+                                        <T t={t} k="providers.verified" />
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        icon="exclamation-circle"
+                                        onClick={() => setView('pending')}
+                                    >
+                                        <T t={t} k="providers.pending" />
+                                    </DropdownMenuItem>
+                                </DropdownMenu>
+                                <A href="/mediator/providers/reconfirm">
+                                    <T t={t} k="providers.reconfirm" />
+                                </A>
+                                <List>
+                                    <ListHeader>
+                                        <ListColumn size="md">
+                                            <T t={t} k="providers.name" />
+                                        </ListColumn>
+                                        <ListColumn size="md">
+                                            <T t={t} k="providers.address" />
+                                        </ListColumn>
+                                    </ListHeader>
+                                    {providerItems}
+                                </List>
+                            </div>
+                        </CardContent>
                     );
                 };
                 return (
@@ -267,7 +343,13 @@ const Providers = withTimer(
                     />
                 );
             },
-            [pendingProviders, verifiedProviders, keyPairs, confirmProvider]
+            [
+                pendingProviders,
+                reconfirmProviders,
+                verifiedProviders,
+                keyPairs,
+                confirmProvider,
+            ]
         )
     ),
     10000
