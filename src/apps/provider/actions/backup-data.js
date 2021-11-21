@@ -64,7 +64,6 @@ export async function backupData(
                 JSON.stringify(state.referenceData) ===
                 JSON.stringify(referenceData)
             ) {
-                console.log('not modified');
                 return state;
             }
         }

@@ -14,8 +14,8 @@ export async function queueData(state, keyStore, settings, data) {
 
     try {
         // we just store the data...
-        if (data !== undefined) backend.temporary.set('user::queueData', data);
-        data = backend.temporary.get('user::queueData');
+        if (data !== undefined) backend.local.set('user::queueData', data);
+        data = backend.local.get('user::queueData');
         if (data === null)
             return {
                 status: 'failed',

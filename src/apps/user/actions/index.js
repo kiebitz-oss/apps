@@ -8,6 +8,7 @@ export * from './confirm-offers';
 export * from './contact-data';
 export * from './invitation';
 export * from './token-data';
+export * from './get-token';
 export * from './user-secret';
 export * from './queue-data';
 export * from './backup-data';

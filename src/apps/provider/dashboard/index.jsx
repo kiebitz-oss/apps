@@ -100,10 +100,7 @@ const Dashboard = withRouter(
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
-                                getAppointmentsAction(kp.data).finally(data => {
-                                    console.log(data);
-                                });
-
+                                getAppointmentsAction(kp.data);
                                 publishAppointmentsAction(kp.data).finally(
                                     () => {
                                         getBookingsAction(kp.data, ks.data);

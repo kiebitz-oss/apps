@@ -50,7 +50,6 @@ export async function getBookings(state, keyStore, settings, keyPairs, keys) {
 
                     bookingsById[item.id] = dd;
                 } catch (e) {
-                    console.log(e);
                     continue;
                 }
             }
@@ -81,7 +80,6 @@ export async function getBookings(state, keyStore, settings, keyPairs, keys) {
                 status: 'suceeded',
             };
         } catch (e) {
-            console.log(e);
             return {
                 status: 'failed',
                 error: e,

@@ -130,7 +130,6 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     async getToken({
         hash,
         encryptedData,
-        queueID,
         publicKey,
         code,
         queueData,
@@ -141,7 +140,6 @@ export default class AppointmentsBackend extends JSONRPCBackend {
             code: code,
             publicKey: publicKey,
             encryptedData: encryptedData,
-            queueID: queueID,
             queueData: queueData,
             signedTokenData: signedTokenData,
         });

@@ -35,7 +35,6 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
                 appointment
             );
             if (!verified) {
-                console.error('invalid signature');
                 continue;
             }
             const appData = JSON.parse(appointment.data);
@@ -44,7 +43,6 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
                 openAppointments.find(app => app.id === appData.id) ||
                 newAppointments.find(app => app.id === appData.id)
             ) {
-                console.log('already exists');
                 continue;
             }
 

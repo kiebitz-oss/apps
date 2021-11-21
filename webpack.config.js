@@ -49,6 +49,7 @@ let config = {
     target: "web",
     context: SRC_DIR,
     resolve: {
+        fallback: { "buffer": require.resolve("buffer"), process: 'process/browser' },
         symlinks: false,
         extensions: [
             // if an import has no file ending, they will be resolved in this order
@@ -104,6 +105,10 @@ let config = {
     },
     plugins: [
         ...copyPlugins,
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+            Buffer: ['buffer', 'Buffer'],
+        }),
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional

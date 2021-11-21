@@ -4,9 +4,9 @@
 
 import React, { useEffect, useRef, useState, Fragment as F } from 'react';
 import {
+    getToken,
     contactData,
     queueData,
-    getToken,
     userSecret,
     backupData,
 } from 'apps/user/actions';
@@ -63,19 +63,23 @@ const Finalize = withForm(
                     backupDataAction,
                     contactData,
                     contactDataAction,
+                    getToken,
+                    getTokenAction,
                     userSecret,
                     userSecretAction,
                     form: { set, data, error, valid, reset },
                 }) => {
                     const [initialized, setInitialized] = useState(false);
+                    const [noQueue, setNoQueue] = useState(false);
                     const [modified, setModified] = useState(false);
                     const [submitting, setSubmitting] = useState(false);
-
+                    const [tv, setTV] = useState(0);
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
                         contactDataAction();
                         userSecretAction();
+                        getTokenAction.reset();
                         queueDataAction().then(qd => {
                             const initialData = {
                                 distance: 5,
@@ -95,15 +99,24 @@ const Finalize = withForm(
 
                     const submit = () => {
                         setSubmitting(true);
-                        queueDataAction(data).then(({ data: sd }) => {
-                            setSubmitting(false);
-                            backupDataAction(userSecret.data);
+                        queueDataAction(data).then(() => {
+                            getTokenAction(
+                                contactData.data,
+                                userSecret.data
+                            ).then(hd => {
+                                setSubmitting(false);
+                                if (hd.status === 'failed') return;
 
-                            router.navigateToUrl('/user/setup/store-secrets');
+                                backupDataAction(userSecret.data);
+                                router.navigateToUrl(
+                                    '/user/setup/store-secrets'
+                                );
+                            });
                         });
                     };
 
                     const setAndMarkModified = (key, value) => {
+                        setNoQueue(false);
                         setModified(true);
                         queueDataAction(set(key, value));
                     };
@@ -148,9 +161,46 @@ const Finalize = withForm(
                     });
 
                     const render = () => {
+                        let noQueueMessage;
+                        let failedMessage;
+                        let failed;
+
+                        if (noQueue)
+                            noQueueMessage = (
+                                <Message type="danger">
+                                    <T t={t} k="wizard.no-queue.notice" />
+                                </Message>
+                            );
+
+                        if (
+                            getToken !== undefined &&
+                            getToken.status === 'failed'
+                        ) {
+                            failed = true;
+                            if (getToken.error.error.code === 401) {
+                                failedMessage = (
+                                    <Message type="danger">
+                                        <T
+                                            t={t}
+                                            k="wizard.failed.invalid-code"
+                                        />
+                                    </Message>
+                                );
+                            }
+                        }
+
+                        if (failed && !failedMessage)
+                            failedMessage = (
+                                <Message type="danger">
+                                    <T t={t} k="wizard.failed.notice" />
+                                </Message>
+                            );
+
                         return (
                             <React.Fragment>
                                 <CardContent>
+                                    {noQueueMessage}
+                                    {failedMessage}
                                     <div className="kip-finalize-fields">
                                         <ErrorFor
                                             error={error}
@@ -268,14 +318,22 @@ const Finalize = withForm(
                                 <CardFooter>
                                     <Button
                                         waiting={submitting}
-                                        type="success"
+                                        type={
+                                            noQueue || failed
+                                                ? 'danger'
+                                                : 'success'
+                                        }
                                         onClick={submit}
                                         disabled={submitting || !valid}
                                     >
                                         <T
                                             t={t}
                                             k={
-                                                submitting
+                                                noQueue
+                                                    ? 'wizard.no-queue.title'
+                                                    : failed
+                                                    ? 'wizard.failed.title'
+                                                    : submitting
                                                     ? 'wizard.please-wait'
                                                     : 'wizard.continue'
                                             }
@@ -287,7 +345,7 @@ const Finalize = withForm(
                     };
                     return <WithLoader resources={[]} renderLoaded={render} />;
                 },
-                [queueData, contactData, userSecret, backupData]
+                [getToken, queueData, contactData, userSecret, backupData]
             )
         )
     ),

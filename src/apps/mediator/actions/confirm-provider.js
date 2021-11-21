@@ -12,7 +12,6 @@ export async function confirmSingleProvider(providerData, keyPairs, backend) {
             zipCode: providerData.data.zipCode,
             accessible: providerData.data.accessible,
         },
-        queues: providerData.data.queues, // so we know which queues the provider can query
     };
 
     const keysJSONData = JSON.stringify(keyHashesData);
@@ -29,8 +28,6 @@ export async function confirmSingleProvider(providerData, keyPairs, backend) {
         description: providerData.data.description,
     };
 
-    console.log(publicProviderData);
-
     const publicProviderJSONData = JSON.stringify(publicProviderData);
     const providerJSONData = JSON.stringify(providerData.data);
 
@@ -39,23 +36,6 @@ export async function confirmSingleProvider(providerData, keyPairs, backend) {
         keysJSONData,
         keyPairs.signing.publicKey
     );
-
-    const queues = await backend.appointments.getQueuesForProvider(
-        { queueIDs: providerData.data.queues },
-        keyPairs.signing
-    );
-
-    const queuePrivateKeys = [];
-    for (const queue of queues) {
-        const queuePrivateKey = await ecdhDecrypt(
-            queue.encryptedPrivateKey,
-            keyPairs.queue.privateKey
-        );
-        queuePrivateKeys.push({
-            privateKey: queuePrivateKey,
-            id: queue.id,
-        });
-    }
 
     // this will be stored for the provider, so we add the public key data
     const signedProviderData = await sign(
@@ -71,7 +51,6 @@ export async function confirmSingleProvider(providerData, keyPairs, backend) {
     );
 
     const fullData = {
-        queuePrivateKeys: queuePrivateKeys,
         signedData: signedProviderData,
         signedPublicData: signedPublicProviderData,
     };

@@ -85,7 +85,6 @@ export async function getAppointments(
                     item.offers = verifiedOffers;
                     verifiedAppointments.push(item);
                 } catch (e) {
-                    console.log(e);
                     continue;
                 }
             }

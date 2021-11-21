@@ -31,16 +31,6 @@ export async function submitProviderData(
             backend.local.set('provider::data::encryptionKeyPair', keyPair);
         }
 
-        try {
-            const queues = await backend.appointments.getQueues({
-                zipCode: data.data.zipCode,
-                radius: 50,
-            });
-            data.data.queues = queues.map(q => q.id);
-        } catch (e) {
-            return { status: 'failed', error: e };
-        }
-
         dataToEncrypt.publicKeys = {
             signing: keyPairs.signing.publicKey,
             encryption: keyPairs.encryption.publicKey,

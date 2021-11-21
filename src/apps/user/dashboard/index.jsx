@@ -11,8 +11,8 @@ import { keys } from 'apps/provider/actions';
 import {
     userSecret,
     backupData,
-    tokenData,
     queueData,
+    tokenData,
     getAppointments,
     invitation,
     appointments,
@@ -60,7 +60,6 @@ const Dashboard = withRouter(
                     getAppointmentsAction,
                     queueData,
                     queueDataAction,
-                    tokenData,
                     tokenDataAction,
                 }) => {
                     const [tv, setTv] = useState(-2);
@@ -70,17 +69,15 @@ const Dashboard = withRouter(
                         if (timer === tv) return;
                         setTv(timer);
                         userSecretAction().then(us =>
-                            keysAction().then(kd =>
-                                tokenDataAction().then(td => {
-                                    if (td === undefined || td.data === null)
-                                        return;
-                                    const { queueData: qd } = td.data;
-
-                                    getAppointmentsAction(qd, kd.data);
-                                    backupDataAction(us.data);
-                                    invitationAction();
-                                    appointmentsAction();
-                                })
+                            tokenDataAction().then(() =>
+                                keysAction().then(kd =>
+                                    queueDataAction().then(qd => {
+                                        getAppointmentsAction(qd.data, kd.data);
+                                        backupDataAction(us.data);
+                                        invitationAction();
+                                        appointmentsAction();
+                                    })
+                                )
                             )
                         );
                     });
@@ -131,11 +128,11 @@ const Dashboard = withRouter(
                 }
             ),
             [
-                tokenData,
                 keys,
                 invitation,
                 appointments,
                 queueData,
+                tokenData,
                 getAppointments,
                 userSecret,
                 backupData,
