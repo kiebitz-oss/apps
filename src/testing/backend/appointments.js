@@ -341,7 +341,7 @@ export default class AppointmentsBackend {
         let queueToken;
         if (signedTokenData !== undefined) {
             // to do: validate signature!
-            let signedToken = JSON.parse(signedTokenData.data);
+            const signedToken = JSON.parse(signedTokenData.data);
             if (
                 !(await e(
                     verify(
@@ -454,7 +454,7 @@ export default class AppointmentsBackend {
                         ) {
                             continue candidates; // the distance between user and provider is too large
                         }
-                        for (let [k, v] of Object.entries(properties)) {
+                        for (const [k, v] of Object.entries(properties)) {
                             if (
                                 token.queueData[k] !== undefined &&
                                 token.queueData[k] !== v

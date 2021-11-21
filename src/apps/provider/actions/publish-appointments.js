@@ -36,17 +36,9 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                     timestamp: appointment.timestamp,
                     publicKey: keyPairs.encryption.publicKey,
                     properties: {},
-                    // to do: remove filter once everything's on the new mechanism
-                    // currently we filter out slots that have been booked through the old mechanism
-                    slotData: appointment.slotData
-                        .filter(
-                            sl =>
-                                sl.token === undefined ||
-                                sl.token.expiresAt === undefined
-                        )
-                        .map(sl => ({
-                            id: sl.id,
-                        })),
+                    slotData: appointment.slotData.map(sl => ({
+                        id: sl.id,
+                    })),
                 };
                 for (const [k, v] of Object.entries(properties)) {
                     for (const [kk] of Object.entries(v.values)) {

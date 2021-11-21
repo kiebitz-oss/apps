@@ -7,7 +7,7 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 import Settings from './settings';
 import Appointments from './appointments';
 
-import { keys, queues } from 'apps/provider/actions';
+import { keys } from 'apps/provider/actions';
 import {
     userSecret,
     backupData,
@@ -16,7 +16,6 @@ import {
     getAppointments,
     invitation,
     appointments,
-    checkInvitationData,
 } from 'apps/user/actions';
 import {
     CenteredCard,
@@ -57,14 +56,10 @@ const Dashboard = withRouter(
                     backupDataAction,
                     invitationAction,
                     appointmentsAction,
-                    checkInvitationData,
-                    checkInvitationDataAction,
                     getAppointments,
                     getAppointmentsAction,
                     queueData,
                     queueDataAction,
-                    queues,
-                    queuesAction,
                     tokenData,
                     tokenDataAction,
                 }) => {
@@ -82,8 +77,6 @@ const Dashboard = withRouter(
                                     const { queueData: qd } = td.data;
 
                                     getAppointmentsAction(qd, kd.data);
-
-                                    checkInvitationDataAction(kd.data, td.data);
                                     backupDataAction(us.data);
                                     invitationAction();
                                     appointmentsAction();
@@ -140,11 +133,9 @@ const Dashboard = withRouter(
             [
                 tokenData,
                 keys,
-                checkInvitationData,
                 invitation,
                 appointments,
                 queueData,
-                queues,
                 getAppointments,
                 userSecret,
                 backupData,

@@ -13,7 +13,7 @@ export async function verifiedProviderData(state, keyStore, settings) {
     }
 
     try {
-        let providerData = backend.local.get('provider::data::verified');
+        const providerData = backend.local.get('provider::data::verified');
         return {
             status: 'loaded',
             data: providerData,

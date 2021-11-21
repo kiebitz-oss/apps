@@ -247,7 +247,10 @@ const Providers = withTimer(
                                                         />
                                                     </td>
                                                     <td>
-                                                        {provider.data.description}
+                                                        {
+                                                            provider.data
+                                                                .description
+                                                        }
                                                     </td>
                                                 </tr>
                                                 <tr>

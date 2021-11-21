@@ -4,14 +4,14 @@
 
 export function getMonday(d) {
     d = new Date(d);
-    var day = d.getDay(),
+    const day = d.getDay(),
         diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
     return new Date(d.setDate(diff));
 }
 
 // https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd
 export function formatDate(date) {
-    var d = new Date(date),
+    let d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();
@@ -24,7 +24,7 @@ export function formatDate(date) {
 
 // https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd
 export function formatTime(date) {
-    var d = new Date(date),
+    let d = new Date(date),
         hours = '' + d.getHours(),
         minutes = '' + d.getMinutes();
 

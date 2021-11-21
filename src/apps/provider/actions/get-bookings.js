@@ -22,7 +22,6 @@ export async function getBookings(state, keyStore, settings, keyPairs, keys) {
         );
 
         try {
-            // we already have a token, we just renew it
             const result = await backend.appointments.getBookedAppointments(
                 {},
                 keyPairs.signing
@@ -58,12 +57,6 @@ export async function getBookings(state, keyStore, settings, keyPairs, keys) {
 
             for (const appointment of appointments) {
                 for (const slotData of appointment.slotData) {
-                    if (
-                        slotData.token !== undefined &&
-                        slotData.token.expiresAt !== undefined
-                    ) {
-                        continue; // this is a legacy token
-                    }
                     const booking = bookingsById[slotData.id];
                     if (booking === undefined) {
                         slotData.open = true;

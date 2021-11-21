@@ -12,7 +12,6 @@ const dataMap = {
     providerData: 'data',
     appointments: 'appointments::open',
     verifiedProviderData: 'data::verified',
-    openTokens: 'tokens::open',
     providerDataEncryptionKey: 'data::encryptionKey',
 };
 
@@ -43,15 +42,6 @@ export async function restoreFromBackup(
                     message: 'decryption failed',
                 },
             };
-
-        // to do: remove as soon as everyone's on the new versioned schema
-        if (dd.version === undefined || dd.version === '0.1') {
-            // this is an old backup file, we restore data from it...
-            for (const [k, v] of Object.entries(dataMap)) {
-                if (dd[k] !== undefined)
-                    backend.local.set(`provider::${v}`, dd[k]);
-            }
-        }
 
         for (const key of localKeys) {
             backend.local.set(`provider::${key}`, dd[key]);

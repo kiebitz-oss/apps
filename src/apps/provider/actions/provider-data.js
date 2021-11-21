@@ -23,15 +23,6 @@ export async function providerData(state, keyStore, settings, data) {
                 verifiedID: randomBytes(32),
                 data: {},
             };
-        } else {
-            // to do: remove once it's migrated
-            if (
-                providerData.data !== undefined &&
-                providerData.data.submitted
-            ) {
-                providerData.data.submittedAt = new Date().toISOString();
-                delete providerData.data.submitted;
-            }
         }
         if (data !== undefined) {
             providerData.data = data;

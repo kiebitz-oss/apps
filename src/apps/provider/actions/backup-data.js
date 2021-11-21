@@ -15,9 +15,6 @@ export const cloudKeys = [
     'data::verified',
     'bookings',
     'bookings::reported',
-    'tokens::open',
-    'tokens::expired',
-    'tokens::used',
     'data::encryptionKey',
 ];
 

@@ -21,7 +21,6 @@ export async function syncData(state, keyStore, settings, keyPairs) {
             providerData: backend.local.get('provider::data'),
             appointments: backend.local.get('provider::appointments::open'),
             verifiedProviderData: backend.local.get('provider::data::verified'),
-            openTokens: backend.local.get('provider::tokens::open'),
             providerDataEncryptionKey: backend.local.get(
                 'provider::data::encryptionKey'
             ),

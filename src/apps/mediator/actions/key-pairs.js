@@ -21,14 +21,14 @@ export async function keyPairs(state, keyStore, settings, data) {
 
         if (data !== undefined) backend.local.set('mediator::keyPairs', data);
 
-        let mediatorKeyPairs = backend.local.get('mediator::keyPairs');
+        const mediatorKeyPairs = backend.local.get('mediator::keyPairs');
 
         if (mediatorKeyPairs === null && settings.get('test') === true) {
             const signingKeyPair = await generateECDSAKeyPair();
             const encryptionKeyPair = await generateECDHKeyPair();
             await backend.appointments.initialized();
 
-            let mediatorKeyPairs = {
+            const mediatorKeyPairs = {
                 signing: signingKeyPair,
                 encryption: encryptionKeyPair,
                 provider: backend.appointments.providerDataEncryptionKeyPair,

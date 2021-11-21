@@ -52,7 +52,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
 
     const chunks = secret.match(/.{1,4}/g);
 
-    let fragments = [];
+    const fragments = [];
     for (let i = 0; i < chunks.length; i++) {
         fragments.push(<F key={`${i}-main`}>{chunks[i]}</F>);
         if (i < chunks.length - 1)

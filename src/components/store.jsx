@@ -48,7 +48,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
                 const newKeyList = [];
                 for (let [key, value] of actionNames) {
                     if (value === undefined) {
-                        let functional = !(key.prototype instanceof Base);
+                        const functional = !(key.prototype instanceof Base);
                         if (functional) value = key.actionName;
                         else value = key.defaultKey;
                     }

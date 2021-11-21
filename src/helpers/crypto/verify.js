@@ -9,7 +9,7 @@ export async function verify(keys, signedData) {
     const signature = b642buf(signedData.signature);
     const data = str2ab(signedData.data);
 
-    for (let keyData of keys) {
+    for (const keyData of keys) {
         const ab = b642buf(keyData);
         try {
             // we import the key data

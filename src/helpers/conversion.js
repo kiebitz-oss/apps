@@ -129,10 +129,10 @@ export function buf2b64(buffer) {
 
 // https://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
 export function b642buf(base64) {
-    var bs = window.atob(base64);
-    var len = bs.length;
-    var bytes = new Uint8Array(len);
-    for (var i = 0; i < len; i++) {
+    const bs = window.atob(base64);
+    const len = bs.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
         bytes[i] = bs.charCodeAt(i);
     }
     return bytes.buffer;

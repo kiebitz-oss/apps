@@ -3,9 +3,7 @@
 // README.md contains license information.
 
 import React, { useEffect, useRef, useState, Fragment as F } from 'react';
-import { queues } from 'apps/provider/actions';
 import {
-    submitToQueue,
     contactData,
     queueData,
     getToken,
@@ -59,32 +57,25 @@ const Finalize = withForm(
                 ({
                     settings,
                     router,
-                    queues,
-                    queuesAction,
                     queueData,
                     queueDataAction,
                     backupData,
                     backupDataAction,
                     contactData,
                     contactDataAction,
-                    submitToQueue,
-                    submitToQueueAction,
                     userSecret,
                     userSecretAction,
                     form: { set, data, error, valid, reset },
                 }) => {
                     const [initialized, setInitialized] = useState(false);
-                    const [noQueue, setNoQueue] = useState(false);
                     const [modified, setModified] = useState(false);
                     const [submitting, setSubmitting] = useState(false);
-                    const [tv, setTV] = useState(0);
+
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
                         contactDataAction();
                         userSecretAction();
-                        queuesAction.reset();
-                        submitToQueueAction.reset();
                         queueDataAction().then(qd => {
                             const initialData = {
                                 distance: 5,
@@ -105,37 +96,14 @@ const Finalize = withForm(
                     const submit = () => {
                         setSubmitting(true);
                         queueDataAction(data).then(({ data: sd }) => {
-                            const qa = queuesAction(sd.zipCode, sd.distance);
-                            qa.then(qd => {
-                                if (qd.status === 'failed') {
-                                    setSubmitting(false);
-                                    return;
-                                }
-                                if (qd.data.length === 0) {
-                                    setNoQueue(true);
-                                    setSubmitting(false);
-                                    return;
-                                }
-                                submitToQueueAction(
-                                    contactData.data,
-                                    sd,
-                                    qd.data[0],
-                                    userSecret.data
-                                ).then(hd => {
-                                    setSubmitting(false);
-                                    if (hd.status === 'failed') return;
+                            setSubmitting(false);
+                            backupDataAction(userSecret.data);
 
-                                    backupDataAction(userSecret.data);
-                                    router.navigateToUrl(
-                                        '/user/setup/store-secrets'
-                                    );
-                                });
-                            });
+                            router.navigateToUrl('/user/setup/store-secrets');
                         });
                     };
 
                     const setAndMarkModified = (key, value) => {
-                        setNoQueue(false);
                         setModified(true);
                         queueDataAction(set(key, value));
                     };
@@ -180,51 +148,9 @@ const Finalize = withForm(
                     });
 
                     const render = () => {
-                        let noQueueMessage;
-                        let failedMessage;
-                        let failed;
-
-                        if (noQueue)
-                            noQueueMessage = (
-                                <Message type="danger">
-                                    <T t={t} k="wizard.no-queue.notice" />
-                                </Message>
-                            );
-
-                        if (
-                            submitToQueue !== undefined &&
-                            submitToQueue.status === 'failed'
-                        ) {
-                            failed = true;
-                            if (submitToQueue.error.error.code === 401) {
-                                failedMessage = (
-                                    <Message type="danger">
-                                        <T
-                                            t={t}
-                                            k="wizard.failed.invalid-code"
-                                        />
-                                    </Message>
-                                );
-                            }
-                        } else if (
-                            queues !== undefined &&
-                            queues.status === 'failed'
-                        ) {
-                            failed = true;
-                        }
-
-                        if (failed && !failedMessage)
-                            failedMessage = (
-                                <Message type="danger">
-                                    <T t={t} k="wizard.failed.notice" />
-                                </Message>
-                            );
-
                         return (
                             <React.Fragment>
                                 <CardContent>
-                                    {noQueueMessage}
-                                    {failedMessage}
                                     <div className="kip-finalize-fields">
                                         <ErrorFor
                                             error={error}
@@ -342,22 +268,14 @@ const Finalize = withForm(
                                 <CardFooter>
                                     <Button
                                         waiting={submitting}
-                                        type={
-                                            noQueue || failed
-                                                ? 'danger'
-                                                : 'success'
-                                        }
+                                        type="success"
                                         onClick={submit}
                                         disabled={submitting || !valid}
                                     >
                                         <T
                                             t={t}
                                             k={
-                                                noQueue
-                                                    ? 'wizard.no-queue.title'
-                                                    : failed
-                                                    ? 'wizard.failed.title'
-                                                    : submitting
+                                                submitting
                                                     ? 'wizard.please-wait'
                                                     : 'wizard.continue'
                                             }
@@ -369,14 +287,7 @@ const Finalize = withForm(
                     };
                     return <WithLoader resources={[]} renderLoaded={render} />;
                 },
-                [
-                    queues,
-                    submitToQueue,
-                    queueData,
-                    contactData,
-                    userSecret,
-                    backupData,
-                ]
+                [queueData, contactData, userSecret, backupData]
             )
         )
     ),

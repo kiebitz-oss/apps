@@ -5,9 +5,9 @@
 const LoggedIn = "LOGGED_IN"
 
 export async function user(state, keyStore, settings, signedData){
-	return {
-		status: LoggedIn
-	}
+    return {
+        status: LoggedIn
+    }
 }
 
 user.actionName = 'user'

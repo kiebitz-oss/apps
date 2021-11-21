@@ -10,7 +10,6 @@ import { formatDuration, formatDate, formatTime } from 'helpers/time';
 import classNames from 'helpers/classnames';
 import {
     tokenData,
-    grantID,
     slotInfos,
     userSecret,
     invitation,
@@ -145,7 +144,6 @@ const AcceptedInvitation = withActions(
         cancelInvitation,
         invitationAction,
         cancelInvitationAction,
-        grantIDAction,
         slotInfosAction,
         offers,
         userSecret,
@@ -159,7 +157,6 @@ const AcceptedInvitation = withActions(
                 tokenData.data
             ).then(() => {
                 // we reload the appointments
-                grantIDAction();
                 slotInfosAction();
                 invitationAction();
                 acceptedInvitationAction();
@@ -184,7 +181,6 @@ const AcceptedInvitation = withActions(
                 k === 'open' ||
                 k === 'slotData' ||
                 k === 'properties' ||
-                k === 'grants' ||
                 k === 'slots'
             )
                 continue;
@@ -261,13 +257,12 @@ const AcceptedInvitation = withActions(
         acceptedInvitation,
         cancelInvitation,
         invitation,
-        grantID,
         slotInfos,
         tokenData,
     ]
 );
 
-const NoInvitations = ({ tokenData, oldGrant }) => {
+const NoInvitations = ({ tokenData }) => {
     let createdAt;
 
     if (tokenData.createdAt !== undefined)
@@ -291,15 +286,9 @@ const NoInvitations = ({ tokenData, oldGrant }) => {
     } else {
         content = (
             <F>
-                {(oldGrant && (
-                    <Message type="warning">
-                        <T t={t} k="no-invitations.old-grant-notice" />
-                    </Message>
-                )) || (
-                    <Message type="warning">
-                        <T t={t} k="no-invitations.notice" />
-                    </Message>
-                )}
+                <Message type="warning">
+                    <T t={t} k="no-invitations.notice" />
+                </Message>
             </F>
         );
     }
@@ -338,16 +327,9 @@ toggleOffers.actionName = 'toggleOffers';
 
 const PropertyTags = ({ appointment }) => {
     let props;
-    if (appointment.grants !== undefined) {
-        props = Object.entries(appointment)
-            .filter(([k, v]) => v === true)
-            .map(([k, v]) => <PropertyTag key={k} property={k} />)
-            .filter(p => p !== undefined);
-    } else {
-        props = Object.entries(appointment.properties)
-            .map(([, v]) => <PropertyTag key={v} property={v} />)
-            .filter(p => p !== undefined);
-    }
+    props = Object.entries(appointment.properties)
+        .map(([, v]) => <PropertyTag key={v} property={v} />)
+        .filter(p => p !== undefined);
     return <F>{props}</F>;
 };
 
@@ -373,8 +355,6 @@ const InvitationDetails = withSettings(
             settings,
             userSecret,
             toggleOffers,
-            grantID,
-            grantIDAction,
             slotInfos,
             slotInfosAction,
             toggleOffersAction,
@@ -390,7 +370,6 @@ const InvitationDetails = withSettings(
                 setInitialized(true);
                 toggleOffersAction(null);
                 slotInfosAction();
-                grantIDAction();
             });
 
             const toggle = offer => {
@@ -432,20 +411,6 @@ const InvitationDetails = withSettings(
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
                     const openSlots = offer.slotData.filter(sl => {
-                        if (offer.grants !== undefined) {
-                            const grant = offer.grants.find(
-                                grant =>
-                                    JSON.parse(grant.data).objectID === sl.id
-                            );
-                            // grant is already expired for this slot
-                            if (
-                                grant !== undefined &&
-                                new Date(JSON.parse(grant.data).expiresAt) <
-                                    new Date()
-                            ) {
-                                return false;
-                            }
-                        }
                         if (
                             slotInfos !== undefined &&
                             slotInfos.data !== null
@@ -553,36 +518,13 @@ const InvitationDetails = withSettings(
                 </F>
             );
         },
-        [
-            toggleOffers,
-            confirmOffers,
-            acceptedInvitation,
-            userSecret,
-            slotInfos,
-            grantID,
-        ]
+        [toggleOffers, confirmOffers, acceptedInvitation, userSecret, slotInfos]
     )
 );
 
-const filterInvitations = (invitation, grantID, slotInfos) => {
+const filterInvitations = (invitation, slotInfos) => {
     if (invitation.offers === null) return false;
-    let expired = true;
-    if (invitation.legacy) {
-        invitation.offers.forEach(offer =>
-            offer.grants.forEach(grant => {
-                const grantData = JSON.parse(grant.data);
-                const grantExpiresAt = new Date(grantData.expiresAt);
-                if (new Date() < grantExpiresAt) {
-                    expired = false;
-                }
-            })
-        );
-
-        if (expired) {
-            return false;
-        }
-    }
-
+    const expired = true;
     let noOpenSlots = false;
     noOpenSlots = !invitation.offers
         .map(offer => offer.slotData)
@@ -606,31 +548,6 @@ const filterInvitations = (invitation, grantID, slotInfos) => {
         return false;
     }
 
-    if (invitation.legacy) {
-        let oldGrant = true;
-        let oldGrantID;
-
-        if (grantID !== undefined && grantID.data !== null)
-            oldGrantID = grantID.data;
-
-        if (oldGrantID !== undefined) {
-            if (!noOpenSlots) {
-                const grant = invitation.offers[0].grants[0];
-                try {
-                    const grantData = JSON.parse(grant.data);
-                    if (grantData.grantID !== oldGrantID) oldGrant = false;
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-        } else {
-            oldGrant = false;
-        }
-
-        if (oldGrant) {
-            return false;
-        }
-    }
     return true;
 };
 
@@ -640,8 +557,6 @@ const Appointments = withActions(
         invitation,
         appointments,
         slotInfos,
-        grantID,
-        grantIDAction,
         slotInfosAction,
         acceptedInvitation,
         tokenData,
@@ -652,7 +567,6 @@ const Appointments = withActions(
             if (initialized) return;
             setInitialized(true);
             slotInfosAction();
-            grantIDAction();
         });
 
         const render = () => {
@@ -693,7 +607,7 @@ const Appointments = withActions(
 
             // we only show relevant invitations
             invitations = invitations.filter(inv =>
-                filterInvitations(inv, grantID, slotInfos, acceptedInvitation)
+                filterInvitations(inv, slotInfos, acceptedInvitation)
             );
 
             if (invitations.length === 0)
@@ -711,25 +625,12 @@ const Appointments = withActions(
         };
         return (
             <WithLoader
-                resources={[
-                    tokenData,
-                    invitation,
-                    appointments,
-                    grantID,
-                    slotInfos,
-                ]}
+                resources={[tokenData, invitation, appointments, slotInfos]}
                 renderLoaded={render}
             />
         );
     },
-    [
-        tokenData,
-        invitation,
-        appointments,
-        acceptedInvitation,
-        slotInfos,
-        grantID,
-    ]
+    [tokenData, invitation, appointments, acceptedInvitation, slotInfos]
 );
 
 export default Appointments;

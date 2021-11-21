@@ -23,45 +23,21 @@ export async function cancelInvitation(
     try {
         const id = acceptedInvitation.slotData.id;
 
-        if (acceptedInvitation.invitation.legacy) {
-            const encryptedProviderData = await ecdhEncrypt(
-                JSON.stringify({ cancel: true }),
-                tokenData.keyPair,
-                acceptedInvitation.invitation.publicKey
+        try {
+            const result = await backend.appointments.cancelSlot(
+                {
+                    id: id,
+                    signedTokenData: tokenData.signedToken,
+                    providerID: acceptedInvitation.invitation.provider.id,
+                },
+                tokenData.signingKeyPair
             );
-
-            try {
-                const result = await backend.appointments.storeData(
-                    {
-                        id: id,
-                        data: encryptedProviderData,
-                    },
-                    tokenData.signingKeyPair
-                );
-            } catch (e) {
-                console.error(e);
-                return {
-                    status: 'failed',
-                    error: e,
-                };
-            }
-        } else {
-            try {
-                const result = await backend.appointments.cancelSlot(
-                    {
-                        id: id,
-                        signedTokenData: tokenData.signedToken,
-                        providerID: acceptedInvitation.invitation.provider.id,
-                    },
-                    tokenData.signingKeyPair
-                );
-            } catch (e) {
-                console.error(e);
-                return {
-                    status: 'failed',
-                    error: e,
-                };
-            }
+        } catch (e) {
+            console.error(e);
+            return {
+                status: 'failed',
+                error: e,
+            };
         }
 
         backend.local.set('user::invitation::verified', null);

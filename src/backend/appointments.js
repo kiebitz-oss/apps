@@ -73,10 +73,6 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         });
     }
 
-    async getQueues({ zipCode, radius }) {
-        return await this.call('getQueues', { zipCode, radius });
-    }
-
     // return all public keys present in the system
     async getKeys() {
         return await this.call('getKeys', {});
@@ -153,11 +149,6 @@ export default class AppointmentsBackend extends JSONRPCBackend {
 
     // provider-only endpoints
 
-    // get n tokens from the given queue IDs
-    async returnTokens({ tokens }, keyPair) {
-        return await this.call('returnTokens', { tokens }, keyPair);
-    }
-
     // get all published appointments from the backend
     async getAppointments({}, keyPair) {
         return await this.call('getProviderAppointments', {}, keyPair);
@@ -177,15 +168,6 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('getBookedAppointments', {}, keyPair);
     }
 
-    // get n tokens from the given queue IDs
-    async getQueueTokens({ expiration, capacities }, keyPair) {
-        return await this.call(
-            'getQueueTokens',
-            { capacities, expiration },
-            keyPair
-        );
-    }
-
     async storeProviderData({ id, encryptedData, code }, keyPair) {
         return await this.call(
             'storeProviderData',
@@ -194,16 +176,7 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         );
     }
 
-    // mark tokens as used
-    async markTokensAsUsed({ tokens }, keyPair) {
-        return await this.call('markTokenAsUsed', { tokens }, keyPair);
-    }
-
     // mediator-only endpoint
-
-    async getQueuesForProvider({ queueIDs }, keyPair) {
-        return await this.call('getQueuesForProvider', { queueIDs }, keyPair);
-    }
 
     async getPendingProviderData({ limit }, keyPair) {
         return await this.call('getPendingProviderData', { limit }, keyPair);

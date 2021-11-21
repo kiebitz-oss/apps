@@ -50,7 +50,7 @@ export async function getAppointments(
 
     try {
         keyStore.set({ status: 'submitting' });
-        let tokenData = backend.local.get('user::tokenData');
+        const tokenData = backend.local.get('user::tokenData');
 
         if (tokenData === null) {
             return {

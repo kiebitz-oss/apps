@@ -16,10 +16,8 @@ import {
     getBookings,
     getAppointments,
     publishAppointments,
-    sendInvitations,
     providerSecret,
     openAppointments,
-    checkInvitations,
     submitProviderData,
     verifiedProviderData,
     checkVerifiedProviderData,
@@ -56,12 +54,8 @@ const Dashboard = withRouter(
                     settings,
                     openAppointments,
                     openAppointmentsAction,
-                    sendInvitations,
-                    sendInvitationsAction,
                     providerData,
                     providerDataAction,
-                    checkInvitations,
-                    checkInvitationsAction,
                     submitProviderData,
                     submitProviderDataAction,
                     verifiedProviderData,
@@ -106,16 +100,13 @@ const Dashboard = withRouter(
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
-                                // we send invitations and then check invitation data
                                 getAppointmentsAction(kp.data).finally(data => {
                                     console.log(data);
                                 });
 
-                                // we send invitations and then check invitation data
                                 publishAppointmentsAction(kp.data).finally(
                                     () => {
                                         getBookingsAction(kp.data, ks.data);
-                                        checkInvitationsAction(kp.data);
                                     }
                                 );
 
@@ -177,12 +168,6 @@ const Dashboard = withRouter(
                             verifiedProviderData.data === null
                         )
                             return;
-
-                        // we send invitations and then check invitation data
-                        sendInvitationsAction(
-                            keyPairs.data,
-                            verifiedProviderData.data
-                        );
                     });
 
                     let content;
@@ -262,12 +247,10 @@ const Dashboard = withRouter(
             keys,
             getBookings,
             validKeyPairs,
-            sendInvitations,
             backupData,
             providerSecret,
             providerData,
             submitProviderData,
-            checkInvitations,
             openAppointments,
             checkVerifiedProviderData,
         ]

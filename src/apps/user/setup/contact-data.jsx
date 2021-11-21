@@ -138,16 +138,3 @@ const ContactData = withActions(
 );
 
 export default ContactData;
-
-/*
-            <h2>
-                <T t={t} k="contact-data.optional.title" />
-            </h2>
-            <ErrorFor error={error} field="name" />
-            <RetractingLabelInput
-                value={data.name || ''}
-                onChange={value => setAndMarkModified('name', value)}
-                label={<T t={t} k="contact-data.name" />}
-            />
-
-*/

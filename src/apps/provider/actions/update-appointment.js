@@ -3,7 +3,6 @@
 // README.md contains license information.
 
 import { randomBytes } from 'helpers/crypto';
-import { cancelSlots } from './cancel-appointment';
 import { createSlot } from './create-appointment';
 
 export async function updateAppointment(
@@ -49,10 +48,6 @@ export async function updateAppointment(
         const os = Math.min(openSlots.length, Math.max(0, data.slots - cs));
         // and we possible add new slots as well
         const ns = Math.max(0, data.slots - cs - os);
-
-        let canceledSlots = [...openSlots.slice(os), ...closedSlots.slice(cs)];
-
-        await cancelSlots(backend, canceledSlots);
 
         appointment.slotData = [
             ...closedSlots.slice(0, cs),

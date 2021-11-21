@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const path = require("path");
 
-const BUILD_DIR = path.resolve(__dirname, "build/web");
+const BUILD_DIR = path.resolve(__dirname, "build");
 const PUBLIC_DIR = path.resolve(BUILD_DIR, "public");
 const SRC_DIR = path.resolve(__dirname, "src");
 const NODE_MODULES_DIR = path.resolve(__dirname, "node_modules");
@@ -22,21 +22,27 @@ switch (APP_ENV) {
         break;
 }
 
+
 const withSourceMap = function(url) {
-    return APP_ENV !== "production" ? url + "?sourceMap" : url;
+    const loader = {
+        loader: url,
+        options: {}
+    }
+    if (APP_ENV === 'production')
+        loader.options.sourceMap = true;
+    return loader;
 };
 
 //we collect static files from various places
 const staticPaths = ["web/static/"];
 const copyPlugins = staticPaths.map(function(path) {
-    return new CopyWebpackPlugin([
+    return new CopyWebpackPlugin({patterns: [
         {
             from: path,
             to: "../",
             toType: "dir",
-            flatten: false
         }
-    ]);
+    ]});
 });
 
 let config = {
@@ -98,7 +104,6 @@ let config = {
     },
     plugins: [
         ...copyPlugins,
-        new webpack.NamedModulesPlugin(),
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
@@ -153,18 +158,18 @@ if (APP_ENV === "production") {
         devtool: "cheap-module-source-map",
         devServer: {
             // enable Hot Module Replacement on the server
-            hot: true,
             host: '0.0.0.0',
-            // match the output path
-            contentBase: ["src/web/static"],
             // match the output `publicPath`
-            publicPath: "/public/",
+            static: {
+                publicPath: "/",
+                directory: path.join(process.cwd(), "src/web/static"),
+            },
             //always render index.html if the document does not exist (we need this for correct routing)
             historyApiFallback: true,
 
             proxy: {
                 "/api": {
-                    target: "http://localhost:5000/",
+                    target: "http://localhost:8888/",
                     secure: false
                 }
             },

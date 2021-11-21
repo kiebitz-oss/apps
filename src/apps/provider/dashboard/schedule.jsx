@@ -64,7 +64,7 @@ const AppointmentOverview = withActions(
         ...props
     }) => {
         const [showDelete, setShowDelete] = useState(false);
-        let acceptedItems = appointment.slotData
+        const acceptedItems = appointment.slotData
             .map(sl => {
                 if (sl.open) return;
                 return (
@@ -374,7 +374,7 @@ const HourRow = withRouter(
             router.navigateToUrl(`/provider/schedule/${action}/new#${query}`);
         };
 
-        let hasAppointments = relevantAppointments.length > 0;
+        const hasAppointments = relevantAppointments.length > 0;
         return (
             <div
                 onClick={showNewAppointment}
@@ -1013,7 +1013,7 @@ const Invitations = withTimer(
                         action = formatDate(startDate);
                     }
 
-                    let dateString = formatDate(startDate);
+                    const dateString = formatDate(startDate);
 
                     const render = () => {
                         let newAppointmentModal;

@@ -104,7 +104,7 @@ export default withForm(
 
                     const readFile = e => {
                         const file = e.target.files[0];
-                        var reader = new FileReader();
+                        const reader = new FileReader();
 
                         set('filename', file.name);
 
