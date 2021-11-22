@@ -1,8 +1,8 @@
 {
     "title":"sofort-impfen",
     "commitSHA" : "COMMIT_SHA",
-    "storageApi" : "https://storage.sofort-impfen.de/jsonrpc",
-    "appointmentsApi" : "https://appointments.sofort-impfen.de/jsonrpc",
-    "termsUrl" : "https://app.sofort-impfen.de/demo/resources/terms",
-    "privacyUrl" : "https://app.sofort-impfen.de/demo/resources/privacy"
+    "storageApi" : "https://storage.kiebitz.eu/jsonrpc",
+    "appointmentsApi" : "https://appointments.kiebitz.eu/jsonrpc",
+    "termsUrl" : "https://app.kiebitz.eu/demo/resources/terms",
+    "privacyUrl" : "https://app.kiebitz.eu/demo/resources/privacy"
 }
