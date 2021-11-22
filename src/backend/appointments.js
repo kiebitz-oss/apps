@@ -48,11 +48,6 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         );
     }
 
-    // add the mediator key to the list of keys (only for testing)
-    async addMediatorPublicKeys({ keys }, keyPair) {
-        return await this.call('addMediatorPublicKeys', { keys }, keyPair);
-    }
-
     // public endpoints
 
     async getAppointmentsByZipCode({ zipCode }) {
@@ -158,7 +153,7 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     async cancelBooking({ id }, keyPair) {
-        return await this.call('cancelBooking', {}, keyPair);
+        return await this.call('cancelBooking', { id }, keyPair);
     }
 
     // get n tokens from the given queue IDs
