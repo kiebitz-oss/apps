@@ -7,6 +7,7 @@ import { base322buf, b642buf } from 'helpers/conversion';
 
 export const backupKeys = [
     'tokenData',
+    'queueData',
     'invitation',
     'invitation::verified',
     'invitation::accepted',
