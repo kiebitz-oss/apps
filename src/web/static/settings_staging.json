@@ -1,8 +1,8 @@
 {
-    "title":"sofort-impfen staging",
+    "title":"kiebitz staging",
     "commitSHA" : "COMMIT_SHA",
-    "storageApi" : "https://storage-staging.sofort-impfen.de/jsonrpc",
-    "appointmentsApi" : "https://appointments-staging.sofort-impfen.de/jsonrpc",
-    "termsUrl" : "https://app-staging.sofort-impfen.de/demo/resources/terms",
-    "privacyUrl" : "https://app-staging.sofort-impfen.de/demo/resources/privacy"
+    "storageApi" : "https://storage-staging.kiebitz.eu/jsonrpc",
+    "appointmentsApi" : "https://appointments-staging.kiebitz.eu/jsonrpc",
+    "termsUrl" : "https://app-staging.kiebitz.eu/demo/resources/terms",
+    "privacyUrl" : "https://app-staging.kiebitz.eu/demo/resources/privacy"
 }

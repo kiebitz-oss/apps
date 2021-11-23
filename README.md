@@ -9,16 +9,15 @@ Welcome to the Kiebitz project! Please visit our [website](https://kiebitz.eu) t
 
 # Getting Started
 
-Kiebietz consists of three apps for providers, mediators and users, which can be reached under `/providers`, `/mediators` and `/users`, respectively. The app can be built with different environments:
+Kiebietz consists of three apps for providers, mediators and users, which can be reached under `/provider`, `/mediator` and `/user`, respectively. The app can be built with different environments:
 
-* The `test` environment provides an integrated backend that simulates the functionality of the real backend and allows testing and developing all apps without running the latter.
 * The `dev` environment works against a locally deployed backend and is great for testing the apps against a real backend.
 * The `production` environment build the app bundles for production deployment, i.e. minified and optimized code that works against the production backend.
 
-To run the app in test mode, simply run
+To run the app in dev mode, simply run
 
 ```bash
-npm run-script make-test
+npm run-script make-dev
 ``` 
 
 after running `npm install`. To build the `dev` and `production` versions simply run
