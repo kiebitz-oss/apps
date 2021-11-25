@@ -73,33 +73,6 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('getKeys', {});
     }
 
-    // data endpoints
-
-    async deleteData({ id }, keyPair) {
-        return await this.call('deleteData', { id }, keyPair);
-    }
-
-    async getData({ id }, keyPair) {
-        return await this.call('getData', { id }, keyPair);
-    }
-
-    async bulkGetData({ ids }, keyPair) {
-        return await this.call('bulkGetData', { ids }, keyPair);
-    }
-
-    async bulkStoreData({ dataList }, keyPair) {
-        return await this.call('bulkStoreData', { dataList }, keyPair);
-    }
-
-    // store provider data for verification
-    async storeData({ id, data, permissions, grant }, keyPair) {
-        return await this.call(
-            'storeData',
-            { id, data, permissions, grant },
-            keyPair
-        );
-    }
-
     // user endpoints
 
     async cancelSlot({ providerID, id, signedTokenData }, keyPair) {

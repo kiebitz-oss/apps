@@ -63,13 +63,6 @@ export default class AppointmentsBackend {
         if (!found) newProviders.push(signedKeyData);
         this.keys.providers = newProviders;
         this.store.set('keys', this.keys);
-        // we store the verified provider data
-        const result = await this.storeData(
-            { id: verifiedID, data: encryptedProviderData },
-            keyPair
-        );
-
-        if (!result) return;
 
         // we remove the provider from the list of unverified providers
         let oldProviderData;
@@ -280,54 +273,6 @@ export default class AppointmentsBackend {
         return keys;
     }
 
-    // data endpoints
-
-    async deleteData({ id }, keyPair) {
-        return this.store.remove(`data::${id}`);
-    }
-
-    async getData({ id }, keyPair) {
-        // to do: implement access control (not really relevant though for the demo)
-        const result = this.store.get(`data::${id}`);
-        return result;
-    }
-
-    async bulkGetData({ ids }, keyPair) {
-        const results = [];
-        for (const id of ids) {
-            results.push(await this.getData({ id }, keyPair));
-        }
-        return results;
-    }
-
-    async bulkStoreData({ dataList }, keyPair) {
-        const results = [];
-        for (const data of dataList) {
-            try {
-                const result = await e(
-                    this.storeData(
-                        {
-                            id: data.id,
-                            data: data.data,
-                            permissions: data.permissions,
-                            grant: data.grant,
-                        },
-                        keyPair
-                    )
-                );
-                results.push(result);
-            } catch (e) {
-                results.push(null);
-            }
-        }
-    }
-
-    // store provider data for verification
-    async storeData({ id, data, permissions, grant }, keyPair) {
-        this.store.set(`data::${id}`, data);
-        return true;
-    }
-
     // user endpoints
 
     // get a token for a given queue
@@ -494,11 +439,6 @@ export default class AppointmentsBackend {
     }
 
     async storeProviderData({ id, encryptedData, code }, keyPair) {
-        const result = await this.storeData(
-            { id: id, data: { encryptedData: encryptedData } },
-            keyPair
-        );
-        if (!result) return;
         let providerDataList = this.store.get('providers::list');
         if (providerDataList === null) providerDataList = [];
         for (const pid of providerDataList) {
