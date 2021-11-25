@@ -41,12 +41,12 @@ export default withActions(
                             </h1>
                             <ul className="kip-cm-selector">
                                 <li>
-                                    <A href="/provider/setup">
+                                    <A className={'bulma-button bulma-is-primary'} href="/provider/setup">
                                         <T t={t} k="setup" />
                                     </A>
                                 </li>
                                 <li>
-                                    <A href="/provider/restore">
+                                    <A className={'bulma-button bulma-is-primary'} href="/provider/restore">
                                         <T t={t} k="restore" />
                                     </A>
                                 </li>

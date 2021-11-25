@@ -1,7 +1,7 @@
 @import 'scss/variables';
 
 .kip-search-select {
-    $kip-border: 1px solid $cm-green1;
+    $kip-border: 1px solid $kip-green;
 
     margin-top: 0;
     margin-bottom: map-get($kip-space, md);

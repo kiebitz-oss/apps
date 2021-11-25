@@ -8,14 +8,14 @@ $kip-sidebar-width: 240px;
     @include kip-gradient('to top');
 
     padding-top: $kip-navbar-height * 1.2;
-    color: #000;
+    color: $kip-black;
     overflow-x: hidden;
     white-space: nowrap;
     transition: width 150ms ease-in-out;
-    box-shadow: $kip-shadow-sm;
+    box-shadow: $kip-box-shadow;
     background-size: 100% 750px;
     background-repeat: repeat-x;
-    background-color: $kip-blue;
+    background-color: $kip-white;
 
     @media (max-width: $kip-desktop) {
         display: none;

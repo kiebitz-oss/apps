@@ -41,13 +41,14 @@ module.exports = {
     "env": {
         "browser": true,
         "es6": true,
+        "node": true,
     },
     "globals": {
         "Atomics": "readonly",
         "Buffer": "readonly",
         "SharedArrayBuffer": "readonly",
     },
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true,

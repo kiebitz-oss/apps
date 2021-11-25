@@ -20,12 +20,14 @@ import {
     CenteredCard,
     CardContent,
     SidebarContainer,
+    TopNavbarSimple,
 } from 'components';
 
 import t from './translations.yml';
 import { user } from 'actions';
 import { encodeQueryData } from 'helpers/url';
 import './app.scss';
+import { Footer } from '../components/footer';
 
 class App extends React.Component {
     constructor(props) {
@@ -114,10 +116,10 @@ class App extends React.Component {
         else content = this.renderFull(RouteComponent, route.handler.props);
 
         return (
-            <Fragment>
+            <div className={'app-container'}>
                 {notice}
                 {content}
-            </Fragment>
+            </div>
         );
     }
 
@@ -167,24 +169,19 @@ class App extends React.Component {
                     sidebar={sidebar}
                     content={content}
                 />
+                <Footer />
             </Fragment>
         );
     }
 
     renderSimple(Component, props) {
-        const { route, settings } = this.props;
+        const { route, settings, title } = this.props;
         return (
-            <React.Fragment>
-                <div className="kip-with-logo-wrapper">
-                    <div className="kip-logo-wrapper">
-                        <img
-                            className="kip-logo"
-                            src={settings.get('whiteLogo')}
-                        />
-                    </div>
-                    <Component {...props} route={route} settings={settings} />
-                </div>
-            </React.Fragment>
+            <Fragment>
+                <TopNavbarSimple settings={settings} title={title} />
+                <Component {...props} route={route} settings={settings} />
+                <Footer />
+            </Fragment>
         );
     }
 }

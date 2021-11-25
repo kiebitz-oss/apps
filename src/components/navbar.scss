@@ -14,17 +14,19 @@
 
 .kip-navbar {
 
-    box-shadow: 0 2px 6px 0 #ebedf4;
+    box-shadow: 0 4px 5px 0 transparentize($kip-black, 0.4);
     background-color: $kip-white;
-    z-index: 30;
-    position: relative;
     font-size: 1.1rem;
+    position: relative;
+    z-index: 30;
+    border-bottom: 8px solid $kip-red;
+    box-sizing: content-box;
 
     @media screen and (min-width: $kip-desktop) {
         .bulma-navbar-item.bulma-has-dropdown:hover .bulma-navbar-link,
-        .bulma-navbar-item.bulma-has-dropdown.bulma-is-active
+        .bulma-navbar-item.bulma-has-dropdown.bulma-is-active,
         .bulma-navbar-link {
-            background-color: $kip-darkblue;
+            background-color: $kip-blue;
         }
     }
 
@@ -36,29 +38,18 @@
 
     .bulma-navbar-brand {
         .kip-logo-wrapper {
-            background-color:white;
-            margin: 0 0.5rem;
-            text-align: center;
-            vertical-align: center;
+            display: flex;
+            align-items: center;
+            margin: 0.25rem 0.5rem;
+
+            @media (max-width: $kip-desktop) {
+                &:not(.persistent) {
+                    display: none;
+                }
+            }
 
             img.kip-logo {
-                height: 1.5rem;
-                @media (max-width: $kip-desktop) {
-                    display: none;
-                }
-            }
-
-            img.kip-small-logo {
-                height: 1.5rem;
-                @media (min-width: $kip-desktop) {
-                    display: none;
-                }
-            }
-
-            a {
-                color: inherit;
-                display: inline-block;
-                margin-top: 0.75rem;
+                height: 2.5rem;
             }
         }
     }
@@ -76,7 +67,7 @@
     }
 
     .bulma-navbar-title {
-        @include font-oxanium;
+        @include font-roboto;
         display: inline-block;
         flex-grow: 1;
         text-align: center;
@@ -97,7 +88,7 @@
     .bulma-navbar-item,
     .bulma-navbar-link {
         &::after {
-            border-color: $kip-darkblue;
+            border-color: $kip-blue;
         }
     }
 

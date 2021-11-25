@@ -35,6 +35,7 @@
 
     &.kip-is-centered {
 
+        margin-bottom: map-get($kip-space, lg);
         margin-top: map-get($kip-space, lg);
 
         @media (min-width: $kip-tablet) {
@@ -94,13 +95,14 @@
     }
 
     .kip-card-nav {
+        @include font-roboto-condensed;
         padding: map-get($kip-space, lg);
         background: #eee;
         flex: 0 0 auto;
         width: 100%;
         cursor: pointer;
         user-select: none;
-        font-weight:600;
+        font-size: 1.1rem;
 
         &.kip-card-nav-active {
             background: #fafafa;
@@ -137,7 +139,7 @@
 
     .kip-card-header {
 
-        @include font-oxanium;
+        @include font-roboto-condensed;
 
         position: relative;
         text-align: left;
@@ -242,19 +244,6 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;
-
-    @media (min-width: $kip-desktop) {
-        padding: 64px;
-    }
-
-    &:not(.kip-is-embedded) {
-        @include kip-gradient('to top');
-
-        &.kip-is-fullheight {
-            min-height: 100vh;
-        }
-
-    }
 
     h2.kip-title {
         text-align: center;

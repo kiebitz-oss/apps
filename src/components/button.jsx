@@ -55,7 +55,7 @@ export const Button = ({
             disabled={disabled}
             className={classnames(
                 'bulma-button',
-                `bulma-is-${type}`,
+                `bulma-is-${type === 'success' ? 'primary' : type}`,
                 className,
                 {
                     'kip-no-text': noText,

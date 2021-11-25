@@ -6,11 +6,11 @@
 
 .kip-input {
     // For some reason, textarea tries to use a system font.
-    @include font-open-sans;
+    @include font-roboto;
 
     font-size: 14px;
     background-color: $kip-white;
-    border: 1px solid $kip-blue;
+    border: 1px solid $kip-primary;
     border-radius: 4px;
     box-sizing: border-box;
     padding: 12px 18px;
@@ -31,7 +31,7 @@
 /* stylelint-disable scss/at-extend-no-missing-placeholder */
 .kip-textarea {
     // For some reason, textarea tries to use a monospace font.
-    @include font-open-sans;
+    @include font-roboto;
     @extend .kip-input;
 
     font-size: 14px;

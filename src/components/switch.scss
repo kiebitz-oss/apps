@@ -17,9 +17,9 @@ $kip-switch-padding: $kip-switch-width + 8px;
     }
 
     .kip-slider {
-        background-color: $cm-red2;
+        background-color: $kip-red;
         box-shadow: $kip-box-shadow;
-        color: #fff;
+        color: $kip-white;
         font-weight: 400;
         position: absolute;
         cursor: pointer;
@@ -58,7 +58,7 @@ $kip-switch-padding: $kip-switch-width + 8px;
 
     input:checked + .kip-slider {
         padding-left: 12px;
-        background-color: $kip-lightgreen;
+        background-color: $kip-green;
         text-align: right;
 
         span.kip-text {

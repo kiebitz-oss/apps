@@ -121,3 +121,35 @@
        url('./source-code-pro-v14-latin-900.ttf') format('truetype'), /* Safari, Android, iOS */
        url('./source-code-pro-v14-latin-900.svg#SourceCodePro') format('svg'); /* Legacy iOS */
 }
+
+/* Roboto - Light */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url('./Roboto-Light.ttf') format('truetype');
+}
+
+/* Roboto - Regular */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./Roboto-Light.ttf') format('truetype');
+}
+
+/* Roboto Condensed - Light */
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 300;
+    src: url('./RobotoCondensed-Light.ttf') format('truetype');
+}
+
+/* Roboto Condensed - Regular */
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./RobotoCondensed-Regular.ttf') format('truetype');
+}

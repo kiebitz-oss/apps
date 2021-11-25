@@ -1,6 +1,6 @@
 // define any variables here to override the defaults from Bulma
 
-$bulma-body-background-color: #f5f6fa;
+$bulma-body-background-color: $kip-background-color;
 
 $bulma-gap: $kip-gap;
 $bulma-tablet: $kip-tablet;
@@ -11,15 +11,24 @@ $bulma-blue: $kip-blue;
 $bulma-green: $kip-green;
 $bulma-purple: $kip-purple;
 $bulma-link: $kip-blue;
-$bulma-primary: $kip-blue;
+$bulma-red: $kip-red;
+$bulma-orange: $kip-orange;
+
+$bulma-primary: $kip-primary;
+$bulma-success: $kip-green;
+$bulma-info: $kip-blue;
+
+$bulma-radius: $kip-radius;
+$bulma-radius-small: $kip-radius;
+$bulma-radius-large: $kip-radius;
 
 // Default height of buttons and inputs
 $bulma-control-height: 48px;
 
-$bulma-button-color: $kip-lightblue;
-$bulma-button-border-color: $kip-green;
-$bulma-button-hover-color: darken($kip-blue, 20%);
-$bulma-button-hover-border-color: darken($kip-green, 20%);
+$bulma-button-color: $kip-primary;
+$bulma-button-border-color: $kip-primary;
+$bulma-button-hover-color: darken($kip-primary, 20%);
+$bulma-button-hover-border-color: darken($kip-primary, 20%);
 
 @import 'bulma-si';
 @import '~assets/bulma/bulma.sass';

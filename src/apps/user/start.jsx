@@ -30,12 +30,12 @@ export default withRouter(
                     </h1>
                     <ul className="kip-cm-selector">
                         <li>
-                            <A href="/user/setup">
+                            <A className={'bulma-button bulma-is-primary'} href="/user/setup">
                                 <T t={t} k="setup" />
                             </A>
                         </li>
                         <li>
-                            <A href="/user/restore">
+                            <A className={'bulma-button bulma-is-primary'} href="/user/restore">
                                 <T t={t} k="restore" />
                             </A>
                         </li>

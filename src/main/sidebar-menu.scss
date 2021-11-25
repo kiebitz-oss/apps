@@ -1,4 +1,4 @@
-@import 'scss/variables';
+@import '~scss/variables';
 
 li.kip-nav-item {
     border-radius: 0;
@@ -6,7 +6,7 @@ li.kip-nav-item {
     a {
         display: inline-block;
         width: 100%;
-        color: #fff;
+        color: $kip-white;
         padding: 12px 24px;
         border-radius: 0;
 
@@ -15,12 +15,12 @@ li.kip-nav-item {
         }
 
         &.is-active {
-            background: $kip-darkblue;
+            background: $kip-primary;
         }
 
         &:hover {
-            color: #fff;
-            background-color: $kip-darkblue;
+            color: $kip-white;
+            background-color: $kip-primary;
         }
     }
 
@@ -51,10 +51,10 @@ li.kip-nav-item {
     .kip-sidebar:hover {
         li.kip-nav-item {
             a.is-active {
-                background: $kip-darkblue;
+                background: $kip-primary;
 
                 i.fas {
-                    color: #fff;
+                    color: $kip-white;
                 }
             }
         }

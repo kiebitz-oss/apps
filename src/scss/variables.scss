@@ -1,14 +1,13 @@
 @import './colors';
 @import './colors-si';
 
-$kip-border-radius: 5px;
-$kip-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1),
-    0 0 0 1px rgba(10, 10, 10, 0.1);
+$kip-border-radius: 0;
+$kip-box-shadow: 0 0 8px 0 rgba(84, 84, 84, 0.2);
 
 $kip-shadow-light-sm: 0 2px 5px 0 rgba(0, 0, 0, 0.11);
 $kip-shadow-dark-sm: 0 2px 5px 0 rgba(0, 0, 0, 0.33);
 
-$kip-radius: 4px;
+$kip-radius: 0;
 
 $kip-gap: 64px;
 $kip-mobile: 421px;
@@ -64,6 +63,14 @@ $kip-fs: (
 }
 
 // Fonts
+
+@mixin font-roboto {
+    font-family: Roboto, sans-serif;
+}
+
+@mixin font-roboto-condensed {
+    font-family: 'Roboto Condensed', sans-serif;
+}
 
 @mixin font-oxanium {
     font-family: Oxanium, sans-serif;

@@ -21,8 +21,6 @@
             color 150ms cubic-bezier(0.47, 0, 0.74, 0.71);
         padding: 0 8px;
         transform: scale(0.75) translateX(-16%) translateY(-26px);
-        border-radius: $kip-border-radius;
-        border: 1px solid $kip-link;
     }
 
     > .kip-input:not([disabled]):placeholder-shown:not(:focus) + .kip-label {

@@ -15,7 +15,7 @@
         text-align: center;
         margin: 10px;
         span {
-            @include font-oxanium;
+            @include font-roboto;
             font-weight: 150;
             @include fs(large);
             display: block;

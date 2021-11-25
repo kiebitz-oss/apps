@@ -8,6 +8,36 @@ import classnames from 'helpers/classnames';
 import { A } from './a';
 import './navbar.scss';
 
+export const TopNavbarSimple = ({ settings, title }) => {
+    return (
+        <header className="kip-navbar bulma-navbar">
+            <div className="centered">
+                <div className="bulma-navbar-brand">
+                    <div className="kip-logo-wrapper persistent">
+                        <img
+                            className="kip-logo"
+                            alt={title}
+                            src={settings.get('logo')}
+                        />
+                    </div>
+                </div>
+                {title ? (
+                    <h1 className="bulma-navbar-item bulma-navbar-title">
+                        {title}
+                    </h1>
+                ) : null}
+            </div>
+        </header>
+    );
+};
+
+TopNavbarSimple.propTypes = {
+    settings: PropTypes.shape({
+        get: PropTypes.func.isRequired,
+    }).isRequired,
+    title: PropTypes.string,
+};
+
 export const TopNavbar = ({ active, menu, settings, title, onToggle }) => (
     <header className="kip-navbar bulma-navbar">
         <div className="centered">
@@ -19,16 +49,14 @@ export const TopNavbar = ({ active, menu, settings, title, onToggle }) => (
                             alt={title}
                             src={settings.get('logo')}
                         />
-                        <img
-                            className="kip-small-logo"
-                            alt={title}
-                            src={settings.get('smallLogo')}
-                        />
                     </A>
                 </div>
             </div>
-            <h1 className="bulma-navbar-item bulma-navbar-title">{title}</h1>
-
+            {title ? (
+                <h1 className="bulma-navbar-item bulma-navbar-title">
+                    {title}
+                </h1>
+            ) : null}
             <div
                 aria-label="menu"
                 aria-expanded={active}

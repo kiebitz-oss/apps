@@ -49,3 +49,20 @@ modal:
     de: Speichern
 pageDoesNotExist:
   en: Sorry, we could not find anything at this URL.
+footer:
+  link:
+    privacy:
+      label:
+        en: Privacy
+        de: Datenschutz
+      href:
+        en: https://frankfurt.de/datenschutz
+        de: https://frankfurt.de/datenschutz
+    imprint:
+      label:
+        en: Imprint
+        de: Impressum
+      href:
+        en: https://frankfurt.de/impressum
+        de: https://frankfurt.de/impressum
+

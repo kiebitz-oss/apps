@@ -15,7 +15,7 @@ html {
 }
 
 body.kip-fonts {
-    @include font-open-sans;
+    @include font-roboto;
 
     margin: 0;
     padding: 0;
@@ -48,7 +48,7 @@ div.kip {
 
     select,
     input {
-        @include font-open-sans;
+        @include font-roboto;
     }
 
     hr {
@@ -62,7 +62,7 @@ div.kip {
     h4,
     h5,
     h6 {
-        @include font-oxanium;
+        @include font-roboto-condensed;
     }
 
     h2 {
