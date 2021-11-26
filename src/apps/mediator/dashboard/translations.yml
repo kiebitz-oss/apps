@@ -88,7 +88,7 @@ upload-key-pairs:
   title:
     de: Geheime Schlüssel laden
   notice:
-    de: Bitte laden Sie die Datei mit ihren geheimen Vermittlerschlüsseln.
+    de: Bitte laden Sie die Datei mit Ihren geheimen Vermittlerschlüsseln.
   upload:
     de: Datei laden
 open:
