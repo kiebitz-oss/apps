@@ -1,5 +1,5 @@
 {
-    "title":"sofort-impfen",
+    "title":"impfentermin",
     "commitSHA" : "COMMIT_SHA",
     "storageApi" : "https://storage.kiebitz.eu/jsonrpc",
     "appointmentsApi" : "https://appointments.kiebitz.eu/jsonrpc",
