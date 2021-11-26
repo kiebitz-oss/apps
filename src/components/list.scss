@@ -35,6 +35,7 @@
         &.kip-is-header {
             margin-bottom: map-get($kip-space, xs);
             background: none;
+            font-weight: $kip-weight-bold;
         }
 
         &.kip-is-card {

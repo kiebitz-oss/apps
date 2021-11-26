@@ -16,11 +16,15 @@ $bulma-orange: $kip-orange;
 
 $bulma-primary: $kip-primary;
 $bulma-success: $kip-green;
+$bulma-warning: lighten($kip-orange, 15%);
 $bulma-info: $kip-blue;
 
 $bulma-radius: $kip-radius;
 $bulma-radius-small: $kip-radius;
 $bulma-radius-large: $kip-radius;
+
+$bulma-footer-padding: 0;
+$bulma-footer-background-color: $kip-white;
 
 // Default height of buttons and inputs
 $bulma-control-height: 48px;

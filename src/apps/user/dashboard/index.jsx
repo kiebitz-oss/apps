@@ -110,13 +110,12 @@ const Dashboard = withRouter(
                     }
 
                     return (
-                        <CenteredCard tight>
+                        <CenteredCard>
                             <CardHeader>
                                 <div
                                     style={{
                                         display: 'flex',
                                         justifyContent: 'flex-end',
-                                        paddingBottom: '13px',
                                     }}
                                 >
                                     {menu}

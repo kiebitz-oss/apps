@@ -10,6 +10,7 @@ import {
     CardHeader,
     A,
     T,
+    CardContent,
 } from 'components';
 import t from './translations.yml';
 import './deleted.scss';
@@ -21,12 +22,14 @@ export default withSettings(({ settings }) => (
                 <T t={t} k="data-deleted" />
             </h1>
         </CardHeader>
-        <Message type="success">
-            <T
-                t={t}
-                k="thanks-for-using-us"
-                service={<strong key="service">{settings.get('title')}</strong>}
-            />
-        </Message>
+        <CardContent>
+            <Message type="success">
+                <T
+                    t={t}
+                    k="thanks-for-using-us"
+                    service={<strong key="service">{settings.get('title')}</strong>}
+                />
+            </Message>
+        </CardContent>
     </CenteredCard>
 ));

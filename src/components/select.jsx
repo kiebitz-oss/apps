@@ -15,7 +15,7 @@ export const RichSelectItem = ({ onClick, option, selected }) => {
             })}
             onClick={onClick}
         >
-            {option.title && <h3>{option.title}</h3>}
+            {option.title && <h3 className={'m-0'}>{option.title}</h3>}
             {option.description && <p>{option.description}</p>}
         </div>
     );

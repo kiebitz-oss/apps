@@ -492,7 +492,7 @@ const InvitationDetails = withSettings(
                     <CardContent>
                         <div className="kip-invitation-details">
                             <ProviderDetails data={data.provider} />
-                            <p>
+                            <p className={'mb-5'}>
                                 <T t={t} k="appointments-notice" />
                             </p>
                             {offerDetails}

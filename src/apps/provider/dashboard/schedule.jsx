@@ -2,6 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
+import ReactDOM from 'react-dom';
 import React, { useState, useEffect, Fragment as F } from 'react';
 import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
@@ -33,6 +34,7 @@ import {
     ErrorFor,
     T,
     Button,
+    ModalHeader,
 } from 'components';
 import {
     keys,
@@ -111,16 +113,10 @@ const AppointmentOverview = withActions(
                 className="kip-appointment-overview"
             >
                 <Card>
-                    <CardHeader>
-                        <T t={t} k="appointment-overview.title" />
-                        <Button
-                            type="info"
-                            aria-label="Close modal"
-                            className="bulma-delete"
-                            data-test-id="modal-close"
-                            onClick={onClose}
-                        />
-                    </CardHeader>
+                    <ModalHeader
+                        title={<T t={t} k="appointment-overview.title" />}
+                        onClose={onClose}
+                    />
                     <CardContent>
                         <ul className="kip-appointment-details">
                             <li>
@@ -165,7 +161,7 @@ const AppointmentOverview = withActions(
                                 </ul>
                             </F>
                         )) || (
-                            <Message type="info">
+                            <Message className={'mt-3'} type="info">
                                 <T
                                     t={t}
                                     k="appointment-overview.details.no-booked-slots"
@@ -194,6 +190,13 @@ const AppointmentOverview = withActions(
     },
     [cancelAppointment, openAppointments]
 );
+
+const AppointmentOverviewModal = props => {
+    return ReactDOM.createPortal(
+        <AppointmentOverview {...props} />,
+        document.getElementById("modal-root")
+    );
+};
 
 const PropertyTags = ({ appointment, verbose, tiny }) => {
     const props = Object.entries(appointment)
@@ -248,7 +251,7 @@ const AppointmentCard = withRouter(
 
         if (active)
             modal = (
-                <AppointmentOverview
+                <AppointmentOverviewModal
                     action={action}
                     secondaryAction={secondaryAction}
                     id={id}
@@ -816,9 +819,9 @@ const NewAppointment = withSettings(
 
                             return (
                                 <F key={k}>
-                                    <h2>
+                                    <label className={'bulma-label'}>
                                         <T t={properties} k={`${k}.title`} />
-                                    </h2>
+                                    </label>
                                     <RichSelect
                                         options={options}
                                         value={currentOption}

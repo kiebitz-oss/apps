@@ -10,6 +10,35 @@ import './modal.scss';
 import classnames from 'helpers/classnames';
 import t from './translations.yml';
 
+export const ModalHeader = ({ onClose, disabled, title }) => {
+    if (!title) return null;
+    const close = () => !disabled && onClose();
+    return (
+        <header className="bulma-modal-card-head">
+            <p className="bulma-modal-card-title">{title}</p>
+            {onClose && (
+                <button
+                    disabled={disabled}
+                    aria-label="Close modal"
+                    className="bulma-delete"
+                    data-test-id="modal-close"
+                    onClick={close}
+                />
+            )}
+        </header>
+    );
+};
+
+ModalHeader.defaultProps = {
+    disabled: false,
+};
+
+ModalHeader.propTypes = {
+    onClose: PropTypes.func,
+    disabled: PropTypes.bool,
+    title: PropTypes.any,
+};
+
 export class Modal extends React.Component {
     render() {
         const {
@@ -57,20 +86,11 @@ export class Modal extends React.Component {
             >
                 <div className="bulma-modal-background" onClick={close}></div>
                 <div className="bulma-modal-card">
-                    {title && (
-                        <header className="bulma-modal-card-head">
-                            <p className="bulma-modal-card-title">{title}</p>
-                            {onClose && (
-                                <Button
-                                    type="info"
-                                    aria-label="Close modal"
-                                    className="bulma-delete"
-                                    data-test-id="modal-close"
-                                    onClick={close}
-                                />
-                            )}
-                        </header>
-                    )}
+                    <ModalHeader
+                        title={title}
+                        onClose={onClose}
+                        disabled={disabled || closeDisabled}
+                    />
                     <section className="bulma-modal-card-body">
                         {children}
                     </section>

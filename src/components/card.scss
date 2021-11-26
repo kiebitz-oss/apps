@@ -55,6 +55,15 @@
             padding-top: 0;
         }
     }
+    &,
+    &:not(.kip-is-tight) {
+        .kip-card-header {
+            padding-bottom: map-get($kip-space, lg);
+        }
+        .kip-card-content {
+            padding-top: map-get($kip-space, lg);
+        }
+    }
 
     &.kip-is-flex {
         display: flex;

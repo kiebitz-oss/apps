@@ -172,7 +172,7 @@ const BaseSettings = ({
                     <h2>
                         <T t={t} k="test-queues.title" />
                     </h2>
-                    <p>
+                    <p className={'mb-5'}>
                         <T t={t} k="test-queues.text" />
                     </p>
                     <div className="kip-buttons">

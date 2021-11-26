@@ -228,11 +228,6 @@ $border: 1px solid #ddd;
 
 				.kip-appointment-overview {
 
-					.kip-card-header {
-						button {
-							float: right;
-						}
-					}
 					.kip-card-content {
 						padding-top: map-get($kip-space, lg);
 					}
