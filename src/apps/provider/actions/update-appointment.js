@@ -59,6 +59,8 @@ export async function updateAppointment(
             appointment[k] = v;
         }
 
+        appointment.modifiedAt = new Date().toISOString();
+
         // we push the modified appointment
         otherAppointments.push(appointment);
         backend.local.set('provider::appointments::open', otherAppointments);

@@ -94,9 +94,12 @@ const Dashboard = withRouter(
                         openAppointmentsAction();
                         keysAction().then(ks =>
                             keyPairsAction().then(kp => {
-                                getAppointmentsAction(kp.data);
+                                // we first publish appointments to e.g.
+                                // notify the backend of changes
                                 publishAppointmentsAction(kp.data).finally(
                                     () => {
+                                        // then we fetch appointments
+                                        getAppointmentsAction(kp.data);
                                         getBookingsAction(kp.data, ks.data);
                                     }
                                 );

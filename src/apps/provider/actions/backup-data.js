@@ -7,13 +7,7 @@ import { base322buf, b642buf } from 'helpers/conversion';
 import { markAsLoading } from 'helpers/actions';
 
 export const localKeys = ['keyPairs'];
-export const cloudKeys = [
-    'data',
-    'data::verified',
-    'data::encryptionKeyPair',
-    'appointments::open', // to do: remove
-    'bookings::list', // to do: remove
-];
+export const cloudKeys = ['data', 'data::verified', 'data::encryptionKeyPair'];
 
 // make sure the signing and encryption key pairs exist
 export async function backupData(

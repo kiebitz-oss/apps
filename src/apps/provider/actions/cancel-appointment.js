@@ -41,6 +41,7 @@ export async function cancelAppointment(
         // we simply remove all slots
         canceledAppointment.slots = 0;
         canceledAppointment.slotData = [];
+        canceledAppointment.modifiedAt = new Date().toISOString();
 
         // we push the modified appointment
         otherAppointments.push(canceledAppointment);

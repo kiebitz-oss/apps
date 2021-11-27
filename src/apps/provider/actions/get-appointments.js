@@ -39,14 +39,50 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
             }
             const appData = JSON.parse(appointment.data);
 
-            if (
-                openAppointments.find(app => app.id === appData.id) ||
-                newAppointments.find(app => app.id === appData.id)
-            ) {
+            // this appointment was loaded already (should not happen)
+            if (newAppointments.find(app => app.id === appData.id)) {
+                continue;
+            }
+
+            const existingAppointment = openAppointments.find(
+                app => app.id === appData.id
+            );
+            if (existingAppointment) {
+                // if the remote version is older than the local one we skip this
+                if (
+                    new Date(appData.updatedAt) <=
+                    new Date(existingAppointment.updatedAt)
+                )
+                    continue;
+
+                // we update the appointment by removing slots that do not exist
+                // in the new version and by adding slots from the new version
+                // that do not exist locally
+
+                // remove slots that do not exist in the backend
+                existingAppointment.slotData = existingAppointment.slotData.filter(
+                    sl => appData.slotData.some(slot => slot.id === sl.id)
+                );
+
+                // add new slots from the backend
+                existingAppointment.slotData = [
+                    ...existingAppointment.slotData,
+                    ...appData.slotData.filter(
+                        sl =>
+                            !existingAppointment.slotData.some(
+                                slot => slot.id === sl.id
+                            )
+                    ),
+                ];
+
+                // we update the slot data length
+                existingAppointment.slots = appData.slotData.length;
+                existingAppointment.updatedAt = appData.updatedAt;
                 continue;
             }
 
             const newAppointment = {
+                updatedAt: appData.updatedAt || new Date().toISOString(),
                 timestamp: appData.timestamp,
                 duration: appData.duration,
                 slotData: appData.slotData,

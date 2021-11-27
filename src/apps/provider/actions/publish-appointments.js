@@ -25,13 +25,16 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
         const relevantAppointments = openAppointments.filter(
             oa =>
                 new Date(oa.timestamp) >
-                new Date(new Date().getTime() - 1000 * 60 * 60 * 4)
+                    new Date(new Date().getTime() - 1000 * 60 * 60 * 4) &&
+                oa.modifiedAt !== undefined &&
+                new Date(oa.modifiedAt) >= new Date(oa.updatedAt)
         );
 
         for (const appointment of relevantAppointments) {
             try {
                 const convertedAppointment = {
                     id: appointment.id,
+                    updatedAt: appointment.modifiedAt,
                     duration: appointment.duration,
                     timestamp: appointment.timestamp,
                     publicKey: keyPairs.encryption.publicKey,
@@ -40,6 +43,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                         id: sl.id,
                     })),
                 };
+
                 for (const [k, v] of Object.entries(properties)) {
                     for (const [kk] of Object.entries(v.values)) {
                         if (appointment[kk] === true)
@@ -61,12 +65,26 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
             }
         }
 
+        if (signedAppointments.length === 0)
+            return {
+                status: 'aborted',
+                data: null,
+            };
+
         const result = await backend.appointments.publishAppointments(
             {
                 offers: signedAppointments,
             },
             keyPairs.signing
         );
+
+        for (const appointment of relevantAppointments) {
+            // we remove the modifiedAt tag so that it won't be published
+            // again...
+            delete appointment.modifiedAt;
+        }
+
+        backend.local.set('provider::appointments::open', openAppointments);
 
         return {
             status: 'succeeded',
