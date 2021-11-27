@@ -1,5 +1,5 @@
 {
-    "title":"sofort-impfen",
+    "title":"impftermin",
     "commitSHA" : "ddssssd",
     "apiUrl" : "http://localhost:8000",
     "supportEmail": "help@kiebitz.eu",
