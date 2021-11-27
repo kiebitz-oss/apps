@@ -6,15 +6,6 @@ import { aesDecrypt, deriveSecrets } from 'helpers/crypto';
 import { base322buf, b642buf } from 'helpers/conversion';
 import { localKeys, cloudKeys } from './backup-data';
 
-// to support old backup versions
-const dataMap = {
-    keyPairs: 'keyPairs',
-    providerData: 'data',
-    appointments: 'appointments::open',
-    verifiedProviderData: 'data::verified',
-    providerDataEncryptionKey: 'data::encryptionKey',
-};
-
 export async function restoreFromBackup(
     state,
     keyStore,

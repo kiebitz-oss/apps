@@ -10,7 +10,6 @@ import Schedule from './schedule';
 import {
     keyPairs,
     keys,
-    validKeyPairs,
     providerData,
     backupData,
     getBookings,
@@ -64,9 +63,9 @@ const Dashboard = withRouter(
                     checkVerifiedProviderDataAction,
                     timer,
                     keys,
+                    keysAction,
                     backupDataAction,
                     providerSecretAction,
-                    keysAction,
                     getBookings,
                     getBookingsAction,
                     publishAppointments,
@@ -75,8 +74,6 @@ const Dashboard = withRouter(
                     getAppointmentsAction,
                     keyPairs,
                     keyPairsAction,
-                    validKeyPairs,
-                    validKeyPairsAction,
                 }) => {
                     const [initialized, setInitialized] = useState(false);
                     const [lastUpdated, setLastUpdated] = useState('');
@@ -85,11 +82,8 @@ const Dashboard = withRouter(
                     useEffect(() => {
                         if (initialized) return;
                         setInitialized(true);
-                        keysAction().then(ks =>
-                            keyPairsAction().then(kp =>
-                                validKeyPairsAction(kp.data, ks.data)
-                            )
-                        );
+                        verifiedProviderDataAction();
+                        keysAction().then(() => keyPairsAction());
                     });
 
                     useEffect(() => {
@@ -110,7 +104,6 @@ const Dashboard = withRouter(
                                 providerSecretAction().then(ps =>
                                     backupDataAction(kp.data, ps.data)
                                 );
-                                validKeyPairsAction(kp.data, ks.data);
                                 providerDataAction().then(pd => {
                                     if (
                                         pd.data.submittedAt === undefined ||
@@ -192,8 +185,9 @@ const Dashboard = withRouter(
                     let invalidKeyMessage;
 
                     if (
-                        validKeyPairs !== undefined &&
-                        validKeyPairs.valid !== true
+                        verifiedProviderData === undefined ||
+                        verifiedProviderData.status !== 'loaded' ||
+                        verifiedProviderData.data === null
                     ) {
                         invalidKeyMessage = (
                             <Message waiting type="warning">
@@ -243,7 +237,6 @@ const Dashboard = withRouter(
             keyPairs,
             keys,
             getBookings,
-            validKeyPairs,
             backupData,
             providerSecret,
             providerData,

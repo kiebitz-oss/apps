@@ -170,11 +170,7 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     async checkProviderData({}, keyPair) {
-        return await this.call(
-            'checkProviderData',
-            {},
-            keyPair
-        );
+        return await this.call('checkProviderData', {}, keyPair);
     }
 
     // mediator-only endpoint
