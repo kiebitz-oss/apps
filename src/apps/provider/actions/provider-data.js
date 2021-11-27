@@ -19,8 +19,6 @@ export async function providerData(state, keyStore, settings, data) {
         let providerData = backend.local.get('provider::data');
         if (providerData === null) {
             providerData = {
-                id: randomBytes(32),
-                verifiedID: randomBytes(32),
                 data: {},
             };
         }

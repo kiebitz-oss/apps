@@ -161,10 +161,18 @@ export default class AppointmentsBackend extends JSONRPCBackend {
         return await this.call('getBookedAppointments', {}, keyPair);
     }
 
-    async storeProviderData({ id, encryptedData, code }, keyPair) {
+    async storeProviderData({ encryptedData, code }, keyPair) {
         return await this.call(
             'storeProviderData',
-            { id, encryptedData, code },
+            { encryptedData, code },
+            keyPair
+        );
+    }
+
+    async checkProviderData({}, keyPair) {
+        return await this.call(
+            'checkProviderData',
+            {},
             keyPair
         );
     }

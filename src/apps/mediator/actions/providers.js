@@ -61,6 +61,7 @@ async function providers(state, keyStore, settings, keyPairs, loader) {
                 );
                 const decryptedData = JSON.parse(decryptedJSONData);
                 decryptedData.entry = entry;
+                decryptedData.id = entry.id;
                 decryptedProviderList.push(decryptedData);
             } catch (e) {
                 invalidEntries.push({

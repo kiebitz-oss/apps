@@ -21,8 +21,8 @@ export async function checkVerifiedProviderData(
     }
 
     try {
-        const verifiedData = await backend.appointments.getData(
-            { id: data.verifiedID },
+        const verifiedData = await backend.appointments.checkProviderData(
+            {},
             keyPairs.signing
         );
         if (verifiedData === null) return { status: 'not-found' };
@@ -33,7 +33,7 @@ export async function checkVerifiedProviderData(
             };
         try {
             const decryptedJSONData = await ecdhDecrypt(
-                verifiedData,
+                verifiedData.encryptedProviderData,
                 keyPair.privateKey
             );
             if (decryptedJSONData === null) {
@@ -44,8 +44,8 @@ export async function checkVerifiedProviderData(
             decryptedData.signedData.json = JSON.parse(
                 decryptedData.signedData.data
             );
-
             backend.local.set('provider::data::verified', decryptedData);
+            // to do: check signed keys as well
             return { status: 'loaded', data: decryptedData };
         } catch (e) {
             return { status: 'failed' };
