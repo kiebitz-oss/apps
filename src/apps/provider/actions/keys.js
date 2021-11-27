@@ -9,14 +9,6 @@ export async function keys(state, keyStore, settings) {
     markAsLoading(state, keyStore);
     try {
         const keys = await backend.appointments.getKeys();
-
-        for (const providerKeys of keys.lists.providers) {
-            providerKeys.json = JSON.parse(providerKeys.data);
-        }
-        for (const mediatorKeys of keys.lists.mediators) {
-            mediatorKeys.json = JSON.parse(mediatorKeys.data);
-        }
-
         return {
             status: 'loaded',
             data: keys,
