@@ -534,7 +534,7 @@ const InvitationDetails = withActions(InvitationDetailsBase, [
 const filterInvitations = invitation => {
     if (invitation.offers === null) return false;
     const expired = true;
-    let noOpenSlots = false;
+    const noOpenSlots = false;
 
     if (noOpenSlots) {
         return false;

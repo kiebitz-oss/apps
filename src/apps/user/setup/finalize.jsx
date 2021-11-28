@@ -291,19 +291,19 @@ const FinalizePage = ({
                                 noQueue
                                     ? 'wizard.no-queue.title'
                                     : failed
-                                    ? 'wizard.failed.title'
-                                    : submitting
-                                    ? 'wizard.please-wait'
-                                    : 'wizard.continue'
+                                        ? 'wizard.failed.title'
+                                        : submitting
+                                            ? 'wizard.please-wait'
+                                            : 'wizard.continue'
                             }
                         >
                             {noQueue
                                 ? 'Nicht verfügbar'
                                 : failed
-                                ? 'Fehlgeschlagen :/'
-                                : submitting
-                                ? 'Bitte warten...'
-                                : 'Weiter'}
+                                    ? 'Fehlgeschlagen :/'
+                                    : submitting
+                                        ? 'Bitte warten...'
+                                        : 'Weiter'}
                         </Trans>
                     </Button>
                 </CardFooter>

@@ -259,15 +259,15 @@ const VerifyPage = ({
                             failed
                                 ? 'wizard.failed.title'
                                 : submitting
-                                ? 'wizard.please-wait'
-                                : 'wizard.continue'
+                                    ? 'wizard.please-wait'
+                                    : 'wizard.continue'
                         }
                     >
                         {failed
                             ? 'Fehlgeschlagen'
                             : submitting
-                            ? 'Bitte warten...'
-                            : 'Weiter'}
+                                ? 'Bitte warten...'
+                                : 'Weiter'}
                     </Trans>
                 </Button>
             </CardFooter>

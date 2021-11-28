@@ -654,6 +654,7 @@ const AppointmentsList = ({ appointments }) => {
         .map(appointment => (
             <AppointmentItem key={appointment.id} appointment={appointment} />
         ));
+
     return (
         <div className="kip-appointments-list kip-printable">
             <h2>

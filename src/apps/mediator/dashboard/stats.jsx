@@ -117,9 +117,9 @@ const prepareHourlyStats = (hourlyStats, settings) => {
                         to:
                             datesTo[i].getDate() === dates[i].getDate()
                                 ? datesTo[i].toLocaleTimeString(
-                                      'en-US',
-                                      timeOpts
-                                  )
+                                    'en-US',
+                                    timeOpts
+                                )
                                 : datesTo[i].toLocaleString('en-US', opts),
                     },
                 })

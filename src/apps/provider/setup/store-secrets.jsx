@@ -87,15 +87,15 @@ export const DataSecret = ({ secret, embedded, hideNotice }) => {
                                 failed
                                     ? 'store-secrets.copy-failed'
                                     : succeeded
-                                    ? 'store-secrets.copy-succeeded'
-                                    : 'store-secrets.copy'
+                                        ? 'store-secrets.copy-succeeded'
+                                        : 'store-secrets.copy'
                             }
                         >
                             {failed
                                 ? 'Fehlgeschlagen'
                                 : succeeded
-                                ? 'In der Zwischenablage'
-                                : 'Kopieren'}
+                                    ? 'In der Zwischenablage'
+                                    : 'Kopieren'}
                         </Trans>
                     </Button>
                 </div>

@@ -89,7 +89,7 @@ export async function getAppointments(state, keyStore, settings, queueData) {
             }
 
             verifiedAppointments.sort((a, b) =>
-                a.provider.json.name > b.provider.json.name ? 1 : -1
+                (a.provider.json.name > b.provider.json.name ? 1 : -1)
             );
 
             backend.local.set(
