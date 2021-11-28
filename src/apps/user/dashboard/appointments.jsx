@@ -10,7 +10,6 @@ import { formatDuration, formatDate, formatTime } from 'helpers/time';
 import classNames from 'helpers/classnames';
 import {
     tokenData,
-    slotInfos,
     userSecret,
     invitation,
     appointments,
@@ -144,7 +143,6 @@ const AcceptedInvitation = withActions(
         cancelInvitation,
         invitationAction,
         cancelInvitationAction,
-        slotInfosAction,
         offers,
         userSecret,
     }) => {
@@ -157,7 +155,6 @@ const AcceptedInvitation = withActions(
                 tokenData.data
             ).then(() => {
                 // we reload the appointments
-                slotInfosAction();
                 invitationAction();
                 acceptedInvitationAction();
             });
@@ -170,10 +167,12 @@ const AcceptedInvitation = withActions(
         } = acceptedInvitation.data;
         const currentOffer = offers.find(of => of.id == offer.id);
         let currentSlotData;
+
         if (currentOffer !== undefined)
             currentSlotData = currentOffer.slotData.find(
                 sl => sl.id === slotData.id
             );
+
         let notice;
         let changed = false;
         for (const [k, v] of Object.entries(currentOffer)) {
@@ -252,14 +251,7 @@ const AcceptedInvitation = withActions(
             </F>
         );
     },
-    [
-        userSecret,
-        acceptedInvitation,
-        cancelInvitation,
-        invitation,
-        slotInfos,
-        tokenData,
-    ]
+    [userSecret, acceptedInvitation, cancelInvitation, invitation, tokenData]
 );
 
 const NoInvitations = ({ tokenData }) => {
@@ -355,8 +347,6 @@ const InvitationDetails = withSettings(
             settings,
             userSecret,
             toggleOffers,
-            slotInfos,
-            slotInfosAction,
             toggleOffersAction,
             acceptedInvitationAction,
             confirmOffers,
@@ -369,7 +359,6 @@ const InvitationDetails = withSettings(
                 if (initialized) return;
                 setInitialized(true);
                 toggleOffersAction(null);
-                slotInfosAction();
             });
 
             const toggle = offer => {
@@ -397,7 +386,6 @@ const InvitationDetails = withSettings(
                 p.finally(() => {
                     setConfirming(false);
                     toggleOffersAction(null);
-                    slotInfosAction();
                 });
             };
 
@@ -410,18 +398,6 @@ const InvitationDetails = withSettings(
                 .filter(a => new Date(a.timestamp) > new Date())
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
-                    const openSlots = offer.slotData.filter(sl => {
-                        if (
-                            slotInfos !== undefined &&
-                            slotInfos.data !== null
-                        ) {
-                            const sd = slotInfos.data[sl.id];
-                            if (sd !== undefined && sd.status === 'taken')
-                                return false;
-                        }
-                        return true;
-                    });
-
                     const d = new Date(offer.timestamp);
                     const selected = toggleOffers.data.includes(offer.id);
                     let pref;
@@ -432,7 +408,7 @@ const InvitationDetails = withSettings(
                             key={offer.id}
                             className={classNames(`kip-pref-${pref}`, {
                                 'kip-selected': selected,
-                                'kip-failed': openSlots.length === 0,
+                                'kip-failed': false,
                             })}
                             onClick={() => toggle(offer)}
                         >
@@ -518,31 +494,14 @@ const InvitationDetails = withSettings(
                 </F>
             );
         },
-        [toggleOffers, confirmOffers, acceptedInvitation, userSecret, slotInfos]
+        [toggleOffers, confirmOffers, acceptedInvitation, userSecret]
     )
 );
 
-const filterInvitations = (invitation, slotInfos) => {
+const filterInvitations = invitation => {
     if (invitation.offers === null) return false;
     const expired = true;
     let noOpenSlots = false;
-    noOpenSlots = !invitation.offers
-        .map(offer => offer.slotData)
-        .flat()
-        .some(sl => {
-            if (sl.open && !sl.canceled) {
-                if (slotInfos !== undefined && slotInfos.data !== null) {
-                    const slotInfo = slotInfos.data[sl.id];
-                    if (slotInfo !== undefined) {
-                        if (slotInfo.status === 'taken') {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-            return false;
-        });
 
     if (noOpenSlots) {
         return false;
@@ -552,21 +511,12 @@ const filterInvitations = (invitation, slotInfos) => {
 };
 
 const Appointments = withActions(
-    ({
-        settings,
-        invitation,
-        appointments,
-        slotInfos,
-        slotInfosAction,
-        acceptedInvitation,
-        tokenData,
-    }) => {
+    ({ settings, invitation, appointments, acceptedInvitation, tokenData }) => {
         const [initialized, setInitialized] = useState(false);
 
         useEffect(() => {
             if (initialized) return;
             setInitialized(true);
-            slotInfosAction();
         });
 
         const render = () => {
@@ -607,7 +557,7 @@ const Appointments = withActions(
 
             // we only show relevant invitations
             invitations = invitations.filter(inv =>
-                filterInvitations(inv, slotInfos, acceptedInvitation)
+                filterInvitations(inv, acceptedInvitation)
             );
 
             if (invitations.length === 0)
@@ -625,12 +575,12 @@ const Appointments = withActions(
         };
         return (
             <WithLoader
-                resources={[tokenData, invitation, appointments, slotInfos]}
+                resources={[tokenData, invitation, appointments]}
                 renderLoaded={render}
             />
         );
     },
-    [tokenData, invitation, appointments, acceptedInvitation, slotInfos]
+    [tokenData, invitation, appointments, acceptedInvitation]
 );
 
 export default Appointments;

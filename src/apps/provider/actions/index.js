@@ -18,4 +18,3 @@ export * from './update-appointment';
 export * from './cancel-appointment';
 export * from './publish-appointments';
 export * from './get-appointments';
-export * from './get-bookings';

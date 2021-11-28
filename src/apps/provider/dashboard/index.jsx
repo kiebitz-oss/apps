@@ -12,7 +12,6 @@ import {
     keys,
     providerData,
     backupData,
-    getBookings,
     getAppointments,
     publishAppointments,
     providerSecret,
@@ -66,8 +65,6 @@ const Dashboard = withRouter(
                     keysAction,
                     backupDataAction,
                     providerSecretAction,
-                    getBookings,
-                    getBookingsAction,
                     publishAppointments,
                     publishAppointmentsAction,
                     getAppointments,
@@ -100,7 +97,6 @@ const Dashboard = withRouter(
                                     () => {
                                         // then we fetch appointments
                                         getAppointmentsAction(kp.data);
-                                        getBookingsAction(kp.data, ks.data);
                                     }
                                 );
 
@@ -239,7 +235,6 @@ const Dashboard = withRouter(
             publishAppointments,
             keyPairs,
             keys,
-            getBookings,
             backupData,
             providerSecret,
             providerData,

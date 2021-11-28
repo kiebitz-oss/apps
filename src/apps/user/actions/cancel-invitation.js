@@ -21,10 +21,10 @@ export async function cancelInvitation(
     }
 
     try {
-        const id = acceptedInvitation.slotData.id;
+        const id = acceptedInvitation.offer.id;
 
         try {
-            const result = await backend.appointments.cancelSlot(
+            const result = await backend.appointments.cancelAppointment(
                 {
                     id: id,
                     signedTokenData: tokenData.signedToken,

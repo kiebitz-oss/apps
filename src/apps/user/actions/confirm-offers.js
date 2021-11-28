@@ -21,8 +21,6 @@ export async function confirmOffers(
         throw null; // we throw a null exception (which won't affect the store state)
     }
 
-    const slotInfos = backend.local.get('user::invitation::slots', {});
-
     try {
         const providerData = {
             signedToken: tokenData.signedToken,
@@ -38,63 +36,48 @@ export async function confirmOffers(
 
         for (const offer of offers) {
             try {
-                for (let i = 0; i < offer.slotData.length; i++) {
-                    const slotData = offer.slotData[i];
-                    if (slotData.failed || !slotData.open) continue;
-                    const slotInfo = slotInfos[slotData.id];
-                    if (slotInfo !== undefined) {
-                        if (slotInfo.status === 'taken') continue; // this slot is taken already, we skip it
-                    }
-
-                    const [encryptedData] = await ephemeralECDHEncrypt(
-                        JSON.stringify(providerData),
-                        offer.publicKey
-                    );
-                    try {
-                        const result = await backend.appointments.bookSlot(
-                            {
-                                id: slotData.id,
-                                providerID: invitation.provider.id,
-                                encryptedData: encryptedData,
-                                signedTokenData: tokenData.signedToken,
-                            },
-                            tokenData.signingKeyPair
-                        );
-                    } catch (e) {
-                        if (
-                            typeof e === 'object' &&
-                            e.name === 'RPCException'
-                        ) {
-                            if (e.error.code === 401) {
-                                slotInfos[slotData.id] = {
-                                    status: 'taken',
-                                };
-                            } else {
-                                slotInfos[slotData.id] = {
-                                    status: 'error',
-                                };
-                            }
-                        }
-                        // we can't use this slot, we try the next...
-                        console.error(e);
-                        continue;
-                    }
-
-                    // we store the information about the offer which we've accepted
-                    backend.local.set('user::invitation::accepted', {
-                        offer: offer,
-                        invitation: invitation,
-                        slotData: slotData,
-                    });
-
-                    return {
-                        status: 'succeeded',
-                        data: {
-                            offer: offer,
-                            slotData: slotData,
+                const [encryptedData] = await ephemeralECDHEncrypt(
+                    JSON.stringify(providerData),
+                    offer.publicKey
+                );
+                let result;
+                try {
+                    result = await backend.appointments.bookAppointment(
+                        {
+                            id: offer.id,
+                            providerID: invitation.provider.id,
+                            encryptedData: encryptedData,
+                            signedTokenData: tokenData.signedToken,
                         },
-                    };
+                        tokenData.signingKeyPair
+                    );
+                } catch (e) {
+                    if (typeof e === 'object' && e.name === 'RPCException') {
+                        if (e.error.code === 401) {
+                            // to do: mark appointment as taken
+                        } else {
+                            // to do: retry
+                        }
+                    }
+                    // we can't use this appointment, we try the next...
+                    console.error(e);
+                    continue;
                 }
+
+                // we store the information about the offer which we've accepted
+                backend.local.set('user::invitation::accepted', {
+                    offer: offer,
+                    invitation: invitation,
+                    slotData: result,
+                });
+
+                return {
+                    status: 'succeeded',
+                    data: {
+                        offer: offer,
+                        slotData: result,
+                    },
+                };
             } catch (e) {
                 console.error(e);
                 continue;
@@ -104,8 +87,6 @@ export async function confirmOffers(
             status: 'failed',
         };
     } finally {
-        backend.local.set('user::invitation::slots', slotInfos);
-
         backend.local.unlock('confirmOffers');
     }
 }

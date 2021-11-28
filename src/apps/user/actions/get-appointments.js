@@ -4,7 +4,9 @@
 
 import { verify } from 'helpers/crypto';
 
-async function verifyOffer(offer, keys) {
+async function verifyOffer(offer, item) {
+    // to do: verify based on key chain
+    /*
     let found = false;
     for (const providerKeys of keys.lists.providers) {
         if (providerKeys.json.signing === offer.publicKey) {
@@ -15,11 +17,15 @@ async function verifyOffer(offer, keys) {
     if (!found) throw 'invalid key';
     const result = await verify([offer.publicKey], offer);
     if (!result) throw 'invalid signature';
+    */
     return JSON.parse(offer.data);
 }
 
-async function verifyProviderData(providerData, keys) {
+async function verifyProviderData(item) {
+    // to do: verify based on key chain
+    /*
     let found = false;
+    if (item.keyChain.mediator.signin)
     for (const mediatorKeys of keys.lists.mediators) {
         if (mediatorKeys.json.signing === providerData.publicKey) {
             found = true;
@@ -27,18 +33,13 @@ async function verifyProviderData(providerData, keys) {
         }
     }
     if (!found) throw 'invalid key';
-    const result = await verify([providerData.publicKey], providerData);
+    const result = await verify([item.provider.publicKey], providerData);
     if (!result) throw 'invalid signature';
-    return JSON.parse(providerData.data);
+    */
+    return JSON.parse(item.provider.data);
 }
 
-export async function getAppointments(
-    state,
-    keyStore,
-    settings,
-    queueData,
-    keys
-) {
+export async function getAppointments(state, keyStore, settings, queueData) {
     const backend = settings.get('backend');
 
     try {
@@ -68,15 +69,12 @@ export async function getAppointments(
 
             for (const item of result) {
                 try {
-                    item.provider.json = await verifyProviderData(
-                        item.provider,
-                        keys
-                    );
+                    item.provider.json = await verifyProviderData(item);
                     const verifiedOffers = [];
                     for (const offer of item.offers) {
-                        const verifiedOffer = await verifyOffer(offer, keys);
+                        const verifiedOffer = await verifyOffer(offer, item);
                         for (const slot of verifiedOffer.slotData) {
-                            if (item.booked.some(id => id === slot.id))
+                            if (offer.bookedSlots.some(id => id === slot.id))
                                 slot.open = false;
                             else slot.open = true;
                         }
@@ -85,6 +83,7 @@ export async function getAppointments(
                     item.offers = verifiedOffers;
                     verifiedAppointments.push(item);
                 } catch (e) {
+                    console.log(e);
                     continue;
                 }
             }

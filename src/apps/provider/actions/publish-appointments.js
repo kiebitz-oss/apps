@@ -26,15 +26,13 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
             oa =>
                 new Date(oa.timestamp) >
                     new Date(new Date().getTime() - 1000 * 60 * 60 * 4) &&
-                oa.modifiedAt !== undefined &&
-                new Date(oa.modifiedAt) >= new Date(oa.updatedAt)
+                oa.modified
         );
 
         for (const appointment of relevantAppointments) {
             try {
                 const convertedAppointment = {
                     id: appointment.id,
-                    updatedAt: appointment.modifiedAt,
                     duration: appointment.duration,
                     timestamp: appointment.timestamp,
                     publicKey: keyPairs.encryption.publicKey,
@@ -79,9 +77,9 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
         );
 
         for (const appointment of relevantAppointments) {
-            // we remove the modifiedAt tag so that it won't be published
+            // we remove the 'modified' tag so that it won't be published
             // again...
-            delete appointment.modifiedAt;
+            delete appointment.modified;
         }
 
         backend.local.set('provider::appointments::open', openAppointments);

@@ -102,20 +102,20 @@ export default class AppointmentsBackend extends JSONRPCBackend {
 
     // user endpoints
 
-    async cancelSlot({ providerID, id, signedTokenData }, keyPair) {
+    async cancelAppointment({ providerID, id, signedTokenData }, keyPair) {
         return await this.call(
-            'cancelSlot',
+            'cancelAppointment',
             { providerID, id, signedTokenData },
             keyPair
         );
     }
 
-    async bookSlot(
+    async bookAppointment(
         { providerID, id, encryptedData, signedTokenData },
         keyPair
     ) {
         return await this.call(
-            'bookSlot',
+            'bookAppointment',
             { providerID, id, encryptedData, signedTokenData },
             keyPair
         );

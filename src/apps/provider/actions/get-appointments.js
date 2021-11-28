@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { randomBytes, sign, verify } from 'helpers/crypto';
+import { randomBytes, sign, verify, ecdhDecrypt } from 'helpers/crypto';
 import { formatDate, formatTime } from 'helpers/time';
 
 export async function getAppointments(state, keyStore, settings, keyPairs) {
@@ -15,6 +15,19 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
     } catch (e) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
+
+    const decryptBookings = async bookings => {
+        for (const booking of bookings) {
+            const dd = JSON.parse(
+                await ecdhDecrypt(
+                    booking.encryptedData,
+                    keyPairs.encryption.privateKey
+                )
+            );
+            booking.data = dd;
+        }
+        return bookings;
+    };
 
     try {
         const openAppointments = backend.local.get(
@@ -47,13 +60,10 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
             const existingAppointment = openAppointments.find(
                 app => app.id === appData.id
             );
+
             if (existingAppointment) {
                 // if the remote version is older than the local one we skip this
-                if (
-                    new Date(appData.updatedAt) <=
-                    new Date(existingAppointment.updatedAt)
-                )
-                    continue;
+                if (existingAppointment.modified) continue;
 
                 // we update the appointment by removing slots that do not exist
                 // in the new version and by adding slots from the new version
@@ -78,14 +88,18 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
                 // we update the slot data length
                 existingAppointment.slots = appData.slotData.length;
                 existingAppointment.updatedAt = appData.updatedAt;
+                existingAppointment.bookings = await decryptBookings(
+                    appointment.bookings || []
+                );
                 continue;
             }
 
             const newAppointment = {
-                updatedAt: appData.updatedAt || new Date().toISOString(),
+                updatedAt: appData.updatedAt,
                 timestamp: appData.timestamp,
                 duration: appData.duration,
                 slotData: appData.slotData,
+                bookings: await decryptBookings(appointment.bookings || []),
                 id: appData.id,
                 slots: appData.slotData.length,
             };

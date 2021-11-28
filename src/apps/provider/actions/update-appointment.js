@@ -59,7 +59,7 @@ export async function updateAppointment(
             appointment[k] = v;
         }
 
-        appointment.modifiedAt = new Date().toISOString();
+        appointment.modified = true;
 
         // we push the modified appointment
         otherAppointments.push(appointment);

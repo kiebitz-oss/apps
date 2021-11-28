@@ -15,5 +15,4 @@ export * from './backup-data';
 export * from './appointments';
 export * from './confirm-deletion';
 export * from './cancel-invitation';
-export * from './slot-infos';
 export * from './get-appointments';

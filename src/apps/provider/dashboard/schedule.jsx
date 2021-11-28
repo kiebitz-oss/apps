@@ -64,12 +64,11 @@ const AppointmentOverview = withActions(
         ...props
     }) => {
         const [showDelete, setShowDelete] = useState(false);
-        const acceptedItems = appointment.slotData
-            .map(sl => {
-                if (sl.open) return;
+        const acceptedItems = appointment.bookings
+            .map(booking => {
                 return (
-                    <li className="kip-is-code" key={sl.id}>
-                        {sl.token.data.code}
+                    <li className="kip-is-code" key={booking.id}>
+                        {booking.data.tokenData.code}
                     </li>
                 );
             })
@@ -143,11 +142,7 @@ const AppointmentOverview = withActions(
                                     t={t}
                                     k="appointment-overview.details.booked"
                                 />
-                                :{' '}
-                                {
-                                    appointment.slotData.filter(sl => !sl.open)
-                                        .length
-                                }{' '}
+                                : {appointment.bookings.length}{' '}
                             </li>
                         </ul>
                         <hr />
@@ -221,6 +216,17 @@ const PropertyTag = withSettings(({ settings, property, tiny, verbose }) => {
                     {verbose ? prop[lang] : prop.tag[lang]}
                 </span>
             );
+        } else {
+            return (
+                <span
+                    key={property}
+                    className={classNames('kip-tag', `kip-is-${property}`, {
+                        'kip-is-tiny': tiny,
+                    })}
+                >
+                    {property}
+                </span>
+            );
         }
     }
 });
@@ -285,9 +291,7 @@ const AppointmentCard = withRouter(
                             {appointment.slots}
                         </span>
                         <span className="kip-tag kip-is-booked kip-is-tiny">
-                            ·{' '}
-                            {appointment.slotData.filter(sl => !sl.open).length}{' '}
-                            ·
+                            · {appointment.bookings.length} ·
                         </span>
                         <PropertyTags appointment={appointment} tiny />
                     </F>
@@ -556,27 +560,19 @@ const WeekCalendar = withRouter(
 );
 
 const AppointmentItem = ({ appointment }) => {
-    const acceptedItems = appointment.slotData
+    const acceptedItems = appointment.bookings
         .sort((a, b) => {
-            if (
-                a.open ||
-                b.open ||
-                a.token === undefined ||
-                b.token === undefined
-            )
-                return 0;
             try {
-                if (a.token.data.code > b.token.data.code) return 1;
+                if (a.data.tokenData.code > b.data.tokenData.code) return 1;
                 else return -1;
             } catch (e) {
                 return 0;
             }
         })
-        .map(sl => {
-            if (sl.open) return;
+        .map(booking => {
             return (
-                <li className="kip-is-code" key={sl.id}>
-                    {sl.token.data.code}
+                <li className="kip-is-code" key={booking.id}>
+                    {booking.data.tokenData.code}
                 </li>
             );
         })
@@ -595,7 +591,7 @@ const AppointmentItem = ({ appointment }) => {
                 </li>
                 <li>
                     <T t={t} k="appointment-overview.details.booked" />:{' '}
-                    {appointment.slotData.filter(sl => !sl.open).length}{' '}
+                    {appointment.bookings.length}{' '}
                 </li>
             </ul>
             <PropertyTags verbose appointment={appointment} />
@@ -614,7 +610,7 @@ const AppointmentItem = ({ appointment }) => {
 
 const AppointmentsList = ({ appointments }) => {
     const appointmentItems = appointments
-        .filter(app => app.slotData.some(sl => !sl.open))
+        .filter(app => app.bookings.length > 0)
         .map(appointment => (
             <AppointmentItem key={appointment.id} appointment={appointment} />
         ));

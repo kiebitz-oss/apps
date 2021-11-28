@@ -39,8 +39,8 @@ export async function createAppointment(
         }
         openAppointments.push({
             slotData: slotData,
-            updatedAt: new Date().toISOString(),
-            modifiedAt: new Date().toISOString(),
+            bookings: [],
+            modified: true,
             id: randomBytes(32),
             ...appointment,
         });
