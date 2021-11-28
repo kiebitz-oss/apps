@@ -9,13 +9,10 @@ import { markAsLoading } from 'helpers/actions';
 export const localKeys = ['keyPairs'];
 export const cloudKeys = [
     'data',
-    'appointments::open',
-    'appointments::slots::canceled',
-    'appointments::past',
     'data::verified',
-    'bookings',
-    'bookings::reported',
-    'data::encryptionKey',
+    'data::encryptionKeyPair',
+    'appointments::open', // to do: remove
+    'bookings::list', // to do: remove
 ];
 
 // make sure the signing and encryption key pairs exist

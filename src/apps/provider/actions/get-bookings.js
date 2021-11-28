@@ -4,7 +4,7 @@
 
 import { verify, ecdhDecrypt } from 'helpers/crypto';
 
-export async function getBookings(state, keyStore, settings, keyPairs, keys) {
+export async function getBookings(state, keyStore, settings, keyPairs) {
     const backend = settings.get('backend');
 
     try {

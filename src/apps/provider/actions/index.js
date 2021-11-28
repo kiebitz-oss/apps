@@ -10,7 +10,6 @@ export * from './provider-data';
 export * from './schedule';
 export * from './submit-provider-data';
 export * from './create-appointment';
-export * from './valid-key-pairs';
 export * from './verified-provider-data';
 export * from './provider-secret';
 export * from './open-appointments';

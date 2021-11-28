@@ -49,7 +49,6 @@ export async function submitProviderData(
         try {
             const result = await backend.appointments.storeProviderData(
                 {
-                    id: data.id,
                     encryptedData: encryptedData,
                     code: data.data.code,
                 },
