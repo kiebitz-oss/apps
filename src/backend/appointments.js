@@ -24,21 +24,12 @@ export default class AppointmentsBackend extends JSONRPCBackend {
     }
 
     async confirmProvider(
-        {
-            id,
-            verifiedID,
-            key,
-            encryptedProviderData,
-            publicProviderData,
-            signedKeyData,
-        },
+        { key, encryptedProviderData, publicProviderData, signedKeyData },
         keyPair
     ) {
         return await this.call(
             'confirmProvider',
             {
-                id,
-                verifiedID,
                 key,
                 encryptedProviderData,
                 publicProviderData,

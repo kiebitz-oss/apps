@@ -131,7 +131,7 @@ const Providers = withTimer(
                     if (action === 'show' && id !== undefined) {
                         const base64Id = buf2b64(hex2buf(id));
                         const provider = providers.data.find(
-                            provider => provider.id === base64Id
+                            provider => provider.publicKeys.signing === base64Id
                         );
 
                         const doConfirmProvider = () => {
@@ -264,8 +264,10 @@ const Providers = withTimer(
                         .sort(sortProviderByDate)
                         .map(provider => (
                             <ListItem
-                                onClick={() => showProvider(provider.id)}
-                                key={provider.id}
+                                onClick={() =>
+                                    showProvider(provider.publicKeys.signing)
+                                }
+                                key={provider.publicKeys.signing}
                                 isCard
                             >
                                 <ListColumn size="md">
