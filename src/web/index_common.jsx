@@ -7,7 +7,6 @@ import ReactDOM from 'react-dom';
 import App from 'main/app';
 import {
     Store,
-    Router,
     MainErrorBoundary,
     Settings,
     ExternalSettings,
@@ -15,8 +14,6 @@ import {
 import Backend, { LocalStorageStore, SessionStorageStore } from 'backend';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-
-import 'scss/main.scss';
 
 const appElement = document.getElementById('app');
 
@@ -35,22 +32,20 @@ export const render = settings => {
 
     // Set the lang attribute on <html> for accessibility
     document.documentElement.setAttribute('lang', settings.lang());
-    settings.get('router').init(settings.get('routes'));
+
     ReactDOM.render(
-        <Settings settings={settings}>
-            <Router router={settings.get('router')}>
+        <I18nProvider i18n={i18n}>
+            <Settings settings={settings}>
                 <MainErrorBoundary>
                     <Store store={settings.get('store')}>
                         <ExternalSettings>
-                            <I18nProvider i18n={i18n}>
-                                <App menu={settings.get('menu')} />
-                            </I18nProvider>
+                            <App menu={settings.get('menu')} />
                         </ExternalSettings>
                     </Store>
                 </MainErrorBoundary>
-            </Router>
-        </Settings>,
+            </Settings>
+        </I18nProvider>,
+
         appElement
     );
 };
-

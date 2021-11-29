@@ -5,34 +5,32 @@
 import React, { useState, useEffect } from 'react';
 
 import { user } from 'actions';
-import { withRouter, withActions, CenteredCard, CardContent } from 'components';
+import { withActions, CenteredCard, CardContent } from 'components';
 import './index.scss';
+import { useNavigate } from 'react-router-dom';
 
-const Login = withRouter(
-    withActions(
-        ({ userAction, user, route, router }) => {
-            const [ok, setOk] = useState(false);
+const Login = withActions(
+    ({ userAction, user }) => {
+        const [ok, setOk] = useState(false);
+        const navigate = useNavigate();
 
-            useEffect(() => {
-                if (user !== undefined) {
-                    if (route.hashParams.redirectTo !== undefined)
-                        router.navigateToUrl(route.hashParams.redirectTo);
-                    else router.navigateTo('/');
-                }
-                if (!ok) {
-                    setOk(true);
-                    userAction({});
-                }
-            });
+        useEffect(() => {
+            if (user !== undefined) {
+                if (hash.redirectTo !== undefined) navigate(hash.redirectTo);
+                else navigate('/');
+            }
+            if (!ok) {
+                setOk(true);
+                userAction({});
+            }
+        });
 
-            return (
-                <CenteredCard className="kip-cm-wizard">
-                    <CardContent>Test</CardContent>
-                </CenteredCard>
-            );
-        },
-        [user]
-    )
+        return (
+            <CenteredCard className="kip-cm-wizard">
+                <CardContent>Test</CardContent>
+            </CenteredCard>
+        );
+    },
+    [user]
 );
-
 export default Login;

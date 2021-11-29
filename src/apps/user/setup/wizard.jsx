@@ -2,20 +2,16 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-    T,
     A,
     Button,
-    withRouter,
     withActions,
     withSettings,
     WithLoader,
     CenteredCard,
     CardContent,
     CardFooter,
-    Switch,
-    Message,
     CardNav,
 } from 'components';
 import ContactData from './contact-data';
@@ -24,6 +20,7 @@ import Verify from './verify';
 import Finalize from './finalize';
 import { Trans } from '@lingui/macro';
 import './wizard.scss';
+import { useNavigate } from 'react-router-dom';
 
 const pages = [
     'hi',
@@ -37,18 +34,19 @@ const Hi = withSettings(({ settings }) => (
     <React.Fragment>
         <CardContent>
             <p>
-                <Trans id="wizard.hi"
-                values={{
-                    link: (
-                        <A
-                            key="letUsKnow"
-                            external
-                            href={settings.get('supportEmail')}
-                        >
-                            <Trans id="wizard.letUsKnow" key="letUsKnow" />
-                        </A>
-                    )
-                }}
+                <Trans
+                    id="wizard.hi"
+                    values={{
+                        link: (
+                            <A
+                                key="letUsKnow"
+                                external
+                                href={settings.get('supportEmail')}
+                            >
+                                <Trans id="wizard.letUsKnow" key="letUsKnow" />
+                            </A>
+                        ),
+                    }}
                 />
             </p>
         </CardContent>
@@ -60,8 +58,9 @@ const Hi = withSettings(({ settings }) => (
     </React.Fragment>
 ));
 
-const Wizard = ({ route, router, page, privacyManager }) => {
+const Wizard = ({ page }) => {
     const pageRef = useRef(null);
+    const navigate = useNavigate();
 
     const checkPage = () => {
         return true;
@@ -85,7 +84,6 @@ const Wizard = ({ route, router, page, privacyManager }) => {
     });
 
     const renderLoaded = () => {
-        const { app } = route.handler;
         const components = new Map([]);
         let i = 1;
 
@@ -99,8 +97,7 @@ const Wizard = ({ route, router, page, privacyManager }) => {
                         key={p}
                         disabled={!canShow(p)}
                         onClick={() => {
-                            if (canShow(p))
-                                router.navigateToUrl(`/user/setup/${p}`);
+                            if (canShow(p)) navigate(`/user/setup/${p}`);
                         }}
                         active={page === p}
                     >
@@ -153,4 +150,4 @@ const Wizard = ({ route, router, page, privacyManager }) => {
     );
 };
 
-export default withActions(withRouter(Wizard), []);
+export default withActions(Wizard, []);

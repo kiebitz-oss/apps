@@ -2,32 +2,22 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { memo, useState, useEffect, Fragment as F } from 'react';
-import Form from 'helpers/form';
+import React, { useState, useEffect, Fragment as F } from 'react';
 import {
-    withRouter,
     withSettings,
-    withForm,
     withActions,
     WithLoader,
-    Form as FormComponent,
-    FieldSet,
     Modal,
-    RetractingLabelInput,
     DropdownMenu,
     DropdownMenuItem,
     Icon,
-    ErrorFor,
-    T,
     CardFooter,
     CardContent,
-    SubmitField,
     Button,
 } from 'components';
 import { ProviderData } from '../setup/verify';
 import { BackupDataLink } from '../setup/store-secrets';
 import { DataSecret } from '../setup/store-secrets';
-import { str2ab } from 'helpers/conversion';
 import {
     keys,
     keyPairs,
@@ -39,277 +29,260 @@ import {
 import { Trans } from '@lingui/macro';
 import './settings.scss';
 import { copyToClipboard } from '../../../helpers/clipboard';
+import { useNavigate } from 'react-router-dom';
 
 const Settings = withActions(
-    withRouter(
-        withSettings(
-            ({
-                action,
-                type,
-                settings,
-                keys,
-                keysAction,
-                keyPairs,
-                keyPairsAction,
-                providerSecret,
-                providerSecretAction,
-                backupData,
-                backupDataAction,
-                providerData,
-                providerDataAction,
-                verifiedProviderData,
-                verifiedProviderDataAction,
-                router,
-            }) => {
-                const [deleting, setDeleting] = useState(false);
-                const [loggingOut, setLoggingOut] = useState(false);
-                const [initialized, setInitialized] = useState(false);
-                const [view, setView] = useState('verified');
+    withSettings(
+        ({
+            action,
+            settings,
+            keysAction,
+            keyPairs,
+            keyPairsAction,
+            providerSecret,
+            providerSecretAction,
+            backupDataAction,
+            providerData,
+            providerDataAction,
+            verifiedProviderData,
+            verifiedProviderDataAction,
+        }) => {
+            const [deleting, setDeleting] = useState(false);
+            const [loggingOut, setLoggingOut] = useState(false);
+            const [initialized, setInitialized] = useState(false);
+            const [view, setView] = useState('verified');
+            const navigate = useNavigate();
 
-                // we load all the resources we need
-                useEffect(() => {
-                    if (initialized) return;
+            // we load all the resources we need
+            useEffect(() => {
+                if (initialized) return;
 
-                    keysAction();
-                    verifiedProviderDataAction();
-                    providerDataAction();
+                keysAction();
+                verifiedProviderDataAction();
+                providerDataAction();
 
-                    setInitialized(true);
-                });
+                setInitialized(true);
+            });
 
-                let modal;
+            let modal;
 
-                const title = settings.get('title').toLowerCase();
+            const cancel = () => {
+                navigate('/provider/settings');
+            };
 
-                const cancel = () => {
-                    router.navigateToUrl('/provider/settings');
-                };
+            const deleteData = () => {
+                setDeleting(true);
+                const backend = settings.get('backend');
+                backend.local.deleteAll('provider::');
+                setDeleting(false);
+                navigate('/provider/deleted');
+            };
 
-                const deleteData = () => {
-                    setDeleting(true);
-                    const backend = settings.get('backend');
-                    backend.local.deleteAll('provider::');
-                    setDeleting(false);
-                    router.navigateToUrl('/provider/deleted');
-                };
+            const logOut = () => {
+                setLoggingOut(true);
 
-                const logOut = () => {
-                    setLoggingOut(true);
-
-                    const kpa = keyPairsAction('logoutKeyPairs');
-                    kpa.then(kp => {
-                        const psa = providerSecretAction(
-                            undefined,
-                            'logoutProviderSecret'
-                        );
-                        psa.then(ps => {
-                            // we give the backup data action a different name to avoid it being rejected
-                            // in case there's already a backup in progress... It will still be queued
-                            // up to ensure no conflicts can occur.
-                            const ba = backupDataAction(
-                                kp.data,
-                                ps.data,
-                                'logout'
-                            );
-                            ba.then(() => {
-                                const backend = settings.get('backend');
-                                backend.local.deleteAll('provider::');
-                                router.navigateToUrl('/provider/logged-out');
-                            });
-                            ba.catch(() => setLoggingOut(false));
+                const kpa = keyPairsAction('logoutKeyPairs');
+                kpa.then(kp => {
+                    const psa = providerSecretAction(
+                        undefined,
+                        'logoutProviderSecret'
+                    );
+                    psa.then(ps => {
+                        // we give the backup data action a different name to avoid it being rejected
+                        // in case there's already a backup in progress... It will still be queued
+                        // up to ensure no conflicts can occur.
+                        const ba = backupDataAction(kp.data, ps.data, 'logout');
+                        ba.then(() => {
+                            const backend = settings.get('backend');
+                            backend.local.deleteAll('provider::');
+                            navigate('/provider/logged-out');
                         });
-                        psa.catch(() => setLoggingOut(false));
+                        ba.catch(() => setLoggingOut(false));
                     });
-                    kpa.catch(() => setLoggingOut(false));
-                };
+                    psa.catch(() => setLoggingOut(false));
+                });
+                kpa.catch(() => setLoggingOut(false));
+            };
 
-                if (action === 'backup') {
-                    modal = (
-                        <Modal
-                            onClose={cancel}
-                            save="Sicherungsdatei herunterladen"
-                            title={<Trans id="backup-modal.title" />}
-                            onCancel={cancel}
-                            cancel={<Trans id="backup-modal.close" />}
-                            saveType="success"
+            if (action === 'backup') {
+                modal = (
+                    <Modal
+                        onClose={cancel}
+                        save="Sicherungsdatei herunterladen"
+                        title={<Trans id="backup-modal.title" />}
+                        onCancel={cancel}
+                        cancel={<Trans id="backup-modal.close" />}
+                        saveType="success"
+                    >
+                        <p>
+                            <Trans id="backup-modal.text" />
+                        </p>
+                        <hr />
+                        <DataSecret
+                            secret={providerSecret.data}
+                            embedded={true}
+                            hideNotice={true}
+                        />
+                        <Button
+                            style={{ marginRight: '1em' }}
+                            type="success"
+                            onClick={() => copyToClipboard(providerSecret.data)}
                         >
-                            <p>
-                                <Trans id="backup-modal.text" />
-                            </p>
-                            <hr />
-                            <DataSecret
-                                secret={providerSecret.data}
-                                embedded={true}
-                                hideNotice={true}
-                            />
-                            <Button
-                                style={{ marginRight: '1em' }}
-                                type="success"
-                                onClick={() =>
-                                    copyToClipboard(providerSecret.data)
+                            Datenschlüssel kopieren
+                        </Button>
+                        <BackupDataLink
+                            downloadText={
+                                <Trans id="backup-modal.download-backup" />
+                            }
+                            onSuccess={cancel}
+                        />
+                    </Modal>
+                );
+            } else if (action === 'delete') {
+                modal = (
+                    <Modal
+                        onClose={cancel}
+                        save={<Trans id="delete" />}
+                        disabled={deleting}
+                        waiting={deleting}
+                        title={<Trans id="delete-modal.title" />}
+                        onCancel={cancel}
+                        onSave={deleteData}
+                        saveType="danger"
+                    >
+                        <p>
+                            <Trans
+                                id={
+                                    deleting
+                                        ? 'delete-modal.deleting-text'
+                                        : 'delete-modal.text'
                                 }
-                            >
-                                Datenschlüssel kopieren
-                            </Button>
-                            <BackupDataLink
-                                downloadText={
-                                    <Trans id="backup-modal.download-backup" />
-                                }
-                                onSuccess={cancel}
                             />
-                        </Modal>
-                    );
-                } else if (action === 'delete') {
-                    modal = (
-                        <Modal
-                            onClose={cancel}
-                            save={<Trans id="delete" />}
-                            disabled={deleting}
-                            waiting={deleting}
-                            title={<Trans id="delete-modal.title" />}
-                            onCancel={cancel}
-                            onSave={deleteData}
-                            saveType="danger"
+                        </p>
+                    </Modal>
+                );
+            } else if (action === 'logout') {
+                modal = (
+                    <Modal
+                        onClose={cancel}
+                        save={<Trans id="log-out" />}
+                        disabled={loggingOut}
+                        waiting={loggingOut}
+                        title={<Trans id="log-out-modal.title" />}
+                        onCancel={cancel}
+                        onSave={logOut}
+                        saveType="warning"
+                    >
+                        <p>
+                            <Trans
+                                id={
+                                    loggingOut
+                                        ? 'log-out-modal.logging-out'
+                                        : 'log-out-modal.text'
+                                }
+                            />
+                        </p>
+                        <hr />
+                        <DataSecret
+                            secret={providerSecret.data}
+                            embedded={true}
+                            hideNotice={true}
+                        />
+                        <Button
+                            style={{ marginRight: '1em' }}
+                            type="success"
+                            onClick={() => copyToClipboard(providerSecret.data)}
                         >
-                            <p>
-                                <Trans id={
-                                        deleting
-                                            ? 'delete-modal.deleting-text'
-                                            : 'delete-modal.text'
-                                    }
-                                />
-                            </p>
-                        </Modal>
-                    );
-                } else if (action === 'logout') {
-                    modal = (
-                        <Modal
-                            onClose={cancel}
-                            save={<Trans id="log-out" />}
-                            disabled={loggingOut}
-                            waiting={loggingOut}
-                            title={<Trans id="log-out-modal.title" />}
-                            onCancel={cancel}
-                            onSave={logOut}
-                            saveType="warning"
-                        >
-                            <p>
-                                <Trans id={
-                                        loggingOut
-                                            ? 'log-out-modal.logging-out'
-                                            : 'log-out-modal.text'
-                                    }
-                                />
-                            </p>
-                            <hr />
-                            <DataSecret
-                                secret={providerSecret.data}
-                                embedded={true}
-                                hideNotice={true}
-                            />
-                            <Button
-                                style={{ marginRight: '1em' }}
-                                type="success"
-                                onClick={() =>
-                                    copyToClipboard(providerSecret.data)
-                                }
-                            >
-                                Datenschlüssel kopieren
-                            </Button>
-                            <BackupDataLink
-                                downloadText={
-                                    <Trans id="backup-modal.download-backup" />
-                                }
-                            />
-                        </Modal>
-                    );
-                }
-
-                const render = () => {
-                    return (
-                        <div className="kip-provider-settings">
-                            {modal}
-                            <CardContent>
-                                <h2>
-                                    <Trans id="provider-data.title" />
-                                </h2>
-
-                                <p style={{ marginBottom: '1em' }}>
-                                    <Trans id="provider-data.verified-vs-unverifired-desc"
-                                    />
-                                </p>
-
-                                <DropdownMenu
-                                    title={
-                                        <F>
-                                            <Icon icon="calendar" />{' '}
-                                            <Trans id={`settings.${view}`} />
-                                        </F>
-                                    }
-                                >
-                                    <DropdownMenuItem
-                                        icon="calendar"
-                                        onClick={() => setView('verified')}
-                                    >
-                                        <Trans id={`settings.verified`} />
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        icon="list"
-                                        onClick={() => setView('local')}
-                                    >
-                                        <Trans id={`settings.local`} />
-                                    </DropdownMenuItem>
-                                </DropdownMenu>
-                                <ProviderData
-                                    providerData={
-                                        view === 'verified'
-                                            ? verifiedProviderData
-                                            : providerData
-                                    }
-                                    verified={view === 'verified'}
-                                />
-                            </CardContent>
-                            <CardFooter>
-                                <div className="kip-buttons">
-                                    <Button
-                                        type="success"
-                                        href="/provider/settings/backup"
-                                    >
-                                        <Trans id="backup" />
-                                    </Button>
-                                    <Button
-                                        type="warning"
-                                        href="/provider/settings/logout"
-                                    >
-                                        <Trans id="log-out" />
-                                    </Button>
-                                    {false && (
-                                        <Button
-                                            type="danger"
-                                            href="/provider/settings/delete"
-                                        >
-                                            <Trans id="delete" />
-                                        </Button>
-                                    )}
-                                </div>
-                            </CardFooter>
-                        </div>
-                    );
-                };
-
-                // we wait until all resources have been loaded before we display the form
-                return (
-                    <WithLoader
-                        resources={[
-                            keyPairs,
-                            providerData,
-                            verifiedProviderData,
-                        ]}
-                        renderLoaded={render}
-                    />
+                            Datenschlüssel kopieren
+                        </Button>
+                        <BackupDataLink
+                            downloadText={
+                                <Trans id="backup-modal.download-backup" />
+                            }
+                        />
+                    </Modal>
                 );
             }
-        )
+
+            const render = () => {
+                return (
+                    <div className="kip-provider-settings">
+                        {modal}
+                        <CardContent>
+                            <h2>
+                                <Trans id="provider-data.title" />
+                            </h2>
+
+                            <p style={{ marginBottom: '1em' }}>
+                                <Trans id="provider-data.verified-vs-unverifired-desc" />
+                            </p>
+
+                            <DropdownMenu
+                                title={
+                                    <F>
+                                        <Icon icon="calendar" />{' '}
+                                        <Trans id={`settings.${view}`} />
+                                    </F>
+                                }
+                            >
+                                <DropdownMenuItem
+                                    icon="calendar"
+                                    onClick={() => setView('verified')}
+                                >
+                                    <Trans id={`settings.verified`} />
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    icon="list"
+                                    onClick={() => setView('local')}
+                                >
+                                    <Trans id={`settings.local`} />
+                                </DropdownMenuItem>
+                            </DropdownMenu>
+                            <ProviderData
+                                providerData={
+                                    view === 'verified'
+                                        ? verifiedProviderData
+                                        : providerData
+                                }
+                                verified={view === 'verified'}
+                            />
+                        </CardContent>
+                        <CardFooter>
+                            <div className="kip-buttons">
+                                <Button
+                                    type="success"
+                                    href="/provider/settings/backup"
+                                >
+                                    <Trans id="backup" />
+                                </Button>
+                                <Button
+                                    type="warning"
+                                    href="/provider/settings/logout"
+                                >
+                                    <Trans id="log-out" />
+                                </Button>
+                                {false && (
+                                    <Button
+                                        type="danger"
+                                        href="/provider/settings/delete"
+                                    >
+                                        <Trans id="delete" />
+                                    </Button>
+                                )}
+                            </div>
+                        </CardFooter>
+                    </div>
+                );
+            };
+
+            // we wait until all resources have been loaded before we display the form
+            return (
+                <WithLoader
+                    resources={[keyPairs, providerData, verifiedProviderData]}
+                    renderLoaded={render}
+                />
+            );
+        }
     ),
     [
         keys,

@@ -6,7 +6,6 @@ import React, { useState, useEffect } from 'react';
 import Form from 'helpers/form';
 import { keyPairs, providerData } from '../actions';
 import {
-    withRouter,
     withForm,
     withActions,
     Form as FormComponent,
@@ -14,15 +13,14 @@ import {
     RetractingLabelInput,
     Switch,
     ErrorFor,
-    T,
     CardFooter,
     CardContent,
     WithLoader,
     SubmitField,
-    Button,
 } from 'components';
 import { Trans } from '@lingui/macro';
 import './provider-data.scss';
+import { useNavigate } from 'react-router-dom';
 
 class ProviderDataForm extends Form {
     validate() {
@@ -40,16 +38,16 @@ const BaseProviderData = ({
     providerDataAction,
     embedded,
     form: { set, data, error, valid, reset },
-    router,
 }) => {
     const [modified, setModified] = useState(false);
     const [initialized, setInitialized] = useState(false);
+    const navigate = useNavigate();
 
     const onSubmit = () => {
         if (!valid) return;
         providerDataAction(data);
         // we redirect to the 'verify' step
-        router.navigateToUrl(`/provider/setup/verify`);
+        navigate(`/provider/setup/verify`);
     };
 
     useEffect(() => {
@@ -180,7 +178,11 @@ const BaseProviderData = ({
                                         submitting ? (
                                             <Trans id="provider-data.saving" />
                                         ) : (
-                                            <Trans id={'provider-data.save-and-continue'} />
+                                            <Trans
+                                                id={
+                                                    'provider-data.save-and-continue'
+                                                }
+                                            />
                                         )
                                     }
                                 />
@@ -201,7 +203,7 @@ const BaseProviderData = ({
 };
 
 const ProviderData = withActions(
-    withForm(withRouter(BaseProviderData), ProviderDataForm, 'form'),
+    withForm(BaseProviderData, ProviderDataForm, 'form'),
     [keyPairs, providerData]
 );
 

@@ -25,7 +25,6 @@ export const Button = ({
     children,
     flex,
     href,
-    hashParams,
     params,
     icon,
     logo,
@@ -49,7 +48,6 @@ export const Button = ({
         onClick={e => (!disabled && onClick !== undefined ? onClick(e) : false)}
         href={href}
         params={params}
-        hashParams={hashParams}
     >
         <button
             disabled={disabled}

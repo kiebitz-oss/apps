@@ -7,17 +7,16 @@ import {
     BarChart,
     withActions,
     withSettings,
-    A,
     Message,
     WithLoader,
     Card,
     CardHeader,
     CardContent,
-    T,
 } from 'components';
 import { getStats } from '../actions';
 import SummaryBox from './summary-box';
 import { Trans } from '@lingui/macro';
+import { i18n } from '@lingui/core';
 import './stats.scss';
 
 export const todayPlusN = n => {
@@ -111,8 +110,7 @@ const prepareHourlyStats = (hourlyStats, settings) => {
     series.forEach((v, k) =>
         titles.push(
             v.map((vv, i) =>
-                settings
-                    .t(t, vv === 1 ? `titles.${k}One` : `titles.${k}`, {
+                i18n._( vv === 1 ? `titles.${k}One` : `titles.${k}`, { values: {
                         n: vv,
                         from: dates[i].toLocaleString('en-US', opts),
                         to:
@@ -122,22 +120,21 @@ const prepareHourlyStats = (hourlyStats, settings) => {
                                       timeOpts
                                   )
                                 : datesTo[i].toLocaleString('en-US', opts),
-                    })
-                    .join('')
+                    }})
+                    
             )
         )
     );
     dates.forEach((date, i) =>
         refTitles.push(
-            settings
-                .t(t, 'refTitle', {
+            i18n._('refTitle', { values: {
                     from: dates[i].toLocaleString('en-US', opts),
                     to:
                         datesTo[i].getDate() === dates[i].getDate()
                             ? datesTo[i].toLocaleTimeString('en-US', timeOpts)
                             : datesTo[i].toLocaleString('en-US', opts),
-                })
-                .join('')
+                }})
+                
         )
     );
     return {

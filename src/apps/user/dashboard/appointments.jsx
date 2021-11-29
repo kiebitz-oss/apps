@@ -3,10 +3,7 @@
 // README.md contains license information.
 
 import React, { useEffect, useState, Fragment as F } from 'react';
-
-import Settings from './settings';
-import { keys } from 'apps/provider/actions';
-import { formatDuration, formatDate, formatTime } from 'helpers/time';
+import { formatDuration } from 'helpers/time';
 import classNames from 'helpers/classnames';
 import {
     tokenData,
@@ -14,7 +11,6 @@ import {
     invitation,
     appointments,
     confirmOffers,
-    getAppointments,
     cancelInvitation,
     confirmDeletion,
     acceptedInvitation,
@@ -24,14 +20,10 @@ import {
     withActions,
     ButtonIcon,
     Button,
-    Card,
     Modal,
     CardContent,
-    CardHeader,
     CardFooter,
     WithLoader,
-    T,
-    A,
     Message,
 } from 'components';
 import { Trans } from '@lingui/macro';
@@ -79,27 +71,27 @@ const OfferDetails = withSettings(({ settings, offer }) => {
                             <Trans
                                 id="offer-notice-text"
                                 values={{
-                                vaccine: (
-                                    <strong key="vaccine">{v[lang]}</strong>
-                                ),
-                                info: (
-                                    <a
-                                        key="infos"
-                                        target="_blank"
-                                        href={v.infosUrl[lang]}
-                                    >
-                                        <Trans id="info" />
-                                    </a>
-                                ),
-                                anamnesis: (
-                                    <a
-                                        key="anamnesis"
-                                        target="_blank"
-                                        href={v.anamnesisUrl[lang]}
-                                    >
-                                        <Trans id="anamnesis" />
-                                    </a>
-                                )
+                                    vaccine: (
+                                        <strong key="vaccine">{v[lang]}</strong>
+                                    ),
+                                    info: (
+                                        <a
+                                            key="infos"
+                                            target="_blank"
+                                            href={v.infosUrl[lang]}
+                                        >
+                                            <Trans id="info" />
+                                        </a>
+                                    ),
+                                    anamnesis: (
+                                        <a
+                                            key="anamnesis"
+                                            target="_blank"
+                                            href={v.anamnesisUrl[lang]}
+                                        >
+                                            <Trans id="anamnesis" />
+                                        </a>
+                                    ),
                                 }}
                             />
                         </p>
@@ -235,7 +227,8 @@ const AcceptedInvitation = withActions(
                         </p>
                         <p className="kip-booking-code">
                             <span>
-                                <Trans id={'invitation-accepted.booking-code'}
+                                <Trans
+                                    id={'invitation-accepted.booking-code'}
                                 />
                             </span>
                             {userSecret.data.slice(0, 4)}

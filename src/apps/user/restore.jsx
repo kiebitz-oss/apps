@@ -2,14 +2,12 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     withActions,
     withSettings,
-    withRouter,
     withForm,
     CenteredCard,
-    ErrorFor,
     Button,
     RetractingLabelInput,
     Message,
@@ -18,14 +16,13 @@ import {
     CardFooter,
     Form as FormComponent,
     FieldSet,
-    A,
-    T,
 } from 'components';
 import { restoreFromBackup } from 'apps/user/actions';
 import { Trans } from '@lingui/macro';
 import Form from 'helpers/form';
-import { i18n } from "@lingui/core"
+import { i18n } from '@lingui/core';
 import './restore.scss';
+import { useNavigate } from 'react-router-dom';
 
 function formatSecret(secret) {
     const parts = secret.match(/.{1,4}/g);
@@ -49,88 +46,77 @@ class LoadBackupForm extends Form {
 
 export default withForm(
     withActions(
-        withRouter(
-            withSettings(
-                ({
-                    form: { set, data, error, valid, reset },
-                    restoreFromBackup,
-                    restoreFromBackupAction,
-                    router,
-                    settings,
-                }) => {
-                    const [initialized, setInitialized] = useState(false);
-                    const [restoring, setRestoring] = useState(false);
+        ({
+            form: { set, data, error, valid, reset },
+            restoreFromBackup,
+            restoreFromBackupAction,
+        }) => {
+            const [initialized, setInitialized] = useState(false);
+            const [restoring, setRestoring] = useState(false);
+            const navigate = useNavigate();
 
-                    useEffect(() => {
-                        if (initialized) return;
-                        setInitialized(true);
-                    });
+            useEffect(() => {
+                if (initialized) return;
+                setInitialized(true);
+            });
 
-                    const restore = () => {
-                        setRestoring(true);
-                        restoreFromBackupAction(data.secret).then(data => {
-                            setRestoring(false);
-                            if (data.status === 'succeeded')
-                                router.navigateToUrl('/user/appointments');
-                        });
-                    };
+            const restore = () => {
+                setRestoring(true);
+                restoreFromBackupAction(data.secret).then(data => {
+                    setRestoring(false);
+                    if (data.status === 'succeeded')
+                        navigate('/user/appointments');
+                });
+            };
 
-                    let notice;
-                    if (
-                        restoreFromBackup !== undefined &&
-                        restoreFromBackup.status === 'failed'
-                    )
-                        notice = (
-                            <Message type="danger">
-                                <Trans id="load-backup.failed" />
-                            </Message>
-                        );
-
-                    return (
-                        <CenteredCard className="kip-user-restore-from-backup">
-                            <CardHeader>
-                                <h1 className="bulma-subtitle">
-                                    <Trans id="load-backup.title" />
-                                </h1>
-                            </CardHeader>
-                            <CardContent>
-                                {notice}
-                                <FormComponent>
-                                    <FieldSet>
-                                        <RetractingLabelInput
-                                            id="secret"
-                                            value={formatSecret(
-                                                data.secret || ''
-                                            )}
-                                            onChange={value =>
-                                                set('secret', value)
-                                            }
-                                            label={
-                                                <Trans id="load-backup.secret.label"
-                                                />
-                                            }
-                                            description={
-                                                <Trans id="load-backup.secret.description"
-                                                />
-                                            }
-                                        />
-                                    </FieldSet>
-                                </FormComponent>
-                            </CardContent>
-                            <CardFooter>
-                                <Button
-                                    onClick={restore}
-                                    type="success"
-                                    disabled={!valid || restoring}
-                                >
-                                    <Trans id="load-backup.load" />
-                                </Button>
-                            </CardFooter>
-                        </CenteredCard>
-                    );
-                }
+            let notice;
+            if (
+                restoreFromBackup !== undefined &&
+                restoreFromBackup.status === 'failed'
             )
-        ),
+                notice = (
+                    <Message type="danger">
+                        <Trans id="load-backup.failed" />
+                    </Message>
+                );
+
+            return (
+                <CenteredCard className="kip-user-restore-from-backup">
+                    <CardHeader>
+                        <h1 className="bulma-subtitle">
+                            <Trans id="load-backup.title" />
+                        </h1>
+                    </CardHeader>
+                    <CardContent>
+                        {notice}
+                        <FormComponent>
+                            <FieldSet>
+                                <RetractingLabelInput
+                                    id="secret"
+                                    value={formatSecret(data.secret || '')}
+                                    onChange={value => set('secret', value)}
+                                    label={
+                                        <Trans id="load-backup.secret.label" />
+                                    }
+                                    description={
+                                        <Trans id="load-backup.secret.description" />
+                                    }
+                                />
+                            </FieldSet>
+                        </FormComponent>
+                    </CardContent>
+                    <CardFooter>
+                        <Button
+                            onClick={restore}
+                            type="success"
+                            disabled={!valid || restoring}
+                        >
+                            <Trans id="load-backup.load" />
+                        </Button>
+                    </CardFooter>
+                </CenteredCard>
+            );
+        },
         [restoreFromBackup]
     ),
     LoadBackupForm,

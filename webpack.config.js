@@ -99,8 +99,7 @@ let config = {
     output: {
         path: PUBLIC_DIR,
         filename: "[name].js",
-        library: "[name]",
-        libraryTarget: "umd",
+        chunkFilename: "[name].[contenthash].js",
         publicPath: "/public/"
     },
     plugins: [
@@ -169,6 +168,9 @@ if (APP_ENV === "production") {
                 publicPath: "/",
                 directory: path.join(process.cwd(), "src/web/static"),
             },
+
+            compress: true,
+
             //always render index.html if the document does not exist (we need this for correct routing)
             historyApiFallback: true,
 

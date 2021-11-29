@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withSettings } from './settings';
-import { withRoute } from './router';
+
 import { Message } from './message';
 import { CenteredCard } from './card';
 import { T } from './t';
@@ -95,4 +95,4 @@ BaseMainErrorBoundary.propTypes = {
     errorContent: PropTypes.node,
 };
 
-export const MainErrorBoundary = withRoute(BaseMainErrorBoundary);
+export const MainErrorBoundary = BaseMainErrorBoundary;

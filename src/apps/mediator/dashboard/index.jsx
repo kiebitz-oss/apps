@@ -27,6 +27,7 @@ import {
 import { keyPairs, validKeyPairs } from '../actions';
 import { Trans } from '@lingui/macro';
 import './index.scss';
+import { useParams } from 'react-router-dom';
 
 const UploadKeyPairsModal = ({ keyPairsAction }) => {
     const [invalidFile, setInvalidFile] = useState(false);
@@ -87,107 +88,93 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
 };
 
 const Dashboard = withActions(
-    withSettings(
-        ({
-            route: {
-                handler: {
-                    props: { tab, action, secondaryAction, id },
-                },
-            },
-            settings,
-            keyPairs,
-            keyPairsAction,
-            validKeyPairs,
-            validKeyPairsAction,
-        }) => {
-            const [key, setKey] = useState(false);
-            const [validKey, setValidKey] = useState(false);
+    ({ keyPairs, keyPairsAction, validKeyPairs, validKeyPairsAction }) => {
+        const [key, setKey] = useState(false);
+        const [validKey, setValidKey] = useState(false);
+        const { tab, action, secondaryAction, id } = useParams();
 
-            useEffect(() => {
-                if (!key) {
-                    setKey(true);
-                    keyPairsAction();
-                }
-                if (!validKey && keyPairs !== undefined) {
-                    setValidKey(true);
-                    validKeyPairsAction(keyPairs);
-                }
-            });
-
-            let content, modal;
-
-            if (keyPairs !== undefined && keyPairs.data === null) {
-                modal = <UploadKeyPairsModal keyPairsAction={keyPairsAction} />;
+        useEffect(() => {
+            if (!key) {
+                setKey(true);
+                keyPairsAction();
             }
-
-            if (keyPairs !== undefined) {
-                switch (tab) {
-                    case 'settings':
-                        content = (
-                            <Settings
-                                action={action}
-                                secondaryAction={secondaryAction}
-                                id={id}
-                            />
-                        );
-                        break;
-                    case 'providers':
-                        content = (
-                            <Providers action={action} id={secondaryAction} />
-                        );
-                        break;
-                    case 'stats':
-                        content = (
-                            <Stats
-                                action={action}
-                                secondaryAction={secondaryAction}
-                                id={id}
-                            />
-                        );
-                        break;
-                }
+            if (!validKey && keyPairs !== undefined) {
+                setValidKey(true);
+                validKeyPairsAction(keyPairs);
             }
+        });
 
-            let invalidKeyMessage;
+        let content, modal;
 
-            if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
-                invalidKeyMessage = (
-                    <Message type="danger">
-                        <Trans id="invalidKey" />
-                    </Message>
-                );
+        if (keyPairs !== undefined && keyPairs.data === null) {
+            modal = <UploadKeyPairsModal keyPairsAction={keyPairsAction} />;
+        }
+
+        if (keyPairs !== undefined) {
+            switch (tab) {
+                case 'settings':
+                    content = (
+                        <Settings
+                            action={action}
+                            secondaryAction={secondaryAction}
+                            id={id}
+                        />
+                    );
+                    break;
+                case 'stats':
+                    content = (
+                        <Stats
+                            action={action}
+                            secondaryAction={secondaryAction}
+                            id={id}
+                        />
+                    );
+                    break;
+                default:
+                case 'providers':
+                    content = (
+                        <Providers action={action} id={secondaryAction} />
+                    );
+                    break;
             }
+        }
 
-            return (
-                <CenteredCard size="fullwidth" tight>
-                    <CardHeader>
-                        <Tabs>
-                            <Tab
-                                active={tab === 'providers'}
-                                href="/mediator/providers"
-                            >
-                                <Trans id="providers.title" />
-                            </Tab>
-                            <Tab
-                                active={tab === 'stats'}
-                                href="/mediator/stats"
-                            >
-                                <Trans id="stats.title" />
-                            </Tab>
-                            <Tab
-                                active={tab === 'settings'}
-                                href="/mediator/settings"
-                            >
-                                <Trans id="settings.title" />
-                            </Tab>
-                        </Tabs>
-                    </CardHeader>
-                    {modal}
-                    {content}
-                </CenteredCard>
+        let invalidKeyMessage;
+
+        if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
+            invalidKeyMessage = (
+                <Message type="danger">
+                    <Trans id="invalidKey" />
+                </Message>
             );
         }
-    ),
+
+        return (
+            <CenteredCard size="fullwidth" tight>
+                <CardHeader>
+                    <Tabs>
+                        <Tab
+                            active={tab === 'providers'}
+                            href="/mediator/providers"
+                        >
+                            <Trans id="providers.title" />
+                        </Tab>
+                        <Tab active={tab === 'stats'} href="/mediator/stats">
+                            <Trans id="stats.title" />
+                        </Tab>
+                        <Tab
+                            active={tab === 'settings'}
+                            href="/mediator/settings"
+                        >
+                            <Trans id="settings.title" />
+                        </Tab>
+                    </Tabs>
+                </CardHeader>
+                {modal}
+                {content}
+            </CenteredCard>
+        );
+    },
     [keyPairs, validKeyPairs]
 );
 

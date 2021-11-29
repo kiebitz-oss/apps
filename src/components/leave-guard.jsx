@@ -3,10 +3,7 @@
 // README.md contains license information.
 
 import React from 'react';
-import { withRouter } from './router';
 import { Modal } from './modal';
-import { T } from './t';
-
 import { Trans } from '@lingui/macro';
 
 class BaseLeaveGuard extends React.Component {
@@ -17,7 +14,7 @@ class BaseLeaveGuard extends React.Component {
         };
     }
 
-    updateRoute = (router, type, ...rest) => {
+    updateRoute = (type, ...rest) => {
         const { ask, confirmed } = this.state;
         const { saveToLeave } = this.props;
         let url, state;
@@ -53,7 +50,7 @@ class BaseLeaveGuard extends React.Component {
         const { router, onLeave } = this.props;
         const { confirmed, url, state } = this.state;
         if (confirmed) {
-            router.navigateToUrl(url, state);
+            navigate(url, state);
             if (onLeave !== undefined) onLeave();
             this.setState({
                 ask: undefined,
@@ -103,4 +100,4 @@ class BaseLeaveGuard extends React.Component {
     }
 }
 
-export const LeaveGuard = withRouter(BaseLeaveGuard);
+export const LeaveGuard = BaseLeaveGuard;
