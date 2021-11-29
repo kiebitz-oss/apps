@@ -76,7 +76,7 @@ contact-data:
     label:
       de: Zugangscode
     description:
-      de: Der in Deiner Anmelde E-Mail enthaltene Zugangscode (dieser sollte bereits ausgefüllt sein)
+      de: Zugangscodes sind nur für bestimmte Impfstellen notwendig. Wenn kein Zugangscode vorliegt, leer lassen.
   distance:
     label:
       de: "Maximale Entfernung zum Impfort in Kilometern (km)"
