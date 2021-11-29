@@ -34,7 +34,7 @@ import {
     A,
     Message,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './appointments.scss';
 
 const ProviderDetails = ({ data }) => {
@@ -47,7 +47,7 @@ const ProviderDetails = ({ data }) => {
                 <li>{data.json.city}</li>
                 {data.json.accessible && (
                     <li>
-                        <T t={t} k="provider-details.accessible" />
+                        <Trans id="provider-details.accessible" />
                     </li>
                 )}
             </ul>
@@ -76,30 +76,31 @@ const OfferDetails = withSettings(({ settings, offer }) => {
                     <F key="k">
                         <p>{v.notice[lang]}</p>
                         <p>
-                            <T
-                                t={t}
-                                k="offer-notice-text"
-                                vaccine={
+                            <Trans
+                                id="offer-notice-text"
+                                values={{
+                                vaccine: (
                                     <strong key="vaccine">{v[lang]}</strong>
-                                }
-                                info={
+                                ),
+                                info: (
                                     <a
                                         key="infos"
                                         target="_blank"
                                         href={v.infosUrl[lang]}
                                     >
-                                        <T t={t} k="info" />
+                                        <Trans id="info" />
                                     </a>
-                                }
-                                anamnesis={
+                                ),
+                                anamnesis: (
                                     <a
                                         key="anamnesis"
                                         target="_blank"
                                         href={v.anamnesisUrl[lang]}
                                     >
-                                        <T t={t} k="anamnesis" />
+                                        <Trans id="anamnesis" />
                                     </a>
-                                }
+                                )
+                                }}
                             />
                         </p>
                     </F>
@@ -115,7 +116,7 @@ const InvitationDeleted = withActions(
         return (
             <F>
                 <Message type="danger">
-                    <T t={t} k="invitation-accepted.deleted" />
+                    <Trans id="invitation-accepted.deleted" />
                 </Message>
                 <CardFooter>
                     <Button
@@ -126,7 +127,7 @@ const InvitationDeleted = withActions(
                             )
                         }
                     >
-                        <T t={t} k="invitation-accepted.confirm-deletion" />
+                        <Trans id="invitation-accepted.confirm-deletion" />
                     </Button>
                 </CardFooter>
             </F>
@@ -192,7 +193,7 @@ const AcceptedInvitation = withActions(
             notice = (
                 <F>
                     <Message type="danger">
-                        <T t={t} k="invitation-accepted.changed" />
+                        <Trans id="invitation-accepted.changed" />
                     </Message>
                 </F>
             );
@@ -207,13 +208,13 @@ const AcceptedInvitation = withActions(
                     onClose={() => setShowDelete(false)}
                     onCancel={() => setShowDelete(false)}
                     saveType="danger"
-                    save={<T t={t} k="invitation-accepted.delete.confirm" />}
-                    cancel={<T t={t} k="invitation-accepted.delete.cancel" />}
-                    title={<T t={t} k="invitation-accepted.delete.title" />}
+                    save={<Trans id="invitation-accepted.delete.confirm" />}
+                    cancel={<Trans id="invitation-accepted.delete.cancel" />}
+                    title={<Trans id="invitation-accepted.delete.title" />}
                     className="kip-appointment-overview"
                 >
                     <p>
-                        <T t={t} k="invitation-accepted.delete.notice" />
+                        <Trans id="invitation-accepted.delete.notice" />
                     </p>
                 </Modal>
             );
@@ -224,7 +225,7 @@ const AcceptedInvitation = withActions(
                     {notice}
                     <div className="kip-accepted-invitation">
                         <h2>
-                            <T t={t} k="invitation-accepted.title" />
+                            <Trans id="invitation-accepted.title" />
                         </h2>
                         <ProviderDetails data={invitationData.provider} />
                         <OfferDetails offer={currentOffer} />
@@ -234,9 +235,7 @@ const AcceptedInvitation = withActions(
                         </p>
                         <p className="kip-booking-code">
                             <span>
-                                <T
-                                    t={t}
-                                    k={'invitation-accepted.booking-code'}
+                                <Trans id={'invitation-accepted.booking-code'}
                                 />
                             </span>
                             {userSecret.data.slice(0, 4)}
@@ -245,7 +244,7 @@ const AcceptedInvitation = withActions(
                 </CardContent>
                 <CardFooter>
                     <Button type="warning" onClick={() => setShowDelete(true)}>
-                        <T t={t} k="cancel-appointment" />
+                        <Trans id="cancel-appointment" />
                     </Button>
                 </CardFooter>
             </F>
@@ -271,7 +270,7 @@ const NoInvitations = ({ tokenData }) => {
         content = (
             <F>
                 <Message type="success">
-                    <T t={t} k="no-invitations.please-wait" />
+                    <Trans id="no-invitations.please-wait" />
                 </Message>
             </F>
         );
@@ -279,7 +278,7 @@ const NoInvitations = ({ tokenData }) => {
         content = (
             <F>
                 <Message type="warning">
-                    <T t={t} k="no-invitations.notice" />
+                    <Trans id="no-invitations.notice" />
                 </Message>
             </F>
         );
@@ -291,7 +290,7 @@ const NoInvitations = ({ tokenData }) => {
             </CardContent>
             <Message type="info">
                 <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
-                <T t={t} k="no-invitations.update-notice" />
+                <Trans id="no-invitations.update-notice" />
             </Message>
         </F>
     );
@@ -437,7 +436,7 @@ const InvitationDetails = withSettings(
             if (offers.length === 0)
                 offerDetails = (
                     <Message type="warning">
-                        <T t={t} k="no-offers-anymore" />
+                        <Trans id="no-offers-anymore" />
                     </Message>
                 );
             else
@@ -446,16 +445,16 @@ const InvitationDetails = withSettings(
                         <thead>
                             <tr>
                                 <th>
-                                    <T t={t} k="appointment-preference" />
+                                    <Trans id="appointment-preference" />
                                 </th>
                                 <th>
-                                    <T t={t} k="appointment-date" />
+                                    <Trans id="appointment-date" />
                                 </th>
                                 <th>
-                                    <T t={t} k="appointment-duration" />
+                                    <Trans id="appointment-duration" />
                                 </th>
                                 <th>
-                                    <T t={t} k="appointment-vaccine" />
+                                    <Trans id="appointment-vaccine" />
                                 </th>
                             </tr>
                         </thead>
@@ -469,7 +468,7 @@ const InvitationDetails = withSettings(
                         <div className="kip-invitation-details">
                             <ProviderDetails data={data.provider} />
                             <p>
-                                <T t={t} k="appointments-notice" />
+                                <Trans id="appointments-notice" />
                             </p>
                             {offerDetails}
                         </div>
@@ -488,7 +487,7 @@ const InvitationDetails = withSettings(
                             }
                             type="success"
                         >
-                            <T t={t} k="confirm-appointment" />
+                            <Trans id="confirm-appointment" />
                         </Button>
                     </CardFooter>
                 </F>

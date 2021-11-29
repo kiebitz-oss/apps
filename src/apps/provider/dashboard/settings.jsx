@@ -36,7 +36,7 @@ import {
     providerSecret,
     verifiedProviderData,
 } from '../actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './settings.scss';
 import { copyToClipboard } from '../../../helpers/clipboard';
 
@@ -128,13 +128,13 @@ const Settings = withActions(
                         <Modal
                             onClose={cancel}
                             save="Sicherungsdatei herunterladen"
-                            title={<T t={t} k="backup-modal.title" />}
+                            title={<Trans id="backup-modal.title" />}
                             onCancel={cancel}
-                            cancel={<T t={t} k="backup-modal.close" />}
+                            cancel={<Trans id="backup-modal.close" />}
                             saveType="success"
                         >
                             <p>
-                                <T t={t} k="backup-modal.text" />
+                                <Trans id="backup-modal.text" />
                             </p>
                             <hr />
                             <DataSecret
@@ -153,7 +153,7 @@ const Settings = withActions(
                             </Button>
                             <BackupDataLink
                                 downloadText={
-                                    <T t={t} k="backup-modal.download-backup" />
+                                    <Trans id="backup-modal.download-backup" />
                                 }
                                 onSuccess={cancel}
                             />
@@ -163,18 +163,16 @@ const Settings = withActions(
                     modal = (
                         <Modal
                             onClose={cancel}
-                            save={<T t={t} k="delete" />}
+                            save={<Trans id="delete" />}
                             disabled={deleting}
                             waiting={deleting}
-                            title={<T t={t} k="delete-modal.title" />}
+                            title={<Trans id="delete-modal.title" />}
                             onCancel={cancel}
                             onSave={deleteData}
                             saveType="danger"
                         >
                             <p>
-                                <T
-                                    t={t}
-                                    k={
+                                <Trans id={
                                         deleting
                                             ? 'delete-modal.deleting-text'
                                             : 'delete-modal.text'
@@ -187,18 +185,16 @@ const Settings = withActions(
                     modal = (
                         <Modal
                             onClose={cancel}
-                            save={<T t={t} k="log-out" />}
+                            save={<Trans id="log-out" />}
                             disabled={loggingOut}
                             waiting={loggingOut}
-                            title={<T t={t} k="log-out-modal.title" />}
+                            title={<Trans id="log-out-modal.title" />}
                             onCancel={cancel}
                             onSave={logOut}
                             saveType="warning"
                         >
                             <p>
-                                <T
-                                    t={t}
-                                    k={
+                                <Trans id={
                                         loggingOut
                                             ? 'log-out-modal.logging-out'
                                             : 'log-out-modal.text'
@@ -222,7 +218,7 @@ const Settings = withActions(
                             </Button>
                             <BackupDataLink
                                 downloadText={
-                                    <T t={t} k="backup-modal.download-backup" />
+                                    <Trans id="backup-modal.download-backup" />
                                 }
                             />
                         </Modal>
@@ -235,13 +231,11 @@ const Settings = withActions(
                             {modal}
                             <CardContent>
                                 <h2>
-                                    <T t={t} k="provider-data.title" />
+                                    <Trans id="provider-data.title" />
                                 </h2>
 
                                 <p style={{ marginBottom: '1em' }}>
-                                    <T
-                                        t={t}
-                                        k="provider-data.verified-vs-unverifired-desc"
+                                    <Trans id="provider-data.verified-vs-unverifired-desc"
                                     />
                                 </p>
 
@@ -249,7 +243,7 @@ const Settings = withActions(
                                     title={
                                         <F>
                                             <Icon icon="calendar" />{' '}
-                                            <T t={t} k={`settings.${view}`} />
+                                            <Trans id={`settings.${view}`} />
                                         </F>
                                     }
                                 >
@@ -257,13 +251,13 @@ const Settings = withActions(
                                         icon="calendar"
                                         onClick={() => setView('verified')}
                                     >
-                                        <T t={t} k={`settings.verified`} />
+                                        <Trans id={`settings.verified`} />
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         icon="list"
                                         onClick={() => setView('local')}
                                     >
-                                        <T t={t} k={`settings.local`} />
+                                        <Trans id={`settings.local`} />
                                     </DropdownMenuItem>
                                 </DropdownMenu>
                                 <ProviderData
@@ -281,20 +275,20 @@ const Settings = withActions(
                                         type="success"
                                         href="/provider/settings/backup"
                                     >
-                                        <T t={t} k="backup" />
+                                        <Trans id="backup" />
                                     </Button>
                                     <Button
                                         type="warning"
                                         href="/provider/settings/logout"
                                     >
-                                        <T t={t} k="log-out" />
+                                        <Trans id="log-out" />
                                     </Button>
                                     {false && (
                                         <Button
                                             type="danger"
                                             href="/provider/settings/delete"
                                         >
-                                            <T t={t} k="delete" />
+                                            <Trans id="delete" />
                                         </Button>
                                     )}
                                 </div>

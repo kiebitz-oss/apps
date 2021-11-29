@@ -11,21 +11,21 @@ import {
     A,
     T,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './deleted.scss';
 
 export default withSettings(({ settings }) => (
     <CenteredCard className="kip-deleted">
         <CardHeader>
             <h1 className="bulma-subtitle">
-                <T t={t} k="data-deleted" />
+                <Trans id="data-deleted" />
             </h1>
         </CardHeader>
         <Message type="success">
-            <T
-                t={t}
-                k="thanks-for-using-us"
-                service={<strong key="service">{settings.get('title')}</strong>}
+            <Trans
+                
+                id="thanks-for-using-us"
+                values={{ service: (<strong key="service">{settings.get('title')}</strong>) }}
             />
         </Message>
     </CenteredCard>

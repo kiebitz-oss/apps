@@ -120,26 +120,26 @@ export default class Settings {
         return this.get("lang", "en");
     }
 
-    /**
-     * Get a translation for a key.
-     * @param key Translation key separated by dots or as an array of strings
-     */
-    t(t: object, key: string | string[]): string;
-    t(t: object, key: string | string[], ...params: string[]): string[];
-    t(t: object, key: string | string[], ...params: any[]): any[];
-    t(t: object, key: string | string[], ...params: any[]): string | any[] {
-        const kl: string[] = Array.isArray(key) ? key : key.split(".");
-        const lang = this.lang();
-        const value = hget(t, [...kl, lang]);
-        if (value === undefined) {
-            let source = '';
-            if (t._t !== undefined && t._t.path !== undefined)
-                source = `/(${t._t.path})`;
-            return [`[mt: ${kl.join("/")}/${lang}${source}]`];
-        }
-        if (typeof value !== "string")
-            return [`[not a string: ${kl.join("/")}/${lang}]`];
-        if (params.length > 0) return format(value.toString(), ...params);
-        return value;
-    }
+    // /**
+    //  * Get a translation for a key.
+    //  * @param key Translation key separated by dots or as an array of strings
+    //  */
+    // t(t: object, key: string | string[]): string;
+    // t(t: object, key: string | string[], ...params: string[]): string[];
+    // t(t: object, key: string | string[], ...params: any[]): any[];
+    // t(t: object, key: string | string[], ...params: any[]): string | any[] {
+    //     const kl: string[] = Array.isArray(key) ? key : key.split(".");
+    //     const lang = this.lang();
+    //     const value = hget(t, [...kl, lang]);
+    //     if (value === undefined) {
+    //         let source = '';
+    //         if (t._t !== undefined && t._t.path !== undefined)
+    //             source = `/(${t._t.path})`;
+    //         return [`[mt: ${kl.join("/")}/${lang}${source}]`];
+    //     }
+    //     if (typeof value !== "string")
+    //         return [`[not a string: ${kl.join("/")}/${lang}]`];
+    //     if (params.length > 0) return format(value.toString(), ...params);
+    //     return value;
+    // }
 }

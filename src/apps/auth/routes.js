@@ -3,7 +3,6 @@
 // README.md contains license information.
 
 import Login from './login';
-import t from './translations.yml';
 
 const routes = new Map([
     [
@@ -11,7 +10,6 @@ const routes = new Map([
         {
             url: '/login?',
             handler: () => ({
-                t: t,
                 title: 'login',
                 component: Login,
                 isSimple: true,

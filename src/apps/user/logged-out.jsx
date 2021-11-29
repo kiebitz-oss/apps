@@ -14,30 +14,31 @@ import {
     A,
     T,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './logged-out.scss';
 
 export default withSettings(({ settings }) => (
     <CenteredCard className="kip-logged-out">
         <CardHeader>
             <h1 className="bulma-subtitle">
-                <T t={t} k="logged-out.title" />
+                <Trans id="logged-out.title" />
             </h1>
         </CardHeader>
         <CardContent>
             <Message type="success">
-                <T
-                    t={t}
-                    k="logged-out.notice"
-                    service={
-                        <strong key="service">{settings.get('title')}</strong>
-                    }
+                <Trans
+                    id="logged-out.notice"
+                    values={{ 
+                        service: (
+                          <strong key="service">{settings.get('title')}</strong>
+                        )
+                    }}
                 />
             </Message>
         </CardContent>
         <CardFooter>
             <Button href="/user/restore">
-                <T t={t} k="logged-out.log-in-again" />
+                <Trans id="logged-out.log-in-again" />
             </Button>
         </CardFooter>
     </CenteredCard>

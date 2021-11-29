@@ -30,7 +30,7 @@ import {
     DropdownMenuItem,
     T,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './providers.scss';
 
 const sortProviderByDate = (a, b) => {
@@ -102,8 +102,8 @@ const Providers = withTimer(
                     if (action === 'reconfirm')
                         modal = (
                             <Modal
-                                title={<T t={t} k="providers.reconfirm" />}
-                                save={<T t={t} k="providers.reconfirm" />}
+                                title={<Trans id="providers.reconfirm" />}
+                                save={<Trans id="providers.reconfirm" />}
                                 onSave={doReconfirmProviders}
                                 saveType="success"
                                 disabled={
@@ -115,14 +115,15 @@ const Providers = withTimer(
                                 <div className="kip-provider-data">
                                     {(reconfirmProviders.status ===
                                         'inProgress' && (
-                                        <T
-                                            t={t}
-                                            k="providers.reconfirmProgressText"
-                                            i={reconfirmProviders.i}
-                                            n={reconfirmProviders.n}
+                                        <Trans
+                                            id="providers.reconfirmProgressText"
+                                            values={{
+                                                i: reconfirmProviders.i,
+                                                n: reconfirmProviders.n
+                                            }}
                                         />
                                     )) || (
-                                        <T t={t} k="providers.reconfirmText" />
+                                        <Trans id="providers.reconfirmText" />
                                     )}
                                 </div>
                             </Modal>
@@ -146,39 +147,30 @@ const Providers = withTimer(
                         if (provider !== undefined)
                             modal = (
                                 <Modal
-                                    title={<T t={t} k="providers.edit" />}
-                                    save={<T t={t} k="providers.confirm" />}
+                                    title={<Trans id="providers.edit" />}
+                                    save={<Trans id="providers.confirm" />}
                                     onSave={doConfirmProvider}
                                     saveType="success"
                                     onClose={closeModal}
                                     onCancel={closeModal}
                                 >
                                     <div className="kip-provider-data">
-                                        <T t={t} k="providers.confirmText" />
+                                        <Trans id="providers.confirmText" />
                                         <table className="bulma-table bulma-is-fullwidth bulma-is-striped">
                                             <thead>
                                                 <tr>
                                                     <th>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.field"
-                                                        />
+                                                        <Trans id="provider-data.field" />
                                                     </th>
                                                     <th>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.value"
-                                                        />
+                                                        <Trans id="provider-data.value" />
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.name"
-                                                        />
+                                                        <Trans id="provider-data.name" />
                                                     </td>
                                                     <td>
                                                         {provider.data.name}
@@ -186,10 +178,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.street"
-                                                        />
+                                                        <Trans id="provider-data.street" />
                                                     </td>
                                                     <td>
                                                         {provider.data.street}
@@ -197,10 +186,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.city"
-                                                        />
+                                                        <Trans id="provider-data.city" />
                                                     </td>
                                                     <td>
                                                         {provider.data.city}
@@ -208,10 +194,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.zipCode"
-                                                        />
+                                                        <Trans id="provider-data.zipCode" />
                                                     </td>
                                                     <td>
                                                         {provider.data.zipCode}
@@ -219,10 +202,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.email"
-                                                        />
+                                                        <Trans id="provider-data.email" />
                                                     </td>
                                                     <td>
                                                         {provider.data.email}
@@ -230,10 +210,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.phone"
-                                                        />
+                                                        <Trans id="provider-data.phone" />
                                                     </td>
                                                     <td>
                                                         {provider.data.phone}
@@ -241,10 +218,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <T
-                                                            t={t}
-                                                            k="provider-data.description"
-                                                        />
+                                                        <Trans id="provider-data.description" />
                                                     </td>
                                                     <td>
                                                         {
@@ -286,7 +260,7 @@ const Providers = withTimer(
                                     title={
                                         <F>
                                             <Icon icon="check-circle" />
-                                            <T t={t} k={`providers.${view}`} />
+                                            <Trans id={`providers.${view}`} />
                                         </F>
                                     }
                                 >
@@ -294,25 +268,25 @@ const Providers = withTimer(
                                         icon="check-circle"
                                         onClick={() => setView('verified')}
                                     >
-                                        <T t={t} k="providers.verified" />
+                                        <Trans id="providers.verified" />
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         icon="exclamation-circle"
                                         onClick={() => setView('pending')}
                                     >
-                                        <T t={t} k="providers.pending" />
+                                        <Trans id="providers.pending" />
                                     </DropdownMenuItem>
                                 </DropdownMenu>
                                 <A href="/mediator/providers/reconfirm">
-                                    <T t={t} k="providers.reconfirm" />
+                                    <Trans id="providers.reconfirm" />
                                 </A>
                                 <List>
                                     <ListHeader>
                                         <ListColumn size="md">
-                                            <T t={t} k="providers.name" />
+                                            <Trans id="providers.name" />
                                         </ListColumn>
                                         <ListColumn size="md">
-                                            <T t={t} k="providers.address" />
+                                            <Trans id="providers.address" />
                                         </ListColumn>
                                     </ListHeader>
                                     {providerItems}

@@ -22,7 +22,7 @@ import {
     SubmitField,
     Button,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './settings.scss';
 
 const TestQueuesModal = withRouter(
@@ -55,16 +55,16 @@ const TestQueuesModal = withRouter(
             if (status === 'invalid')
                 notice = (
                     <Message type="danger">
-                        <T t={t} k="upload-queues.invalid-file" />
+                        <Trans id="upload-queues.invalid-file" />
                     </Message>
                 );
             else if (status === 'valid')
                 notice = (
                     <Message type="success">
-                        <T t={t} k="upload-queues.valid-file" />
+                        <Trans id="upload-queues.valid-file" />
                     </Message>
                 );
-            else notice = <T t={t} k="upload-queues.notice" />;
+            else notice = <Trans id="upload-queues.notice" />;
 
             const footer = (
                 <Form>
@@ -73,7 +73,7 @@ const TestQueuesModal = withRouter(
                             htmlFor="file-upload"
                             className="custom-file-upload"
                         >
-                            <T t={t} k="upload-queues.input" />
+                            <Trans id="upload-queues.input" />
                             <input
                                 id="file-upload"
                                 disabled={
@@ -93,7 +93,7 @@ const TestQueuesModal = withRouter(
                     footer={footer}
                     onClose={() => router.navigateToUrl('/mediator/settings')}
                     className="kip-upload-file"
-                    title={<T t={t} k="upload-queues.title" />}
+                    title={<Trans id="upload-queues.title" />}
                 >
                     {notice}
                 </Modal>
@@ -142,21 +142,19 @@ const BaseSettings = ({
         modal = (
             <Modal
                 onClose={cancel}
-                save={<T t={t} k="log-out" />}
+                save={<Trans id="log-out" />}
                 disabled={loggingOut}
                 waiting={loggingOut}
-                title={<T t={t} k="log-out-modal.title" />}
+                title={<Trans id="log-out-modal.title" />}
                 onCancel={cancel}
                 onSave={logOut}
                 saveType="warning"
             >
                 <p>
-                    <T
-                        t={t}
-                        k={
-                            loggingOut
-                                ? 'log-out-modal.logging-out'
-                                : 'log-out-modal.text'
+                    <Trans id={
+                        loggingOut
+                            ? 'log-out-modal.logging-out'
+                            : 'log-out-modal.text'
                         }
                     />
                 </p>
@@ -170,17 +168,17 @@ const BaseSettings = ({
             <CardContent>
                 <div className="kip-mediator-settings">
                     <h2>
-                        <T t={t} k="test-queues.title" />
+                        <Trans id="test-queues.title" />
                     </h2>
                     <p>
-                        <T t={t} k="test-queues.text" />
+                        <Trans id="test-queues.text" />
                     </p>
                     <div className="kip-buttons">
                         <Button
                             type="success"
                             href="/mediator/settings/test-queues"
                         >
-                            <T t={t} k="test-queues.button" />
+                            <Trans id="test-queues.button" />
                         </Button>
                     </div>
                 </div>
@@ -188,7 +186,7 @@ const BaseSettings = ({
             <CardFooter>
                 <div className="kip-buttons">
                     <Button type="warning" href="/mediator/settings/logout">
-                        <T t={t} k="log-out" />
+                        <Trans id="log-out" />
                     </Button>
                 </div>
             </CardFooter>

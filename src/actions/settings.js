@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import BaseActions from 'actions/base';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 export default class Settings extends BaseActions {
     static get defaultKey() {

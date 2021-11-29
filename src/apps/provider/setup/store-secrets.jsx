@@ -18,7 +18,7 @@ import {
     A,
 } from 'components';
 import { providerSecret, providerData, keyPairs, backupData } from '../actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './store-secrets.scss';
 
 import { copyToClipboard } from '../../../helpers/clipboard';
@@ -50,7 +50,7 @@ export const DataSecret = withSettings(
             <React.Fragment>
                 {!embedded && (
                     <p className="kip-secrets-notice">
-                        <T t={t} k="store-secrets.online.text" safe />
+                        <Trans id="store-secrets.online.text" safe />
                     </p>
                 )}
                 <div
@@ -63,7 +63,7 @@ export const DataSecret = withSettings(
                             <div className="kip-uid">
                                 {!hideNotice && (
                                     <span>
-                                        <T t={t} k="store-secrets.secret" />
+                                        <Trans id="store-secrets.secret" />
                                     </span>
                                 )}
                                 <code>{fragments}</code>
@@ -81,14 +81,11 @@ export const DataSecret = withSettings(
                             className="bulma-button bulma-is-small"
                             onClick={copy}
                         >
-                            <T
-                                t={t}
-                                k={
-                                    failed
-                                        ? 'store-secrets.copy-failed'
-                                        : succeeded
-                                        ? 'store-secrets.copy-succeeded'
-                                        : 'store-secrets.copy'
+                            <Trans id={failed
+                                    ? 'store-secrets.copy-failed'
+                                    : succeeded
+                                    ? 'store-secrets.copy-succeeded'
+                                    : 'store-secrets.copy'
                                 }
                             />
                         </Button>
@@ -175,14 +172,14 @@ export const BackupDataLink = withSettings(
                         type="success"
                     >
                         {downloadText || (
-                            <T t={t} k="wizard.download-backup-data" />
+                            <Trans id="wizard.download-backup-data" />
                         )}
                     </a>
                 );
 
             return (
                 <Message waiting type="warning">
-                    <T t={t} k="wizard.generating-backup-data" />
+                    <Trans id="wizard.generating-backup-data" />
                 </Message>
             );
         },
@@ -209,9 +206,9 @@ export default withActions(
         if (status === 'show')
             modal = (
                 <Modal
-                    title={<T t={t} k="store-secrets.secrets-modal.title" />}
+                    title={<Trans id="store-secrets.secrets-modal.title" />}
                     onClose={hideSecrets}
-                    save={<T t={t} k="wizard.leave" />}
+                    save={<Trans id="wizard.leave" />}
                     onSave={goToDashboard}
                     onCancel={hideSecrets}
                     saveType="success"
@@ -225,7 +222,7 @@ export default withActions(
                 {modal}
                 <CardContent className="kip-secrets">
                     <p>
-                        <T t={t} k="store-secrets.notice" />
+                        <Trans id="store-secrets.notice" />
                     </p>
                 </CardContent>
                 <CardFooter>
@@ -243,6 +240,6 @@ export default withActions(
             setTab(tab === 'online' ? 'local' : 'online')
         }
     >
-        <T t={t} k={`store-secrets.${tab}.title`} />
+        <Trans id={`store-secrets.${tab}.title`} />
     </Switch>
 */

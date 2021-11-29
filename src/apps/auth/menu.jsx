@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Title, T } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 const menu = new Map([
     ['auth', new Map([])],

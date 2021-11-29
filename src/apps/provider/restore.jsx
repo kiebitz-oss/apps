@@ -21,8 +21,9 @@ import {
     A,
     T,
 } from 'components';
+import { i18n } from "@lingui/core"
 import { restoreFromBackup } from 'apps/provider/actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import Form from 'helpers/form';
 import './restore.scss';
 
@@ -31,9 +32,9 @@ class LoadBackupForm extends Form {
         const errors = {};
         const { data } = this;
         if (!data.file)
-            errors.file = this.settings.t(t, 'load-backup.missing-file');
+            errors.file = i18n._('load-backup.missing-file');
         else if (data.file.data === undefined || data.file.iv === undefined)
-            errors.file = this.settings.t(t, 'load-backup.invalid-file', {
+            errors.file = i18n._('load-backup.invalid-file', {
                 title: this.settings.get('title'),
             });
         if (data.secret !== undefined)
@@ -41,7 +42,7 @@ class LoadBackupForm extends Form {
                 .toLowerCase()
                 .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
         if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(data.secret))
-            errors.secret = this.settings.t(t, 'load-backup.invalid-secret');
+            errors.secret = i18n._('load-backup.invalid-secret');
 
         return errors;
     }
@@ -98,7 +99,7 @@ export default withForm(
                     )
                         notice = (
                             <Message type="danger">
-                                <T t={t} k="load-backup.failed" />
+                                <Trans id="load-backup.failed" />
                             </Message>
                         );
 
@@ -124,7 +125,7 @@ export default withForm(
                         <CenteredCard className="kip-provider-restore-from-backup">
                             <CardContent>
                                 <h1 className="bulma-subtitle">
-                                    <T t={t} k="load-backup.title" />
+                                    <Trans id="load-backup.title" />
                                 </h1>
                                 {notice}
                                 <FormComponent>
@@ -138,16 +139,10 @@ export default withForm(
                                                 set('secret', value)
                                             }
                                             label={
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.secret.label"
-                                                />
+                                                <Trans id="load-backup.secret.label" />
                                             }
                                             description={
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.secret.description"
-                                                />
+                                                <Trans id="load-backup.secret.description" />
                                             }
                                         />
                                         <label
@@ -166,33 +161,20 @@ export default withForm(
                                                 onChange={e => readFile(e)}
                                             />
                                             {(data.file !== undefined && (
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.input.change"
-                                                    filename={data.filename}
-                                                />
+                                                <Trans id="load-backup.input.change" values={{ filename: data.filename }} />
                                             )) || (
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.input"
-                                                />
+                                                <Trans id="load-backup.input" />
                                             )}
                                         </label>
                                         <span className="kip-retracting-label-input">
                                             <p className="kip-description">
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.input.description"
-                                                />
+                                                <Trans id="load-backup.input.description" />
                                             </p>
                                         </span>
                                         {false && (
                                             <F>
                                                 <h3>
-                                                    <T
-                                                        t={t}
-                                                        k="load-backup.advanced-options"
-                                                    />
+                                                    <Trans id="load-backup.advanced-options" />
                                                 </h3>
                                                 <ul className="kip-properties">
                                                     <li className="kip-property">
@@ -215,10 +197,7 @@ export default withForm(
                                                         </Switch>
 
                                                         <label htmlFor="localOnly">
-                                                            <T
-                                                                t={t}
-                                                                k="load-backup.local-only.label"
-                                                            />
+                                                            <Trans id="load-backup.local-only.label" />
                                                         </label>
                                                     </li>
                                                 </ul>
@@ -233,7 +212,7 @@ export default withForm(
                                     type="success"
                                     disabled={!valid || restoring}
                                 >
-                                    <T t={t} k="load-backup.load" />
+                                    <Trans id="load-backup.load" />
                                 </Button>
                             </CardFooter>
                         </CenteredCard>

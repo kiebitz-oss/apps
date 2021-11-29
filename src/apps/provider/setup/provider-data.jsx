@@ -21,7 +21,7 @@ import {
     SubmitField,
     Button,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './provider-data.scss';
 
 class ProviderDataForm extends Form {
@@ -76,35 +76,35 @@ const BaseProviderData = ({
                 <RetractingLabelInput
                     value={data.name || ''}
                     onChange={value => setAndMarkModified('name', value)}
-                    label={<T t={t} k="provider-data.name" />}
+                    label={<Trans id="provider-data.name" />}
                 />
                 <ErrorFor error={error} field="street" />
                 <RetractingLabelInput
                     value={data.street || ''}
                     onChange={value => setAndMarkModified('street', value)}
-                    label={<T t={t} k="provider-data.street" />}
+                    label={<Trans id="provider-data.street" />}
                 />
                 <ErrorFor error={error} field="zipCode" />
                 <RetractingLabelInput
                     value={data.zipCode || ''}
                     onChange={value => setAndMarkModified('zipCode', value)}
-                    label={<T t={t} k="provider-data.zip-code" />}
+                    label={<Trans id="provider-data.zip-code" />}
                 />
                 <ErrorFor error={error} field="city" />
                 <RetractingLabelInput
                     value={data.city || ''}
                     onChange={value => setAndMarkModified('city', value)}
-                    label={<T t={t} k="provider-data.city" />}
+                    label={<Trans id="provider-data.city" />}
                 />
                 <ErrorFor error={error} field="website" />
                 <RetractingLabelInput
                     value={data.website || ''}
                     onChange={value => setAndMarkModified('website', value)}
-                    label={<T t={t} k="provider-data.website" />}
+                    label={<Trans id="provider-data.website" />}
                 />
                 <ErrorFor error={error} field="description" />
                 <label htmlFor="description">
-                    <T t={t} k="provider-data.description" />
+                    <Trans id="provider-data.description" />
                 </label>
                 <textarea
                     id="description"
@@ -115,19 +115,19 @@ const BaseProviderData = ({
                     }
                 />
                 <h3>
-                    <T t={t} k="provider-data.for-mediator" />
+                    <Trans id="provider-data.for-mediator" />
                 </h3>
                 <ErrorFor error={error} field="phone" />
                 <RetractingLabelInput
                     value={data.phone || ''}
                     onChange={value => setAndMarkModified('phone', value)}
-                    label={<T t={t} k="provider-data.phone" />}
+                    label={<Trans id="provider-data.phone" />}
                 />
                 <ErrorFor error={error} field="email" />
                 <RetractingLabelInput
                     value={data.email || ''}
                     onChange={value => setAndMarkModified('email', value)}
-                    label={<T t={t} k="provider-data.email" />}
+                    label={<Trans id="provider-data.email" />}
                 />
                 <hr />
                 <ErrorFor error={error} field="code" />
@@ -135,9 +135,9 @@ const BaseProviderData = ({
                     value={data.code || ''}
                     onChange={value => setAndMarkModified('code', value)}
                     description={
-                        <T t={t} k="provider-data.access-code.description" />
+                        <Trans id="provider-data.access-code.description" />
                     }
-                    label={<T t={t} k="provider-data.access-code.label" />}
+                    label={<Trans id="provider-data.access-code.label" />}
                 />
                 <hr />
                 <ul className="kip-properties">
@@ -157,7 +157,7 @@ const BaseProviderData = ({
                         </Switch>
 
                         <label htmlFor="accessible">
-                            <T t={t} k="provider-data.accessible" />
+                            <Trans id="provider-data.accessible" />
                         </label>
                     </li>
                 </ul>
@@ -178,14 +178,9 @@ const BaseProviderData = ({
                                     waiting={submitting}
                                     title={
                                         submitting ? (
-                                            <T t={t} k="provider-data.saving" />
+                                            <Trans id="provider-data.saving" />
                                         ) : (
-                                            <T
-                                                t={t}
-                                                k={
-                                                    'provider-data.save-and-continue'
-                                                }
-                                            />
+                                            <Trans id={'provider-data.save-and-continue'} />
                                         )
                                     }
                                 />

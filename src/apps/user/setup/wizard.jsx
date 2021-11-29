@@ -22,7 +22,7 @@ import ContactData from './contact-data';
 import StoreSecrets from './store-secrets';
 import Verify from './verify';
 import Finalize from './finalize';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './wizard.scss';
 
 const pages = [
@@ -37,24 +37,24 @@ const Hi = withSettings(({ settings }) => (
     <React.Fragment>
         <CardContent>
             <p>
-                <T
-                    t={t}
-                    k="wizard.hi"
-                    link={
+                <Trans id="wizard.hi"
+                values={{
+                    link: (
                         <A
                             key="letUsKnow"
                             external
                             href={settings.get('supportEmail')}
                         >
-                            <T t={t} k="wizard.letUsKnow" key="letUsKnow" />
+                            <Trans id="wizard.letUsKnow" key="letUsKnow" />
                         </A>
-                    }
+                    )
+                }}
                 />
             </p>
         </CardContent>
         <CardFooter>
             <Button type="success" href={`/user/setup/enter-contact-data`}>
-                <T t={t} k="wizard.continue" />
+                <Trans id="wizard.continue" />
             </Button>
         </CardFooter>
     </React.Fragment>
@@ -104,7 +104,7 @@ const Wizard = ({ route, router, page, privacyManager }) => {
                         }}
                         active={page === p}
                     >
-                        {i++}. <T t={t} k={`wizard.steps.${p}`} />
+                        {i++}. <Trans id={`wizard.steps.${p}`} />
                     </CardNav>
                 </a>
             );

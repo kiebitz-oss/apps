@@ -17,7 +17,7 @@ import {
 } from 'components';
 import { getStats } from '../actions';
 import SummaryBox from './summary-box';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './stats.scss';
 
 export const todayPlusN = n => {
@@ -183,7 +183,7 @@ class Stats extends React.Component {
                 <div className="bulma-column bulma-is-fullwidth-desktop">
                     <Card size="fullwidth">
                         <Message type="warning">
-                            <T t={t} k="noData" />
+                            <Trans id="noData" />
                         </Message>
                     </Card>
                 </div>
@@ -194,24 +194,25 @@ class Stats extends React.Component {
                     <div className="bulma-column bulma-is-full-desktop">
                         <Card size="fullwidth" flex>
                             <CardContent>
-                                <T
+                                <Trans
                                     key="span"
-                                    t={t}
-                                    k="dateSpan"
-                                    from={
+                                    id="dateSpan"
+                                    values={{
+                                    from: (
                                         <strong key="s1">
                                             {new Date(
                                                 summary.from
                                             ).toLocaleString('en-US', opts)}
                                         </strong>
-                                    }
-                                    to={
+                                    ),
+                                    to: (
                                         <strong key="s2">
                                             {new Date(
                                                 summary.to
                                             ).toLocaleString('en-US', opts)}
                                         </strong>
-                                    }
+                                    )
+                                }}
                                 />
                             </CardContent>
                         </Card>
@@ -227,7 +228,7 @@ class Stats extends React.Component {
                         <Card size="fullwidth" flex>
                             <CardHeader>
                                 <h2>
-                                    <T t={t} k="bookingRate" />
+                                    <Trans id="bookingRate" />
                                 </h2>
                             </CardHeader>
                             <CardContent className="kip-cm-overview">

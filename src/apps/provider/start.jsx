@@ -13,7 +13,7 @@ import {
     T,
 } from 'components';
 import { providerData } from 'apps/provider/actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './start.scss';
 
 export default withActions(
@@ -37,17 +37,17 @@ export default withActions(
                     <CenteredCard className="kip-cm-welcome">
                         <CardContent>
                             <h1 className="bulma-subtitle">
-                                <T t={t} k="what-to-do" />
+                                <Trans id="what-to-do" />
                             </h1>
                             <ul className="kip-cm-selector">
                                 <li>
                                     <A href="/provider/setup">
-                                        <T t={t} k="setup" />
+                                        <Trans id="setup" />
                                     </A>
                                 </li>
                                 <li>
                                     <A href="/provider/restore">
-                                        <T t={t} k="restore" />
+                                        <Trans id="restore" />
                                     </A>
                                 </li>
                             </ul>

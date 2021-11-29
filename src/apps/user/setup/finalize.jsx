@@ -29,7 +29,7 @@ import {
 } from 'components';
 import Form from 'helpers/form';
 import Wizard from './wizard';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './finalize.scss';
 
 class FinalizeForm extends Form {
@@ -37,9 +37,7 @@ class FinalizeForm extends Form {
         const errors = {};
         if (this.data.distance === undefined) this.data.distance = 5;
         if (!this.data.zipCode || this.data.zipCode.length != 5)
-            errors.zipCode = this.settings.t(
-                t,
-                'contact-data.invalid-zip-code'
+            errors.zipCode = i18n._('contact-data.invalid-zip-code'
             );
         return errors;
     }
@@ -138,10 +136,7 @@ const Finalize = withForm(
                                     </Switch>
 
                                     <label htmlFor={kv}>
-                                        <T
-                                            t={t}
-                                            k={`contact-data.properties.${k}.values.${kv}`}
-                                        />
+                                        <Trans id={`contact-data.properties.${k}.values.${kv}`} />
                                     </label>
                                 </li>
                             )
@@ -150,10 +145,7 @@ const Finalize = withForm(
                         return (
                             <F key={k}>
                                 <h2>
-                                    <T
-                                        t={t}
-                                        k={`contact-data.properties.${k}.title`}
-                                    />
+                                    <Trans id={`contact-data.properties.${k}.title`} />
                                 </h2>
                                 <ul className="kip-properties">{items}</ul>
                             </F>
@@ -168,7 +160,7 @@ const Finalize = withForm(
                         if (noQueue)
                             noQueueMessage = (
                                 <Message type="danger">
-                                    <T t={t} k="wizard.no-queue.notice" />
+                                    <Trans id="wizard.no-queue.notice" />
                                 </Message>
                             );
 
@@ -180,10 +172,7 @@ const Finalize = withForm(
                             if (getToken.error.error.code === 401) {
                                 failedMessage = (
                                     <Message type="danger">
-                                        <T
-                                            t={t}
-                                            k="wizard.failed.invalid-code"
-                                        />
+                                        <Trans id="wizard.failed.invalid-code" />
                                     </Message>
                                 );
                             }
@@ -192,7 +181,7 @@ const Finalize = withForm(
                         if (failed && !failedMessage)
                             failedMessage = (
                                 <Message type="danger">
-                                    <T t={t} k="wizard.failed.notice" />
+                                    <Trans id="wizard.failed.notice" />
                                 </Message>
                             );
 
@@ -215,9 +204,7 @@ const Finalize = withForm(
                                                 )
                                             }
                                             label={
-                                                <T
-                                                    t={t}
-                                                    k="contact-data.zip-code"
+                                                <Trans id="contact-data.zip-code"
                                                 />
                                             }
                                         />
@@ -225,15 +212,9 @@ const Finalize = withForm(
                                             className="kip-control-label"
                                             htmlFor="distance"
                                         >
-                                            <T
-                                                t={t}
-                                                k="contact-data.distance.label"
-                                            />
+                                            <Trans id="contact-data.distance.label" />
                                             <span className="kip-control-notice">
-                                                <T
-                                                    t={t}
-                                                    k="contact-data.distance.notice"
-                                                />
+                                                <Trans id="contact-data.distance.notice" />
                                             </span>
                                         </label>
                                         <ErrorFor
@@ -253,60 +234,63 @@ const Finalize = withForm(
                                                 {
                                                     value: 5,
                                                     description: (
-                                                        <T
-                                                            t={t}
-                                                            k="contact-data.distance.option"
-                                                            distance={5}
+                                                        <Trans id="contact-data.distance.option" values={{
+                                                            distance: 5
+                                                        }}
                                                         />
                                                     ),
                                                 },
                                                 {
                                                     value: 10,
                                                     description: (
-                                                        <T
-                                                            t={t}
-                                                            k="contact-data.distance.option"
-                                                            distance={10}
+                                                        <Trans 
+                                                            id="contact-data.distance.option" values={{
+                                                                distance: 10
+                                                            }}
                                                         />
                                                     ),
                                                 },
                                                 {
                                                     value: 20,
                                                     description: (
-                                                        <T
-                                                            t={t}
-                                                            k="contact-data.distance.option"
-                                                            distance={20}
+                                                        <Trans
+                                                            id="contact-data.distance.option"
+                                                            values={{
+                                                                distance: 20
+                                                            }}
                                                         />
                                                     ),
                                                 },
                                                 {
                                                     value: 30,
                                                     description: (
-                                                        <T
-                                                            t={t}
-                                                            k="contact-data.distance.option"
-                                                            distance={30}
+                                                        <Trans
+                                                            id="contact-data.distance.option"
+                                                            values={{
+                                                                distance: 30
+                                                            }}
                                                         />
                                                     ),
                                                 },
                                                 {
                                                     value: 40,
                                                     description: (
-                                                        <T
-                                                            t={t}
-                                                            k="contact-data.distance.option"
-                                                            distance={40}
+                                                        <Trans 
+                                                            id="contact-data.distance.option"
+                                                            values={{
+                                                                distance: 40
+                                                            }}
                                                         />
                                                     ),
                                                 },
                                                 {
                                                     value: 50,
                                                     description: (
-                                                        <T
-                                                            t={t}
-                                                            k="contact-data.distance.option"
-                                                            distance={50}
+                                                        <Trans
+                                                            id="contact-data.distance.option"
+                                                            values={{
+                                                                distance: 50
+                                                            }}
                                                         />
                                                     ),
                                                 },
@@ -326,9 +310,7 @@ const Finalize = withForm(
                                         onClick={submit}
                                         disabled={submitting || !valid}
                                     >
-                                        <T
-                                            t={t}
-                                            k={
+                                        <Trans id={
                                                 noQueue
                                                     ? 'wizard.no-queue.title'
                                                     : failed

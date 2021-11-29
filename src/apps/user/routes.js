@@ -8,7 +8,6 @@ import Restore from './restore';
 import Deleted from './deleted';
 import LoggedOut from './logged-out';
 import Dashboard from './dashboard';
-import t from './translations.yml';
 
 const routes = new Map([
     [
@@ -16,7 +15,6 @@ const routes = new Map([
         {
             url: '/?(?:user/?)?',
             handler: () => ({
-                t: t,
                 title: 'welcome',
                 component: Start,
                 isSimple: true,
@@ -29,7 +27,6 @@ const routes = new Map([
         {
             url: '/user/restore',
             handler: () => ({
-                t: t,
                 title: 'restore',
                 component: Restore,
                 isSimple: true,
@@ -42,7 +39,6 @@ const routes = new Map([
         {
             url: '/user/deleted',
             handler: () => ({
-                t: t,
                 title: 'deleted',
                 component: Deleted,
                 isSimple: true,
@@ -55,7 +51,6 @@ const routes = new Map([
         {
             url: '/user/logged-out',
             handler: () => ({
-                t: t,
                 title: 'logged-out',
                 component: LoggedOut,
                 isSimple: true,
@@ -68,7 +63,6 @@ const routes = new Map([
         {
             url: '/user/(appointments|settings)(?:/([a-z]+))?',
             handler: (tab, action) => ({
-                t: t,
                 title: 'dashboard',
                 component: Dashboard,
                 isSimple: true,
@@ -81,7 +75,6 @@ const routes = new Map([
         {
             url: '/user/setup(?:/([a-z-]+))?(?:/([a-z-]+))?',
             handler: (page, status) => ({
-                t: t,
                 title: 'setup',
                 isSimple: true,
                 component: Setup,

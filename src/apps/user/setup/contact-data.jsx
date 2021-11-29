@@ -20,7 +20,7 @@ import {
     SubmitField,
     Button,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './contact-data.scss';
 
 class ContactDataForm extends Form {
@@ -33,10 +33,10 @@ class ContactDataForm extends Form {
 /*
             <ErrorFor error={error} field="email" />
             <RetractingLabelInput
-                description={<T t={t} k="contact-data.email.description" />}
+                description={<Trans id="contact-data.email.description" />}
                 value={data.email || ''}
                 onChange={value => setAndMarkModified('email', value)}
-                label={<T t={t} k="contact-data.email.label" />}
+                label={<Trans id="contact-data.email.label" />}
             />
 
 */
@@ -78,9 +78,9 @@ const BaseContactData = ({
                 value={data.code || ''}
                 onChange={value => setAndMarkModified('code', value)}
                 description={
-                    <T t={t} k="contact-data.access-code.description" />
+                    <Trans id="contact-data.access-code.description" />
                 }
-                label={<T t={t} k="contact-data.access-code.label" />}
+                label={<Trans id="contact-data.access-code.label" />}
             />
         </React.Fragment>
     );
@@ -103,19 +103,13 @@ const BaseContactData = ({
                                         waiting={submitting || redirecting}
                                         title={
                                             redirecting ? (
-                                                <T
-                                                    t={t}
-                                                    k="contact-data.success"
+                                                <Trans id="contact-data.success"
                                                 />
                                             ) : submitting ? (
-                                                <T
-                                                    t={t}
-                                                    k="contact-data.saving"
+                                                <Trans id="contact-data.saving"
                                                 />
                                             ) : (
-                                                <T
-                                                    t={t}
-                                                    k={
+                                                <Trans id={
                                                         'contact-data.save-and-continue'
                                                     }
                                                 />

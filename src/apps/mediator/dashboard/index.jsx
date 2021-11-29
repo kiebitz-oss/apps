@@ -25,7 +25,7 @@ import {
     CardContent,
 } from 'components';
 import { keyPairs, validKeyPairs } from '../actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './index.scss';
 
 const UploadKeyPairsModal = ({ keyPairsAction }) => {
@@ -55,16 +55,16 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
     if (invalidFile)
         notice = (
             <Message type="danger">
-                <T t={t} k="upload-key-pairs.invalid-file" />
+                <Trans id="upload-key-pairs.invalid-file" />
             </Message>
         );
-    else notice = <T t={t} k="upload-key-pairs.notice" />;
+    else notice = <Trans id="upload-key-pairs.notice" />;
 
     const footer = (
         <Form>
             <FieldSet>
                 <label htmlFor="file-upload" className="custom-file-upload">
-                    <T t={t} k="upload-key-pairs.input" />
+                    <Trans id="upload-key-pairs.input" />
                     <input
                         id="file-upload"
                         className="bulma-input"
@@ -79,7 +79,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
         <Modal
             footer={footer}
             className="kip-upload-key-pairs"
-            title={<T t={t} k="upload-key-pairs.title" />}
+            title={<Trans id="upload-key-pairs.title" />}
         >
             {notice}
         </Modal>
@@ -153,7 +153,7 @@ const Dashboard = withActions(
             if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
                 invalidKeyMessage = (
                     <Message type="danger">
-                        <T t={t} k="invalidKey" />
+                        <Trans id="invalidKey" />
                     </Message>
                 );
             }
@@ -166,19 +166,19 @@ const Dashboard = withActions(
                                 active={tab === 'providers'}
                                 href="/mediator/providers"
                             >
-                                <T t={t} k="providers.title" />
+                                <Trans id="providers.title" />
                             </Tab>
                             <Tab
                                 active={tab === 'stats'}
                                 href="/mediator/stats"
                             >
-                                <T t={t} k="stats.title" />
+                                <Trans id="stats.title" />
                             </Tab>
                             <Tab
                                 active={tab === 'settings'}
                                 href="/mediator/settings"
                             >
-                                <T t={t} k="settings.title" />
+                                <Trans id="settings.title" />
                             </Tab>
                         </Tabs>
                     </CardHeader>

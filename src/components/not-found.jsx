@@ -7,13 +7,13 @@ import { CenteredCard } from './card';
 import { Message } from './message';
 import { T } from './t';
 
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 export const NotFound = () => {
     return (
         <CenteredCard>
             <Message type="warning">
-                <T t={t} k="pageDoesNotExist" />
+                <Trans id="pageDoesNotExist" />
             </Message>
         </CenteredCard>
     );

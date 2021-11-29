@@ -34,7 +34,7 @@ import {
     Message,
 } from 'components';
 import { StoreOnline } from 'apps/user/setup/store-secrets';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 const Dashboard = withRouter(
     withTimer(
@@ -92,7 +92,7 @@ const Dashboard = withRouter(
                                 <A href={'/user/appointments'}>
                                     <span className="kip-icon">
                                         <Icon icon="chevron-left" />{' '}
-                                        <T t={t} k="go-back.button" />
+                                        <Trans id="go-back.button" />
                                     </span>
                                 </A>
                             );

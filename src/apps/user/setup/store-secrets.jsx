@@ -17,7 +17,7 @@ import {
     A,
 } from 'components';
 import { userSecret } from 'apps/user/actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './store-secrets.scss';
 
 export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
@@ -43,10 +43,10 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     if (bookmarkModal)
         modal = (
             <Modal
-                title={<T t={t} k="store-secrets.bookmark-modal.title" />}
+                title={<Trans id="store-secrets.bookmark-modal.title" />}
                 onClose={hideBookmarkModal}
             >
-                <T t={t} k="store-secrets.bookmark-modal.text" />
+                <Trans id="store-secrets.bookmark-modal.text" />
             </Modal>
         );
 
@@ -68,7 +68,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
             {modal}
             {!embedded && (
                 <p className="kip-secrets-notice">
-                    <T t={t} k="store-secrets.online.text" safe />
+                    <Trans id="store-secrets.online.text" safe />
                 </p>
             )}
             <div
@@ -81,7 +81,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
                         <div className="kip-uid">
                             {!hideNotice && (
                                 <span>
-                                    <T t={t} k="store-secrets.secret" />
+                                    <Trans id="store-secrets.secret" />
                                 </span>
                             )}
                             <code>{fragments}</code>
@@ -95,7 +95,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
                         className="bulma-button bulma-is-small"
                         onClick={showBookmarkModal}
                     >
-                        <T t={t} k="store-secrets.bookmark" />
+                        <Trans id="store-secrets.bookmark" />
                     </A>
                 </div>
             )}
@@ -111,14 +111,14 @@ const StoreLocal = ({ data }) => {
     return (
         <F>
             <p className="kip-secrets-notice">
-                <T t={t} k="store-secrets.local.text" />
+                <Trans id="store-secrets.local.text" />
             </p>
             <a
                 className="bulma-button"
                 download={`geheime-daten.kiebitz`}
                 href={URL.createObjectURL(blob)}
             >
-                <T t={t} k="store-secrets.download" />
+                <Trans id="store-secrets.download" />
             </a>
         </F>
     );
@@ -147,7 +147,7 @@ export default withActions(
                 <CardContent className="kip-secrets">{content}</CardContent>
                 <CardFooter>
                     <Button type="success" href={`/user/appointments`}>
-                        <T t={t} k="wizard.leave" />
+                        <Trans id="wizard.leave" />
                     </Button>
                 </CardFooter>
             </F>
@@ -162,6 +162,6 @@ export default withActions(
             setTab(tab === 'online' ? 'local' : 'online')
         }
     >
-        <T t={t} k={`store-secrets.${tab}.title`} />
+        <Trans id={`store-secrets.${tab}.title`} />
     </Switch>
 */

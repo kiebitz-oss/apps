@@ -35,7 +35,7 @@ import {
     A,
     Message,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 const Dashboard = withRouter(
     withActions(
@@ -190,7 +190,7 @@ const Dashboard = withRouter(
                     ) {
                         invalidKeyMessage = (
                             <Message waiting type="warning">
-                                <T t={t} k="invalid-key" />
+                                <Trans id="invalid-key" />
                             </Message>
                         );
                     }
@@ -203,13 +203,13 @@ const Dashboard = withRouter(
                                         active={tab === 'schedule'}
                                         href="/provider/schedule"
                                     >
-                                        <T t={t} k="schedule.title" />
+                                        <Trans id="schedule.title" />
                                     </Tab>
                                     <Tab
                                         active={tab === 'settings'}
                                         href="/provider/settings"
                                     >
-                                        <T t={t} k="settings.title" />
+                                        <Trans id="settings.title" />
                                     </Tab>
                                     <Tab
                                         last
@@ -217,7 +217,7 @@ const Dashboard = withRouter(
                                         active={tab === 'log-out'}
                                         href="/provider/settings/logout"
                                     >
-                                        <T t={t} k="log-out" />
+                                        <Trans id="log-out" />
                                     </Tab>
                                 </Tabs>
                             </CardHeader>

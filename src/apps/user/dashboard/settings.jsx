@@ -6,7 +6,7 @@ import React, { useState, Fragment as F } from 'react';
 import { StoreOnline } from 'apps/user/setup/store-secrets';
 import { userSecret, backupData } from 'apps/user/actions';
 import './settings.scss';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 import {
     withRouter,
@@ -48,22 +48,20 @@ const Settings = withActions(
                     logOutModal = (
                         <Modal
                             onClose={cancel}
-                            save={<T t={t} k="log-out" />}
+                            save={<Trans id="log-out" />}
                             disabled={loggingOut}
                             waiting={loggingOut}
-                            title={<T t={t} k="log-out-modal.title" />}
+                            title={<Trans id="log-out-modal.title" />}
                             onCancel={cancel}
                             onSave={logOut}
                             saveType="warning"
                         >
                             <p>
-                                <T
-                                    t={t}
-                                    k={
-                                        loggingOut
-                                            ? 'log-out-modal.logging-out'
-                                            : 'log-out-modal.text'
-                                    }
+                                <Trans id={
+                                    loggingOut
+                                        ? 'log-out-modal.logging-out'
+                                        : 'log-out-modal.text'
+                                }
                                 />
                             </p>
                             <hr />
@@ -84,10 +82,10 @@ const Settings = withActions(
                             <div className="kip-user-settings">
                                 {logOutModal}
                                 <h2>
-                                    <T t={t} k="user-data.title" />
+                                    <Trans id="user-data.title" />
                                 </h2>
                                 <p>
-                                    <T t={t} k="user-data.notice" />
+                                    <Trans id="user-data.notice" />
                                 </p>
                             </div>
                         </CardContent>
@@ -97,7 +95,7 @@ const Settings = withActions(
                                     type="warning"
                                     href="/user/settings/logout"
                                 >
-                                    <T t={t} k="log-out" />
+                                    <Trans id="log-out" />
                                 </Button>
                             </div>
                         </CardFooter>

@@ -21,7 +21,7 @@ import Wizard from './wizard';
 import classNames from 'helpers/classnames';
 import { submitProviderData, providerData, keyPairs, keys } from '../actions';
 
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './verify.scss';
 
 export const ProviderData = ({ providerData, changeHref, verified }) => {
@@ -31,7 +31,7 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
             return (
                 <F>
                     <p>
-                        <T t={t} k="provider-data.not-verified-yet" />
+                        <Trans id="provider-data.not-verified-yet" />
                     </p>
                 </F>
             );
@@ -47,55 +47,55 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                 <ul>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.name" />
+                            <Trans id="provider-data.name" />
                         </span>{' '}
                         {data.name}
                     </li>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.street" />
+                            <Trans id="provider-data.street" />
                         </span>{' '}
                         {data.street}
                     </li>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.zip-code" /> &
-                            <T t={t} k="provider-data.city" />
+                            <Trans id="provider-data.zip-code" /> &
+                            <Trans id="provider-data.city" />
                         </span>{' '}
                         {data.zipCode} - &nbsp;
                         {data.city}
                     </li>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.website" />
+                            <Trans id="provider-data.website" />
                         </span>{' '}
                         {data.website}
                     </li>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.description" />
+                            <Trans id="provider-data.description" />
                         </span>{' '}
                         {data.description || (
-                            <T t={t} k="provider-data.not-given" />
+                            <Trans id="provider-data.not-given" />
                         )}
                     </li>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.phone" />
+                            <Trans id="provider-data.phone" />
                         </span>{' '}
-                        {data.phone || <T t={t} k="provider-data.not-given" />}
+                        {data.phone || <Trans id="provider-data.not-given" />}
                     </li>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.email" />
+                            <Trans id="provider-data.email" />
                         </span>{' '}
-                        {data.email || <T t={t} k="provider-data.not-given" />}
+                        {data.email || <Trans id="provider-data.not-given" />}
                     </li>
                     <li>
                         <span>
-                            <T t={t} k="provider-data.access-code.label" />
+                            <Trans id="provider-data.access-code.label" />
                         </span>{' '}
-                        {data.code || <T t={t} k="provider-data.not-given" />}
+                        {data.code || <Trans id="provider-data.not-given" />}
                     </li>
                 </ul>
                 <hr />
@@ -110,7 +110,7 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                         </Switch>
 
                         <label htmlFor="accessible">
-                            <T t={t} k="provider-data.accessible" />
+                            <Trans id="provider-data.accessible" />
                         </label>
                     </li>
                 </ul>
@@ -120,7 +120,7 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                     className="bulma-button bulma-is-small"
                     href={changeHref || '/provider/setup/enter-provider-data'}
                 >
-                    <T t={t} k="provider-data.change" />
+                    <Trans id="provider-data.change" />
                 </A>
             </div>
         </F>
@@ -191,7 +191,7 @@ const Verify = withRouter(
                     ) {
                         failedMessage = (
                             <Message type="danger">
-                                <T t={t} k="wizard.failed.invalid-code" />
+                                <Trans id="wizard.failed.invalid-code" />
                             </Message>
                         );
                     }
@@ -200,7 +200,7 @@ const Verify = withRouter(
                 if (failed && !failedMessage)
                     failedMessage = (
                         <Message type="danger">
-                            <T t={t} k="wizard.failed.notice" />
+                            <Trans id="wizard.failed.notice" />
                         </Message>
                     );
 
@@ -209,18 +209,15 @@ const Verify = withRouter(
                         <CardContent>
                             {failedMessage}
                             <p className="kip-verify-notice">
-                                <T
-                                    t={t}
-                                    k="verify.text"
+                                <Trans id="verify.text"
                                     link={
                                         <A
                                             key="letUsKnow"
                                             external
                                             href={settings.get('supportEmail')}
                                         >
-                                            <T
-                                                t={t}
-                                                k="wizard.letUsKnow"
+                                            <Trans
+                                                id="wizard.letUsKnow"
                                                 key="letUsKnow"
                                             />
                                         </A>
@@ -235,9 +232,7 @@ const Verify = withRouter(
                                 disabled={submitting}
                                 onClick={submit}
                             >
-                                <T
-                                    t={t}
-                                    k={
+                                <Trans id={
                                         failed
                                             ? 'wizard.failed.title'
                                             : submitting

@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { SearchSelect, T } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './queue-select.scss';
 
 export const QueueSelect = ({
@@ -89,8 +89,8 @@ export const QueueSelect = ({
                     onSelect={selectQueue}
                     setSearch={updateSearch}
                     candidates={candidates}
-                    label={<T t={t} k="queues.label" />}
-                    description={<T t={t} k="queues.description" />}
+                    label={<Trans id="queues.label" />}
+                    description={<Trans id="queues.description" />}
                 />
             )}
         </div>

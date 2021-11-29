@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Title, T } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 const menu = new Map([
     [
@@ -15,7 +15,7 @@ const menu = new Map([
                 {
                     title: (
                         <Title
-                            title={<T t={t} k="drawingBoard" />}
+                            title={<Trans id="drawingBoard" />}
                             icon="chalkboard"
                         />
                     ),

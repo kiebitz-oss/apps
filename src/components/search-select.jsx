@@ -6,7 +6,7 @@ import React from 'react';
 import { T } from './t';
 import { RetractingLabelInput } from './retracting-label-input';
 import './search-select.scss';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 export const SearchSelect = ({
     search,
@@ -35,7 +35,7 @@ export const SearchSelect = ({
         searchCandidates = (
             <ul className="kip-candidates">
                 <li className="kip-candidate" key="not-found">
-                    <T t={t} k="search-select.no-candidates" />
+                    <Trans id="search-select.no-candidates" />
                 </li>
             </ul>
         );

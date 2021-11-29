@@ -17,7 +17,7 @@ import {
 import Wizard from './wizard';
 import { contactData } from 'apps/user/actions';
 
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './verify.scss';
 
 /*
@@ -40,32 +40,30 @@ const Verify = withSettings(
                 <React.Fragment>
                     <CardContent>
                         <p className="kip-verify-notice">
-                            <T
-                                t={t}
-                                k="verify.text"
-                                link={
+                            <Trans id="verify.text"
+                            values={{
+                                link: (
                                     <A
                                         key="letUsKnow"
                                         external
                                         href={settings.get('supportEmail')}
                                     >
-                                        <T
-                                            t={t}
-                                            k="wizard.letUsKnow"
+                                        <Trans
+                                            id="wizard.letUsKnow"
                                             key="letUsKnow"
                                         />
                                     </A>
-                                }
+                                )}}
                             />
                         </p>
                         <div className="kip-contact-data-box">
                             <ul>
                                 <li>
                                     <span>
-                                        <T t={t} k="contact-data.email.label" />
+                                        <Trans id="contact-data.email.label" />
                                     </span>{' '}
                                     {contactData.data.email || (
-                                        <T t={t} k="contact-data.not-given" />
+                                        <Trans id="contact-data.not-given" />
                                     )}
                                 </li>
                             </ul>
@@ -75,13 +73,13 @@ const Verify = withSettings(
                                 className="bulma-button bulma-is-small"
                                 href="/user/setup/enter-contact-data"
                             >
-                                <T t={t} k="contact-data.change" />
+                                <Trans id="contact-data.change" />
                             </A>
                         </div>
                     </CardContent>
                     <CardFooter>
                         <Button type="success" href={`/user/setup/finalize`}>
-                            <T t={t} k="wizard.continue" />
+                            <Trans id="wizard.continue" />
                         </Button>
                     </CardFooter>
                 </React.Fragment>

@@ -4,7 +4,6 @@
 
 import Dashboard from './dashboard';
 import LoggedOut from './logged-out';
-import t from './translations.yml';
 
 const routes = new Map([
     [
@@ -12,7 +11,6 @@ const routes = new Map([
         {
             url: '/mediator/logged-out',
             handler: () => ({
-                t: t,
                 title: 'logged-out',
                 component: LoggedOut,
                 isSimple: true,
@@ -26,7 +24,6 @@ const routes = new Map([
             url:
                 '/mediator(?:/(providers|stats|settings)(?:/([a-z0-9-]+))?(?:/([a-z0-9-]+))?(?:/([a-z0-9]+))?)?',
             handler: (tab, action, secondaryAction, id) => ({
-                t: t,
                 title: 'dashboard',
                 component: Dashboard,
                 isSimple: true,

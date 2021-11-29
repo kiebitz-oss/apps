@@ -21,7 +21,7 @@ import {
 import ProviderData from './provider-data';
 import StoreSecrets from './store-secrets';
 import Verify from './verify';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './wizard.scss';
 
 const pages = ['hi', 'enter-provider-data', 'verify', 'store-secrets'];
@@ -30,16 +30,14 @@ const Hi = withSettings(({ settings }) => (
     <React.Fragment>
         <CardContent>
             <p>
-                <T
-                    t={t}
-                    k="wizard.hi"
+                <Trans id="wizard.hi"
                     link={
                         <A
                             key="letUsKnow"
                             external
                             href={settings.get('supportEmail')}
                         >
-                            <T t={t} k="wizard.letUsKnow" key="letUsKnow" />
+                            <Trans id="wizard.letUsKnow" key="letUsKnow" />
                         </A>
                     }
                 />
@@ -47,7 +45,7 @@ const Hi = withSettings(({ settings }) => (
         </CardContent>
         <CardFooter>
             <Button type="success" href={`/provider/setup/enter-provider-data`}>
-                <T t={t} k="wizard.continue" />
+                <Trans id="wizard.continue" />
             </Button>
         </CardFooter>
     </React.Fragment>
@@ -97,7 +95,7 @@ const Wizard = ({ route, router, page, status }) => {
                         }}
                         active={page === p}
                     >
-                        {i++}. <T t={t} k={`wizard.steps.${p}`} />
+                        {i++}. <Trans id={`wizard.steps.${p}`} />
                     </CardNav>
                 </a>
             );

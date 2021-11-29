@@ -13,10 +13,14 @@ import {
     ExternalSettings,
 } from 'components';
 import Backend, { LocalStorageStore, SessionStorageStore } from 'backend';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 
 import 'scss/main.scss';
 
 const appElement = document.getElementById('app');
+
+i18n.activate('de');
 
 export const render = settings => {
     if (settings.get('backend') === undefined) {
@@ -38,7 +42,9 @@ export const render = settings => {
                 <MainErrorBoundary>
                     <Store store={settings.get('store')}>
                         <ExternalSettings>
-                            <App menu={settings.get('menu')} />
+                            <I18nProvider i18n={i18n}>
+                                <App menu={settings.get('menu')} />
+                            </I18nProvider>
                         </ExternalSettings>
                     </Store>
                 </MainErrorBoundary>
@@ -47,3 +53,4 @@ export const render = settings => {
         appElement
     );
 };
+

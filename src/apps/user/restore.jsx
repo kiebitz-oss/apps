@@ -22,8 +22,9 @@ import {
     T,
 } from 'components';
 import { restoreFromBackup } from 'apps/user/actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import Form from 'helpers/form';
+import { i18n } from "@lingui/core"
 import './restore.scss';
 
 function formatSecret(secret) {
@@ -41,7 +42,7 @@ class LoadBackupForm extends Form {
                 .toLowerCase()
                 .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
         if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(data.secret))
-            errors.secret = this.settings.t(t, 'load-backup.invalid-secret');
+            errors.secret = i18n._('load-backup.invalid-secret');
         return errors;
     }
 }
@@ -81,7 +82,7 @@ export default withForm(
                     )
                         notice = (
                             <Message type="danger">
-                                <T t={t} k="load-backup.failed" />
+                                <Trans id="load-backup.failed" />
                             </Message>
                         );
 
@@ -89,7 +90,7 @@ export default withForm(
                         <CenteredCard className="kip-user-restore-from-backup">
                             <CardHeader>
                                 <h1 className="bulma-subtitle">
-                                    <T t={t} k="load-backup.title" />
+                                    <Trans id="load-backup.title" />
                                 </h1>
                             </CardHeader>
                             <CardContent>
@@ -105,15 +106,11 @@ export default withForm(
                                                 set('secret', value)
                                             }
                                             label={
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.secret.label"
+                                                <Trans id="load-backup.secret.label"
                                                 />
                                             }
                                             description={
-                                                <T
-                                                    t={t}
-                                                    k="load-backup.secret.description"
+                                                <Trans id="load-backup.secret.description"
                                                 />
                                             }
                                         />
@@ -126,7 +123,7 @@ export default withForm(
                                     type="success"
                                     disabled={!valid || restoring}
                                 >
-                                    <T t={t} k="load-backup.load" />
+                                    <Trans id="load-backup.load" />
                                 </Button>
                             </CardFooter>
                         </CenteredCard>

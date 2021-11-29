@@ -5,7 +5,7 @@
 import React, { Component, ReactChild } from 'react';
 import { Message } from './message';
 import { T } from './t';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './loader.scss';
 
 type Resource = {
@@ -15,20 +15,20 @@ type Resource = {
 export const LoadingIndicator = () => (
     <div className="kip-loading-indicator">
         <Message waiting type="info">
-            <T t={t} k="loader.updating" />
+            <Trans id="loader.updating" />
         </Message>
     </div>
 );
 
 export const RenderWait = () => (
     <Message waiting type="info">
-        <T t={t} k="loader.please-wait" />
+        <Trans id="loader.please-wait" />
     </Message>
 );
 
 export const RenderFailed = () => (
     <Message type="danger">
-        <T t={t} k="loader.failed" />
+        <Trans id="loader.failed" />
     </Message>
 );
 

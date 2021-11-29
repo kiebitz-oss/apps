@@ -8,7 +8,6 @@ import Restore from './restore';
 import Deleted from './deleted';
 import LoggedOut from './logged-out';
 import Setup from './setup';
-import t from './translations.yml';
 
 const routes = new Map([
     [
@@ -16,7 +15,6 @@ const routes = new Map([
         {
             url: '/provider/?',
             handler: () => ({
-                t: t,
                 title: 'welcome',
                 component: Start,
                 isSimple: true,
@@ -29,7 +27,6 @@ const routes = new Map([
         {
             url: '/provider/restore',
             handler: () => ({
-                t: t,
                 title: 'restore',
                 component: Restore,
                 isSimple: true,
@@ -43,7 +40,6 @@ const routes = new Map([
             url:
                 '/provider(?:/(schedule|settings)(?:/([a-z0-9-]+))?(?:/([a-z0-9-]+))?(?:/([a-z0-9]+))?)?',
             handler: (tab, action, secondaryAction, id) => ({
-                t: t,
                 title: 'dashboard',
                 component: Dashboard,
                 isSimple: true,
@@ -62,7 +58,6 @@ const routes = new Map([
         {
             url: '/provider/deleted',
             handler: () => ({
-                t: t,
                 title: 'deleted',
                 component: Deleted,
                 isSimple: true,
@@ -75,7 +70,6 @@ const routes = new Map([
         {
             url: '/provider/logged-out',
             handler: () => ({
-                t: t,
                 title: 'logged-out',
                 component: LoggedOut,
                 isSimple: true,
@@ -88,7 +82,6 @@ const routes = new Map([
         {
             url: '/provider/setup(?:/([a-z-]+))?(?:/([a-z-]+))?',
             handler: (page, status) => ({
-                t: t,
                 title: 'setup',
                 isSimple: true,
                 component: Setup,

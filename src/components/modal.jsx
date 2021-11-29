@@ -8,7 +8,7 @@ import { Button } from './button';
 import { T } from './t';
 import './modal.scss';
 import classnames from 'helpers/classnames';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 export class Modal extends React.Component {
     render() {
@@ -87,7 +87,7 @@ export class Modal extends React.Component {
                                         !saveDisabled && !disabled && onSave()
                                     }
                                 >
-                                    {save || <T t={t} k="modal.save" />}
+                                    {save || <Trans id="modal.save" />}
                                 </Button>
                             )}
                             {onCancel && (
@@ -100,7 +100,7 @@ export class Modal extends React.Component {
                                         onCancel()
                                     }
                                 >
-                                    {cancel || <T t={t} k="modal.cancel" />}
+                                    {cancel || <Trans id="modal.cancel" />}
                                 </Button>
                             )}
                         </footer>

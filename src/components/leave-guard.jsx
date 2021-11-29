@@ -7,7 +7,7 @@ import { withRouter } from './router';
 import { Modal } from './modal';
 import { T } from './t';
 
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 class BaseLeaveGuard extends React.Component {
     constructor(props) {
@@ -90,11 +90,11 @@ class BaseLeaveGuard extends React.Component {
                             this.setState({ ask: false, confirmed: true })
                         }
                         saveType="danger"
-                        save={<T t={t} k="leave.leave" />}
-                        cancel={<T t={t} k="leave.cancel" />}
-                        title={<T t={t} k="leave.title" />}
+                        save={<Trans id="leave.leave" />}
+                        cancel={<Trans id="leave.cancel" />}
+                        title={<Trans id="leave.title" />}
                     >
-                        {text || <T t={t} k="leave.text" />}
+                        {text || <Trans id="leave.text" />}
                     </Modal>
                 )}
                 {children}

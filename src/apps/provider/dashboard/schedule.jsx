@@ -7,6 +7,7 @@ import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
 import { urlEncode } from 'helpers/data';
 import { formatDate, formatTime, getMonday } from 'helpers/time';
+import { i18n } from "@lingui/core"
 import Form from 'helpers/form';
 import {
     withRouter,
@@ -42,7 +43,7 @@ import {
     cancelAppointment,
     openAppointments,
 } from '../actions';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import './schedule.scss';
 
 Date.prototype.addHours = function(h) {
@@ -91,14 +92,14 @@ const AppointmentOverview = withActions(
                     onClose={() => setShowDelete(false)}
                     onCancel={() => setShowDelete(false)}
                     saveType="danger"
-                    save={<T t={t} k="appointment-overview.delete.confirm" />}
-                    cancel={<T t={t} k="appointment-overview.delete.cancel" />}
-                    title={<T t={t} k="appointment-overview.delete.title" />}
+                    save={<Trans id="appointment-overview.delete.confirm" />}
+                    cancel={<Trans id="appointment-overview.delete.cancel" />}
+                    title={<Trans id="appointment-overview.delete.title" />}
                     {...props}
                     className="kip-appointment-overview"
                 >
                     <p>
-                        <T t={t} k="appointment-overview.delete.notice" />
+                        <Trans id="appointment-overview.delete.notice" />
                     </p>
                 </Modal>
             );
@@ -111,7 +112,7 @@ const AppointmentOverview = withActions(
             >
                 <Card>
                     <CardHeader>
-                        <T t={t} k="appointment-overview.title" />
+                        <Trans id="appointment-overview.title" />
                         <Button
                             type="info"
                             aria-label="Close modal"
@@ -131,17 +132,11 @@ const AppointmentOverview = withActions(
                                 ).toLocaleTimeString()}
                             </li>
                             <li>
-                                <T
-                                    t={t}
-                                    k="appointment-overview.details.slots"
-                                />
+                                <Trans id="appointment-overview.details.slots" />
                                 : {appointment.slotData.length}{' '}
                             </li>
                             <li>
-                                <T
-                                    t={t}
-                                    k="appointment-overview.details.booked"
-                                />
+                                <Trans id="appointment-overview.details.booked" />
                                 : {appointment.bookings.length}{' '}
                             </li>
                         </ul>
@@ -150,10 +145,7 @@ const AppointmentOverview = withActions(
                         {(acceptedItems.length > 0 && (
                             <F>
                                 <h3>
-                                    <T
-                                        t={t}
-                                        k="appointment-overview.details.booking-codes"
-                                    />
+                                    <Trans id="appointment-overview.details.booking-codes" />
                                 </h3>
                                 <ul className="kip-booking-codes">
                                     {acceptedItems}
@@ -161,9 +153,7 @@ const AppointmentOverview = withActions(
                             </F>
                         )) || (
                             <Message type="info">
-                                <T
-                                    t={t}
-                                    k="appointment-overview.details.no-booked-slots"
+                                <Trans id="appointment-overview.details.no-booked-slots"
                                 />
                             </Message>
                         )}
@@ -173,14 +163,14 @@ const AppointmentOverview = withActions(
                             type="warning"
                             href={`/provider/schedule/${action}/edit/${hexId}`}
                         >
-                            <T t={t} k="appointment-overview.edit.button" />
+                            <Trans id="appointment-overview.edit.button" />
                         </Button>
                         &nbsp;
                         <Button
                             type="danger"
                             onClick={() => setShowDelete(true)}
                         >
-                            <T t={t} k="appointment-overview.delete.button" />
+                            <Trans id="appointment-overview.delete.button" />
                         </Button>
                     </CardFooter>
                 </Card>
@@ -420,7 +410,7 @@ const DayLabelRow = ({ day, date }) => {
     return (
         <div className="kip-hour-row kip-is-day-label">
             <span className="kip-day">
-                <T t={t} k={`day-${day + 1}`} />
+                <Trans id={`day-${day + 1}`} />
             </span>
             <span className="kip-date">{date.toLocaleDateString()}</span>
         </div>
@@ -547,10 +537,10 @@ const WeekCalendar = withRouter(
                         type=""
                         onClick={goBackward}
                     >
-                        <T t={t} k="schedule.backward" />
+                        <Trans id="schedule.backward" />
                     </Button>
                     <Button className="kip-forward" type="" onClick={goForward}>
-                        <T t={t} k="schedule.forward" />
+                        <Trans id="schedule.forward" />
                     </Button>
                 </div>
                 <div className="kip-week-calendar">{dayColumns}</div>
@@ -586,11 +576,11 @@ const AppointmentItem = ({ appointment }) => {
                     {new Date(appointment.timestamp).toLocaleTimeString()}
                 </li>
                 <li>
-                    <T t={t} k="appointment-overview.details.slots" />:{' '}
+                    <Trans id="appointment-overview.details.slots" />:{' '}
                     {appointment.slotData.length}{' '}
                 </li>
                 <li>
-                    <T t={t} k="appointment-overview.details.booked" />:{' '}
+                    <Trans id="appointment-overview.details.booked" />:{' '}
                     {appointment.bookings.length}{' '}
                 </li>
             </ul>
@@ -601,7 +591,7 @@ const AppointmentItem = ({ appointment }) => {
                 </F>
             )) || (
                 <Message type="info">
-                    <T t={t} k="appointment-overview.details.no-booked-slots" />
+                    <Trans id="appointment-overview.details.no-booked-slots" />
                 </Message>
             )}
         </li>
@@ -617,7 +607,7 @@ const AppointmentsList = ({ appointments }) => {
     return (
         <div className="kip-appointments-list kip-printable">
             <h2>
-                <T t={t} k="appointments-list.title" />
+                <Trans id="appointments-list.title" />
             </h2>
             <ul className="kip-appointments">{appointmentItems}</ul>
         </div>
@@ -628,21 +618,17 @@ class AppointmentForm extends Form {
     validate() {
         const errors = {};
         if (this.data.date === undefined)
-            errors.date = this.settings.t(
-                t,
-                'new-appointment.please-enter-date'
+            errors.date = i18n._('new-appointment.please-enter-date'
             );
         else if (this.data.time === undefined)
-            errors.time = this.settings.t(
-                t,
-                'new-appointment.please-enter-time'
+            errors.time = i18n._('new-appointment.please-enter-time'
             );
         else {
             this.data.timestamp = new Date(
                 `${this.data.date} ${this.data.time}`
             );
             if (this.data.timestamp < new Date())
-                errors.date = this.settings.t(t, 'new-appointment.in-the-past');
+                errors.date = i18n._('new-appointment.in-the-past');
             // we allow appointments max. 30 days in the future
             if (
                 this.data.timestamp >
@@ -654,10 +640,10 @@ class AppointmentForm extends Form {
                 );
         }
         if (this.data.slots > 50) {
-            errors.slots = this.settings.t(t, 'new-appointment.too-many-slots');
+            errors.slots = i18n._('new-appointment.too-many-slots');
         }
         if (this.data.slots < 1) {
-            errors.slots = this.settings.t(t, 'new-appointment.too-few-slots');
+            errors.slots = i18n._('new-appointment.too-few-slots');
         }
         return errors;
     }
@@ -785,9 +771,9 @@ const NewAppointment = withSettings(
                                     value: kv,
                                     key: vv,
                                     title: (
-                                        <T
-                                            t={properties}
-                                            k={`${k}.values.${kv}`}
+                                        <Trans 
+                                            values={{ t: properties }}
+                                            id={`${k}.values.${kv}`}
                                         />
                                     ),
                                 })
@@ -813,7 +799,7 @@ const NewAppointment = withSettings(
                             return (
                                 <F key={k}>
                                     <h2>
-                                        <T t={properties} k={`${k}.title`} />
+                                        <trans values={properties} id={`${k}.title`} />
                                     </h2>
                                     <RichSelect
                                         options={options}
@@ -842,11 +828,7 @@ const NewAppointment = withSettings(
                     ].map(v => ({
                         value: v,
                         title: (
-                            <T
-                                t={t}
-                                k={`schedule.appointment.duration.title`}
-                                duration={v}
-                            />
+                            <Trans id={`schedule.appointment.duration.title`} values={{ duration: v }}  />
                         ),
                     }));
 
@@ -861,12 +843,9 @@ const NewAppointment = withSettings(
                             onCancel={cancel}
                             onClose={cancel}
                             title={
-                                <T
-                                    t={t}
-                                    k={
-                                        appointment !== undefined
-                                            ? 'edit-appointment.title'
-                                            : 'new-appointment.title'
+                                <Trans id={appointment !== undefined
+                                        ? 'edit-appointment.title'
+                                        : 'new-appointment.title'
                                     }
                                 />
                             }
@@ -875,7 +854,7 @@ const NewAppointment = withSettings(
                                 <FieldSet>
                                     <div className="kip-field">
                                         <Label htmlFor="date">
-                                            <T t={t} k="new-appointment.date" />
+                                            <Trans id="new-appointment.date" />
                                         </Label>
                                         <ErrorFor error={error} field="date" />
                                         <input
@@ -889,7 +868,7 @@ const NewAppointment = withSettings(
                                     </div>
                                     <div className="kip-field">
                                         <Label htmlFor="time">
-                                            <T t={t} k="new-appointment.time" />
+                                            <Trans id="new-appointment.time" />
                                         </Label>
                                         <ErrorFor error={error} field="time" />
                                         <input
@@ -904,9 +883,7 @@ const NewAppointment = withSettings(
                                     </div>
                                     <div className="kip-field kip-is-fullwidth kip-slider">
                                         <Label htmlFor="slots">
-                                            <T
-                                                t={t}
-                                                k="new-appointment.slots"
+                                            <Trans id="new-appointment.slots"
                                             />
                                         </Label>
                                         <ErrorFor error={error} field="slots" />
@@ -1065,20 +1042,14 @@ const Invitations = withTimer(
                                         <Button
                                             href={`/provider/schedule/${dateString}/new`}
                                         >
-                                            <T
-                                                t={t}
-                                                k="schedule.appointment.add"
-                                            />
+                                            <Trans id="schedule.appointment.add" />
                                         </Button>
                                         &nbsp;
                                         <DropdownMenu
                                             title={
                                                 <F>
                                                     <Icon icon="calendar" />{' '}
-                                                    <T
-                                                        t={t}
-                                                        k={`schedule.${view}`}
-                                                    />
+                                                    <Trans id={`schedule.${view}`} />
                                                 </F>
                                             }
                                         >
@@ -1088,10 +1059,7 @@ const Invitations = withTimer(
                                                     setView('calendar')
                                                 }
                                             >
-                                                <T
-                                                    t={t}
-                                                    k={`schedule.calendar`}
-                                                />
+                                                <Trans id={`schedule.calendar`} />
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 icon="list"
@@ -1099,10 +1067,7 @@ const Invitations = withTimer(
                                                     setView('booking-list')
                                                 }
                                             >
-                                                <T
-                                                    t={t}
-                                                    k={`schedule.booking-list`}
-                                                />
+                                                <Trans id={`schedule.booking-list`} />
                                             </DropdownMenuItem>
                                         </DropdownMenu>
                                         <hr />
@@ -1110,11 +1075,7 @@ const Invitations = withTimer(
                                     {content}
                                 </CardContent>
                                 <Message type="info" waiting>
-                                    <T
-                                        t={t}
-                                        k="schedule.updating"
-                                        lastUpdated={lastUpdated}
-                                    />
+                                    <Trans id="schedule.updating" values={{ lastUpdated }} />
                                 </Message>
                             </div>
                         );

@@ -11,7 +11,7 @@ import {
     A,
     T,
 } from 'components';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 // styles are in 'apps/provider/start.scss'
 
@@ -26,17 +26,17 @@ export default withRouter(
             <CenteredCard className="kip-cm-welcome">
                 <CardContent>
                     <h1 className="bulma-subtitle">
-                        <T t={t} k="what-to-do" />
+                        <Trans id="what-to-do" />
                     </h1>
                     <ul className="kip-cm-selector">
                         <li>
                             <A href="/user/setup">
-                                <T t={t} k="setup" />
+                                <Trans id="setup" />
                             </A>
                         </li>
                         <li>
                             <A href="/user/restore">
-                                <T t={t} k="restore" />
+                                <Trans id="restore" />
                             </A>
                         </li>
                     </ul>

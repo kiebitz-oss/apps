@@ -10,22 +10,21 @@ import { Message } from './message';
 import { CenteredCard } from './card';
 import { T } from './t';
 import { A } from './a';
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 
 const BaseDefaultErrorMessage = ({ settings }) => (
     <CenteredCard>
         <Message type="danger">
-            <T
-                t={t}
-                k="errorBoundary.somethingWentWrong"
-                contactUs={
+            <Trans id="errorBoundary.somethingWentWrong" values={{
+                    contactUs: (
                     <A
                         href={'mailto:' + settings.get(['supportEmail'])}
                         external
                     >
-                        <T t={t} k="errorBoundary.contactUs" />
+                        <Trans id="errorBoundary.contactUs" />
                     </A>
-                }
+                    )
+                }}
             />{' '}
         </Message>
     </CenteredCard>

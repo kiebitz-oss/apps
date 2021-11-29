@@ -22,7 +22,7 @@ import {
     SidebarContainer,
 } from 'components';
 
-import t from './translations.yml';
+import { Trans } from '@lingui/macro';
 import { user } from 'actions';
 import { encodeQueryData } from 'helpers/url';
 import './app.scss';
@@ -90,10 +90,10 @@ class App extends React.Component {
             notice = (
                 <Message className="kip-outdated-notice" type="warning">
                     <p>
-                        <T t={t} k="outdated" />
+                        <Trans id="outdated" />
                     </p>
                     <Button type="info" onClick={() => location.reload()}>
-                        <T t={t} k="reload" />
+                        <Trans id="reload" />
                     </Button>
                 </Message>
             );
@@ -103,7 +103,7 @@ class App extends React.Component {
             return (
                 <CenteredCard>
                     <CardContent>
-                        <T t={t} k="redirecting" />
+                        <Trans id="redirecting" />
                     </CardContent>
                 </CenteredCard>
             );
