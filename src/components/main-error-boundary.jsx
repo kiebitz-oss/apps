@@ -15,17 +15,11 @@ const BaseDefaultErrorMessage = ({ settings }) => (
     <CenteredCard>
         <Message type="danger">
             <Trans id="errorBoundary.somethingWentWrong" values={{
-                    contactUs: (
-                    <A
-                        href={'mailto:' + settings.get(['supportEmail'])}
-                        external
-                    >
-                        <Trans id="errorBoundary.contactUs">kontaktieren Sie uns zur Behebung</Trans>
-                    </A>
-                    )
+                    email: settings.get(['supportEmail'])
                 }}
             >
-                Es tut uns schrecklich leid aber es ist ein unerwarteter Fehler passiert. Bitte {contactUs}.
+                Es tut uns schrecklich leid aber es ist ein unerwarteter Fehler passiert. Bitte 
+                <A href="mailto:{email}" external>kontaktieren Sie uns zur Behebung</A>.
             </Trans>
             {' '}
         </Message>

@@ -30,6 +30,7 @@ import Form from 'helpers/form';
 import Wizard from './wizard';
 import { Trans, defineMessage } from '@lingui/macro';
 import './finalize.scss';
+import td from "./translations.yml"
 
 const contactDataPropertiesMessages = {
     'location': {
@@ -97,7 +98,7 @@ const Finalize = withForm(
                                 distance: 5,
                             };
                             for (const [k, v] of Object.entries(
-                                t['contact-data'].properties
+                                td['contact-data'].properties
                             )) {
                                 for (const [kv, vv] of Object.entries(
                                     v.values
@@ -134,7 +135,7 @@ const Finalize = withForm(
                     };
 
                     const properties = Object.entries(
-                        t['contact-data'].properties
+                        td['contact-data'].properties
                     ).map(([k, v]) => {
                         const items = Object.entries(v.values).map(
                             ([kv, vv]) => (
@@ -259,9 +260,7 @@ const Finalize = withForm(
                                                     description: (
                                                         <Trans id="contact-data.distance.option" values={{
                                                             distance: 5
-                                                        }}
-                                                        >{distance} km</Trans>
-
+                                                        }}  defaults="{distance} km" />
                                                     ),
                                                 },
                                                 {
@@ -270,8 +269,7 @@ const Finalize = withForm(
                                                         <Trans 
                                                             id="contact-data.distance.option" values={{
                                                                 distance: 10
-                                                            }}
-                                                        >{distance} km</Trans>
+                                                            }}  defaults="{distance} km" />
                                                     ),
                                                 },
                                                 {
@@ -281,8 +279,7 @@ const Finalize = withForm(
                                                             id="contact-data.distance.option"
                                                             values={{
                                                                 distance: 20
-                                                            }}
-                                                        >{distance} km</Trans>
+                                                            }}  defaults="{distance} km" />
                                                     ),
                                                 },
                                                 {
@@ -292,8 +289,7 @@ const Finalize = withForm(
                                                             id="contact-data.distance.option"
                                                             values={{
                                                                 distance: 30
-                                                            }}
-                                                        >{distance} km</Trans>
+                                                            }}  defaults="{distance} km" />
                                                     ),
                                                 },
                                                 {
@@ -303,8 +299,7 @@ const Finalize = withForm(
                                                             id="contact-data.distance.option"
                                                             values={{
                                                                 distance: 40
-                                                            }}
-                                                        >{distance} km</Trans>
+                                                            }}  defaults="{distance} km" />
                                                     ),
                                                 },
                                                 {
@@ -314,8 +309,7 @@ const Finalize = withForm(
                                                             id="contact-data.distance.option"
                                                             values={{
                                                                 distance: 50
-                                                            }}
-                                                        >{distance} km</Trans>
+                                                            }}  defaults="{distance} km" />
                                                     ),
                                                 },
                                             ]}

@@ -1,19 +1,13 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-11-29 15:52+0100\n"
+"POT-Creation-Date: 2021-11-30 15:20+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
-#: src/apps/provider/dashboard/schedule.jsx:794
+#: src/apps/provider/dashboard/schedule.jsx:793
 #: src/apps/provider/setup/wizard.jsx:101
 msgid "TODO"
 msgstr ""
@@ -146,20 +140,20 @@ msgstr ""
 msgid "contact-data.change"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:234
+#: src/apps/user/setup/finalize.jsx:235
 msgid "contact-data.distance.label"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:238
+#: src/apps/user/setup/finalize.jsx:239
 msgid "contact-data.distance.notice"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:260
-#: src/apps/user/setup/finalize.jsx:270
-#: src/apps/user/setup/finalize.jsx:280
-#: src/apps/user/setup/finalize.jsx:291
-#: src/apps/user/setup/finalize.jsx:302
-#: src/apps/user/setup/finalize.jsx:313
+#: src/apps/user/setup/finalize.jsx:261
+#: src/apps/user/setup/finalize.jsx:269
+#: src/apps/user/setup/finalize.jsx:278
+#: src/apps/user/setup/finalize.jsx:288
+#: src/apps/user/setup/finalize.jsx:298
+#: src/apps/user/setup/finalize.jsx:308
 msgid "contact-data.distance.option"
 msgstr ""
 
@@ -171,11 +165,11 @@ msgstr ""
 msgid "contact-data.not-given"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:36
+#: src/apps/user/setup/finalize.jsx:37
 msgid "contact-data.properties.location.title"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:41
+#: src/apps/user/setup/finalize.jsx:42
 msgid "contact-data.properties.location.values.accessible"
 msgstr ""
 
@@ -191,7 +185,7 @@ msgstr ""
 msgid "contact-data.success"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:225
+#: src/apps/user/setup/finalize.jsx:226
 msgid "contact-data.zip-code"
 msgstr ""
 
@@ -244,10 +238,6 @@ msgstr ""
 #: src/apps/provider/menu.jsx:18
 #: src/apps/user/menu.jsx:18
 msgid "drawingBoard"
-msgstr ""
-
-#: src/components/main-error-boundary.jsx:23
-msgid "errorBoundary.contactUs"
 msgstr ""
 
 #: src/components/main-error-boundary.jsx:17
@@ -429,15 +419,15 @@ msgstr ""
 msgid "modal.save"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:883
+#: src/apps/provider/dashboard/schedule.jsx:882
 msgid "new-appointment.date"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:912
+#: src/apps/provider/dashboard/schedule.jsx:911
 msgid "new-appointment.slots"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:897
+#: src/apps/provider/dashboard/schedule.jsx:896
 msgid "new-appointment.time"
 msgstr ""
 
@@ -477,16 +467,16 @@ msgstr ""
 msgid "pageDoesNotExist"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:142
+#: src/apps/provider/setup/provider-data.jsx:145
 msgid "provider-data.access-code.description"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:146
+#: src/apps/provider/setup/provider-data.jsx:149
 #: src/apps/provider/setup/verify.jsx:104
 msgid "provider-data.access-code.label"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:166
+#: src/apps/provider/setup/provider-data.jsx:169
 #: src/apps/provider/setup/verify.jsx:121
 msgid "provider-data.accessible"
 msgstr ""
@@ -496,19 +486,19 @@ msgid "provider-data.change"
 msgstr ""
 
 #: src/apps/mediator/dashboard/providers.jsx:197
-#: src/apps/provider/setup/provider-data.jsx:97
+#: src/apps/provider/setup/provider-data.jsx:100
 #: src/apps/provider/setup/verify.jsx:65
 msgid "provider-data.city"
 msgstr ""
 
 #: src/apps/mediator/dashboard/providers.jsx:229
-#: src/apps/provider/setup/provider-data.jsx:107
+#: src/apps/provider/setup/provider-data.jsx:110
 #: src/apps/provider/setup/verify.jsx:78
 msgid "provider-data.description"
 msgstr ""
 
 #: src/apps/mediator/dashboard/providers.jsx:213
-#: src/apps/provider/setup/provider-data.jsx:134
+#: src/apps/provider/setup/provider-data.jsx:137
 #: src/apps/provider/setup/verify.jsx:98
 msgid "provider-data.email"
 msgstr ""
@@ -517,12 +507,12 @@ msgstr ""
 msgid "provider-data.field"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:120
+#: src/apps/provider/setup/provider-data.jsx:123
 msgid "provider-data.for-mediator"
 msgstr ""
 
 #: src/apps/mediator/dashboard/providers.jsx:181
-#: src/apps/provider/setup/provider-data.jsx:79
+#: src/apps/provider/setup/provider-data.jsx:82
 #: src/apps/provider/setup/verify.jsx:52
 msgid "provider-data.name"
 msgstr ""
@@ -539,21 +529,21 @@ msgid "provider-data.not-verified-yet"
 msgstr ""
 
 #: src/apps/mediator/dashboard/providers.jsx:221
-#: src/apps/provider/setup/provider-data.jsx:128
+#: src/apps/provider/setup/provider-data.jsx:131
 #: src/apps/provider/setup/verify.jsx:90
 msgid "provider-data.phone"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:189
+#: src/apps/provider/setup/provider-data.jsx:192
 msgid "provider-data.save-and-continue"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:187
+#: src/apps/provider/setup/provider-data.jsx:190
 msgid "provider-data.saving"
 msgstr ""
 
 #: src/apps/mediator/dashboard/providers.jsx:189
-#: src/apps/provider/setup/provider-data.jsx:85
+#: src/apps/provider/setup/provider-data.jsx:88
 #: src/apps/provider/setup/verify.jsx:58
 msgid "provider-data.street"
 msgstr ""
@@ -570,12 +560,12 @@ msgstr ""
 msgid "provider-data.verified-vs-unverifired-desc"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:103
+#: src/apps/provider/setup/provider-data.jsx:106
 #: src/apps/provider/setup/verify.jsx:72
 msgid "provider-data.website"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:91
+#: src/apps/provider/setup/provider-data.jsx:94
 #: src/apps/provider/setup/verify.jsx:64
 msgid "provider-data.zip-code"
 msgstr ""
@@ -658,11 +648,11 @@ msgstr ""
 msgid "restore"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:1070
+#: src/apps/provider/dashboard/schedule.jsx:1069
 msgid "schedule.appointment.add"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:851
+#: src/apps/provider/dashboard/schedule.jsx:850
 msgid "schedule.appointment.duration.title"
 msgstr ""
 
@@ -671,12 +661,12 @@ msgid "schedule.backward"
 msgstr ""
 
 #: src/apps/provider/dashboard/schedule.jsx:61
-#: src/apps/provider/dashboard/schedule.jsx:1095
+#: src/apps/provider/dashboard/schedule.jsx:1094
 msgid "schedule.booking-list"
 msgstr ""
 
 #: src/apps/provider/dashboard/schedule.jsx:60
-#: src/apps/provider/dashboard/schedule.jsx:1087
+#: src/apps/provider/dashboard/schedule.jsx:1086
 msgid "schedule.calendar"
 msgstr ""
 
@@ -688,7 +678,7 @@ msgstr ""
 msgid "schedule.title"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:1103
+#: src/apps/provider/dashboard/schedule.jsx:1102
 msgid "schedule.updating"
 msgstr ""
 
@@ -842,12 +832,12 @@ msgid "wizard.download-backup-data"
 msgstr ""
 
 #: src/apps/provider/setup/verify.jsx:204
-#: src/apps/user/setup/finalize.jsx:189
+#: src/apps/user/setup/finalize.jsx:190
 msgid "wizard.failed.invalid-code"
 msgstr ""
 
 #: src/apps/provider/setup/verify.jsx:213
-#: src/apps/user/setup/finalize.jsx:200
+#: src/apps/user/setup/finalize.jsx:201
 msgid "wizard.failed.notice"
 msgstr ""
 
@@ -872,7 +862,7 @@ msgstr ""
 msgid "wizard.letUsKnow"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:177
+#: src/apps/user/setup/finalize.jsx:178
 msgid "wizard.no-queue.notice"
 msgstr ""
 
@@ -896,12 +886,12 @@ msgstr ""
 msgid "wizard.steps.verify"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:868
+#: src/apps/provider/dashboard/schedule.jsx:867
 #: src/apps/provider/dashboard/settings.jsx:184
 #: src/apps/provider/dashboard/settings.jsx:210
 #: src/apps/provider/setup/store-secrets.jsx:86
 #: src/apps/provider/setup/verify.jsx:247
 #: src/apps/user/dashboard/settings.jsx:60
-#: src/apps/user/setup/finalize.jsx:337
+#: src/apps/user/setup/finalize.jsx:331
 msgid "{0}"
 msgstr ""
