@@ -200,9 +200,6 @@ App.propTypes = {
         props: PropTypes.object,
         title: PropTypes.string,
     }).isRequired,
-    settings: PropTypes.shape({
-        t: PropTypes.func.isRequired,
-    }).isRequired,
 };
 
 export default withSettings(
