@@ -1,67 +1,70 @@
 /* eslint-env node */
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require("webpack");
-const path = require("path");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
+const path = require('path');
 
-const BUILD_DIR = path.resolve(__dirname, "build");
-const PUBLIC_DIR = path.resolve(BUILD_DIR, "public");
-const SRC_DIR = path.resolve(__dirname, "src");
-const NODE_MODULES_DIR = path.resolve(__dirname, "node_modules");
-const APP_ENV = process.env.APP_ENV || "production";
-let indexPath = "index.jsx";
+const BUILD_DIR = path.resolve(__dirname, 'build');
+const PUBLIC_DIR = path.resolve(BUILD_DIR, 'public');
+const SRC_DIR = path.resolve(__dirname, 'src');
+const NODE_MODULES_DIR = path.resolve(__dirname, 'node_modules');
+const APP_ENV = process.env.APP_ENV || 'production';
+let indexPath = 'index.jsx';
 switch (APP_ENV) {
-    case "dev":
-        indexPath = "index_dev.jsx";
+    case 'dev':
+        indexPath = 'index_dev.jsx';
         break;
-    case "staging":
-        indexPath = "index_staging.jsx";
+    case 'staging':
+        indexPath = 'index_staging.jsx';
         break;
-    case "test":
-        indexPath = "index_test.jsx";
+    case 'test':
+        indexPath = 'index_test.jsx';
         break;
 }
-
 
 const withSourceMap = function(url) {
     const loader = {
         loader: url,
-        options: {}
-    }
-    if (APP_ENV === 'production')
-        loader.options.sourceMap = true;
+        options: {},
+    };
+    if (APP_ENV === 'production') loader.options.sourceMap = true;
     return loader;
 };
 
 //we collect static files from various places
-const staticPaths = ["web/static/"];
+const staticPaths = ['web/static/'];
 const copyPlugins = staticPaths.map(function(path) {
-    return new CopyWebpackPlugin({patterns: [
-        {
-            from: path,
-            to: "../",
-            toType: "dir",
-        }
-    ]});
+    return new CopyWebpackPlugin({
+        patterns: [
+            {
+                from: path,
+                to: '../',
+                toType: 'dir',
+            },
+        ],
+    });
 });
 
 let config = {
-    target: "web",
+    target: 'web',
     context: SRC_DIR,
     resolve: {
-        fallback: { "buffer": require.resolve("buffer"), process: 'process/browser' },
+        fallback: {
+            buffer: require.resolve('buffer'),
+            process: 'process/browser',
+        },
         symlinks: false,
         extensions: [
             // if an import has no file ending, they will be resolved in this order
-            ".tsx",
-            ".ts",
-            ".jsx",
-            ".js"
+            '.tsx',
+            '.ts',
+            '.jsx',
+            '.js',
         ],
-        modules: [SRC_DIR, NODE_MODULES_DIR]
+        modules: [SRC_DIR, NODE_MODULES_DIR],
     },
     entry: {
-        [`app`]: SRC_DIR + `/web/${indexPath}`
+        [`app`]: SRC_DIR + `/web/${indexPath}`,
     },
     module: {
         rules: [
@@ -71,36 +74,36 @@ let config = {
             {
                 test: /\.(scss|sass)$/,
                 use: [
-                    "style-loader",
-                    withSourceMap("css-loader"),
-                    withSourceMap("sass-loader")
-                ]
+                    'style-loader',
+                    withSourceMap('css-loader'),
+                    withSourceMap('sass-loader'),
+                ],
             },
             {
                 test: /\.css$/,
-                use: ["style-loader", withSourceMap("css-loader")]
+                use: ['style-loader', withSourceMap('css-loader')],
             },
             // END(CSS) DO NOT MOVE
             {
                 test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-                use: "file-loader"
+                use: 'file-loader',
             },
             {
                 test: /\.(yaml|yml)$/,
-                use: ["json-loader", "yaml-loader"]
+                use: ['json-loader', 'yaml-loader'],
             },
             {
                 test: /\.[tj]sx?$/,
                 include: [SRC_DIR],
-                use: "babel-loader"
-            }
-        ]
+                use: 'babel-loader',
+            },
+        ],
     },
     output: {
         path: PUBLIC_DIR,
-        filename: "[name].js",
-        chunkFilename: "[name].[contenthash].js",
-        publicPath: "/public/"
+        filename: '[name].js',
+        chunkFilename: '[name].[contenthash].js',
+        publicPath: '/public/',
     },
     plugins: [
         ...copyPlugins,
@@ -111,26 +114,26 @@ let config = {
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: "[name].css",
-            chunkFilename: "[id].css"
-        })
-    ]
+            filename: '[name].css',
+            chunkFilename: '[id].css',
+        }),
+    ],
 };
 
-if (APP_ENV === "production") {
+if (APP_ENV === 'production') {
     config = {
         ...config,
-        mode: "production",
+        mode: 'production',
         plugins: [
             ...config.plugins,
             new webpack.DefinePlugin({
-                "process.env.NODE_ENV": JSON.stringify("production"),
+                'process.env.NODE_ENV': JSON.stringify('production'),
                 COMMIT_SHA: JSON.stringify(
                     process.env.CI_COMMIT_SHA ||
                         process.env.COMMIT_SHA ||
-                        "unknown"
-                )
-            })
+                        'unknown'
+                ),
+            }),
         ],
         module: {
             ...config.module,
@@ -140,33 +143,33 @@ if (APP_ENV === "production") {
                     test: /\.(scss|sass)$/,
                     use: [
                         MiniCssExtractPlugin.loader,
-                        withSourceMap("css-loader"),
-                        withSourceMap("sass-loader")
-                    ]
+                        withSourceMap('css-loader'),
+                        withSourceMap('sass-loader'),
+                    ],
                 },
                 {
                     test: /\.css$/,
                     use: [
                         MiniCssExtractPlugin.loader,
-                        withSourceMap("css-loader")
-                    ]
+                        withSourceMap('css-loader'),
+                    ],
                 },
-                ...config.module.rules.slice(2)
-            ]
-        }
+                ...config.module.rules.slice(2),
+            ],
+        },
     };
 } else {
     config = {
         ...config,
-        mode: "development",
-        devtool: "cheap-module-source-map",
+        mode: 'development',
+        devtool: 'cheap-module-source-map',
         devServer: {
             // enable Hot Module Replacement on the server
             host: '0.0.0.0',
             // match the output `publicPath`
             static: {
-                publicPath: "/",
-                directory: path.join(process.cwd(), "src/web/static"),
+                publicPath: '/',
+                directory: path.join(process.cwd(), 'src/web/static'),
             },
 
             compress: true,
@@ -175,33 +178,33 @@ if (APP_ENV === "production") {
             historyApiFallback: true,
 
             proxy: {
-                "/api": {
-                    target: "http://localhost:8888/",
-                    secure: false
-                }
+                '/api': {
+                    target: 'http://localhost:8888/',
+                    secure: false,
+                },
             },
             // we enable CORS requests (useful for testing)
             headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods":
-                    "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-                "Access-Control-Allow-Headers":
-                    "X-Requested-With, content-type, Authorization"
-            }
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods':
+                    'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+                'Access-Control-Allow-Headers':
+                    'X-Requested-With, content-type, Authorization',
+            },
         },
         plugins: [
             ...config.plugins,
             new webpack.HotModuleReplacementPlugin(),
             new webpack.DefinePlugin({
-                "process.env.NODE_ENV": '"development"',
+                'process.env.NODE_ENV': '"development"',
                 COMMIT_SHA: JSON.stringify(
                     process.env.CI_COMMIT_SHA ||
                         process.env.COMMIT_SHA ||
-                        "unknown"
-                )
-            })
+                        'unknown'
+                ),
+            }),
             //new BundleAnalyzerPlugin()
-        ]
+        ],
     };
 }
 

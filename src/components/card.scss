@@ -27,6 +27,7 @@
 
     .bulma-message {
         border: none;
+
         .bulma-message-body {
             border: none;
         }
@@ -50,6 +51,7 @@
         .kip-card-header {
             padding-bottom: 0;
         }
+
         .kip-card-content {
             padding-top: 0;
         }
@@ -100,7 +102,7 @@
         width: 100%;
         cursor: pointer;
         user-select: none;
-        font-weight:600;
+        font-weight: 600;
 
         &.kip-card-nav-active {
             background: #fafafa;

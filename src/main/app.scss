@@ -3,13 +3,16 @@
 .bulma-message.kip-outdated-notice {
     margin-bottom: 0 !important;
     padding-bottom: 0;
+
     .bulma-message-body {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+
         a {
             text-decoration: none !important;
         }
+
         p {
             flex-grow: 1;
             margin-top: map-get($kip-space, md);
@@ -27,7 +30,7 @@
     }
 
     .kip-logo-wrapper {
-        background-color:white;
+        background-color: white;
         display: block;
         margin: 0 auto;
         text-align: center;

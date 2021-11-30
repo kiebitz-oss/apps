@@ -10,12 +10,12 @@
     position: relative;
 
     ul {
-
         li {
             &.kip-is-last {
                 margin-left: auto;
             }
-            a span.kip-icon  {
+
+            a span.kip-icon {
                 padding-right: map-get($kip-space, sm);
             }
         }
