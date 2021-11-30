@@ -131,7 +131,7 @@ const StoreLocal = ({ data }) => {
     const blob = new Blob([b642buf(data)], {
         type: 'application/octet-stream',
     });
-    const date = new Date().toLocaleDateString();
+
     return (
         <F>
             <p className="kip-secrets-notice">
@@ -151,7 +151,6 @@ const StoreLocal = ({ data }) => {
 };
 
 const StoreSecretPage = ({ userSecret }) => {
-    const [url, setUrl] = useState(null);
     const [tab, setTab] = useState('online');
 
     let content;

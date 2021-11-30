@@ -26,11 +26,7 @@ const SetupPage = ({ providerDataAction }) => {
         });
     });
 
-    return (
-        <React.Fragment>
-            <Wizard page={page || 'hi'} status={status} />
-        </React.Fragment>
-    );
+    return <Wizard page={page || 'hi'} status={status} />;
 };
 
 export default withActions(SetupPage, [providerData]);

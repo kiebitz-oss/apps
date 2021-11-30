@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
 import Schedule from './schedule';
@@ -79,6 +79,7 @@ const DashboardPage = ({
                 providerSecretAction().then(ps =>
                     backupDataAction(kp.data, ps.data)
                 );
+
                 providerDataAction().then(pd => {
                     if (
                         pd.data.submittedAt === undefined ||
@@ -88,7 +89,10 @@ const DashboardPage = ({
                         submitProviderDataAction(pd.data, kp.data, ks.data);
                     } else {
                         verifiedProviderDataAction().then(vd => {
-                            if (vd === undefined) return;
+                            if (vd === undefined) {
+                                return;
+                            }
+
                             if (
                                 vd.data === null &&
                                 pd.data.submittedAt !== undefined &&
@@ -112,10 +116,41 @@ const DashboardPage = ({
                 });
             })
         );
+
+        if (
+            keyPairs === undefined ||
+            keyPairs.status !== 'loaded' ||
+            verifiedProviderData === undefined ||
+            verifiedProviderData.status !== 'loaded' ||
+            verifiedProviderData.data === null
+        )
+            return;
     });
+
+    let content;
+
+    switch (tab) {
+        case 'settings':
+            content = <Settings key="settings" action={action} />;
+            break;
+
+        default:
+        case 'schedule':
+            content = (
+                <Schedule
+                    action={action}
+                    secondaryAction={secondaryAction}
+                    id={id}
+                    key="schedule"
+                    lastUpdated={lastUpdated}
+                />
+            );
+            break;
+    }
+
+    let invalidKeyMessage;
+
     if (
-        keyPairs === undefined ||
-        keyPairs.status !== 'loaded' ||
         verifiedProviderData === undefined ||
         verifiedProviderData.status !== 'loaded' ||
         verifiedProviderData.data === null

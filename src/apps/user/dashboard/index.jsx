@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState, Fragment as F } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Settings from './settings';
 import Appointments from './appointments';

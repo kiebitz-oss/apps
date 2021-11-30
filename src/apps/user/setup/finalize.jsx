@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useRef, useState, Fragment as F } from 'react';
+import React, { useEffect, useState, Fragment as F } from 'react';
 import {
     getToken,
     contactData,
@@ -22,10 +22,8 @@ import {
     WithLoader,
     Switch,
     Button,
-    A,
 } from 'components';
 import Form from 'helpers/form';
-import Wizard from './wizard';
 import { Trans, t, defineMessage } from '@lingui/macro';
 import './finalize.scss';
 import props from './properties.json';
@@ -172,6 +170,7 @@ const FinalizePage = ({
 
         if (getToken !== undefined && getToken.status === 'failed') {
             failed = true;
+
             if (getToken.error.error.code === 401) {
                 failedMessage = (
                     <Message type="danger">
@@ -291,19 +290,19 @@ const FinalizePage = ({
                                 noQueue
                                     ? 'wizard.no-queue.title'
                                     : failed
-                                        ? 'wizard.failed.title'
-                                        : submitting
-                                            ? 'wizard.please-wait'
-                                            : 'wizard.continue'
+                                    ? 'wizard.failed.title'
+                                    : submitting
+                                    ? 'wizard.please-wait'
+                                    : 'wizard.continue'
                             }
                         >
                             {noQueue
                                 ? 'Nicht verfügbar'
                                 : failed
-                                    ? 'Fehlgeschlagen :/'
-                                    : submitting
-                                        ? 'Bitte warten...'
-                                        : 'Weiter'}
+                                ? 'Fehlgeschlagen :/'
+                                : submitting
+                                ? 'Bitte warten...'
+                                : 'Weiter'}
                         </Trans>
                     </Button>
                 </CardFooter>

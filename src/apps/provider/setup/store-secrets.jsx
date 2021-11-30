@@ -22,7 +22,6 @@ import { useNavigate } from 'react-router-dom';
 export const DataSecret = ({ secret, embedded, hideNotice }) => {
     const [succeeded, setSucceeded] = useState(false);
     const [failed, setFailed] = useState(false);
-    const navigate = useNavigate();
 
     const chunks = secret.match(/.{1,4}/g);
 
@@ -87,15 +86,15 @@ export const DataSecret = ({ secret, embedded, hideNotice }) => {
                                 failed
                                     ? 'store-secrets.copy-failed'
                                     : succeeded
-                                        ? 'store-secrets.copy-succeeded'
-                                        : 'store-secrets.copy'
+                                    ? 'store-secrets.copy-succeeded'
+                                    : 'store-secrets.copy'
                             }
                         >
                             {failed
                                 ? 'Fehlgeschlagen'
                                 : succeeded
-                                    ? 'In der Zwischenablage'
-                                    : 'Kopieren'}
+                                ? 'In der Zwischenablage'
+                                : 'Kopieren'}
                         </Trans>
                     </Button>
                 </div>

@@ -6,9 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { withActions } from 'components';
 import { contactData, queueData, tokenData } from 'apps/user/actions';
 import Wizard from './wizard';
-
-import './index.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import './index.scss';
 
 const SetupPage = ({ contactDataAction, tokenDataAction, queueDataAction }) => {
     const [initialized, setInitialized] = useState(false);

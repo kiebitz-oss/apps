@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import React from 'react';
-import { Message, CenteredCard, CardHeader, A, T } from 'components';
+import { Message, CenteredCard, CardHeader } from 'components';
 import { Trans } from '@lingui/macro';
 import './deleted.scss';
 import { useSettings } from 'hooks';
