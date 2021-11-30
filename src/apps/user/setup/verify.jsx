@@ -40,21 +40,7 @@ const Verify = withSettings(
                 <React.Fragment>
                     <CardContent>
                         <p className="kip-verify-notice">
-                            <Trans id="verify.text"
-                            values={{
-                                link: (
-                                    <A
-                                        key="letUsKnow"
-                                        external
-                                        href={settings.get('supportEmail')}
-                                    >
-                                        <Trans
-                                            id="wizard.letUsKnow"
-                                            key="letUsKnow"
-                                        ></Trans>
-                                    </A>
-                                )}}
-                            >Bitte überprüfe Deine Daten.</Trans>
+                            <Trans id="verify.text">Bitte überprüfe Deine Daten.</Trans>
                         </p>
                         <div className="kip-contact-data-box">
                             <ul>

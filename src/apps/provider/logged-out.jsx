@@ -26,14 +26,7 @@ export default withSettings(({ settings }) => (
         </CardHeader>
         <CardContent>
             <Message type="success">
-                <Trans
-                    id="logged-out.notice"
-                    values={{
-                        service: (
-                        <strong key="service">{settings.get('title')}</strong>
-                        )
-                    }}
-                >
+                <Trans id="logged-out.notice">
                     Sie wurden erfolgreich abgemeldet. Sie können Ihre Daten jederzeit mit Ihrem Datenschlüssel und Ihrer Sicherheitsdatei wiederherstellen.
                 </Trans>
             </Message>

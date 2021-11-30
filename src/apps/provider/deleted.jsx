@@ -24,9 +24,9 @@ export default withSettings(({ settings }) => (
         <Message type="success">
             <Trans
                 id="thanks-for-using-us"
-                values={{ service: (<strong key="service">{settings.get('title')}</strong>) }}
+                values={{ title: settings.get('title') }}
             >
-                Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie {service} genutzt haben!
+                Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie <strong key="service">{title}</strong> genutzt haben!
             </Trans>
         </Message>
     </CenteredCard>

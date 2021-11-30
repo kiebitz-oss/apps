@@ -847,9 +847,7 @@ const NewAppointment = withSettings(
                     ].map(v => ({
                         value: v,
                         title: (
-                            <Trans id='schedule.appointment.duration.title' values={{ duration: v }}>
-                                Dauer: {duration} Minuten
-                            </Trans>
+                            <Trans id='schedule.appointment.duration.title' values={{ duration: v }} defaults="Dauer: {duration} Minuten" />
                         ),
                     }));
 
@@ -1099,9 +1097,7 @@ const Invitations = withTimer(
                                     {content}
                                 </CardContent>
                                 <Message type="info" waiting>
-                                    <Trans id="schedule.updating" values={{ lastUpdated }}>
-                                        Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}
-                                    </Trans>
+                                    <Trans id="schedule.updating" values={{ lastUpdated }} defaults="Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}" />
                                 </Message>
                             </div>
                         );

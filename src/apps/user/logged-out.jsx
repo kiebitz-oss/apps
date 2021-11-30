@@ -26,14 +26,7 @@ export default withSettings(({ settings }) => (
         </CardHeader>
         <CardContent>
             <Message type="success">
-                <Trans
-                    id="logged-out.notice"
-                    values={{ 
-                        service: (
-                          <strong key="service">{settings.get('title')}</strong>
-                        )
-                    }}
-                 >
+                <Trans id="logged-out.notice">
                      Du wurdest erfolgreich abgemeldet. Du kannst dich jederzeit wieder mit deinem Sicherheitscode anmelden um deine Termine zu prüfen.
                 </Trans>
             </Message>

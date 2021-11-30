@@ -127,7 +127,8 @@ const Providers = withTimer(
                                                 i: reconfirmProviders.i,
                                                 n: reconfirmProviders.n
                                             }}
-                                        >Bestätige Anbieter {i} von {n}...</Trans>
+                                            defaults="Bestätige Anbieter {i} von {n}..."
+                                        />
                                     )) || (
                                         <Trans id="providers.reconfirmText">
                                             Wollen Sie alle bestätigten Anbieter neu bestätigen?
