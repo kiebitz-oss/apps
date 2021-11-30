@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { Component, PureComponent, ReactChild } from 'react';
+import React, { Component, forwardRef, PureComponent, ReactChild } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'helpers/classnames';
 import { Button } from './button';
@@ -166,40 +166,19 @@ interface InputProps {
     onChange: (value: string) => void;
 }
 
-export class Input extends PureComponent<InputProps> {
-    static defaultProps = {
-        className: undefined,
-    };
-
-    static propTypes = {
-        /** Class name to apply on the input */
-        className: PropTypes.string,
-        /** Returns the new value (not the event) on change */
-        onChange: PropTypes.func.isRequired,
-    };
-
-    handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.onChange(event.target.value);
-    };
-
-    render() {
-        const { forwardedRef, onEnter, ...props } = this.props;
+export const Input = forwardRef<HTMLInputElement>(
+    ({ className, ...props }, ref) => {
         return (
             <input
-                ref={forwardedRef}
+                className={classnames('kip-input', className)}
                 {...props}
-                tabIndex="0"
-                onKeyDown={e =>
-                    onEnter &&
-                    (e.key === 'Enter' || e.keyCode === 13) &&
-                    onEnter(e)
-                }
-                className={classnames('kip-input', this.props.className)}
-                onChange={this.handleChange}
+                ref={ref}
             />
         );
     }
-}
+);
+
+Input.displayName = 'Input';
 
 interface NumberInputProps {
     className?: string;

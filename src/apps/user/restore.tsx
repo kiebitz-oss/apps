@@ -15,7 +15,7 @@ import {
 } from 'components';
 import { restoreFromBackup } from 'apps/user/actions';
 import { t, Trans } from '@lingui/macro';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
 import './restore.scss';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,10 +24,28 @@ function formatSecret(secret: string) {
     if (parts === null) return secret;
     return parts.join('  ');
 }
-
 interface FormData {
     secret: string;
 }
+
+const resolver: Resolver<FormData> = async values => {
+    const errors: Partial<FormData> = {};
+
+    if (values.secret !== undefined) {
+        values.secret = values.secret
+            .toLowerCase()
+            .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
+    }
+
+    if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(values.secret)) {
+        errors.secret = t({ id: 'load-backup.invalid-secret' });
+    }
+
+    return {
+        values,
+        errors,
+    };
+};
 
 const RestorePage: React.FC<any> = ({
     restoreFromBackup,
@@ -35,7 +53,7 @@ const RestorePage: React.FC<any> = ({
 }) => {
     const navigate = useNavigate();
 
-    const onSubmit: SubmitHandler<FormData> = (data: any) => {
+    const onSubmit: SubmitHandler<FormData> = data => {
         restoreFromBackupAction(data.secret).then((data: any) => {
             if (data.status === 'succeeded') {
                 navigate('/user/appointments');
@@ -44,28 +62,7 @@ const RestorePage: React.FC<any> = ({
     };
 
     const { register, handleSubmit, formState } = useForm<FormData>({
-        resolver: async values => {
-            const errors: Partial<FormData> = {};
-
-            if (values.secret !== undefined) {
-                values.secret = values.secret
-                    .toLowerCase()
-                    .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
-            }
-
-            if (
-                !/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(
-                    values.secret
-                )
-            ) {
-                errors.secret = t({ id: 'load-backup.invalid-secret' });
-            }
-
-            return {
-                values,
-                errors,
-            };
-        },
+        resolver,
     });
 
     return (
@@ -91,17 +88,8 @@ const RestorePage: React.FC<any> = ({
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <RetractingLabelInput
-                        label={
-                            <Trans id="load-backup.secret.label">
-                                Sicherheitscode
-                            </Trans>
-                        }
-                        description={
-                            <Trans id="load-backup.secret.description">
-                                Der Sicherheitscode, den Du bei der
-                                Registrierung erhalten hast.
-                            </Trans>
-                        }
+                        label={t({ id: "load-backup.secret.label", message: "Sicherheitscode" })}
+                        description={{ id: "load-backup.secret.description", message: "Der Sicherheitscode, den Du bei der Registrierung erhalten hast." })}
                         {...register('secret', {
                             onChange: event =>
                                 formatSecret(event.target.value || ''),
