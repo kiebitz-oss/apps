@@ -1,0 +1,16 @@
+{
+    "contact-data": {
+        "properties": {
+            "location": {
+                "title": {
+                    "de": "Impfort"
+                },
+                "values": {
+                    "accessible": {
+                        "de": "Barrierefreier Impfort gewünscht"
+                    }
+                }
+            }
+        }
+    }
+}
