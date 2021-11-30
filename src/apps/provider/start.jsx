@@ -37,17 +37,17 @@ export default withActions(
                     <CenteredCard className="kip-cm-welcome">
                         <CardContent>
                             <h1 className="bulma-subtitle">
-                                <Trans id="what-to-do" />
+                                <Trans id="what-to-do">Was möchten Sie tun?</Trans>
                             </h1>
                             <ul className="kip-cm-selector">
                                 <li>
                                     <A href="/provider/setup">
-                                        <Trans id="setup" />
+                                        <Trans id="setup">Als Arzt registrieren</Trans>
                                     </A>
                                 </li>
                                 <li>
                                     <A href="/provider/restore">
-                                        <Trans id="restore" />
+                                        <Trans id="restore">Einloggen</Trans>
                                     </A>
                                 </li>
                             </ul>

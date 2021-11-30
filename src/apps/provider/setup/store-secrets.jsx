@@ -50,7 +50,9 @@ export const DataSecret = withSettings(
             <React.Fragment>
                 {!embedded && (
                     <p className="kip-secrets-notice">
-                        <Trans id="store-secrets.online.text" safe />
+                        <Trans id="store-secrets.online.text" safe>
+                            Bitte notieren Sie Ihren Datenschlüssel sorgfältig! Sie benötigen ihn, um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre Termine zugreifen zu können.
+                        </Trans>
                     </p>
                 )}
                 <div
@@ -63,7 +65,7 @@ export const DataSecret = withSettings(
                             <div className="kip-uid">
                                 {!hideNotice && (
                                     <span>
-                                        <Trans id="store-secrets.secret" />
+                                        <Trans id="store-secrets.secret">Ihr Datenschlüssel</Trans>
                                     </span>
                                 )}
                                 <code>{fragments}</code>
@@ -87,7 +89,12 @@ export const DataSecret = withSettings(
                                     ? 'store-secrets.copy-succeeded'
                                     : 'store-secrets.copy'
                                 }
-                            />
+                            >{failed
+                                ? 'Fehlgeschlagen'
+                                : succeeded
+                                ? 'In der Zwischenablage'
+                                : 'Kopieren'
+                            }</Trans>
                         </Button>
                     </div>
                 )}
@@ -172,14 +179,18 @@ export const BackupDataLink = withSettings(
                         type="success"
                     >
                         {downloadText || (
-                            <Trans id="wizard.download-backup-data" />
+                            <Trans id="wizard.download-backup-data">
+                                Sicherungsdatei herunterladen und Datenschlüssel notieren
+                            </Trans>
                         )}
                     </a>
                 );
 
             return (
                 <Message waiting type="warning">
-                    <Trans id="wizard.generating-backup-data" />
+                    <Trans id="wizard.generating-backup-data">
+                        Bitte warten, erstelle Backup-Daten...
+                    </Trans>
                 </Message>
             );
         },
@@ -206,9 +217,9 @@ export default withActions(
         if (status === 'show')
             modal = (
                 <Modal
-                    title={<Trans id="store-secrets.secrets-modal.title" />}
+                    title={<Trans id="store-secrets.secrets-modal.title">Bitte Datenschlüssel notieren!</Trans>}
                     onClose={hideSecrets}
-                    save={<Trans id="wizard.leave" />}
+                    save={<Trans id="wizard.leave">Abschließen & zur Terminplanung</Trans>}
                     onSave={goToDashboard}
                     onCancel={hideSecrets}
                     saveType="success"
@@ -222,7 +233,9 @@ export default withActions(
                 {modal}
                 <CardContent className="kip-secrets">
                     <p>
-                        <Trans id="store-secrets.notice" />
+                        <Trans id="store-secrets.notice">
+                            Um sich auf einem anderen PC (Tablet, Smartphone etc.) einzuloggen oder auf einem anderen Endgerät auf Ihre Termine zugreifen zu können, benötigen Sie Ihre Sicherungsdatei und Ihren Datenschlüssel. Bitte erstellen Sie jetzt Ihre Sicherungsdatei und notieren Sie sich im Anschluss den Datenschlüssel.
+                        </Trans>
                     </p>
                 </CardContent>
                 <CardFooter>

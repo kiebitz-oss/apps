@@ -5,7 +5,6 @@
 import React from 'react';
 import { CenteredCard } from './card';
 import { Message } from './message';
-import { T } from './t';
 
 import { Trans } from '@lingui/macro';
 
@@ -13,7 +12,7 @@ export const NotFound = () => {
     return (
         <CenteredCard>
             <Message type="warning">
-                <Trans id="pageDoesNotExist" />
+                <Trans id="pageDoesNotExist">pageDoesNotExist MISSING</Trans>
             </Message>
         </CenteredCard>
     );

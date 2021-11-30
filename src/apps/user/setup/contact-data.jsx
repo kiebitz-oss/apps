@@ -78,9 +78,11 @@ const BaseContactData = ({
                 value={data.code || ''}
                 onChange={value => setAndMarkModified('code', value)}
                 description={
-                    <Trans id="contact-data.access-code.description" />
+                    <Trans id="contact-data.access-code.description">
+                        Zugangscodes sind nur für bestimmte Impfstellen notwendig. Wenn kein Zugangscode vorliegt, leer lassen.
+                    </Trans>
                 }
-                label={<Trans id="contact-data.access-code.label" />}
+                label={<Trans id="contact-data.access-code.label">Zugangscode</Trans>}
             />
         </React.Fragment>
     );
@@ -103,16 +105,11 @@ const BaseContactData = ({
                                         waiting={submitting || redirecting}
                                         title={
                                             redirecting ? (
-                                                <Trans id="contact-data.success"
-                                                />
+                                                <Trans id="contact-data.success">contact-data.success MISSING</Trans>
                                             ) : submitting ? (
-                                                <Trans id="contact-data.saving"
-                                                />
+                                                <Trans id="contact-data.saving">contact-data.saving MISSING</Trans>
                                             ) : (
-                                                <Trans id={
-                                                        'contact-data.save-and-continue'
-                                                    }
-                                                />
+                                                <Trans id='contact-data.save-and-continue'>Weiter</Trans>
                                             )
                                         }
                                     />

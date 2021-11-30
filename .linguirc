@@ -3,6 +3,8 @@
         "de",
         "en"
     ],
+    "sourceLocale": "de",
+    "format": "po",
     "catalogs": [
         {
             "path": "src/locales/{locale}/messages",
@@ -10,6 +12,5 @@
                 "src"
             ]
         }
-    ],
-    "format": "po"
+    ]
 }

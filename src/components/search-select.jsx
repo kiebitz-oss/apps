@@ -3,7 +3,6 @@
 // README.md contains license information.
 
 import React from 'react';
-import { T } from './t';
 import { RetractingLabelInput } from './retracting-label-input';
 import './search-select.scss';
 import { Trans } from '@lingui/macro';
@@ -35,7 +34,7 @@ export const SearchSelect = ({
         searchCandidates = (
             <ul className="kip-candidates">
                 <li className="kip-candidate" key="not-found">
-                    <Trans id="search-select.no-candidates" />
+                    <Trans id="search-select.no-candidates">Keine Kandidaten gefunden</Trans>
                 </li>
             </ul>
         );

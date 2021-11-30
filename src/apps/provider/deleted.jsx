@@ -18,15 +18,16 @@ export default withSettings(({ settings }) => (
     <CenteredCard className="kip-deleted">
         <CardHeader>
             <h1 className="bulma-subtitle">
-                <Trans id="data-deleted" />
+                <Trans id="data-deleted">Daten erfolgreich gelöscht</Trans>
             </h1>
         </CardHeader>
         <Message type="success">
             <Trans
-                
                 id="thanks-for-using-us"
-                values={{ service: (<strong key="service">{settings.get('title')}</strong>) }}
-            />
+                values={{ title: settings.get('title') }}
+            >
+                Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass Sie <strong key="service">{title}</strong> genutzt haben!
+            </Trans>
         </Message>
     </CenteredCard>
 ));

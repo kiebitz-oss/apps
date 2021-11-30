@@ -82,7 +82,9 @@ export default withForm(
                     )
                         notice = (
                             <Message type="danger">
-                                <Trans id="load-backup.failed" />
+                                <Trans id="load-backup.failed">
+                                    Das Laden Deiner Daten ist leider fehlgeschlagen. Bitte prüfe Deinen Sicherheitscode.
+                                </Trans>
                             </Message>
                         );
 
@@ -90,7 +92,7 @@ export default withForm(
                         <CenteredCard className="kip-user-restore-from-backup">
                             <CardHeader>
                                 <h1 className="bulma-subtitle">
-                                    <Trans id="load-backup.title" />
+                                    <Trans id="load-backup.title">Anmelden</Trans>
                                 </h1>
                             </CardHeader>
                             <CardContent>
@@ -106,12 +108,12 @@ export default withForm(
                                                 set('secret', value)
                                             }
                                             label={
-                                                <Trans id="load-backup.secret.label"
-                                                />
+                                                <Trans id="load-backup.secret.label">Sicherheitscode</Trans>
                                             }
                                             description={
-                                                <Trans id="load-backup.secret.description"
-                                                />
+                                                <Trans id="load-backup.secret.description">
+                                                    Der Sicherheitscode, den Du bei der Registrierung erhalten hast.
+                                                </Trans>
                                             }
                                         />
                                     </FieldSet>
@@ -123,7 +125,7 @@ export default withForm(
                                     type="success"
                                     disabled={!valid || restoring}
                                 >
-                                    <Trans id="load-backup.load" />
+                                    <Trans id="load-backup.load">Anmelden</Trans>
                                 </Button>
                             </CardFooter>
                         </CenteredCard>

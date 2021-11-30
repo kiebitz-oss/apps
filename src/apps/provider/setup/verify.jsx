@@ -31,7 +31,9 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
             return (
                 <F>
                     <p>
-                        <Trans id="provider-data.not-verified-yet" />
+                        <Trans id="provider-data.not-verified-yet">
+                            Ihre Daten wurden noch nicht verifiziert.  Bitte haben Sie Verständnis, dass die Verifizierung bis zu 48h dauern kann.
+                        </Trans>
                     </p>
                 </F>
             );
@@ -47,55 +49,61 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                 <ul>
                     <li>
                         <span>
-                            <Trans id="provider-data.name" />
+                            <Trans id="provider-data.name">Vollständiger Name</Trans>
                         </span>{' '}
                         {data.name}
                     </li>
                     <li>
                         <span>
-                            <Trans id="provider-data.street" />
+                            <Trans id="provider-data.street">Straße & Hausnummer</Trans>
                         </span>{' '}
                         {data.street}
                     </li>
                     <li>
                         <span>
-                            <Trans id="provider-data.zip-code" /> &
-                            <Trans id="provider-data.city" />
+                            <Trans id="provider-data.zip-code">Postleitzahl</Trans> &
+                            <Trans id="provider-data.city">Ort</Trans>
                         </span>{' '}
                         {data.zipCode} - &nbsp;
                         {data.city}
                     </li>
                     <li>
                         <span>
-                            <Trans id="provider-data.website" />
+                            <Trans id="provider-data.website">Webseite</Trans>
                         </span>{' '}
                         {data.website}
                     </li>
                     <li>
                         <span>
-                            <Trans id="provider-data.description" />
+                            <Trans id="provider-data.description">
+                                Informationen für Impfwillige (z.B. wenn Sie spezielle Impfstoffe nur bestimmten Gruppen empfehlen)
+                            </Trans>
                         </span>{' '}
                         {data.description || (
-                            <Trans id="provider-data.not-given" />
+                            <Trans id="provider-data.not-given">
+                                (keine Angabe)
+                            </Trans>
                         )}
                     </li>
                     <li>
                         <span>
-                            <Trans id="provider-data.phone" />
+                            <Trans id="provider-data.phone">
+                                Telefonnummer (nicht sichtbar für Impfinteressierte)
+                            </Trans>
                         </span>{' '}
-                        {data.phone || <Trans id="provider-data.not-given" />}
+                        {data.phone || <Trans id="provider-data.not-given">(keine Angabe)</Trans>}
                     </li>
                     <li>
                         <span>
                             <Trans id="provider-data.email" />
                         </span>{' '}
-                        {data.email || <Trans id="provider-data.not-given" />}
+                        {data.email || <Trans id="provider-data.not-given">(keine Angabe)</Trans>}
                     </li>
                     <li>
                         <span>
-                            <Trans id="provider-data.access-code.label" />
+                            <Trans id="provider-data.access-code.label">Zugangscode (falls vorhanden)</Trans>
                         </span>{' '}
-                        {data.code || <Trans id="provider-data.not-given" />}
+                        {data.code || <Trans id="provider-data.not-given">(keine Angabe)</Trans>}
                     </li>
                 </ul>
                 <hr />
@@ -110,7 +118,9 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                         </Switch>
 
                         <label htmlFor="accessible">
-                            <Trans id="provider-data.accessible" />
+                            <Trans id="provider-data.accessible">
+                                Barrierefreier Zugang zur Praxis/zum Impfzentrum
+                            </Trans>
                         </label>
                     </li>
                 </ul>
@@ -120,7 +130,7 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                     className="bulma-button bulma-is-small"
                     href={changeHref || '/provider/setup/enter-provider-data'}
                 >
-                    <Trans id="provider-data.change" />
+                    <Trans id="provider-data.change">Anpassen</Trans>
                 </A>
             </div>
         </F>
@@ -191,7 +201,7 @@ const Verify = withRouter(
                     ) {
                         failedMessage = (
                             <Message type="danger">
-                                <Trans id="wizard.failed.invalid-code" />
+                                <Trans id="wizard.failed.invalid-code">Ihr Zugangscode ist leider ungültig.</Trans>
                             </Message>
                         );
                     }
@@ -200,7 +210,9 @@ const Verify = withRouter(
                 if (failed && !failedMessage)
                     failedMessage = (
                         <Message type="danger">
-                            <Trans id="wizard.failed.notice" />
+                            <Trans id="wizard.failed.notice">
+                                Sorry, hier ist etwas schief gelaufen. Bitte versuche es später erneut.
+                            </Trans>
                         </Message>
                     );
 
@@ -209,20 +221,7 @@ const Verify = withRouter(
                         <CardContent>
                             {failedMessage}
                             <p className="kip-verify-notice">
-                                <Trans id="verify.text"
-                                    link={
-                                        <A
-                                            key="letUsKnow"
-                                            external
-                                            href={settings.get('supportEmail')}
-                                        >
-                                            <Trans
-                                                id="wizard.letUsKnow"
-                                                key="letUsKnow"
-                                            />
-                                        </A>
-                                    }
-                                />
+                                <Trans id="verify.text">Bitte überprüfen Sie Ihre Daten, bevor Sie den Vorgang abschließen.</Trans>
                             </p>
                             <ProviderData providerData={providerData || {}} />
                         </CardContent>
@@ -239,7 +238,13 @@ const Verify = withRouter(
                                             ? 'wizard.please-wait'
                                             : 'wizard.continue'
                                     }
-                                />
+                                >{
+                                    failed
+                                        ? 'Fehlgeschlagen'
+                                        : submitting
+                                        ? 'Bitte warten...'
+                                        : 'Weiter'
+                                }</Trans>
                             </Button>
                         </CardFooter>
                     </React.Fragment>

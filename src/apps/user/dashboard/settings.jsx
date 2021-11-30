@@ -48,10 +48,10 @@ const Settings = withActions(
                     logOutModal = (
                         <Modal
                             onClose={cancel}
-                            save={<Trans id="log-out" />}
+                        save={<Trans id="log-out">Abmelden</Trans>}
                             disabled={loggingOut}
                             waiting={loggingOut}
-                            title={<Trans id="log-out-modal.title" />}
+                            title={<Trans id="log-out-modal.title">Abmelden</Trans>}
                             onCancel={cancel}
                             onSave={logOut}
                             saveType="warning"
@@ -62,7 +62,11 @@ const Settings = withActions(
                                         ? 'log-out-modal.logging-out'
                                         : 'log-out-modal.text'
                                 }
-                                />
+                                >{
+                                    loggingOut
+                                        ? "Bitte warten, Sie werden abgemeldet..."
+                                        : "Möchtest Du Dich wirklich abmelden? Bitte stelle vorher sicher, dass Du Deinen Sicherheitscode notiert hast. Nur mit diesem Code kannst Du Dich später wieder anmelden."
+                                }</Trans>
                             </p>
                             <hr />
                             {userSecret !== undefined && (
@@ -82,10 +86,10 @@ const Settings = withActions(
                             <div className="kip-user-settings">
                                 {logOutModal}
                                 <h2>
-                                    <Trans id="user-data.title" />
+                                    <Trans id="user-data.title">Deine Daten</Trans>
                                 </h2>
                                 <p>
-                                    <Trans id="user-data.notice" />
+                                    <Trans id="user-data.notice">Du kannst Dich hier abmelden oder Deine Daten endgültig löschen</Trans>
                                 </p>
                             </div>
                         </CardContent>
@@ -95,7 +99,7 @@ const Settings = withActions(
                                     type="warning"
                                     href="/user/settings/logout"
                                 >
-                                    <Trans id="log-out" />
+                                    <Trans id="log-out">Abmelden</Trans>
                                 </Button>
                             </div>
                         </CardFooter>

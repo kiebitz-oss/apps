@@ -55,16 +55,18 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
     if (invalidFile)
         notice = (
             <Message type="danger">
-                <Trans id="upload-key-pairs.invalid-file" />
+                <Trans id="upload-key-pairs.invalid-file">Die von Ihnen gewählte Datei ist ungültig.</Trans>
             </Message>
         );
-    else notice = <Trans id="upload-key-pairs.notice" />;
+    else notice = <Trans id="upload-key-pairs.notice">
+        Bitte laden Sie die Datei mit Ihren geheimen Vermittlerschlüsseln.
+    </Trans>;
 
     const footer = (
         <Form>
             <FieldSet>
                 <label htmlFor="file-upload" className="custom-file-upload">
-                    <Trans id="upload-key-pairs.input" />
+                    <Trans id="upload-key-pairs.input">Datei auswählen</Trans>
                     <input
                         id="file-upload"
                         className="bulma-input"
@@ -79,7 +81,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
         <Modal
             footer={footer}
             className="kip-upload-key-pairs"
-            title={<Trans id="upload-key-pairs.title" />}
+            title={<Trans id="upload-key-pairs.title">Geheime Schlüssel laden</Trans>}
         >
             {notice}
         </Modal>
@@ -153,7 +155,7 @@ const Dashboard = withActions(
             if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
                 invalidKeyMessage = (
                     <Message type="danger">
-                        <Trans id="invalidKey" />
+                        <Trans id="invalidKey">invalidKey MISSING</Trans>
                     </Message>
                 );
             }
@@ -166,19 +168,19 @@ const Dashboard = withActions(
                                 active={tab === 'providers'}
                                 href="/mediator/providers"
                             >
-                                <Trans id="providers.title" />
+                                <Trans id="providers.title">Anbieter</Trans>
                             </Tab>
                             <Tab
                                 active={tab === 'stats'}
                                 href="/mediator/stats"
                             >
-                                <Trans id="stats.title" />
+                                <Trans id="stats.title">Statistiken</Trans>
                             </Tab>
                             <Tab
                                 active={tab === 'settings'}
                                 href="/mediator/settings"
                             >
-                                <Trans id="settings.title" />
+                                <Trans id="settings.title">Einstellungen</Trans>
                             </Tab>
                         </Tabs>
                     </CardHeader>

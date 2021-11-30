@@ -22,13 +22,16 @@ import {
     Button,
 } from 'components';
 import { Trans } from '@lingui/macro';
+import { i18n } from '@lingui/core';
 import './provider-data.scss';
 
 class ProviderDataForm extends Form {
     validate() {
         const errors = {};
         if (!this.data.name || this.data.name.length < 2)
-            errors.name = this.settings.t(t, 'provider-data.invalid-name');
+            errors.name = i18n._('provider-data.invalid-name', {}, {
+                defaults: 'Bitte gegen Sie einen gültigen Namen an'
+            });
         return errors;
     }
 }
@@ -76,35 +79,37 @@ const BaseProviderData = ({
                 <RetractingLabelInput
                     value={data.name || ''}
                     onChange={value => setAndMarkModified('name', value)}
-                    label={<Trans id="provider-data.name" />}
+                    label={<Trans id="provider-data.name">Vollständiger Name</Trans>}
                 />
                 <ErrorFor error={error} field="street" />
                 <RetractingLabelInput
                     value={data.street || ''}
                     onChange={value => setAndMarkModified('street', value)}
-                    label={<Trans id="provider-data.street" />}
+                    label={<Trans id="provider-data.street">Straße & Hausnummer</Trans>}
                 />
                 <ErrorFor error={error} field="zipCode" />
                 <RetractingLabelInput
                     value={data.zipCode || ''}
                     onChange={value => setAndMarkModified('zipCode', value)}
-                    label={<Trans id="provider-data.zip-code" />}
+                    label={<Trans id="provider-data.zip-code">Postleitzahl</Trans>}
                 />
                 <ErrorFor error={error} field="city" />
                 <RetractingLabelInput
                     value={data.city || ''}
                     onChange={value => setAndMarkModified('city', value)}
-                    label={<Trans id="provider-data.city" />}
+                    label={<Trans id="provider-data.city">Ort</Trans>}
                 />
                 <ErrorFor error={error} field="website" />
                 <RetractingLabelInput
                     value={data.website || ''}
                     onChange={value => setAndMarkModified('website', value)}
-                    label={<Trans id="provider-data.website" />}
+                    label={<Trans id="provider-data.website">Webseite</Trans>}
                 />
                 <ErrorFor error={error} field="description" />
                 <label htmlFor="description">
-                    <Trans id="provider-data.description" />
+                    <Trans id="provider-data.description">
+                        Informationen für Impfwillige (z.B. wenn Sie spezielle Impfstoffe nur bestimmten Gruppen empfehlen)
+                    </Trans>
                 </label>
                 <textarea
                     id="description"
@@ -115,19 +120,21 @@ const BaseProviderData = ({
                     }
                 />
                 <h3>
-                    <Trans id="provider-data.for-mediator" />
+                    <Trans id="provider-data.for-mediator">
+                        Die folgenden Kontaktdaten dienen ausschließlich zur Kommunikation mit dem Support-Team.
+                    </Trans>
                 </h3>
                 <ErrorFor error={error} field="phone" />
                 <RetractingLabelInput
                     value={data.phone || ''}
                     onChange={value => setAndMarkModified('phone', value)}
-                    label={<Trans id="provider-data.phone" />}
+                    label={<Trans id="provider-data.phone">Telefonnummer (nicht sichtbar für Impfinteressierte)</Trans>}
                 />
                 <ErrorFor error={error} field="email" />
                 <RetractingLabelInput
                     value={data.email || ''}
                     onChange={value => setAndMarkModified('email', value)}
-                    label={<Trans id="provider-data.email" />}
+                    label={<Trans id="provider-data.email">E-Mail Adresse (nicht sichtbar für Impfinteressierte)</Trans>}
                 />
                 <hr />
                 <ErrorFor error={error} field="code" />
@@ -135,9 +142,11 @@ const BaseProviderData = ({
                     value={data.code || ''}
                     onChange={value => setAndMarkModified('code', value)}
                     description={
-                        <Trans id="provider-data.access-code.description" />
+                        <Trans id="provider-data.access-code.description">
+                            Falls Sie einen spezifischen Zugangscode erhalten haben geben Sie diesen bitte hier ein.
+                        </Trans>
                     }
-                    label={<Trans id="provider-data.access-code.label" />}
+                    label={<Trans id="provider-data.access-code.label">Zugangscode (falls vorhanden)</Trans>}
                 />
                 <hr />
                 <ul className="kip-properties">
@@ -157,7 +166,7 @@ const BaseProviderData = ({
                         </Switch>
 
                         <label htmlFor="accessible">
-                            <Trans id="provider-data.accessible" />
+                            <Trans id="provider-data.accessible">Barrierefreier Zugang zur Praxis/zum Impfzentrum</Trans>
                         </label>
                     </li>
                 </ul>
@@ -178,9 +187,9 @@ const BaseProviderData = ({
                                     waiting={submitting}
                                     title={
                                         submitting ? (
-                                            <Trans id="provider-data.saving" />
+                                            <Trans id="provider-data.saving">Speichere...</Trans>
                                         ) : (
-                                            <Trans id={'provider-data.save-and-continue'} />
+                                            <Trans id='provider-data.save-and-continue'>Weiter</Trans>
                                         )
                                     }
                                 />

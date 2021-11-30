@@ -90,10 +90,12 @@ class App extends React.Component {
             notice = (
                 <Message className="kip-outdated-notice" type="warning">
                     <p>
-                        <Trans id="outdated" />
+                        <Trans id="outdated">
+                            Ihre App-Version ist veraltet, bitte laden Sie die Seite neu um die neueste Version zu nutzen. Automatisches Neuladen erfolgt nach 60 Sekunden.
+                        </Trans>
                     </p>
                     <Button type="info" onClick={() => location.reload()}>
-                        <Trans id="reload" />
+                        <Trans id="reload">Seite neu laden</Trans>
                     </Button>
                 </Message>
             );
@@ -103,7 +105,7 @@ class App extends React.Component {
             return (
                 <CenteredCard>
                     <CardContent>
-                        <Trans id="redirecting" />
+                        <Trans id="redirecting">Bitte warten, Sie werden umgeleitet...</Trans>
                     </CardContent>
                 </CenteredCard>
             );
@@ -197,9 +199,6 @@ App.propTypes = {
         component: PropTypes.any,
         props: PropTypes.object,
         title: PropTypes.string,
-    }).isRequired,
-    settings: PropTypes.shape({
-        t: PropTypes.func.isRequired,
     }).isRequired,
 };
 

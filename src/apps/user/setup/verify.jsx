@@ -40,30 +40,16 @@ const Verify = withSettings(
                 <React.Fragment>
                     <CardContent>
                         <p className="kip-verify-notice">
-                            <Trans id="verify.text"
-                            values={{
-                                link: (
-                                    <A
-                                        key="letUsKnow"
-                                        external
-                                        href={settings.get('supportEmail')}
-                                    >
-                                        <Trans
-                                            id="wizard.letUsKnow"
-                                            key="letUsKnow"
-                                        />
-                                    </A>
-                                )}}
-                            />
+                            <Trans id="verify.text">Bitte überprüfe Deine Daten.</Trans>
                         </p>
                         <div className="kip-contact-data-box">
                             <ul>
                                 <li>
                                     <span>
-                                        <Trans id="contact-data.email.label" />
+                                        <Trans id="contact-data.email.label">E-Mail Adresse</Trans>
                                     </span>{' '}
                                     {contactData.data.email || (
-                                        <Trans id="contact-data.not-given" />
+                                        <Trans id="contact-data.not-given">(keine Angabe)</Trans>
                                     )}
                                 </li>
                             </ul>
@@ -73,13 +59,13 @@ const Verify = withSettings(
                                 className="bulma-button bulma-is-small"
                                 href="/user/setup/enter-contact-data"
                             >
-                                <Trans id="contact-data.change" />
+                                <Trans id="contact-data.change">Anpassen</Trans>
                             </A>
                         </div>
                     </CardContent>
                     <CardFooter>
                         <Button type="success" href={`/user/setup/finalize`}>
-                            <Trans id="wizard.continue" />
+                            <Trans id="wizard.continue">Weiter</Trans>
                         </Button>
                     </CardFooter>
                 </React.Fragment>

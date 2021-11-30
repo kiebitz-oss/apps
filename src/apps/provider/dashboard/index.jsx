@@ -190,7 +190,9 @@ const Dashboard = withRouter(
                     ) {
                         invalidKeyMessage = (
                             <Message waiting type="warning">
-                                <Trans id="invalid-key" />
+                                <Trans id="invalid-key">
+                                    Ihre Daten wurden noch nicht verifiziert. Sie können bereits Termine anlegen, allerdings werden Impfwillige noch nicht über Ihre Termine benachrichtigt.
+                                </Trans>
                             </Message>
                         );
                     }
@@ -203,13 +205,17 @@ const Dashboard = withRouter(
                                         active={tab === 'schedule'}
                                         href="/provider/schedule"
                                     >
-                                        <Trans id="schedule.title" />
+                                        <Trans id="schedule.title">
+                                            Terminplan
+                                        </Trans>
                                     </Tab>
                                     <Tab
                                         active={tab === 'settings'}
                                         href="/provider/settings"
                                     >
-                                        <Trans id="settings.title" />
+                                        <Trans id="settings.title">
+                                            Einstellungen
+                                        </Trans>
                                     </Tab>
                                     <Tab
                                         last
@@ -217,7 +223,9 @@ const Dashboard = withRouter(
                                         active={tab === 'log-out'}
                                         href="/provider/settings/logout"
                                     >
-                                        <Trans id="log-out" />
+                                        <Trans id="log-out">
+                                            Abmelden
+                                        </Trans>
                                     </Tab>
                                 </Tabs>
                             </CardHeader>

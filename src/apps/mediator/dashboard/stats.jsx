@@ -195,7 +195,6 @@ class Stats extends React.Component {
                         <Card size="fullwidth" flex>
                             <CardContent>
                                 <Trans
-                                    key="span"
                                     id="dateSpan"
                                     values={{
                                     from: (
@@ -212,7 +211,9 @@ class Stats extends React.Component {
                                             ).toLocaleString('en-US', opts)}
                                         </strong>
                                     )
+                                    
                                 }}
+                                defaults="Zeige Daten von {from} bis {to}."
                                 />
                             </CardContent>
                         </Card>

@@ -26,17 +26,17 @@ export default withRouter(
             <CenteredCard className="kip-cm-welcome">
                 <CardContent>
                     <h1 className="bulma-subtitle">
-                        <Trans id="what-to-do" />
+                        <Trans id="what-to-do">Was möchtest Du tun?</Trans>
                     </h1>
                     <ul className="kip-cm-selector">
                         <li>
                             <A href="/user/setup">
-                                <Trans id="setup" />
+                                <Trans id="setup">Impftermin finden</Trans>
                             </A>
                         </li>
                         <li>
                             <A href="/user/restore">
-                                <Trans id="restore" />
+                                <Trans id="restore">Termin und Profil bearbeiten</Trans>
                             </A>
                         </li>
                     </ul>
