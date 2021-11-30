@@ -30,7 +30,7 @@ import Form from 'helpers/form';
 import Wizard from './wizard';
 import { Trans, t, defineMessage } from '@lingui/macro';
 import './finalize.scss';
-import td from './translations.yml';
+import props from './properties.json';
 
 const contactDataPropertiesMessages = {
     location: {
@@ -52,7 +52,7 @@ class FinalizeForm extends Form {
         const errors = {};
         if (this.data.distance === undefined) this.data.distance = 5;
         if (!this.data.zipCode || this.data.zipCode.length != 5)
-            errors.zipCode = t({ id: 'contact-data.invalid-zip-code' });
+            errors.zipCode = t({ id: 'contact-data.invalid-zip-code', message: "Bitte trage eine gültige Postleitzahl ein." });
         return errors;
     }
 }
@@ -97,7 +97,7 @@ const Finalize = withForm(
                                 distance: 5,
                             };
                             for (const [k, v] of Object.entries(
-                                td['contact-data'].properties
+                                props['contact-data'].properties
                             )) {
                                 for (const [kv, vv] of Object.entries(
                                     v.values
@@ -134,7 +134,7 @@ const Finalize = withForm(
                     };
 
                     const properties = Object.entries(
-                        td['contact-data'].properties
+                        props['contact-data'].properties
                     ).map(([k, v]) => {
                         const items = Object.entries(v.values).map(
                             ([kv, vv]) => (
