@@ -2,26 +2,22 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState, Fragment as F } from 'react';
+import React, { useState, Fragment as F } from 'react';
 import { b642buf } from 'helpers/conversion';
 import {
     Modal,
     withActions,
-    Message,
-    Switch,
     CardContent,
     CardFooter,
     Button,
-    T,
     A,
 } from 'components';
 import { userSecret } from 'apps/user/actions';
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import './store-secrets.scss';
 
 export const StoreOnline = ({ secret, embedded, hideNotice }) => {
     const [bookmarkModal, setBookmarkModal] = useState(false);
-    const [copyModal, setCopyModal] = useState(false);
 
     let modal;
 

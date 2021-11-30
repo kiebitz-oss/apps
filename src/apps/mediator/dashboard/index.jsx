@@ -12,16 +12,12 @@ import {
     withActions,
     Tabs,
     Tab,
-    T,
-    A,
     Message,
     FieldSet,
     Form,
-    Input,
     Modal,
     CenteredCard,
     CardHeader,
-    CardContent,
 } from 'components';
 import { keyPairs, validKeyPairs } from '../actions';
 import { Trans } from '@lingui/macro';

@@ -10,8 +10,6 @@ import {
     CardContent,
     CardFooter,
     Button,
-    A,
-    T,
 } from 'components';
 import { Trans } from '@lingui/macro';
 import './logged-out.scss';

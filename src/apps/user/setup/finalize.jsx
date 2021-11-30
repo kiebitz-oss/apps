@@ -177,7 +177,7 @@ const FinalizePage = ({
                     <Message type="danger">
                         <Trans id="wizard.failed.invalid-code">
                             Dein Zugangscode ist ungültig oder wurde bereits
-                            benutzt. Du kannst sich nicht mehrfach registrieren.
+                            benutzt. Du kannst Dich nicht mehrfach registrieren.
                         </Trans>
                     </Message>
                 );

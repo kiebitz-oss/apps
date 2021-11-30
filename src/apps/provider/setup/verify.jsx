@@ -2,20 +2,17 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useRef, useState, Fragment as F } from 'react';
+import React, { useEffect, useState, Fragment as F } from 'react';
 import {
     withActions,
-    Modal,
     Message,
     CardContent,
     WithLoader,
     CardFooter,
     Button,
     Switch,
-    T,
     A,
 } from 'components';
-import Wizard from './wizard';
 import classNames from 'helpers/classnames';
 import { submitProviderData, providerData, keyPairs, keys } from '../actions';
 import { Trans } from '@lingui/macro';
@@ -259,15 +256,15 @@ const VerifyPage = ({
                             failed
                                 ? 'wizard.failed.title'
                                 : submitting
-                                    ? 'wizard.please-wait'
-                                    : 'wizard.continue'
+                                ? 'wizard.please-wait'
+                                : 'wizard.continue'
                         }
                     >
                         {failed
                             ? 'Fehlgeschlagen'
                             : submitting
-                                ? 'Bitte warten...'
-                                : 'Weiter'}
+                            ? 'Bitte warten...'
+                            : 'Weiter'}
                     </Trans>
                 </Button>
             </CardFooter>

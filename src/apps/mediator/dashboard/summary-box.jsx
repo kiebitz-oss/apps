@@ -3,8 +3,7 @@
 // README.md contains license information.
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { T, Card, CardHeader, CardContent } from 'components';
+import { Card, CardHeader, CardContent } from 'components';
 import './summary-box.scss';
 import { Trans } from '@lingui/macro';
 

@@ -2,23 +2,20 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     withActions,
-    Modal,
     CardContent,
     WithLoader,
     CardFooter,
     Button,
-    T,
     A,
 } from 'components';
-import Wizard from './wizard';
+
 import { contactData } from 'apps/user/actions';
 
 import { Trans } from '@lingui/macro';
 import './verify.scss';
-import { useSettings } from 'hooks';
 
 /*
 Here the user has a chance to review all data that was entered before confirming
@@ -27,7 +24,6 @@ codes, encrypts the contact data and stores the settings in the storage backend.
 */
 const VerifyPage = ({ contactData, contactDataAction }) => {
     const [initialized, setInitialized] = useState(false);
-    const settings = useSettings();
 
     useEffect(() => {
         if (initialized) return;
