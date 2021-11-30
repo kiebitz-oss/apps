@@ -7,7 +7,6 @@ import {
     A,
     Button,
     withActions,
-    withSettings,
     WithLoader,
     CenteredCard,
     CardContent,
@@ -23,43 +22,47 @@ import { useNavigate } from 'react-router-dom';
 
 const pages = ['hi', 'enter-provider-data', 'verify', 'store-secrets'];
 
-
 const wizardStepsMessages = {
-    'hi': defineMessage({
+    hi: defineMessage({
         id: 'wizard.steps.hi',
-        message: 'Jetzt starten'
+        message: 'Jetzt starten',
     }),
     'enter-provider-data': defineMessage({
         id: 'wizard.steps.enter-provider-data',
-        message: 'Kontaktdaten eingeben'
+        message: 'Kontaktdaten eingeben',
     }),
-    'verify': defineMessage({
+    verify: defineMessage({
         id: 'wizard.steps.verify',
-        message: 'Daten prüfen'
+        message: 'Daten prüfen',
     }),
     'store-secrets': defineMessage({
         id: 'wizard.steps.store-secrets',
-        message: 'Sicherungsdatei & Datenschlüssel'
+        message: 'Sicherungsdatei & Datenschlüssel',
     }),
 };
 
-const Hi = withSettings(({ settings }) => (
-    <React.Fragment>
-        <CardContent>
-            <p>
-                <Trans id="wizard.hi">
-                    Willkommen.
-                    Dieser Assistent führt Sie Schritt für Schritt zur Terminverwaltung.
-                </Trans>
-            </p>
-        </CardContent>
-        <CardFooter>
-            <Button type="success" href={`/provider/setup/enter-provider-data`}>
-                <Trans id="wizard.continue">Weiter</Trans>
-            </Button>
-        </CardFooter>
-    </React.Fragment>
-));
+const Hi = () => {
+    return (
+        <React.Fragment>
+            <CardContent>
+                <p>
+                    <Trans id="wizard.hi">
+                        Willkommen. Dieser Assistent führt Sie Schritt für
+                        Schritt zur Terminverwaltung.
+                    </Trans>
+                </p>
+            </CardContent>
+            <CardFooter>
+                <Button
+                    type="success"
+                    href={`/provider/setup/enter-provider-data`}
+                >
+                    <Trans id="wizard.continue">Weiter</Trans>
+                </Button>
+            </CardFooter>
+        </React.Fragment>
+    );
+};
 
 const Wizard = ({ page, status }) => {
     const pageRef = useRef(null);

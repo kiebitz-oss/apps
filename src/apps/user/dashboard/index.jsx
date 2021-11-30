@@ -28,98 +28,93 @@ import {
 import { Trans } from '@lingui/macro';
 import { useParams } from 'react-router-dom';
 
-const Dashboard = withTimer(
-    withActions(
-        ({
-            timer,
-            userSecretAction,
-            keysAction,
-            backupDataAction,
-            invitationAction,
-            appointmentsAction,
-            getAppointmentsAction,
-            queueDataAction,
-            tokenDataAction,
-        }) => {
-            const [tv, setTv] = useState(-2);
-            const { tab, action } = useParams();
+const DashboardPage = ({
+    timer,
+    userSecretAction,
+    keysAction,
+    backupDataAction,
+    invitationAction,
+    appointmentsAction,
+    getAppointmentsAction,
+    queueDataAction,
+    tokenDataAction,
+}) => {
+    const [tv, setTv] = useState(-2);
+    const { tab, action } = useParams();
 
-            console.log({ tab, action });
+    useEffect(() => {
+        // we do this only once per timer interval...
+        if (timer === tv) return;
+        setTv(timer);
+        userSecretAction().then(us =>
+            tokenDataAction().then(() =>
+                keysAction().then(kd =>
+                    queueDataAction().then(qd => {
+                        getAppointmentsAction(qd.data, kd.data);
+                        backupDataAction(us.data);
+                        invitationAction();
+                        appointmentsAction();
+                    })
+                )
+            )
+        );
+    });
 
-            useEffect(() => {
-                // we do this only once per timer interval...
-                if (timer === tv) return;
-                setTv(timer);
-                userSecretAction().then(us =>
-                    tokenDataAction().then(() =>
-                        keysAction().then(kd =>
-                            queueDataAction().then(qd => {
-                                getAppointmentsAction(qd.data, kd.data);
-                                backupDataAction(us.data);
-                                invitationAction();
-                                appointmentsAction();
-                            })
-                        )
-                    )
-                );
-            });
+    let content;
+    let menu;
 
-            let content;
-            let menu;
-
-            switch (tab) {
-                case 'settings':
-                    content = <Settings action={action} />;
-                    menu = (
-                        <A href={'/user/appointments'}>
-                            <span className="kip-icon">
-                                <Icon icon="chevron-left" />{' '}
-                                <Trans id="go-back.button" />
-                            </span>
-                        </A>
-                    );
-                    break;
-                case 'appointments':
-                    content = <Appointments />;
-                    menu = (
-                        <A href={'/user/settings'}>
-                            <span className="kip-icon">
-                                <Icon icon="cogs" />
-                            </span>
-                        </A>
-                    );
-                    break;
-            }
-
-            return (
-                <CenteredCard tight>
-                    <CardHeader>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-end',
-                                paddingBottom: '13px',
-                            }}
-                        >
-                            {menu}
-                        </div>
-                    </CardHeader>
-                    {content}
-                </CenteredCard>
+    switch (tab) {
+        case 'settings':
+            content = <Settings action={action} />;
+            menu = (
+                <A href={'/user/appointments'}>
+                    <span className="kip-icon">
+                        <Icon icon="chevron-left" />{' '}
+                        <Trans id="go-back.button" />
+                    </span>
+                </A>
             );
-        },
-        [
-            keys,
-            invitation,
-            appointments,
-            queueData,
-            tokenData,
-            getAppointments,
-            userSecret,
-            backupData,
-        ]
-    ),
+            break;
+        case 'appointments':
+            content = <Appointments />;
+            menu = (
+                <A href={'/user/settings'}>
+                    <span className="kip-icon">
+                        <Icon icon="cogs" />
+                    </span>
+                </A>
+            );
+            break;
+    }
+
+    return (
+        <CenteredCard tight>
+            <CardHeader>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        paddingBottom: '13px',
+                    }}
+                >
+                    {menu}
+                </div>
+            </CardHeader>
+            {content}
+        </CenteredCard>
+    );
+};
+
+export default withTimer(
+    withActions(DashboardPage, [
+        keys,
+        invitation,
+        appointments,
+        queueData,
+        tokenData,
+        getAppointments,
+        userSecret,
+        backupData,
+    ]),
     10000
 );
-
-export default Dashboard;

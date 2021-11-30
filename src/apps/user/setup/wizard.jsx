@@ -7,7 +7,6 @@ import {
     A,
     Button,
     withActions,
-    withSettings,
     WithLoader,
     CenteredCard,
     CardContent,
@@ -22,43 +21,38 @@ import { Trans, defineMessage } from '@lingui/macro';
 import './wizard.scss';
 import { useNavigate } from 'react-router-dom';
 
-const pages = [
-    'hi',
-    'enter-contact-data',
-    'finalize',
-    'store-secrets',
-];
+const pages = ['hi', 'enter-contact-data', 'finalize', 'store-secrets'];
 
 const wizardStepsMessages = {
-    'hi': defineMessage({
+    hi: defineMessage({
         id: 'wizard.steps.hi',
-        message: 'Los geht\'s!'
+        message: "Los geht's!",
     }),
     'enter-contact-data': defineMessage({
         id: 'wizard.steps.enter-contact-data',
-        message: 'Registrierungsdaten eingeben'
+        message: 'Registrierungsdaten eingeben',
     }),
-    'verify': defineMessage({
+    verify: defineMessage({
         id: 'wizard.steps.verify',
-        message: 'Kontaktdaten prüfen'
+        message: 'Kontaktdaten prüfen',
     }),
-    'finalize': defineMessage({
+    finalize: defineMessage({
         id: 'wizard.steps.finalize',
-        message: 'Daten zu Impfung eingeben'
+        message: 'Daten zu Impfung eingeben',
     }),
     'store-secrets': defineMessage({
         id: 'wizard.steps.store-secrets',
-        message: 'Sicherheitscode notieren'
+        message: 'Sicherheitscode notieren',
     }),
 };
 
-const Hi = withSettings(({ settings }) => (
+const Hi = () => (
     <React.Fragment>
         <CardContent>
             <p>
                 <Trans id="wizard.hi">
-                   Willkommen.
-                   Dieser Assistent hilft Dir bei der Impfanmeldung.
+                    Willkommen. Dieser Assistent hilft Dir bei der
+                    Impfanmeldung.
                 </Trans>
             </p>
         </CardContent>
@@ -68,7 +62,7 @@ const Hi = withSettings(({ settings }) => (
             </Button>
         </CardFooter>
     </React.Fragment>
-));
+);
 
 const Wizard = ({ page }) => {
     const pageRef = useRef(null);
@@ -113,7 +107,7 @@ const Wizard = ({ page }) => {
                         }}
                         active={page === p}
                     >
-                        {i++}. <Trans id={wizardStepsMessages[p]}/>
+                        {i++}. <Trans id={wizardStepsMessages[p]} />
                     </CardNav>
                 </a>
             );

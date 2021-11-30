@@ -2,7 +2,6 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-export * from './t';
 export * from './a';
 export * from './card';
 export * from './title';

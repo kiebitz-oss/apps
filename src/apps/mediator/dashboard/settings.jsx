@@ -5,7 +5,6 @@
 import React, { useState, useEffect, Fragment as F } from 'react';
 import { keyPairs, testQueues } from '../actions';
 import {
-    withSettings,
     withActions,
     Message,
     Modal,
@@ -18,97 +17,100 @@ import {
 import { Trans } from '@lingui/macro';
 import './settings.scss';
 import { useNavigate } from 'react-router-dom';
+import { useBackend } from 'hooks';
 
-const TestQueuesModal = withActions(
-    ({ keyPairs, testQueues, testQueuesAction }) => {
-        const [initialized, setInitialized] = useState(false);
-        const navigate = useNavigate();
+const TestQueuesModalBase = ({ keyPairs, testQueues, testQueuesAction }) => {
+    const [initialized, setInitialized] = useState(false);
+    const navigate = useNavigate();
 
-        useEffect(() => {
-            if (initialized) return;
-            setInitialized(true);
-            testQueuesAction(keyPairs);
-        });
+    useEffect(() => {
+        if (initialized) return;
+        setInitialized(true);
+        testQueuesAction(keyPairs);
+    });
 
-        const readFile = e => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
+    const readFile = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
 
-            reader.onload = function(e) {
-                const json = JSON.parse(e.target.result);
-                testQueuesAction(keyPairs, json);
-            };
-
-            reader.readAsBinaryString(file);
+        reader.onload = function(e) {
+            const json = JSON.parse(e.target.result);
+            testQueuesAction(keyPairs, json);
         };
 
-        let notice;
+        reader.readAsBinaryString(file);
+    };
 
-        const { status } = testQueues;
-        
-        if (status === 'invalid')
-            notice = (
-                <Message type="danger">
-                    <Trans id="upload-queues.invalid-file">
-                        Die erzeugten Queue-Schlüssel sind nicht korrekt und können mit Ihrem Vermittler-Schlüssel nicht entschlüsselt werden.
-                    </Trans>
-                </Message>
-            );
-        else if (status === 'valid')
-            notice = (
-                <Message type="success">
-                    <Trans id="upload-queues.valid-file">
-                        Die erzeugten Queue-Schlüssel sind korrekt und können mit Ihrem Vermittler-Schlüssel entschlüsselt werden.
-                    </Trans>
-                </Message>
-            );
-        else notice = <Trans id="upload-queues.notice">
-            Bitte laden Sie die Queues-Datei, die mit dem "kiebitz" Kommando erstellt wurde. Die Datei wird dann auf Korrektheit geprüft.
-        </Trans>;
+    let notice;
 
-        const footer = (
-            <Form>
-                <FieldSet>
-                    <label
-                        htmlFor="file-upload"
-                        className="custom-file-upload"
-                    >
-                        <Trans id="upload-queues.input">Datei wählen</Trans>
-                        <input
-                            id="file-upload"
-                            disabled={
-                                keyPairs === undefined ||
-                                keyPairs.data === null
-                            }
-                            className="bulma-input"
-                            type="file"
-                            onChange={e => readFile(e)}
-                        />
-                    </label>
-                </FieldSet>
-            </Form>
+    const { status } = testQueues;
+
+    if (status === 'invalid')
+        notice = (
+            <Message type="danger">
+                <Trans id="upload-queues.invalid-file">
+                    Die erzeugten Queue-Schlüssel sind nicht korrekt und können
+                    mit Ihrem Vermittler-Schlüssel nicht entschlüsselt werden.
+                </Trans>
+            </Message>
+        );
+    else if (status === 'valid')
+        notice = (
+            <Message type="success">
+                <Trans id="upload-queues.valid-file">
+                    Die erzeugten Queue-Schlüssel sind korrekt und können mit
+                    Ihrem Vermittler-Schlüssel entschlüsselt werden.
+                </Trans>
+            </Message>
+        );
+    else
+        notice = (
+            <Trans id="upload-queues.notice">
+                Bitte laden Sie die Queues-Datei, die mit dem "kiebitz" Kommando
+                erstellt wurde. Die Datei wird dann auf Korrektheit geprüft.
+            </Trans>
         );
 
-        return (
-            <Modal
-                footer={footer}
-                onClose={() => navigate('/mediator/settings')}
-                className="kip-upload-file"
-                title={<Trans id="upload-queues.title">Queues-Datei laden</Trans>}
-            >
-                {notice}
-            </Modal>
-        );
-    },
-    [testQueues]
-);
+    const footer = (
+        <Form>
+            <FieldSet>
+                <label htmlFor="file-upload" className="custom-file-upload">
+                    <Trans id="upload-queues.input">Datei wählen</Trans>
+                    <input
+                        id="file-upload"
+                        disabled={
+                            keyPairs === undefined || keyPairs.data === null
+                        }
+                        className="bulma-input"
+                        type="file"
+                        onChange={e => readFile(e)}
+                    />
+                </label>
+            </FieldSet>
+        </Form>
+    );
 
-const BaseSettings = ({ settings, keyPairs, keyPairsAction, action }) => {
+    return (
+        <Modal
+            footer={footer}
+            onClose={() => navigate('/mediator/settings')}
+            className="kip-upload-file"
+            title={<Trans id="upload-queues.title">Queues-Datei laden</Trans>}
+        >
+            {notice}
+        </Modal>
+    );
+};
+
+const TestQueuesModal = withActions(TestQueuesModalBase, [testQueues]);
+
+const BaseSettings = ({ keyPairs, keyPairsAction, action }) => {
     let modal;
 
     const [initialized, setInitialized] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
     const navigate = useNavigate();
+    const backend = useBackend();
 
     useEffect(() => {
         if (initialized) return;
@@ -123,7 +125,6 @@ const BaseSettings = ({ settings, keyPairs, keyPairsAction, action }) => {
     const logOut = () => {
         setLoggingOut(true);
 
-        const backend = settings.get('backend');
         backend.local.deleteAll('mediator::');
         navigate('/mediator/logged-out');
     };
@@ -143,18 +144,22 @@ const BaseSettings = ({ settings, keyPairs, keyPairsAction, action }) => {
                 saveType="warning"
             >
                 <p>
-                    {
-                        loggingOut
-                            ? <Trans id='log-out-modal.logging-out'>log-out-modal.logging-out MISSING</Trans>
-                            : <Trans id='log-out-modal.text'>log-out-modal.text MISSING</Trans>
-                    }
+                    {loggingOut ? (
+                        <Trans id="log-out-modal.logging-out">
+                            log-out-modal.logging-out MISSING
+                        </Trans>
+                    ) : (
+                        <Trans id="log-out-modal.text">
+                            log-out-modal.text MISSING
+                        </Trans>
+                    )}
                 </p>
             </Modal>
         );
     }
 
     return (
-        <F>
+        <>
             {modal}
             <CardContent>
                 <div className="kip-mediator-settings">
@@ -163,7 +168,10 @@ const BaseSettings = ({ settings, keyPairs, keyPairsAction, action }) => {
                     </h2>
                     <p>
                         <Trans id="test-queues.text">
-                            Hier können Sie Queues-Dateien testen, die Sie mit dem "kiebitz" Tool erstellt haben. Hierdurch können Sie sicherstellen, dass die Dateien korrekt sind, bevor Sie diese in ein Backend hochladen.
+                            Hier können Sie Queues-Dateien testen, die Sie mit
+                            dem "kiebitz" Tool erstellt haben. Hierdurch können
+                            Sie sicherstellen, dass die Dateien korrekt sind,
+                            bevor Sie diese in ein Backend hochladen.
                         </Trans>
                     </p>
                     <div className="kip-buttons">
@@ -183,10 +191,10 @@ const BaseSettings = ({ settings, keyPairs, keyPairsAction, action }) => {
                     </Button>
                 </div>
             </CardFooter>
-        </F>
+        </>
     );
 };
 
-const Settings = withActions(withSettings(BaseSettings), [keyPairs]);
+const Settings = withActions(BaseSettings, [keyPairs]);
 
 export default Settings;

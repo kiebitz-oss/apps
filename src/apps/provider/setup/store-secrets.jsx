@@ -7,7 +7,6 @@ import { str2ab } from 'helpers/conversion';
 import {
     Modal,
     withActions,
-    withSettings,
     Message,
     CardContent,
     CardFooter,
@@ -122,153 +121,144 @@ function formatDate(date) {
     return `${year}-${month}-${day}-${hours}-${minutes}`;
 }
 
-export const BackupDataLink = withSettings(
-    withActions(
-        ({
-            onSuccess,
-            settings,
-            downloadText,
-            providerData,
-            keyPairsAction,
-            providerSecretAction,
-            backupData,
-            backupDataAction,
-        }) => {
-            const [initialized, setInitialized] = useState(false);
+const BackupDataLinkBase = ({
+    onSuccess,
+    settings,
+    downloadText,
+    providerData,
+    keyPairsAction,
+    providerSecretAction,
+    backupData,
+    backupDataAction,
+}) => {
+    const [initialized, setInitialized] = useState(false);
 
-            let providerName;
+    let providerName;
 
-            try {
-                providerName = providerData.data.data.name
-                    .replaceAll(' ', '-')
-                    .replaceAll('.', '-')
-                    .toLowerCase();
-            } catch (e) {}
+    try {
+        providerName = providerData.data.data.name
+            .replaceAll(' ', '-')
+            .replaceAll('.', '-')
+            .toLowerCase();
+    } catch (e) {}
 
-            useEffect(() => {
-                if (initialized) return;
-                setInitialized(true);
-                keyPairsAction().then(kp =>
-                    providerSecretAction().then(ps =>
-                        backupDataAction(kp.data, ps.data)
-                    )
-                );
-            });
-
-            let blob;
-
-            if (backupData !== undefined && backupData.status === 'succeeded') {
-                blob = new Blob([str2ab(JSON.stringify(backupData.data))], {
-                    type: 'application/octet-stream',
-                });
-            }
-
-            const title = settings.get('title').toLowerCase();
-
-            const dateString = formatDate(new Date());
-
-            const filename = `${title}-backup-${dateString}-${providerName}.enc`;
-
-            if (blob !== undefined)
-                return (
-                    <a
-                        onClick={onSuccess}
-                        className="bulma-button bulma-is-success"
-                        download={filename}
-                        href={URL.createObjectURL(blob)}
-                        type="success"
-                    >
-                        {downloadText || (
-                            <Trans id="wizard.download-backup-data">
-                                Sicherungsdatei herunterladen und Datenschlüssel
-                                notieren
-                            </Trans>
-                        )}
-                    </a>
-                );
-
-            return (
-                <Message waiting type="warning">
-                    <Trans id="wizard.generating-backup-data">
-                        Bitte warten, erstelle Backup-Daten...
-                    </Trans>
-                </Message>
-            );
-        },
-        [providerSecret, backupData, keyPairs, providerData]
-    )
-);
-
-export default withActions(
-    ({ providerSecret, status }) => {
-        const navigate = useNavigate();
-
-        const goToDashboard = () => {
-            navigate('/provider');
-        };
-
-        const showSecrets = () => {
-            navigate('/provider/setup/store-secrets/show');
-        };
-
-        const hideSecrets = () => {
-            navigate('/provider/setup/store-secrets');
-        };
-
-        let modal;
-
-        if (status === 'show')
-            modal = (
-                <Modal
-                    title={
-                        <Trans id="store-secrets.secrets-modal.title">
-                            Bitte Datenschlüssel notieren!
-                        </Trans>
-                    }
-                    onClose={hideSecrets}
-                    save={
-                        <Trans id="wizard.leave">
-                            Abschließen & zur Terminplanung
-                        </Trans>
-                    }
-                    onSave={goToDashboard}
-                    onCancel={hideSecrets}
-                    saveType="success"
-                >
-                    <DataSecret secret={providerSecret.data} />
-                </Modal>
-            );
-
-        return (
-            <React.Fragment>
-                {modal}
-                <CardContent className="kip-secrets">
-                    <p>
-                        <Trans id="store-secrets.notice">
-                            Um sich auf einem anderen PC (Tablet, Smartphone
-                            etc.) einzuloggen oder auf einem anderen Endgerät
-                            auf Ihre Termine zugreifen zu können, benötigen Sie
-                            Ihre Sicherungsdatei und Ihren Datenschlüssel. Bitte
-                            erstellen Sie jetzt Ihre Sicherungsdatei und
-                            notieren Sie sich im Anschluss den Datenschlüssel.
-                        </Trans>
-                    </p>
-                </CardContent>
-                <CardFooter>
-                    <BackupDataLink onSuccess={showSecrets} />
-                </CardFooter>
-            </React.Fragment>
+    useEffect(() => {
+        if (initialized) return;
+        setInitialized(true);
+        keyPairsAction().then(kp =>
+            providerSecretAction().then(ps =>
+                backupDataAction(kp.data, ps.data)
+            )
         );
-    },
-    [providerSecret]
-);
+    });
 
-/*
-    <Switch
-        onChange={() =>
-            setTab(tab === 'online' ? 'local' : 'online')
-        }
-    >
-        <Trans id={`store-secrets.${tab}.title`} />
-    </Switch>
-*/
+    let blob;
+
+    if (backupData !== undefined && backupData.status === 'succeeded') {
+        blob = new Blob([str2ab(JSON.stringify(backupData.data))], {
+            type: 'application/octet-stream',
+        });
+    }
+
+    const title = settings.get('title').toLowerCase();
+
+    const dateString = formatDate(new Date());
+
+    const filename = `${title}-backup-${dateString}-${providerName}.enc`;
+
+    if (blob !== undefined)
+        return (
+            <a
+                onClick={onSuccess}
+                className="bulma-button bulma-is-success"
+                download={filename}
+                href={URL.createObjectURL(blob)}
+                type="success"
+            >
+                {downloadText || (
+                    <Trans id="wizard.download-backup-data">
+                        Sicherungsdatei herunterladen und Datenschlüssel
+                        notieren
+                    </Trans>
+                )}
+            </a>
+        );
+
+    return (
+        <Message waiting type="warning">
+            <Trans id="wizard.generating-backup-data">
+                Bitte warten, erstelle Backup-Daten...
+            </Trans>
+        </Message>
+    );
+};
+
+export const BackupDataLink = withActions(BackupDataLinkBase, [
+    providerSecret,
+    backupData,
+    keyPairs,
+    providerData,
+]);
+
+const StoreSecretsPage = ({ providerSecret, status }) => {
+    const navigate = useNavigate();
+
+    const goToDashboard = () => {
+        navigate('/provider');
+    };
+
+    const showSecrets = () => {
+        navigate('/provider/setup/store-secrets/show');
+    };
+
+    const hideSecrets = () => {
+        navigate('/provider/setup/store-secrets');
+    };
+
+    let modal;
+
+    if (status === 'show')
+        modal = (
+            <Modal
+                title={
+                    <Trans id="store-secrets.secrets-modal.title">
+                        Bitte Datenschlüssel notieren!
+                    </Trans>
+                }
+                onClose={hideSecrets}
+                save={
+                    <Trans id="wizard.leave">
+                        Abschließen & zur Terminplanung
+                    </Trans>
+                }
+                onSave={goToDashboard}
+                onCancel={hideSecrets}
+                saveType="success"
+            >
+                <DataSecret secret={providerSecret.data} />
+            </Modal>
+        );
+
+    return (
+        <React.Fragment>
+            {modal}
+            <CardContent className="kip-secrets">
+                <p>
+                    <Trans id="store-secrets.notice">
+                        Um sich auf einem anderen PC (Tablet, Smartphone etc.)
+                        einzuloggen oder auf einem anderen Endgerät auf Ihre
+                        Termine zugreifen zu können, benötigen Sie Ihre
+                        Sicherungsdatei und Ihren Datenschlüssel. Bitte
+                        erstellen Sie jetzt Ihre Sicherungsdatei und notieren
+                        Sie sich im Anschluss den Datenschlüssel.
+                    </Trans>
+                </p>
+            </CardContent>
+            <CardFooter>
+                <BackupDataLink onSuccess={showSecrets} />
+            </CardFooter>
+        </React.Fragment>
+    );
+};
+
+export default withActions(StoreSecretsPage, [providerSecret]);

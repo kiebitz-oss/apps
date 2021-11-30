@@ -29,7 +29,13 @@ export class Modal extends React.Component {
             onClose,
             saveType,
         } = this.props;
-        const close = () => !closeDisabled && !disabled && onClose();
+
+        const close = () =>
+            !closeDisabled &&
+            !disabled &&
+            typeof onClose === 'function' &&
+            onClose();
+
         if (bare)
             return (
                 <div
@@ -86,7 +92,9 @@ export class Modal extends React.Component {
                                         !saveDisabled && !disabled && onSave()
                                     }
                                 >
-                                    {save || <Trans id="modal.save">Speichern</Trans>}
+                                    {save || (
+                                        <Trans id="modal.save">Speichern</Trans>
+                                    )}
                                 </Button>
                             )}
                             {onCancel && (
@@ -99,7 +107,11 @@ export class Modal extends React.Component {
                                         onCancel()
                                     }
                                 >
-                                    {cancel || <Trans id="modal.cancel">Abbrechen</Trans>}
+                                    {cancel || (
+                                        <Trans id="modal.cancel">
+                                            Abbrechen
+                                        </Trans>
+                                    )}
                                 </Button>
                             )}
                         </footer>

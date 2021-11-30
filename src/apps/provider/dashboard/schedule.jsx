@@ -9,7 +9,6 @@ import { urlEncode } from 'helpers/data';
 import { formatDate, formatTime, getMonday } from 'helpers/time';
 import Form from 'helpers/form';
 import {
-    withSettings,
     withForm,
     withActions,
     WithLoader,
@@ -44,6 +43,7 @@ import {
 import { t, Trans, defineMessage } from '@lingui/macro';
 import './schedule.scss';
 import { useLocation, useNavigate } from 'react-router';
+import { useSettings } from 'hooks';
 
 const dayMessages = {
     [0]: defineMessage({ id: 'day-1', message: 'Montag' }),
@@ -75,159 +75,158 @@ function getHexId(id) {
     return buf2hex(b642buf(id));
 }
 
-const AppointmentOverview = withActions(
-    ({
-        openAppointmentsAction,
-        cancelAppointmentAction,
-        appointment,
-        action,
-        onClose,
-        ...props
-    }) => {
-        const [showDelete, setShowDelete] = useState(false);
-        const acceptedItems = appointment.bookings
-            .map(booking => {
-                return (
-                    <li className="kip-is-code" key={booking.id}>
-                        {booking.data.tokenData.code}
-                    </li>
-                );
-            })
-            .filter(it => it);
-
-        const doDelete = () => {
-            cancelAppointmentAction(appointment).then(() => {
-                // we reload the appointments
-                openAppointmentsAction();
-                onClose();
-            });
-        };
-
-        const hexId = getHexId(appointment.id);
-
-        if (showDelete)
+const AppointmentOverviewBase = ({
+    openAppointmentsAction,
+    cancelAppointmentAction,
+    appointment,
+    action,
+    onClose,
+    ...props
+}) => {
+    const [showDelete, setShowDelete] = useState(false);
+    const acceptedItems = appointment.bookings
+        .map(booking => {
             return (
-                <Modal
-                    onSave={doDelete}
-                    onClose={() => setShowDelete(false)}
-                    onCancel={() => setShowDelete(false)}
-                    saveType="danger"
-                    save={
-                        <Trans id="appointment-overview.delete.confirm">
-                            Löschen bestätigen
-                        </Trans>
-                    }
-                    cancel={
-                        <Trans id="appointment-overview.delete.cancel">
-                            Abbrechen
-                        </Trans>
-                    }
-                    title={
-                        <Trans id="appointment-overview.delete.title">
-                            Termin löschen
-                        </Trans>
-                    }
-                    {...props}
-                    className="kip-appointment-overview"
-                >
-                    <p>
-                        <Trans id="appointment-overview.delete.notice">
-                            Wollen Sie diesen Termin wirklich löschen?
-                        </Trans>
-                    </p>
-                </Modal>
+                <li className="kip-is-code" key={booking.id}>
+                    {booking.data.tokenData.code}
+                </li>
             );
+        })
+        .filter(it => it);
+
+    const doDelete = () => {
+        cancelAppointmentAction(appointment).then(() => {
+            // we reload the appointments
+            openAppointmentsAction();
+            onClose();
+        });
+    };
+
+    const hexId = getHexId(appointment.id);
+
+    if (showDelete)
         return (
             <Modal
-                bare
-                onClose={onClose}
+                onSave={doDelete}
+                onClose={() => setShowDelete(false)}
+                onCancel={() => setShowDelete(false)}
+                saveType="danger"
+                save={
+                    <Trans id="appointment-overview.delete.confirm">
+                        Löschen bestätigen
+                    </Trans>
+                }
+                cancel={
+                    <Trans id="appointment-overview.delete.cancel">
+                        Abbrechen
+                    </Trans>
+                }
+                title={
+                    <Trans id="appointment-overview.delete.title">
+                        Termin löschen
+                    </Trans>
+                }
                 {...props}
                 className="kip-appointment-overview"
             >
-                <Card>
-                    <CardHeader>
-                        <Trans id="appointment-overview.title">
-                            Terminübersicht
-                        </Trans>
-                        <Button
-                            type="info"
-                            aria-label="Close modal"
-                            className="bulma-delete"
-                            data-test-id="modal-close"
-                            onClick={onClose}
-                        />
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="kip-appointment-details">
-                            <li>
-                                {new Date(
-                                    appointment.timestamp
-                                ).toLocaleDateString()}{' '}
-                                {new Date(
-                                    appointment.timestamp
-                                ).toLocaleTimeString()}
-                            </li>
-                            <li>
-                                <Trans id="appointment-overview.details.slots">
-                                    Slots
-                                </Trans>
-                                : {appointment.slotData.length}{' '}
-                            </li>
-                            <li>
-                                <Trans id="appointment-overview.details.booked">
-                                    Gebucht
-                                </Trans>
-                                : {appointment.bookings.length}{' '}
-                            </li>
-                        </ul>
-                        <hr />
-                        <PropertyTags verbose appointment={appointment} />
-                        {(acceptedItems.length > 0 && (
-                            <F>
-                                <h3>
-                                    <Trans id="appointment-overview.details.booking-codes">
-                                        Buchungscodes
-                                    </Trans>
-                                </h3>
-                                <ul className="kip-booking-codes">
-                                    {acceptedItems}
-                                </ul>
-                            </F>
-                        )) || (
-                            <Message type="info">
-                                <Trans id="appointment-overview.details.no-booked-slots">
-                                    Keine gebuchten Slots bisher. Sobald
-                                    Buchungen vorhanden sind werden hier die
-                                    Buchungscodes angezeigt.
-                                </Trans>
-                            </Message>
-                        )}
-                    </CardContent>
-                    <CardFooter>
-                        <Button
-                            type="warning"
-                            href={`/provider/schedule/${action}/edit/${hexId}`}
-                        >
-                            <Trans id="appointment-overview.edit.button">
-                                Bearbeiten
-                            </Trans>
-                        </Button>
-                        &nbsp;
-                        <Button
-                            type="danger"
-                            onClick={() => setShowDelete(true)}
-                        >
-                            <Trans id="appointment-overview.delete.button">
-                                Löschen bestätigen
-                            </Trans>
-                        </Button>
-                    </CardFooter>
-                </Card>
+                <p>
+                    <Trans id="appointment-overview.delete.notice">
+                        Wollen Sie diesen Termin wirklich löschen?
+                    </Trans>
+                </p>
             </Modal>
         );
-    },
-    [cancelAppointment, openAppointments]
-);
+    return (
+        <Modal
+            bare
+            onClose={onClose}
+            {...props}
+            className="kip-appointment-overview"
+        >
+            <Card>
+                <CardHeader>
+                    <Trans id="appointment-overview.title">
+                        Terminübersicht
+                    </Trans>
+                    <Button
+                        type="info"
+                        aria-label="Close modal"
+                        className="bulma-delete"
+                        data-test-id="modal-close"
+                        onClick={onClose}
+                    />
+                </CardHeader>
+                <CardContent>
+                    <ul className="kip-appointment-details">
+                        <li>
+                            {new Date(
+                                appointment.timestamp
+                            ).toLocaleDateString()}{' '}
+                            {new Date(
+                                appointment.timestamp
+                            ).toLocaleTimeString()}
+                        </li>
+                        <li>
+                            <Trans id="appointment-overview.details.slots">
+                                Slots
+                            </Trans>
+                            : {appointment.slotData.length}{' '}
+                        </li>
+                        <li>
+                            <Trans id="appointment-overview.details.booked">
+                                Gebucht
+                            </Trans>
+                            : {appointment.bookings.length}{' '}
+                        </li>
+                    </ul>
+                    <hr />
+                    <PropertyTags verbose appointment={appointment} />
+                    {(acceptedItems.length > 0 && (
+                        <F>
+                            <h3>
+                                <Trans id="appointment-overview.details.booking-codes">
+                                    Buchungscodes
+                                </Trans>
+                            </h3>
+                            <ul className="kip-booking-codes">
+                                {acceptedItems}
+                            </ul>
+                        </F>
+                    )) || (
+                        <Message type="info">
+                            <Trans id="appointment-overview.details.no-booked-slots">
+                                Keine gebuchten Slots bisher. Sobald Buchungen
+                                vorhanden sind werden hier die Buchungscodes
+                                angezeigt.
+                            </Trans>
+                        </Message>
+                    )}
+                </CardContent>
+                <CardFooter>
+                    <Button
+                        type="warning"
+                        href={`/provider/schedule/${action}/edit/${hexId}`}
+                    >
+                        <Trans id="appointment-overview.edit.button">
+                            Bearbeiten
+                        </Trans>
+                    </Button>
+                    &nbsp;
+                    <Button type="danger" onClick={() => setShowDelete(true)}>
+                        <Trans id="appointment-overview.delete.button">
+                            Löschen bestätigen
+                        </Trans>
+                    </Button>
+                </CardFooter>
+            </Card>
+        </Modal>
+    );
+};
+
+const AppointmentOverview = withActions(AppointmentOverviewBase, [
+    cancelAppointment,
+    openAppointments,
+]);
 
 const PropertyTags = ({ appointment, verbose, tiny }) => {
     const props = Object.entries(appointment)
@@ -239,9 +238,11 @@ const PropertyTags = ({ appointment, verbose, tiny }) => {
     return <F>{props}</F>;
 };
 
-const PropertyTag = withSettings(({ settings, property, tiny, verbose }) => {
+const PropertyTag = ({ property, tiny, verbose }) => {
+    const settings = useSettings();
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
+
     for (const [category, values] of Object.entries(properties)) {
         const prop = values.values[property];
         if (prop !== undefined) {
@@ -268,7 +269,7 @@ const PropertyTag = withSettings(({ settings, property, tiny, verbose }) => {
             );
         }
     }
-});
+};
 
 const AppointmentCard = ({ action, secondaryAction, id, appointment, n }) => {
     const navigate = useNavigate();
@@ -697,448 +698,398 @@ class AppointmentForm extends Form {
     }
 }
 
-const NewAppointment = withSettings(
-    withActions(
-        withForm(
-            ({
-                updateAppointment,
-                createAppointment,
-                appointments,
-                existingAppointment,
-                settings,
-                action,
-                id,
-                createAppointmentAction,
-                updateAppointmentAction,
-                openAppointmentsAction,
-                form: { valid, error, data, set, reset },
-            }) => {
-                let actionUrl = '';
+const NewAppointmentBase = ({
+    updateAppointment,
+    createAppointment,
+    appointments,
+    existingAppointment,
+    action,
+    id,
+    createAppointmentAction,
+    updateAppointmentAction,
+    openAppointmentsAction,
+    form: { valid, error, data, set, reset },
+}) => {
+    let actionUrl = '';
 
-                const navigate = useNavigate();
-                const { hash } = useLocation();
+    const navigate = useNavigate();
+    const { hash } = useLocation();
+    const settings = useSettings();
 
-                if (action !== undefined) actionUrl = `/${action}`;
-                if (id !== undefined) actionUrl += `/view/${id}`;
-                const [initialized, setInitialized] = useState(false);
-                const [saving, setSaving] = useState(false);
-                const cancel = () => navigate(`/provider/schedule${actionUrl}`);
+    if (action !== undefined) actionUrl = `/${action}`;
+    if (id !== undefined) actionUrl += `/view/${id}`;
+    const [initialized, setInitialized] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const cancel = () => navigate(`/provider/schedule${actionUrl}`);
 
-                let appointment;
+    let appointment;
 
-                if (id !== undefined)
-                    appointment = appointments.find(
-                        app => getHexId(app.id) === id
-                    );
+    if (id !== undefined)
+        appointment = appointments.find(app => getHexId(app.id) === id);
 
-                const save = () => {
-                    let action;
-                    setSaving(true);
-                    // we remove unnecessary fields like 'time' and 'date'
-                    delete data.time;
-                    delete data.date;
-                    if (appointment !== undefined)
-                        action = updateAppointmentAction;
-                    else action = createAppointmentAction;
-                    const promise = action(data, appointment);
-                    promise.finally(() => setSaving(false));
-                    promise.then(() => {
-                        // we reload the appointments
-                        openAppointmentsAction();
-                        // and we go back to the schedule view
-                        navigate(`/provider/schedule${actionUrl}`);
-                    });
-                };
+    const save = () => {
+        let action;
+        setSaving(true);
+        // we remove unnecessary fields like 'time' and 'date'
+        delete data.time;
+        delete data.date;
+        if (appointment !== undefined) action = updateAppointmentAction;
+        else action = createAppointmentAction;
+        const promise = action(data, appointment);
+        promise.finally(() => setSaving(false));
+        promise.then(() => {
+            // we reload the appointments
+            openAppointmentsAction();
+            // and we go back to the schedule view
+            navigate(`/provider/schedule${actionUrl}`);
+        });
+    };
 
-                useEffect(() => {
-                    if (initialized) return;
-                    setInitialized(true);
-                    if (appointment !== undefined) {
-                        const appointmentData = {
-                            time: formatTime(appointment.timestamp),
-                            date: formatDate(appointment.timestamp),
-                            slots: appointment.slots,
-                            duration: appointment.duration,
-                        };
-                        for (const [_, v] of Object.entries(properties)) {
-                            for (const [kk, _] of Object.entries(v.values)) {
-                                if (appointment[kk] !== undefined)
-                                    appointmentData[kk] = true;
-                                else delete appointmentData[kk];
-                            }
-                        }
-                        reset(appointmentData);
-                    } else {
-                        const newData = {
-                            duration: data.duration || 30,
-                            slots: data.slots || 1,
-                        };
+    useEffect(() => {
+        if (initialized) return;
+        setInitialized(true);
+        if (appointment !== undefined) {
+            const appointmentData = {
+                time: formatTime(appointment.timestamp),
+                date: formatDate(appointment.timestamp),
+                slots: appointment.slots,
+                duration: appointment.duration,
+            };
+            for (const [_, v] of Object.entries(properties)) {
+                for (const [kk, _] of Object.entries(v.values)) {
+                    if (appointment[kk] !== undefined)
+                        appointmentData[kk] = true;
+                    else delete appointmentData[kk];
+                }
+            }
+            reset(appointmentData);
+        } else {
+            const newData = {
+                duration: data.duration || 30,
+                slots: data.slots || 1,
+            };
 
-                        let firstProperty;
-                        let found = false;
-                        addProps: for (const [_, v] of Object.entries(
-                            properties
-                        )) {
-                            for (const [kk, _] of Object.entries(v.values)) {
-                                if (firstProperty === undefined)
-                                    firstProperty = kk;
-                                if (data[kk] !== undefined) {
-                                    found = true;
-                                    newData[kk] = true;
-                                    break addProps;
-                                }
-                            }
-                        }
-                        if (!found) newData[firstProperty] = true;
-
-                        if (hash?.timestamp !== undefined) {
-                            const date = new Date(hash.timestamp);
-                            newData.time = formatTime(date);
-                            newData.date = formatDate(date);
-                        }
-
-                        reset(newData);
+            let firstProperty;
+            let found = false;
+            addProps: for (const [_, v] of Object.entries(properties)) {
+                for (const [kk, _] of Object.entries(v.values)) {
+                    if (firstProperty === undefined) firstProperty = kk;
+                    if (data[kk] !== undefined) {
+                        found = true;
+                        newData[kk] = true;
+                        break addProps;
                     }
-                });
+                }
+            }
+            if (!found) newData[firstProperty] = true;
 
-                const properties = settings.get('appointmentProperties');
+            if (hash?.timestamp !== undefined) {
+                const date = new Date(hash.timestamp);
+                newData.time = formatTime(date);
+                newData.date = formatDate(date);
+            }
 
-                const apptProperties = Object.entries(properties).map(
-                    ([k, v]) => {
-                        const options = Object.entries(v.values).map(
-                            ([kv, vv]) => ({
-                                key: vv,
-                                title: (
-                                    <Trans id={`${k}.values.${kv}`}>{v}</Trans>
-                                ),
-                            })
-                        );
+            reset(newData);
+        }
+    });
 
-                        let currentOption;
+    const properties = settings.get('appointmentProperties');
 
-                        for (const [k, v] of Object.entries(data)) {
-                            for (const option of options) {
-                                if (k === option.value && v === true)
-                                    currentOption = k;
-                            }
-                        }
+    const apptProperties = Object.entries(properties).map(([k, v]) => {
+        const options = Object.entries(v.values).map(([kv, vv]) => ({
+            key: vv,
+            title: <Trans id={`${k}.values.${kv}`}>{v}</Trans>,
+        }));
 
-                        const changeTo = option => {
-                            const newData = { ...data };
-                            for (const option of options)
-                                newData[option.value] = undefined;
-                            newData[option.value] = true;
-                            reset(newData);
-                        };
+        let currentOption;
 
-                        return (
-                            <F key={k}>
-                                <h2>
-                                    <trans
-                                        values={properties}
-                                        id={`${k}.title`}
-                                    />
-                                </h2>
-                                <RichSelect
-                                    options={options}
-                                    value={currentOption}
-                                    onChange={option => changeTo(option)}
-                                />
-                            </F>
-                        );
+        for (const [k, v] of Object.entries(data)) {
+            for (const option of options) {
+                if (k === option.value && v === true) currentOption = k;
+            }
+        }
+
+        const changeTo = option => {
+            const newData = { ...data };
+            for (const option of options) newData[option.value] = undefined;
+            newData[option.value] = true;
+            reset(newData);
+        };
+
+        return (
+            <F key={k}>
+                <h2>
+                    <trans values={properties} id={`${k}.title`} />
+                </h2>
+                <RichSelect
+                    options={options}
+                    value={currentOption}
+                    onChange={option => changeTo(option)}
+                />
+            </F>
+        );
+    });
+
+    const durations = [
+        5,
+        10,
+        15,
+        20,
+        30,
+        45,
+        60,
+        90,
+        120,
+        150,
+        180,
+        210,
+        240,
+    ].map(duration => ({
+        title: (
+            <Trans id="schedule.appointment.duration.title">
+                Dauer: {duration} Minuten"
+            </Trans>
+        ),
+    }));
+
+    return (
+        <Modal
+            saveDisabled={!valid || saving}
+            cancelDisabled={saving}
+            closeDisabled={saving}
+            className="kip-new-appointment"
+            onSave={save}
+            waiting={saving}
+            onCancel={cancel}
+            onClose={cancel}
+            title={
+                <Trans
+                    id={
+                        appointment !== undefined
+                            ? 'edit-appointment.title'
+                            : 'new-appointment.title'
                     }
-                );
-
-                const durations = [
-                    5,
-                    10,
-                    15,
-                    20,
-                    30,
-                    45,
-                    60,
-                    90,
-                    120,
-                    150,
-                    180,
-                    210,
-                    240,
-                ].map(duration => ({
-                    title: (
-                        <Trans id="schedule.appointment.duration.title">
-                            Dauer: {duration} Minuten"
-                        </Trans>
-                    ),
-                }));
-
-                return (
-                    <Modal
-                        saveDisabled={!valid || saving}
-                        cancelDisabled={saving}
-                        closeDisabled={saving}
-                        className="kip-new-appointment"
-                        onSave={save}
-                        waiting={saving}
-                        onCancel={cancel}
-                        onClose={cancel}
-                        title={
-                            <Trans
-                                id={
-                                    appointment !== undefined
-                                        ? 'edit-appointment.title'
-                                        : 'new-appointment.title'
-                                }
-                            >
-                                {appointment !== undefined
-                                    ? 'Termin bearbeiten'
-                                    : 'Neuen Termin erstellen'}
+                >
+                    {appointment !== undefined
+                        ? 'Termin bearbeiten'
+                        : 'Neuen Termin erstellen'}
+                </Trans>
+            }
+        >
+            <FormComponent>
+                <FieldSet>
+                    <div className="kip-field">
+                        <Label htmlFor="date">
+                            <Trans id="new-appointment.date">Datum</Trans>
+                        </Label>
+                        <ErrorFor error={error} field="date" />
+                        <input
+                            value={data.date || ''}
+                            type="date"
+                            className="bulma-input"
+                            onChange={e => set('date', e.target.value)}
+                        />
+                    </div>
+                    <div className="kip-field">
+                        <Label htmlFor="time">
+                            <Trans id="new-appointment.time">Uhrzeit</Trans>
+                        </Label>
+                        <ErrorFor error={error} field="time" />
+                        <input
+                            type="time"
+                            className="bulma-input"
+                            value={data.time || ''}
+                            onChange={e => set('time', e.target.value)}
+                            step={60}
+                        />
+                    </div>
+                    <div className="kip-field kip-is-fullwidth kip-slider">
+                        <Label htmlFor="slots">
+                            <Trans id="new-appointment.slots">
+                                Anzahl Impfdosen
                             </Trans>
-                        }
-                    >
-                        <FormComponent>
-                            <FieldSet>
-                                <div className="kip-field">
-                                    <Label htmlFor="date">
-                                        <Trans id="new-appointment.date">
-                                            Datum
-                                        </Trans>
-                                    </Label>
-                                    <ErrorFor error={error} field="date" />
-                                    <input
-                                        value={data.date || ''}
-                                        type="date"
-                                        className="bulma-input"
-                                        onChange={e =>
-                                            set('date', e.target.value)
-                                        }
-                                    />
-                                </div>
-                                <div className="kip-field">
-                                    <Label htmlFor="time">
-                                        <Trans id="new-appointment.time">
-                                            Uhrzeit
-                                        </Trans>
-                                    </Label>
-                                    <ErrorFor error={error} field="time" />
-                                    <input
-                                        type="time"
-                                        className="bulma-input"
-                                        value={data.time || ''}
-                                        onChange={e =>
-                                            set('time', e.target.value)
-                                        }
-                                        step={60}
-                                    />
-                                </div>
-                                <div className="kip-field kip-is-fullwidth kip-slider">
-                                    <Label htmlFor="slots">
-                                        <Trans id="new-appointment.slots">
-                                            Anzahl Impfdosen
-                                        </Trans>
-                                    </Label>
-                                    <ErrorFor error={error} field="slots" />
-                                    <input
-                                        type="number"
-                                        className="bulma-input"
-                                        value={data.slots || 1}
-                                        onChange={e =>
-                                            set(
-                                                'slots',
-                                                parseInt(e.target.value)
-                                            )
-                                        }
-                                        step={1}
-                                        min={1}
-                                        max={50}
-                                    />
-                                </div>
-                                <div className="kip-field kip-is-fullwidth">
-                                    <RichSelect
-                                        id="duration"
-                                        value={data.duration || 30}
-                                        onChange={value =>
-                                            set('duration', value.value)
-                                        }
-                                        options={durations}
-                                    />
-                                </div>
+                        </Label>
+                        <ErrorFor error={error} field="slots" />
+                        <input
+                            type="number"
+                            className="bulma-input"
+                            value={data.slots || 1}
+                            onChange={e =>
+                                set('slots', parseInt(e.target.value))
+                            }
+                            step={1}
+                            min={1}
+                            max={50}
+                        />
+                    </div>
+                    <div className="kip-field kip-is-fullwidth">
+                        <RichSelect
+                            id="duration"
+                            value={data.duration || 30}
+                            onChange={value => set('duration', value.value)}
+                            options={durations}
+                        />
+                    </div>
 
-                                <div className="kip-field kip-is-fullwidth">
-                                    {apptProperties}
-                                </div>
-                            </FieldSet>
-                        </FormComponent>
-                    </Modal>
-                );
-            },
-            AppointmentForm,
-            'form'
-        )
-    ),
+                    <div className="kip-field kip-is-fullwidth">
+                        {apptProperties}
+                    </div>
+                </FieldSet>
+            </FormComponent>
+        </Modal>
+    );
+};
+
+const NewAppointment = withActions(
+    withForm(NewAppointmentBase, AppointmentForm, 'form'),
     [createAppointment, updateAppointment, openAppointments]
 );
 
-const Invitations = withTimer(
-    withSettings(
-        withActions(
-            ({
-                action,
-                secondaryAction,
-                id,
-                keys,
-                keysAction,
-                lastUpdated,
-                keyPairs,
-                timer,
-                settings,
-                keyPairsAction,
-                invitationQueues,
-                invitationQueuesAction,
-                openAppointments,
-                openAppointmentsAction,
-            }) => {
-                const [initialized, setInitialized] = useState(false);
-                const [view, setView] = useState('calendar');
+const InvitationsPage = ({
+    action,
+    secondaryAction,
+    id,
+    keys,
+    keysAction,
+    lastUpdated,
+    keyPairs,
+    timer,
+    keyPairsAction,
+    invitationQueues,
+    invitationQueuesAction,
+    openAppointments,
+    openAppointmentsAction,
+}) => {
+    const [initialized, setInitialized] = useState(false);
+    const [view, setView] = useState('calendar');
 
-                useEffect(() => {
-                    if (initialized) return;
-                    setInitialized(true);
-                    // we load all the necessary data
-                    keyPairsAction();
-                    openAppointmentsAction();
-                    keysAction();
-                });
+    useEffect(() => {
+        if (initialized) return;
+        setInitialized(true);
+        // we load all the necessary data
+        keyPairsAction();
+        openAppointmentsAction();
+        keysAction();
+    });
 
-                let startDate;
+    let startDate;
 
-                if (action !== undefined) {
-                    const result = /^(\d{4})-(\d{2})-(\d{2})$/.exec(action);
-                    if (result) {
-                        const [, year, month, day] = result;
-                        startDate = getMonday(
-                            new Date(
-                                Number(year),
-                                Number(month) - 1,
-                                Number(day)
-                            )
-                        );
-                    }
-                }
+    if (action !== undefined) {
+        const result = /^(\d{4})-(\d{2})-(\d{2})$/.exec(action);
+        if (result) {
+            const [, year, month, day] = result;
+            startDate = getMonday(
+                new Date(Number(year), Number(month) - 1, Number(day))
+            );
+        }
+    }
 
-                if (startDate === undefined) startDate = getMonday(new Date());
+    if (startDate === undefined) startDate = getMonday(new Date());
 
-                if (action === undefined) {
-                    action = formatDate(startDate);
-                }
+    if (action === undefined) {
+        action = formatDate(startDate);
+    }
 
-                const dateString = formatDate(startDate);
+    const dateString = formatDate(startDate);
 
-                const render = () => {
-                    let newAppointmentModal;
+    const render = () => {
+        let newAppointmentModal;
 
-                    let content;
-                    switch (view) {
-                        case 'calendar':
-                            content = (
-                                <WeekCalendar
-                                    startDate={startDate}
-                                    action={action}
-                                    secondaryAction={secondaryAction}
-                                    id={id}
-                                    appointments={openAppointments.enrichedData}
-                                />
-                            );
-                            break;
-                        case 'booking-list':
-                            content = (
-                                <AppointmentsList
-                                    startDate={startDate}
-                                    id={id}
-                                    action={action}
-                                    secondaryAction={secondaryAction}
-                                    appointments={openAppointments.enrichedData}
-                                />
-                            );
-                            break;
-                    }
-
-                    if (secondaryAction === 'new' || secondaryAction === 'edit')
-                        newAppointmentModal = (
-                            <NewAppointment
-                                appointments={openAppointments.data}
-                                action={action}
-                                id={id}
-                            />
-                        );
-
-                    return (
-                        <div className="kip-schedule">
-                            <CardContent>
-                                <div className="kip-non-printable">
-                                    {newAppointmentModal}
-                                    <Button
-                                        href={`/provider/schedule/${dateString}/new`}
-                                    >
-                                        <Trans id="schedule.appointment.add">
-                                            Termin erstellen
-                                        </Trans>
-                                    </Button>
-                                    &nbsp;
-                                    <DropdownMenu
-                                        title={
-                                            <F>
-                                                <Icon icon="calendar" />{' '}
-                                                <Trans
-                                                    id={scheduleMessages[view]}
-                                                />
-                                            </F>
-                                        }
-                                    >
-                                        <DropdownMenuItem
-                                            icon="calendar"
-                                            onClick={() => setView('calendar')}
-                                        >
-                                            <Trans id="schedule.calendar">
-                                                Kalenderansicht
-                                            </Trans>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            icon="list"
-                                            onClick={() =>
-                                                setView('booking-list')
-                                            }
-                                        >
-                                            <Trans id="schedule.booking-list">
-                                                Buchungliste
-                                            </Trans>
-                                        </DropdownMenuItem>
-                                    </DropdownMenu>
-                                    <hr />
-                                </div>
-                                {content}
-                            </CardContent>
-                            <Message type="info" waiting>
-                                <Trans id="schedule.updating">
-                                    Ansicht wird automatisch aktualisiert.
-                                    Letzte Aktualisierung: {lastUpdated}
-                                </Trans>
-                            </Message>
-                        </div>
-                    );
-                };
-
-                // we wait until all resources have been loaded before we display the form
-                return (
-                    <WithLoader
-                        resources={[keyPairs, openAppointments]}
-                        renderLoaded={render}
+        let content;
+        switch (view) {
+            case 'calendar':
+                content = (
+                    <WeekCalendar
+                        startDate={startDate}
+                        action={action}
+                        secondaryAction={secondaryAction}
+                        id={id}
+                        appointments={openAppointments.enrichedData}
                     />
                 );
-            },
-            [keys, keyPairs, openAppointments]
-        )
-    ),
+                break;
+            case 'booking-list':
+                content = (
+                    <AppointmentsList
+                        startDate={startDate}
+                        id={id}
+                        action={action}
+                        secondaryAction={secondaryAction}
+                        appointments={openAppointments.enrichedData}
+                    />
+                );
+                break;
+        }
+
+        if (secondaryAction === 'new' || secondaryAction === 'edit')
+            newAppointmentModal = (
+                <NewAppointment
+                    appointments={openAppointments.data}
+                    action={action}
+                    id={id}
+                />
+            );
+
+        return (
+            <div className="kip-schedule">
+                <CardContent>
+                    <div className="kip-non-printable">
+                        {newAppointmentModal}
+                        <Button href={`/provider/schedule/${dateString}/new`}>
+                            <Trans id="schedule.appointment.add">
+                                Termin erstellen
+                            </Trans>
+                        </Button>
+                        &nbsp;
+                        <DropdownMenu
+                            title={
+                                <F>
+                                    <Icon icon="calendar" />{' '}
+                                    <Trans id={scheduleMessages[view]} />
+                                </F>
+                            }
+                        >
+                            <DropdownMenuItem
+                                icon="calendar"
+                                onClick={() => setView('calendar')}
+                            >
+                                <Trans id="schedule.calendar">
+                                    Kalenderansicht
+                                </Trans>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                icon="list"
+                                onClick={() => setView('booking-list')}
+                            >
+                                <Trans id="schedule.booking-list">
+                                    Buchungliste
+                                </Trans>
+                            </DropdownMenuItem>
+                        </DropdownMenu>
+                        <hr />
+                    </div>
+                    {content}
+                </CardContent>
+                <Message type="info" waiting>
+                    <Trans id="schedule.updating">
+                        Ansicht wird automatisch aktualisiert. Letzte
+                        Aktualisierung: {lastUpdated}
+                    </Trans>
+                </Message>
+            </div>
+        );
+    };
+
+    // we wait until all resources have been loaded before we display the form
+    return (
+        <WithLoader
+            resources={[keyPairs, openAppointments]}
+            renderLoaded={render}
+        />
+    );
+};
+
+export default withTimer(
+    withActions(InvitationsPage, [keys, keyPairs, openAppointments]),
     2000
 );
-
-export default Invitations;

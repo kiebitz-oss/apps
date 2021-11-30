@@ -1,0 +1,19 @@
+{
+    "editor.quickSuggestions": {
+        "strings": true
+    },
+
+    "css.validate": false, // Disable css built-in lint
+    "scss.validate": false,
+    "stylelint.enable": true, // Enable sytlelint
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": [
+        "source.addMissingImports",
+        // "source.organizeImports",
+        "source.fixAll"
+    ],
+    "editor.guides.bracketPairs": true,
+    "files.exclude": {
+        "node_module": true
+    }
+}

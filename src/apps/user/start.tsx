@@ -3,18 +3,18 @@
 // README.md contains license information.
 
 import React, { useEffect } from 'react';
-import { CenteredCard, CardContent, A, withSettings } from 'components';
+import { CenteredCard, CardContent, A } from 'components';
 import { Trans } from '@lingui/macro';
 import { useNavigate } from 'react-router';
+import { useBackend } from 'hooks';
 
 // styles are in 'apps/provider/start.scss'
 
-const Start = withSettings(({ settings }) => {
+const StartPage: React.FC = () => {
     const navigate = useNavigate();
+    const backend = useBackend();
 
     useEffect(() => {
-        const backend = settings.get('backend');
-
         if (backend.local.get('user::tokenData') !== null)
             navigate('/user/appointments');
     });
@@ -41,6 +41,6 @@ const Start = withSettings(({ settings }) => {
             </CardContent>
         </CenteredCard>
     );
-});
+};
 
-export default Start;
+export default StartPage;

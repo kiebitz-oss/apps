@@ -50,7 +50,7 @@ pendingProviders.actionName = 'pendingProviders';
 async function providers(state, keyStore, settings, keyPairs, loader) {
     markAsLoading(state, keyStore);
     try {
-        const providersList = await loader({ n: 10 }, keyPairs.signing);
+        const providersList = await loader({ n: 10 }, keyPairs?.signing);
         const invalidEntries = [];
         const decryptedProviderList = [];
         for (const entry of providersList) {

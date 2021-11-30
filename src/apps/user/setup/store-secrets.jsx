@@ -7,7 +7,6 @@ import { b642buf } from 'helpers/conversion';
 import {
     Modal,
     withActions,
-    withSettings,
     Message,
     Switch,
     CardContent,
@@ -20,7 +19,7 @@ import { userSecret } from 'apps/user/actions';
 import { Trans } from '@lingui/macro';
 import './store-secrets.scss';
 
-export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
+export const StoreOnline = ({ secret, embedded, hideNotice }) => {
     const [bookmarkModal, setBookmarkModal] = useState(false);
     const [copyModal, setCopyModal] = useState(false);
 
@@ -29,7 +28,10 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     const showBookmarkModal = () => {
         history.pushState(
             {},
-            t({ id: 'store-secrets.restore.title', message: 'store-secrets.restore.title MISSING' }),
+            t({
+                id: 'store-secrets.restore.title',
+                message: 'store-secrets.restore.title MISSING',
+            }),
             `/user/restore#${secret},v0.1`
         );
         setBookmarkModal(true);
@@ -43,13 +45,17 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     if (bookmarkModal)
         modal = (
             <Modal
-                title={<Trans id="store-secrets.bookmark-modal.title">
-                    Lesezeichen erstellen
-                </Trans>}
+                title={
+                    <Trans id="store-secrets.bookmark-modal.title">
+                        Lesezeichen erstellen
+                    </Trans>
+                }
                 onClose={hideBookmarkModal}
             >
                 <Trans id="store-secrets.bookmark-modal.text">
-                    Nutze Dein Browser-Menü um ein Lesezeichen für diese Seite zu erstellen. Du kannst dieses Lesezeichen öffnen, um Deinen Sicherheitscode wiederherzustellen.
+                    Nutze Dein Browser-Menü um ein Lesezeichen für diese Seite
+                    zu erstellen. Du kannst dieses Lesezeichen öffnen, um Deinen
+                    Sicherheitscode wiederherzustellen.
                 </Trans>
             </Modal>
         );
@@ -68,12 +74,24 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     }
 
     return (
-        <F>
+        <>
             {modal}
             {!embedded && (
                 <p className="kip-secrets-notice">
                     <Trans id="store-secrets.online.text" safe>
-                        Bitte notiere Dir Deinen vertraulichen Sicherheitscode. Alternativ kannst Du auch ein Bildschirmfoto machen. Bitte beachte, dass Dir der Code NICHT per E-Mail geschickt wird und er von uns auch NICHT wiederhergestellt werden kann.<br/><br/><b>Du benötigst den Code, wenn Du Dich auf einem anderen Endgerät (Tablet, Smartphone, Laptop etc.) einloggen und Deinen gebuchten Termin einsehen oder ändern willst.</b>
+                        Bitte notiere Dir Deinen vertraulichen Sicherheitscode.
+                        Alternativ kannst Du auch ein Bildschirmfoto machen.
+                        Bitte beachte, dass Dir der Code NICHT per E-Mail
+                        geschickt wird und er von uns auch NICHT
+                        wiederhergestellt werden kann.
+                        <br />
+                        <br />
+                        <b>
+                            Du benötigst den Code, wenn Du Dich auf einem
+                            anderen Endgerät (Tablet, Smartphone, Laptop etc.)
+                            einloggen und Deinen gebuchten Termin einsehen oder
+                            ändern willst.
+                        </b>
                     </Trans>
                 </p>
             )}
@@ -109,7 +127,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
                     </A>
                 </div>
             )}
-        </F>
+        </>
     );
 };
 
@@ -121,7 +139,9 @@ const StoreLocal = ({ data }) => {
     return (
         <F>
             <p className="kip-secrets-notice">
-                <Trans id="store-secrets.local.text">store-secrects.local.text MISSING</Trans>
+                <Trans id="store-secrets.local.text">
+                    store-secrects.local.text MISSING
+                </Trans>
             </p>
             <a
                 className="bulma-button"
@@ -134,44 +154,31 @@ const StoreLocal = ({ data }) => {
     );
 };
 
-export default withActions(
-    withSettings(({ settings, userSecret }) => {
-        const [url, setUrl] = useState(null);
-        const [tab, setTab] = useState('online');
+const StoreSecretPage = ({ userSecret }) => {
+    const [url, setUrl] = useState(null);
+    const [tab, setTab] = useState('online');
 
-        let content;
+    let content;
 
-        switch (tab) {
-            case 'online':
-                content = (
-                    <StoreOnline settings={settings} secret={userSecret.data} />
-                );
-                break;
-            case 'local':
-                content = <StoreLocal settings={settings} data={'data'} />;
-                break;
-        }
+    switch (tab) {
+        case 'online':
+            content = <StoreOnline secret={userSecret.data} />;
+            break;
+        case 'local':
+            content = <StoreLocal data={'data'} />;
+            break;
+    }
 
-        return (
-            <F>
-                <CardContent className="kip-secrets">{content}</CardContent>
-                <CardFooter>
-                    <Button type="success" href={`/user/appointments`}>
-                        <Trans id="wizard.leave">Zu den verfügbaren Terminen</Trans>
-                    </Button>
-                </CardFooter>
-            </F>
-        );
-    }),
-    [userSecret]
-);
+    return (
+        <>
+            <CardContent className="kip-secrets">{content}</CardContent>
+            <CardFooter>
+                <Button type="success" href={`/user/appointments`}>
+                    <Trans id="wizard.leave">Zu den verfügbaren Terminen</Trans>
+                </Button>
+            </CardFooter>
+        </>
+    );
+};
 
-/*
-    <Switch
-        onChange={() =>
-            setTab(tab === 'online' ? 'local' : 'online')
-        }
-    >
-        <Trans id={`store-secrets.${tab}.title`} />
-    </Switch>
-*/
+export default withActions(StoreSecretPage, [userSecret]);

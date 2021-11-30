@@ -4,26 +4,35 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withSettings } from './settings';
-
 import { Message } from './message';
 import { CenteredCard } from './card';
 import { A } from './a';
 import { Trans } from '@lingui/macro';
+import { useSettings } from 'hooks';
 
-const BaseDefaultErrorMessage = ({ settings }) => (
-    <CenteredCard>
-        <Message type="danger">
-            <Trans id="errorBoundary.somethingWentWrong">
-                Es tut uns schrecklich leid aber es ist ein unerwarteter Fehler passiert. Bitte 
-                <A href={`mailto:${settings.get(['supportEmail'])}`} external>kontaktieren Sie uns zur Behebung</A>.
-            </Trans>
-            {' '}
-        </Message>
-    </CenteredCard>
-);
+const BaseDefaultErrorMessage = () => {
+    const settings = useSettings();
 
-export const DefaultErrorMessage = withSettings(BaseDefaultErrorMessage);
+    return (
+        <CenteredCard>
+            <Message type="danger">
+                <Trans id="errorBoundary.somethingWentWrong">
+                    Es tut uns schrecklich leid aber es ist ein unerwarteter
+                    Fehler passiert. Bitte
+                    <A
+                        href={`mailto:${settings.get(['supportEmail'])}`}
+                        external
+                    >
+                        kontaktieren Sie uns zur Behebung
+                    </A>
+                    .
+                </Trans>
+            </Message>
+        </CenteredCard>
+    );
+};
+
+export const DefaultErrorMessage = BaseDefaultErrorMessage;
 
 /**
  * An error boundary for main content. It will try to recover when the router's

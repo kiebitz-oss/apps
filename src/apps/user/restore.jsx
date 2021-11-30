@@ -5,7 +5,6 @@
 import React, { useEffect, useState } from 'react';
 import {
     withActions,
-    withSettings,
     withForm,
     CenteredCard,
     Button,
@@ -43,87 +42,78 @@ class LoadBackupForm extends Form {
     }
 }
 
+const RestorePage = ({
+    form: { set, data, error, valid, reset },
+    restoreFromBackup,
+    restoreFromBackupAction,
+}) => {
+    const [restoring, setRestoring] = useState(false);
+    const navigate = useNavigate();
+
+    const restore = () => {
+        setRestoring(true);
+        restoreFromBackupAction(data.secret).then(data => {
+            setRestoring(false);
+            if (data.status === 'succeeded') navigate('/user/appointments');
+        });
+    };
+
+    let notice;
+    if (restoreFromBackup?.status === 'failed')
+        notice = (
+            <Message type="danger">
+                <Trans id="load-backup.failed">
+                    Das Laden Deiner Daten ist leider fehlgeschlagen. Bitte
+                    prüfe Deinen Sicherheitscode.
+                </Trans>
+            </Message>
+        );
+
+    return (
+        <CenteredCard className="kip-user-restore-from-backup">
+            <CardHeader>
+                <h1 className="bulma-subtitle">
+                    <Trans id="load-backup.title">Anmelden</Trans>
+                </h1>
+            </CardHeader>
+            <CardContent>
+                {notice}
+                <FormComponent>
+                    <FieldSet>
+                        <RetractingLabelInput
+                            id="secret"
+                            value={formatSecret(data.secret || '')}
+                            onChange={value => set('secret', value)}
+                            label={
+                                <Trans id="load-backup.secret.label">
+                                    Sicherheitscode
+                                </Trans>
+                            }
+                            description={
+                                <Trans id="load-backup.secret.description">
+                                    Der Sicherheitscode, den Du bei der
+                                    Registrierung erhalten hast.
+                                </Trans>
+                            }
+                        />
+                    </FieldSet>
+                </FormComponent>
+            </CardContent>
+            <CardFooter>
+                <Button
+                    onClick={restore}
+                    type="success"
+                    disabled={!valid || restoring}
+                >
+                    <Trans id="load-backup.load">Anmelden</Trans>
+                </Button>
+            </CardFooter>
+        </CenteredCard>
+    );
+};
+
 export default withForm(
-    withActions(
-        ({
-            form: { set, data, error, valid, reset },
-            restoreFromBackup,
-            restoreFromBackupAction,
-        }) => {
-            const [initialized, setInitialized] = useState(false);
-            const [restoring, setRestoring] = useState(false);
-            const navigate = useNavigate();
-
-            useEffect(() => {
-                if (initialized) return;
-                setInitialized(true);
-            });
-
-            const restore = () => {
-                setRestoring(true);
-                restoreFromBackupAction(data.secret).then(data => {
-                    setRestoring(false);
-                    if (data.status === 'succeeded')
-                        navigate('/user/appointments');
-                });
-            };
-
-            let notice;
-            if (restoreFromBackup?.status === 'failed')
-                notice = (
-                    <Message type="danger">
-                        <Trans id="load-backup.failed">
-                            Das Laden Deiner Daten ist leider fehlgeschlagen.
-                            Bitte prüfe Deinen Sicherheitscode.
-                        </Trans>
-                    </Message>
-                );
-
-            return (
-                <CenteredCard className="kip-user-restore-from-backup">
-                    <CardHeader>
-                        <h1 className="bulma-subtitle">
-                            <Trans id="load-backup.title">Anmelden</Trans>
-                        </h1>
-                    </CardHeader>
-                    <CardContent>
-                        {notice}
-                        <FormComponent>
-                            <FieldSet>
-                                <RetractingLabelInput
-                                    id="secret"
-                                    value={formatSecret(data.secret || '')}
-                                    onChange={value => set('secret', value)}
-                                    label={
-                                        <Trans id="load-backup.secret.label">
-                                            Sicherheitscode
-                                        </Trans>
-                                    }
-                                    description={
-                                        <Trans id="load-backup.secret.description">
-                                            Der Sicherheitscode, den Du bei der
-                                            Registrierung erhalten hast.
-                                        </Trans>
-                                    }
-                                />
-                            </FieldSet>
-                        </FormComponent>
-                    </CardContent>
-                    <CardFooter>
-                        <Button
-                            onClick={restore}
-                            type="success"
-                            disabled={!valid || restoring}
-                        >
-                            <Trans id="load-backup.load">Anmelden</Trans>
-                        </Button>
-                    </CardFooter>
-                </CenteredCard>
-            );
-        },
-
-        [restoreFromBackup]
-    ),
+    withActions(RestorePage, [restoreFromBackup]),
     LoadBackupForm,
     'form'
 );

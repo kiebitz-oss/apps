@@ -4,7 +4,6 @@
 
 import React from 'react';
 import {
-    withSettings,
     Message,
     CenteredCard,
     CardHeader,
@@ -17,7 +16,7 @@ import {
 import { Trans } from '@lingui/macro';
 import './logged-out.scss';
 
-export default withSettings(({ settings }) => (
+const LoggedOutPage = () => (
     <CenteredCard className="kip-logged-out">
         <CardHeader>
             <h1 className="bulma-subtitle">
@@ -27,7 +26,9 @@ export default withSettings(({ settings }) => (
         <CardContent>
             <Message type="success">
                 <Trans id="logged-out.notice">
-                     Du wurdest erfolgreich abgemeldet. Du kannst dich jederzeit wieder mit deinem Sicherheitscode anmelden um deine Termine zu prüfen.
+                    Du wurdest erfolgreich abgemeldet. Du kannst dich jederzeit
+                    wieder mit deinem Sicherheitscode anmelden um deine Termine
+                    zu prüfen.
                 </Trans>
             </Message>
         </CardContent>
@@ -37,4 +38,6 @@ export default withSettings(({ settings }) => (
             </Button>
         </CardFooter>
     </CenteredCard>
-));
+);
+
+export default LoggedOutPage;

@@ -9,7 +9,6 @@ import Providers from './providers';
 import Stats from './stats';
 
 import {
-    withSettings,
     withActions,
     Tabs,
     Tab,
@@ -99,108 +98,94 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
     );
 };
 
-const Dashboard = withActions(
-    withSettings(
-        ({
-            settings,
-            keyPairs,
-            keyPairsAction,
-            validKeyPairs,
-            validKeyPairsAction,
-        }) => {
-            const [key, setKey] = useState(false);
-            const [validKey, setValidKey] = useState(false);
-            const { tab, action, secondaryAction, id } = useParams();
+const DashboardPage = ({
+    keyPairs,
+    keyPairsAction,
+    validKeyPairs,
+    validKeyPairsAction,
+}) => {
+    const [key, setKey] = useState(false);
+    const [validKey, setValidKey] = useState(false);
+    const { tab, action, secondaryAction, id } = useParams();
 
-            useEffect(() => {
-                if (!key) {
-                    setKey(true);
-                    keyPairsAction();
-                }
-                if (!validKey && keyPairs !== undefined) {
-                    setValidKey(true);
-                    validKeyPairsAction(keyPairs);
-                }
-            });
-
-            let content, modal;
-
-            if (keyPairs !== undefined && keyPairs.data === null) {
-                modal = <UploadKeyPairsModal keyPairsAction={keyPairsAction} />;
-            }
-
-            if (keyPairs !== undefined) {
-                switch (tab) {
-                    case 'settings':
-                        content = (
-                            <Settings
-                                action={action}
-                                secondaryAction={secondaryAction}
-                                id={id}
-                            />
-                        );
-                        break;
-                    
-                    case 'stats':
-                        content = (
-                            <Stats
-                                action={action}
-                                secondaryAction={secondaryAction}
-                                id={id}
-                            />
-                        );
-                        break;
-
-                    default: 
-                    case 'providers':
-                        content = (
-                            <Providers action={action} id={secondaryAction} />
-                        );
-                        break;
-                }
-            }
-
-            let invalidKeyMessage;
-
-            if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
-                invalidKeyMessage = (
-                    <Message type="danger">
-                        <Trans id="invalidKey">invalidKey MISSING</Trans>
-                    </Message>
-                );
-            }
-
-            return (
-                <CenteredCard size="fullwidth" tight>
-                    <CardHeader>
-                        <Tabs>
-                            <Tab
-                                active={tab === 'providers'}
-                                href="/mediator/providers"
-                            >
-                                <Trans id="providers.title">Anbieter</Trans>
-                            </Tab>
-                            <Tab
-                                active={tab === 'stats'}
-                                href="/mediator/stats"
-                            >
-                                <Trans id="stats.title">Statistiken</Trans>
-                            </Tab>
-                            <Tab
-                                active={tab === 'settings'}
-                                href="/mediator/settings"
-                            >
-                                <Trans id="settings.title">Einstellungen</Trans>
-                            </Tab>
-                        </Tabs>
-                    </CardHeader>
-                    {modal}
-                    {content}
-                </CenteredCard>
-            );
+    useEffect(() => {
+        if (!key) {
+            setKey(true);
+            keyPairsAction();
         }
-    ),
-    [keyPairs, validKeyPairs]
-);
+        if (!validKey && keyPairs !== undefined) {
+            setValidKey(true);
+            validKeyPairsAction(keyPairs);
+        }
+    });
 
-export default Dashboard;
+    let content, modal;
+
+    if (keyPairs !== undefined && keyPairs.data === null) {
+        modal = <UploadKeyPairsModal keyPairsAction={keyPairsAction} />;
+    }
+
+    if (keyPairs !== undefined) {
+        switch (tab) {
+            case 'settings':
+                content = (
+                    <Settings
+                        action={action}
+                        secondaryAction={secondaryAction}
+                        id={id}
+                    />
+                );
+                break;
+
+            case 'stats':
+                content = (
+                    <Stats
+                        action={action}
+                        secondaryAction={secondaryAction}
+                        id={id}
+                    />
+                );
+                break;
+
+            default:
+            case 'providers':
+                content = <Providers action={action} id={secondaryAction} />;
+                break;
+        }
+    }
+
+    let invalidKeyMessage;
+
+    if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
+        invalidKeyMessage = (
+            <Message type="danger">
+                <Trans id="invalidKey">invalidKey MISSING</Trans>
+            </Message>
+        );
+    }
+
+    return (
+        <CenteredCard size="fullwidth" tight>
+            <CardHeader>
+                <Tabs>
+                    <Tab
+                        active={tab === 'providers'}
+                        href="/mediator/providers"
+                    >
+                        <Trans id="providers.title">Anbieter</Trans>
+                    </Tab>
+                    <Tab active={tab === 'stats'} href="/mediator/stats">
+                        <Trans id="stats.title">Statistiken</Trans>
+                    </Tab>
+                    <Tab active={tab === 'settings'} href="/mediator/settings">
+                        <Trans id="settings.title">Einstellungen</Trans>
+                    </Tab>
+                </Tabs>
+            </CardHeader>
+            {modal}
+            {content}
+        </CenteredCard>
+    );
+};
+
+export default withActions(DashboardPage, [keyPairs, validKeyPairs]);

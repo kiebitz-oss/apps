@@ -27,7 +27,7 @@ class ContactDataForm extends Form {
     }
 }
 
-const BaseContactData = ({
+const ContactDataBase = ({
     contactDataAction,
     form: { set, data, error, valid, reset },
 }) => {
@@ -64,10 +64,15 @@ const BaseContactData = ({
                 onChange={value => setAndMarkModified('code', value)}
                 description={
                     <Trans id="contact-data.access-code.description">
-                        Zugangscodes sind nur für bestimmte Impfstellen notwendig. Wenn kein Zugangscode vorliegt, leer lassen.
+                        Zugangscodes sind nur für bestimmte Impfstellen
+                        notwendig. Wenn kein Zugangscode vorliegt, leer lassen.
                     </Trans>
                 }
-                label={<Trans id="contact-data.access-code.label">Zugangscode</Trans>}
+                label={
+                    <Trans id="contact-data.access-code.label">
+                        Zugangscode
+                    </Trans>
+                }
             />
         </React.Fragment>
     );
@@ -90,11 +95,17 @@ const BaseContactData = ({
                                         waiting={submitting || redirecting}
                                         title={
                                             redirecting ? (
-                                                <Trans id="contact-data.success">contact-data.success MISSING</Trans>
+                                                <Trans id="contact-data.success">
+                                                    contact-data.success MISSING
+                                                </Trans>
                                             ) : submitting ? (
-                                                <Trans id="contact-data.saving">contact-data.saving MISSING</Trans>
+                                                <Trans id="contact-data.saving">
+                                                    contact-data.saving MISSING
+                                                </Trans>
                                             ) : (
-                                                <Trans id='contact-data.save-and-continue'>Weiter</Trans>
+                                                <Trans id="contact-data.save-and-continue">
+                                                    Weiter
+                                                </Trans>
                                             )
                                         }
                                     />
@@ -108,9 +119,6 @@ const BaseContactData = ({
     );
 };
 
-const ContactData = withActions(
-    withForm(BaseContactData, ContactDataForm, 'form'),
-    [contactData]
-);
-
-export default ContactData;
+export default withActions(withForm(ContactDataBase, ContactDataForm, 'form'), [
+    contactData,
+]);

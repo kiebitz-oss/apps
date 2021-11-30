@@ -110,7 +110,8 @@ const prepareHourlyStats = (hourlyStats, settings) => {
     series.forEach((v, k) =>
         titles.push(
             v.map((vv, i) =>
-                i18n._( vv === 1 ? `titles.${k}One` : `titles.${k}`, { values: {
+                i18n._(vv === 1 ? `titles.${k}One` : `titles.${k}`, {
+                    values: {
                         n: vv,
                         from: dates[i].toLocaleString('en-US', opts),
                         to:
@@ -120,21 +121,22 @@ const prepareHourlyStats = (hourlyStats, settings) => {
                                       timeOpts
                                   )
                                 : datesTo[i].toLocaleString('en-US', opts),
-                    }})
-                    
+                    },
+                })
             )
         )
     );
     dates.forEach((date, i) =>
         refTitles.push(
-            i18n._('refTitle', { values: {
+            i18n._('refTitle', {
+                values: {
                     from: dates[i].toLocaleString('en-US', opts),
                     to:
                         datesTo[i].getDate() === dates[i].getDate()
                             ? datesTo[i].toLocaleTimeString('en-US', timeOpts)
                             : datesTo[i].toLocaleString('en-US', opts),
-                }})
-                
+                },
+            })
         )
     );
     return {
@@ -191,7 +193,23 @@ class Stats extends React.Component {
                     <div className="bulma-column bulma-is-full-desktop">
                         <Card size="fullwidth" flex>
                             <CardContent>
-                                <Trans id="dateSpan">Zeige Daten von <strong>{new Date(summary.from).toLocaleString('en-US', opts)}</strong> bis <strong>{new Date(summary.to).toLocaleString('en-US', opts)}</strong>.</Trans>
+                                <Trans id="dateSpan">
+                                    Zeige Daten von{' '}
+                                    <strong>
+                                        {new Date(summary.from).toLocaleString(
+                                            'en-US',
+                                            opts
+                                        )}
+                                    </strong>{' '}
+                                    bis{' '}
+                                    <strong>
+                                        {new Date(summary.to).toLocaleString(
+                                            'en-US',
+                                            opts
+                                        )}
+                                    </strong>
+                                    .
+                                </Trans>
                             </CardContent>
                         </Card>
                     </div>
