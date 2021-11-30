@@ -40,8 +40,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
             if (
                 json.signing === undefined ||
                 json.encryption === undefined ||
-                json.provider === undefined ||
-                json.queue === undefined
+                json.provider === undefined
             )
                 setInvalidFile(true);
             else keyPairsAction(json);
