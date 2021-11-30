@@ -4,6 +4,7 @@
 
 import BaseActions from 'actions/base';
 import { Trans } from '@lingui/macro';
+import { i18n } from '@lingui/core';
 
 export default class Settings extends BaseActions {
     static get defaultKey() {
@@ -69,7 +70,7 @@ export default class Settings extends BaseActions {
             xhr.onerror = () => {
                 reject({
                     status: xhr.status,
-                    message: xhr.statusText || settings.t(t, 'requestFailed'),
+                    message: xhr.statusText || i18n._('requestFailed', {}, { defaults: 'requestFailed MISSING' }),
                     errors: {},
                 });
             };

@@ -423,7 +423,7 @@ const InvitationDetails = withSettings(
                                 })}
                             </td>
                             <td>
-                                {formatDuration(offer.duration, settings, t)}
+                                {formatDuration(offer.duration)}
                             </td>
                             <td>
                                 <PropertyTags appointment={offer} />

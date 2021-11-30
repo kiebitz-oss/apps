@@ -654,10 +654,9 @@ class AppointmentForm extends Form {
                 this.data.timestamp >
                 new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
             )
-                errors.date = this.settings.t(
-                    t,
-                    'new-appointment.too-far-in-the-future'
-                );
+                errors.date = i18n._('new-appointment.too-far-in-the-future', {}, {
+                    defaults: 'Bitte wählen Sie Termine die maximal 30 Tage in der Zukunft liegen'
+                });
         }
         if (this.data.slots > 50) {
             errors.slots = i18n._('new-appointment.too-many-slots');

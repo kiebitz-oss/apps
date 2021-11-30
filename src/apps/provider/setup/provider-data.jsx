@@ -22,13 +22,16 @@ import {
     Button,
 } from 'components';
 import { Trans } from '@lingui/macro';
+import { i18n } from '@lingui/core';
 import './provider-data.scss';
 
 class ProviderDataForm extends Form {
     validate() {
         const errors = {};
         if (!this.data.name || this.data.name.length < 2)
-            errors.name = this.settings.t(t, 'provider-data.invalid-name');
+            errors.name = i18n._('provider-data.invalid-name', {}, {
+                defaults: 'Bitte gegen Sie einen gültigen Namen an'
+            });
         return errors;
     }
 }
