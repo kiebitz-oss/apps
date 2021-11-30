@@ -16,7 +16,7 @@ import {
     A,
 } from 'components';
 import { userSecret } from 'apps/user/actions';
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import './store-secrets.scss';
 
 export const StoreOnline = ({ secret, embedded, hideNotice }) => {
