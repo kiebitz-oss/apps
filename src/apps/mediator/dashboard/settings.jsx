@@ -55,16 +55,22 @@ const TestQueuesModal = withRouter(
             if (status === 'invalid')
                 notice = (
                     <Message type="danger">
-                        <Trans id="upload-queues.invalid-file" />
+                        <Trans id="upload-queues.invalid-file">
+                            Die erzeugten Queue-Schlüssel sind nicht korrekt und können mit Ihrem Vermittler-Schlüssel nicht entschlüsselt werden.
+                        </Trans>
                     </Message>
                 );
             else if (status === 'valid')
                 notice = (
                     <Message type="success">
-                        <Trans id="upload-queues.valid-file" />
+                        <Trans id="upload-queues.valid-file">
+                            Die erzeugten Queue-Schlüssel sind korrekt und können mit Ihrem Vermittler-Schlüssel entschlüsselt werden.
+                        </Trans>
                     </Message>
                 );
-            else notice = <Trans id="upload-queues.notice" />;
+            else notice = <Trans id="upload-queues.notice">
+                Bitte laden Sie die Queues-Datei, die mit dem "kiebitz" Kommando erstellt wurde. Die Datei wird dann auf Korrektheit geprüft.
+            </Trans>;
 
             const footer = (
                 <Form>
@@ -73,7 +79,7 @@ const TestQueuesModal = withRouter(
                             htmlFor="file-upload"
                             className="custom-file-upload"
                         >
-                            <Trans id="upload-queues.input" />
+                            <Trans id="upload-queues.input">Datei wählen</Trans>
                             <input
                                 id="file-upload"
                                 disabled={
@@ -93,7 +99,7 @@ const TestQueuesModal = withRouter(
                     footer={footer}
                     onClose={() => router.navigateToUrl('/mediator/settings')}
                     className="kip-upload-file"
-                    title={<Trans id="upload-queues.title" />}
+                    title={<Trans id="upload-queues.title">Queues-Datei laden</Trans>}
                 >
                     {notice}
                 </Modal>
@@ -142,21 +148,20 @@ const BaseSettings = ({
         modal = (
             <Modal
                 onClose={cancel}
-                save={<Trans id="log-out" />}
+                save={<Trans id="log-out">Abmelden</Trans>}
                 disabled={loggingOut}
                 waiting={loggingOut}
-                title={<Trans id="log-out-modal.title" />}
+                title={<Trans id="log-out-modal.title">Abmelden</Trans>}
                 onCancel={cancel}
                 onSave={logOut}
                 saveType="warning"
             >
                 <p>
-                    <Trans id={
+                    {
                         loggingOut
-                            ? 'log-out-modal.logging-out'
-                            : 'log-out-modal.text'
-                        }
-                    />
+                            ? <Trans id='log-out-modal.logging-out'>log-out-modal.logging-out MISSING</Trans>
+                            : <Trans id='log-out-modal.text'>log-out-modal.text MISSING</Trans>
+                    }
                 </p>
             </Modal>
         );
@@ -168,17 +173,19 @@ const BaseSettings = ({
             <CardContent>
                 <div className="kip-mediator-settings">
                     <h2>
-                        <Trans id="test-queues.title" />
+                        <Trans id="test-queues.title">Queue-Datei testen</Trans>
                     </h2>
                     <p>
-                        <Trans id="test-queues.text" />
+                        <Trans id="test-queues.text">
+                            Hier können Sie Queues-Dateien testen, die Sie mit dem "kiebitz" Tool erstellt haben. Hierdurch können Sie sicherstellen, dass die Dateien korrekt sind, bevor Sie diese in ein Backend hochladen.
+                        </Trans>
                     </p>
                     <div className="kip-buttons">
                         <Button
                             type="success"
                             href="/mediator/settings/test-queues"
                         >
-                            <Trans id="test-queues.button" />
+                            <Trans id="test-queues.button">Testen</Trans>
                         </Button>
                     </div>
                 </div>
@@ -186,7 +193,7 @@ const BaseSettings = ({
             <CardFooter>
                 <div className="kip-buttons">
                     <Button type="warning" href="/mediator/settings/logout">
-                        <Trans id="log-out" />
+                        <Trans id="log-out">Abmelden</Trans>
                     </Button>
                 </div>
             </CardFooter>

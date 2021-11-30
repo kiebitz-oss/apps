@@ -22,7 +22,7 @@ import ContactData from './contact-data';
 import StoreSecrets from './store-secrets';
 import Verify from './verify';
 import Finalize from './finalize';
-import { Trans } from '@lingui/macro';
+import { Trans, defineMessage } from '@lingui/macro';
 import './wizard.scss';
 
 const pages = [
@@ -32,6 +32,29 @@ const pages = [
     'finalize',
     'store-secrets',
 ];
+
+const wizardStepsMessages = {
+    'hi': defineMessage({
+        id: 'wizard.steps.hi',
+        message: 'Los geht\'s!'
+    }),
+    'enter-contact-data': defineMessage({
+        id: 'wizard.steps.enter-contact-data',
+        message: 'Registrierungsdaten eingeben'
+    }),
+    'verify': defineMessage({
+        id: 'wizard.steps.verify',
+        message: 'Kontaktdaten prüfen'
+    }),
+    'finalize': defineMessage({
+        id: 'wizard.steps.finalize',
+        message: 'Daten zu Impfung eingeben'
+    }),
+    'store-secrets': defineMessage({
+        id: 'wizard.steps.store-secrets',
+        message: 'Sicherheitscode notieren'
+    }),
+};
 
 const Hi = withSettings(({ settings }) => (
     <React.Fragment>
@@ -45,16 +68,19 @@ const Hi = withSettings(({ settings }) => (
                             external
                             href={settings.get('supportEmail')}
                         >
-                            <Trans id="wizard.letUsKnow" key="letUsKnow" />
+                            <Trans id="wizard.letUsKnow" key="letUsKnow"></Trans>
                         </A>
                     )
                 }}
-                />
+                >
+                   Willkommen.
+                   Dieser Assistent hilft Dir bei der Impfanmeldung.
+                </Trans>
             </p>
         </CardContent>
         <CardFooter>
             <Button type="success" href={`/user/setup/enter-contact-data`}>
-                <Trans id="wizard.continue" />
+                <Trans id="wizard.continue">Weiter</Trans>
             </Button>
         </CardFooter>
     </React.Fragment>
@@ -104,7 +130,7 @@ const Wizard = ({ route, router, page, privacyManager }) => {
                         }}
                         active={page === p}
                     >
-                        {i++}. <Trans id={`wizard.steps.${p}`} />
+                        {i++}. <Trans id={wizardStepsMessages[p]}/>
                     </CardNav>
                 </a>
             );

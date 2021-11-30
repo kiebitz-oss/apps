@@ -4,7 +4,6 @@
 
 import React, { Component, ReactChild } from 'react';
 import { Message } from './message';
-import { T } from './t';
 import { Trans } from '@lingui/macro';
 import './loader.scss';
 
@@ -15,20 +14,20 @@ type Resource = {
 export const LoadingIndicator = () => (
     <div className="kip-loading-indicator">
         <Message waiting type="info">
-            <Trans id="loader.updating" />
+            <Trans id="loader.updating">Aktualisiere Daten...</Trans>
         </Message>
     </div>
 );
 
 export const RenderWait = () => (
     <Message waiting type="info">
-        <Trans id="loader.please-wait" />
+        <Trans id="loader.please-wait">Bitte warten, lade Daten...</Trans>
     </Message>
 );
 
 export const RenderFailed = () => (
     <Message type="danger">
-        <Trans id="loader.failed" />
+        <Trans id="loader.failed">Das Laden von Ressourcen ist leider fehlgeschlagen.</Trans>
     </Message>
 );
 

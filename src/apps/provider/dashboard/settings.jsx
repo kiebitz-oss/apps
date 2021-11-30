@@ -36,9 +36,14 @@ import {
     providerSecret,
     verifiedProviderData,
 } from '../actions';
-import { Trans } from '@lingui/macro';
+import { Trans, defineMessage } from '@lingui/macro';
 import './settings.scss';
 import { copyToClipboard } from '../../../helpers/clipboard';
+
+const settingsMessages = {
+    'verified': defineMessage({'id': 'settings.verified', 'message': 'Verifizierte Daten'}),
+    'local': defineMessage({'id': 'settings.local', 'message': 'Unverifizierte Daten'}),
+};
 
 const Settings = withActions(
     withRouter(
@@ -128,13 +133,15 @@ const Settings = withActions(
                         <Modal
                             onClose={cancel}
                             save="Sicherungsdatei herunterladen"
-                            title={<Trans id="backup-modal.title" />}
+                            title={<Trans id="backup-modal.title">Datenbackup anfertigen</Trans>}
                             onCancel={cancel}
-                            cancel={<Trans id="backup-modal.close" />}
+                            cancel={<Trans id="backup-modal.close">Schließen</Trans>}
                             saveType="success"
                         >
                             <p>
-                                <Trans id="backup-modal.text" />
+                                <Trans id="backup-modal.text">
+                                    Klicken Sie auf "Datenbackup anfertigen" um eine verschlüsselte Datei mit Ihren Einstellungen und Termindaten zu erzeugen. Bitte denken Sie daran, den Datenschlüssel zu notieren, ohne diesen sind die Daten nicht wiederherstellbar.
+                                </Trans>
                             </p>
                             <hr />
                             <DataSecret
@@ -153,7 +160,9 @@ const Settings = withActions(
                             </Button>
                             <BackupDataLink
                                 downloadText={
-                                    <Trans id="backup-modal.download-backup" />
+                                    <Trans id="backup-modal.download-backup">
+                                        Sicherungsdatei herunterladen
+                                    </Trans>
                                 }
                                 onSuccess={cancel}
                             />
@@ -163,10 +172,10 @@ const Settings = withActions(
                     modal = (
                         <Modal
                             onClose={cancel}
-                            save={<Trans id="delete" />}
+                            save={<Trans id="delete">Konto löschen</Trans>}
                             disabled={deleting}
                             waiting={deleting}
-                            title={<Trans id="delete-modal.title" />}
+                            title={<Trans id="delete-modal.title">Nutzer-Daten löschen</Trans>}
                             onCancel={cancel}
                             onSave={deleteData}
                             saveType="danger"
@@ -177,7 +186,11 @@ const Settings = withActions(
                                             ? 'delete-modal.deleting-text'
                                             : 'delete-modal.text'
                                     }
-                                />
+                                >{
+                                    deleting
+                                        ? 'Bitte warten, Ihre Daten werden gelöscht. Sie werden nach der Löschung auf die Startseite umgeleitet.'
+                                        : 'Möchten Sie Ihre Daten wirklich unwiderruflich löschen?'
+                                }</Trans>
                             </p>
                         </Modal>
                     );
@@ -185,10 +198,10 @@ const Settings = withActions(
                     modal = (
                         <Modal
                             onClose={cancel}
-                            save={<Trans id="log-out" />}
+                            save={<Trans id="log-out">Abmelden</Trans>}
                             disabled={loggingOut}
                             waiting={loggingOut}
-                            title={<Trans id="log-out-modal.title" />}
+                            title={<Trans id="log-out-modal.title">Abmelden</Trans>}
                             onCancel={cancel}
                             onSave={logOut}
                             saveType="warning"
@@ -199,7 +212,11 @@ const Settings = withActions(
                                             ? 'log-out-modal.logging-out'
                                             : 'log-out-modal.text'
                                     }
-                                />
+                                >{
+                                    loggingOut
+                                        ? 'Bitte warten, Sie werden abgemeldet...'
+                                        : 'Möchten Sie sich wirklich abmelden? Bitte stellen Sie sicher, dass Sie Ihren Datenschlüssel notiert und Ihre Sicherungsdatei heruntergeladen haben . Nur damit können Sie sich erneut einloggen.'
+                                }</Trans>
                             </p>
                             <hr />
                             <DataSecret
@@ -218,7 +235,7 @@ const Settings = withActions(
                             </Button>
                             <BackupDataLink
                                 downloadText={
-                                    <Trans id="backup-modal.download-backup" />
+                                    <Trans id="backup-modal.download-backup">Sicherungsdatei herunterladen</Trans>
                                 }
                             />
                         </Modal>
@@ -231,19 +248,21 @@ const Settings = withActions(
                             {modal}
                             <CardContent>
                                 <h2>
-                                    <Trans id="provider-data.title" />
+                                    <Trans id="provider-data.title">Ihre Daten</Trans>
                                 </h2>
 
                                 <p style={{ marginBottom: '1em' }}>
                                     <Trans id="provider-data.verified-vs-unverifired-desc"
-                                    />
+                                    >
+                                        Ihre Daten unterlaufen einer Überprüfung unsererseits. Sobald Ihre Daten überprüft wurden, werden Sie Impfwilligen angezeigt. Führen Sie nach der Überprüfung Ihrer Daten noch Änderungen dieser durch, so müssen diese erneut Überprüft werden und werden entsprechend erst nach erfolgreicher Überprüfung Impfwilligen angezeigt. Daher differenzieren wir zwischen verifizierten und unverifizierten Daten.
+                                    </Trans>
                                 </p>
 
                                 <DropdownMenu
                                     title={
                                         <F>
                                             <Icon icon="calendar" />{' '}
-                                            <Trans id={`settings.${view}`} />
+                                            <Trans id={settingsMessages[view]} />
                                         </F>
                                     }
                                 >
@@ -251,13 +270,13 @@ const Settings = withActions(
                                         icon="calendar"
                                         onClick={() => setView('verified')}
                                     >
-                                        <Trans id={`settings.verified`} />
+                                        <Trans id='settings.verified'>Verifizierte Daten</Trans>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         icon="list"
                                         onClick={() => setView('local')}
                                     >
-                                        <Trans id={`settings.local`} />
+                                        <Trans id='settings.local'>Unverifizierte Daten</Trans>
                                     </DropdownMenuItem>
                                 </DropdownMenu>
                                 <ProviderData
@@ -275,20 +294,20 @@ const Settings = withActions(
                                         type="success"
                                         href="/provider/settings/backup"
                                     >
-                                        <Trans id="backup" />
+                                        <Trans id="backup">Datenbackup anfertigen</Trans>
                                     </Button>
                                     <Button
                                         type="warning"
                                         href="/provider/settings/logout"
                                     >
-                                        <Trans id="log-out" />
+                                        <Trans id="log-out">Abmelden</Trans>
                                     </Button>
                                     {false && (
                                         <Button
                                             type="danger"
                                             href="/provider/settings/delete"
                                         >
-                                            <Trans id="delete" />
+                                            <Trans id="delete">Konto löschen</Trans>
                                         </Button>
                                     )}
                                 </div>

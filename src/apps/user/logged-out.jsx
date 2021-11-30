@@ -21,7 +21,7 @@ export default withSettings(({ settings }) => (
     <CenteredCard className="kip-logged-out">
         <CardHeader>
             <h1 className="bulma-subtitle">
-                <Trans id="logged-out.title" />
+                <Trans id="logged-out.title">Erfolgreich abgemeldet.</Trans>
             </h1>
         </CardHeader>
         <CardContent>
@@ -33,12 +33,14 @@ export default withSettings(({ settings }) => (
                           <strong key="service">{settings.get('title')}</strong>
                         )
                     }}
-                />
+                 >
+                     Du wurdest erfolgreich abgemeldet. Du kannst dich jederzeit wieder mit deinem Sicherheitscode anmelden um deine Termine zu prüfen.
+                </Trans>
             </Message>
         </CardContent>
         <CardFooter>
             <Button href="/user/restore">
-                <Trans id="logged-out.log-in-again" />
+                <Trans id="logged-out.log-in-again">Anmelden</Trans>
             </Button>
         </CardFooter>
     </CenteredCard>

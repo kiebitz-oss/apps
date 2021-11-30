@@ -5,7 +5,6 @@
 import React from 'react';
 import { withRouter } from './router';
 import { Modal } from './modal';
-import { T } from './t';
 
 import { Trans } from '@lingui/macro';
 
@@ -90,11 +89,13 @@ class BaseLeaveGuard extends React.Component {
                             this.setState({ ask: false, confirmed: true })
                         }
                         saveType="danger"
-                        save={<Trans id="leave.leave" />}
-                        cancel={<Trans id="leave.cancel" />}
-                        title={<Trans id="leave.title" />}
+                        save={<Trans id="leave.leave">Seite verlassen</Trans>}
+                        cancel={<Trans id="leave.cancel">Zurück</Trans>}
+                        title={<Trans id="leave.title">Möchten Sie diese Seite wirklich verlassen?</Trans> }
                     >
-                        {text || <Trans id="leave.text" />}
+                        {text || <Trans id="leave.text">
+                            Es gibt ungespeicherte Änderungen auf der aktuellen Seite. Wollen Sie diese wirklich verlassen?
+                        </Trans>}
                     </Modal>
                 )}
                 {children}

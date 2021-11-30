@@ -24,13 +24,27 @@ import {
     WithLoader,
     Switch,
     Button,
-    T,
     A,
 } from 'components';
 import Form from 'helpers/form';
 import Wizard from './wizard';
-import { Trans } from '@lingui/macro';
+import { Trans, defineMessage } from '@lingui/macro';
 import './finalize.scss';
+
+const contactDataPropertiesMessages = {
+    'location': {
+        'title': defineMessage({
+            id: 'contact-data.properties.location.title',
+            message: 'Impfort'
+        }),
+        'values': {
+            'accessible': defineMessage({
+                id: 'contact-data.properties.location.values.accessible',
+                message: 'Barrierefreier Impfort gewünscht'
+            }),
+        }
+    },
+};
 
 class FinalizeForm extends Form {
     validate() {
@@ -136,7 +150,7 @@ const Finalize = withForm(
                                     </Switch>
 
                                     <label htmlFor={kv}>
-                                        <Trans id={`contact-data.properties.${k}.values.${kv}`} />
+                                        <Trans id={contactDataPropertiesMessages[k].values[kv]} />
                                     </label>
                                 </li>
                             )
@@ -145,7 +159,7 @@ const Finalize = withForm(
                         return (
                             <F key={k}>
                                 <h2>
-                                    <Trans id={`contact-data.properties.${k}.title`} />
+                                    <Trans id={contactDataPropertiesMessages[k].title} />
                                 </h2>
                                 <ul className="kip-properties">{items}</ul>
                             </F>
@@ -160,7 +174,7 @@ const Finalize = withForm(
                         if (noQueue)
                             noQueueMessage = (
                                 <Message type="danger">
-                                    <Trans id="wizard.no-queue.notice" />
+                                    <Trans id="wizard.no-queue.notice">Im gewählten Postleitzahlgebiet ist der Dienst noch nicht verfügar. Sorry!</Trans>
                                 </Message>
                             );
 
@@ -172,7 +186,9 @@ const Finalize = withForm(
                             if (getToken.error.error.code === 401) {
                                 failedMessage = (
                                     <Message type="danger">
-                                        <Trans id="wizard.failed.invalid-code" />
+                                        <Trans id="wizard.failed.invalid-code">
+                                            Dein Zugangscode ist ungültig oder wurde bereits benutzt. Du kannst sich nicht mehrfach registrieren.
+                                        </Trans>
                                     </Message>
                                 );
                             }
@@ -181,7 +197,9 @@ const Finalize = withForm(
                         if (failed && !failedMessage)
                             failedMessage = (
                                 <Message type="danger">
-                                    <Trans id="wizard.failed.notice" />
+                                    <Trans id="wizard.failed.notice">
+                                        Sorry, hier ist etwas schief gelaufen. Bitte versuche es später erneut.
+                                    </Trans>
                                 </Message>
                             );
 
@@ -204,17 +222,22 @@ const Finalize = withForm(
                                                 )
                                             }
                                             label={
-                                                <Trans id="contact-data.zip-code"
-                                                />
+                                                <Trans id="contact-data.zip-code">
+                                                    Postleitzahl Deines Wohnorts
+                                                </Trans>
                                             }
                                         />
                                         <label
                                             className="kip-control-label"
                                             htmlFor="distance"
                                         >
-                                            <Trans id="contact-data.distance.label" />
+                                            <Trans id="contact-data.distance.label">
+                                                Maximale Entfernung zum Impfort in Kilometern (km)
+                                            </Trans>
                                             <span className="kip-control-notice">
-                                                <Trans id="contact-data.distance.notice" />
+                                                <Trans id="contact-data.distance.notice">
+                                                    Achtung: Du kannst den Radius derzeit nur 1x einstellen und nicht mehr ändern!
+                                                </Trans>
                                             </span>
                                         </label>
                                         <ErrorFor
@@ -237,7 +260,8 @@ const Finalize = withForm(
                                                         <Trans id="contact-data.distance.option" values={{
                                                             distance: 5
                                                         }}
-                                                        />
+                                                        >{distance} km</Trans>
+
                                                     ),
                                                 },
                                                 {
@@ -247,7 +271,7 @@ const Finalize = withForm(
                                                             id="contact-data.distance.option" values={{
                                                                 distance: 10
                                                             }}
-                                                        />
+                                                        >{distance} km</Trans>
                                                     ),
                                                 },
                                                 {
@@ -258,7 +282,7 @@ const Finalize = withForm(
                                                             values={{
                                                                 distance: 20
                                                             }}
-                                                        />
+                                                        >{distance} km</Trans>
                                                     ),
                                                 },
                                                 {
@@ -269,7 +293,7 @@ const Finalize = withForm(
                                                             values={{
                                                                 distance: 30
                                                             }}
-                                                        />
+                                                        >{distance} km</Trans>
                                                     ),
                                                 },
                                                 {
@@ -280,7 +304,7 @@ const Finalize = withForm(
                                                             values={{
                                                                 distance: 40
                                                             }}
-                                                        />
+                                                        >{distance} km</Trans>
                                                     ),
                                                 },
                                                 {
@@ -291,7 +315,7 @@ const Finalize = withForm(
                                                             values={{
                                                                 distance: 50
                                                             }}
-                                                        />
+                                                        >{distance} km</Trans>
                                                     ),
                                                 },
                                             ]}
@@ -319,7 +343,15 @@ const Finalize = withForm(
                                                     ? 'wizard.please-wait'
                                                     : 'wizard.continue'
                                             }
-                                        />
+                                        >{
+                                            noQueue
+                                                ? 'Nicht verfügbar'
+                                                : failed
+                                                ? 'Fehlgeschlagen :/'
+                                                : submitting
+                                                ? 'Bitte warten...'
+                                                : 'Weiter'
+                                        }</Trans>
                                     </Button>
                                 </CardFooter>
                             </React.Fragment>

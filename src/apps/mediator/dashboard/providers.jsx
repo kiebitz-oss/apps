@@ -30,8 +30,14 @@ import {
     DropdownMenuItem,
     T,
 } from 'components';
-import { Trans } from '@lingui/macro';
+import { Trans, defineMessage } from '@lingui/macro';
 import './providers.scss';
+
+const providersMessages = {
+    'verified': defineMessage({ id: 'providers.verified', message: 'Bestätigt' }),
+    'pending': defineMessage({ id: 'providers.pending', message: 'Unbestätigt' }),
+    'reconfirm': defineMessage({ id: 'providers.reconfirm', message: 'Alle neu bestätigen' }),
+};
 
 const sortProviderByDate = (a, b) => {
     return new Date(b.entry.timestamp) - new Date(a.entry.timestamp);
@@ -102,8 +108,8 @@ const Providers = withTimer(
                     if (action === 'reconfirm')
                         modal = (
                             <Modal
-                                title={<Trans id="providers.reconfirm" />}
-                                save={<Trans id="providers.reconfirm" />}
+                                title={<Trans id="providers.reconfirm">Alle neu bestätigen</Trans>}
+                                save={<Trans id="providers.reconfirm">Alle neu bestätigen</Trans>}
                                 onSave={doReconfirmProviders}
                                 saveType="success"
                                 disabled={
@@ -121,9 +127,11 @@ const Providers = withTimer(
                                                 i: reconfirmProviders.i,
                                                 n: reconfirmProviders.n
                                             }}
-                                        />
+                                        >Bestätige Anbieter {i} von {n}...</Trans>
                                     )) || (
-                                        <Trans id="providers.reconfirmText" />
+                                        <Trans id="providers.reconfirmText">
+                                            Wollen Sie alle bestätigten Anbieter neu bestätigen?
+                                        </Trans>
                                     )}
                                 </div>
                             </Modal>
@@ -147,30 +155,30 @@ const Providers = withTimer(
                         if (provider !== undefined)
                             modal = (
                                 <Modal
-                                    title={<Trans id="providers.edit" />}
-                                    save={<Trans id="providers.confirm" />}
+                                    title={<Trans id="providers.edit">Anbieter bearbeiten</Trans>}
+                                    save={<Trans id="providers.confirm">Anbieter freischalten</Trans>}
                                     onSave={doConfirmProvider}
                                     saveType="success"
                                     onClose={closeModal}
                                     onCancel={closeModal}
                                 >
                                     <div className="kip-provider-data">
-                                        <Trans id="providers.confirmText" />
+                                        <Trans id="providers.confirmText">Wollen Sie den Anbieter wirklich freischalten?</Trans>
                                         <table className="bulma-table bulma-is-fullwidth bulma-is-striped">
                                             <thead>
                                                 <tr>
                                                     <th>
-                                                        <Trans id="provider-data.field" />
+                                                        <Trans id="provider-data.field">Feld</Trans>
                                                     </th>
                                                     <th>
-                                                        <Trans id="provider-data.value" />
+                                                        <Trans id="provider-data.value">Wert</Trans>
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.name" />
+                                                        <Trans id="provider-data.name">Name</Trans>
                                                     </td>
                                                     <td>
                                                         {provider.data.name}
@@ -178,7 +186,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.street" />
+                                                        <Trans id="provider-data.street">Straße</Trans>
                                                     </td>
                                                     <td>
                                                         {provider.data.street}
@@ -186,7 +194,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.city" />
+                                                        <Trans id="provider-data.city">Stadt</Trans>
                                                     </td>
                                                     <td>
                                                         {provider.data.city}
@@ -194,7 +202,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.zipCode" />
+                                                        <Trans id="provider-data.zipCode">Postleitzahl</Trans>
                                                     </td>
                                                     <td>
                                                         {provider.data.zipCode}
@@ -202,7 +210,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.email" />
+                                                        <Trans id="provider-data.email">E-Mail</Trans>
                                                     </td>
                                                     <td>
                                                         {provider.data.email}
@@ -210,7 +218,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.phone" />
+                                                        <Trans id="provider-data.phone">Telefonnummer</Trans>
                                                     </td>
                                                     <td>
                                                         {provider.data.phone}
@@ -218,7 +226,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.description" />
+                                                        <Trans id="provider-data.description">Beschreibung</Trans>
                                                     </td>
                                                     <td>
                                                         {
@@ -260,7 +268,7 @@ const Providers = withTimer(
                                     title={
                                         <F>
                                             <Icon icon="check-circle" />
-                                            <Trans id={`providers.${view}`} />
+                                            <Trans id={providersMessages[view]} />
                                         </F>
                                     }
                                 >
@@ -268,25 +276,25 @@ const Providers = withTimer(
                                         icon="check-circle"
                                         onClick={() => setView('verified')}
                                     >
-                                        <Trans id="providers.verified" />
+                                        <Trans id="providers.verified">Bestätigt</Trans>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         icon="exclamation-circle"
                                         onClick={() => setView('pending')}
                                     >
-                                        <Trans id="providers.pending" />
+                                        <Trans id="providers.pending">Unbestätigt</Trans>
                                     </DropdownMenuItem>
                                 </DropdownMenu>
                                 <A href="/mediator/providers/reconfirm">
-                                    <Trans id="providers.reconfirm" />
+                                    <Trans id="providers.reconfirm">Alle neu bestätigen</Trans>
                                 </A>
                                 <List>
                                     <ListHeader>
                                         <ListColumn size="md">
-                                            <Trans id="providers.name" />
+                                            <Trans id="providers.name">Name</Trans>
                                         </ListColumn>
                                         <ListColumn size="md">
-                                            <Trans id="providers.address" />
+                                            <Trans id="providers.address">Adresse</Trans>
                                         </ListColumn>
                                     </ListHeader>
                                     {providerItems}

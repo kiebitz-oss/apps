@@ -14,21 +14,21 @@ const SummaryBox = ({ open, booked, active }) => (
     <Card className="kip-is-fullheight kip-is-fullwidth kip-summary-box" flex>
         <CardHeader>
             <h2>
-                <Trans id="summary" />
+                <Trans id="summary">Überblick</Trans>
             </h2>
         </CardHeader>
         <CardContent>
             <p className="kip-summary-box-number">
                 <span>{formatNumbers(open)}</span>
-                <Trans id="open" />
+                <Trans id="open">Offene Termine</Trans>
             </p>
             <p className="kip-summary-box-number">
                 <span>{formatNumbers(booked)}</span>
-                <Trans id="booked" />
+                <Trans id="booked">Gebuchte Termine</Trans>
             </p>
             <p className="kip-summary-box-number">
                 <span>{formatNumbers(active)}</span>
-                <Trans id="active" />
+                <Trans id="active">Aktive Anbieter</Trans>
             </p>
         </CardContent>
     </Card>

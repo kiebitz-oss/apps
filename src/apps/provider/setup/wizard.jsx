@@ -37,15 +37,18 @@ const Hi = withSettings(({ settings }) => (
                             external
                             href={settings.get('supportEmail')}
                         >
-                            <Trans id="wizard.letUsKnow" key="letUsKnow" />
+                            <Trans id="wizard.letUsKnow" key="letUsKnow">wizard.letUsKnow MISSING</Trans>
                         </A>
                     }
-                />
+                >
+                    Willkommen.
+                    Dieser Assistent führt Sie Schritt für Schritt zur Terminverwaltung.
+                </Trans>
             </p>
         </CardContent>
         <CardFooter>
             <Button type="success" href={`/provider/setup/enter-provider-data`}>
-                <Trans id="wizard.continue" />
+                <Trans id="wizard.continue">Weiter</Trans>
             </Button>
         </CardFooter>
     </React.Fragment>
@@ -95,7 +98,7 @@ const Wizard = ({ route, router, page, status }) => {
                         }}
                         active={page === p}
                     >
-                        {i++}. <Trans id={`wizard.steps.${p}`} />
+                        {i++}. <Trans id={`wizard.steps.${p}`}>TODO</Trans>
                     </CardNav>
                 </a>
             );

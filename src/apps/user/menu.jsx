@@ -15,7 +15,7 @@ const menu = new Map([
                 {
                     title: (
                         <Title
-                            title={<Trans id="drawingBoard" />}
+                            title={<Trans id="drawingBoard">drawingBoard MISSING</Trans>}
                             icon="chalkboard"
                         />
                     ),

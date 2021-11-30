@@ -43,10 +43,14 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     if (bookmarkModal)
         modal = (
             <Modal
-                title={<Trans id="store-secrets.bookmark-modal.title" />}
+                title={<Trans id="store-secrets.bookmark-modal.title">
+                    Lesezeichen erstellen
+                </Trans>}
                 onClose={hideBookmarkModal}
             >
-                <Trans id="store-secrets.bookmark-modal.text" />
+                <Trans id="store-secrets.bookmark-modal.text">
+                    Nutze Dein Browser-Menü um ein Lesezeichen für diese Seite zu erstellen. Du kannst dieses Lesezeichen öffnen, um Deinen Sicherheitscode wiederherzustellen.
+                </Trans>
             </Modal>
         );
 
@@ -68,7 +72,9 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
             {modal}
             {!embedded && (
                 <p className="kip-secrets-notice">
-                    <Trans id="store-secrets.online.text" safe />
+                    <Trans id="store-secrets.online.text" safe>
+                        Bitte notiere Dir Deinen vertraulichen Sicherheitscode. Alternativ kannst Du auch ein Bildschirmfoto machen. Bitte beachte, dass Dir der Code NICHT per E-Mail geschickt wird und er von uns auch NICHT wiederhergestellt werden kann.<br/><br/><b>Du benötigst den Code, wenn Du Dich auf einem anderen Endgerät (Tablet, Smartphone, Laptop etc.) einloggen und Deinen gebuchten Termin einsehen oder ändern willst.</b>
+                    </Trans>
                 </p>
             )}
             <div
@@ -81,7 +87,9 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
                         <div className="kip-uid">
                             {!hideNotice && (
                                 <span>
-                                    <Trans id="store-secrets.secret" />
+                                    <Trans id="store-secrets.secret">
+                                        Dein Sicherheitscode - Bitte notieren!
+                                    </Trans>
                                 </span>
                             )}
                             <code>{fragments}</code>
@@ -95,7 +103,9 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
                         className="bulma-button bulma-is-small"
                         onClick={showBookmarkModal}
                     >
-                        <Trans id="store-secrets.bookmark" />
+                        <Trans id="store-secrets.bookmark">
+                            Als Lesezeichen speichern
+                        </Trans>
                     </A>
                 </div>
             )}
@@ -111,14 +121,14 @@ const StoreLocal = ({ data }) => {
     return (
         <F>
             <p className="kip-secrets-notice">
-                <Trans id="store-secrets.local.text" />
+                <Trans id="store-secrets.local.text">store-secrects.local.text MISSING</Trans>
             </p>
             <a
                 className="bulma-button"
                 download={`geheime-daten.kiebitz`}
                 href={URL.createObjectURL(blob)}
             >
-                <Trans id="store-secrets.download" />
+                <Trans id="store-secrets.download">Datei speichern</Trans>
             </a>
         </F>
     );
@@ -147,7 +157,7 @@ export default withActions(
                 <CardContent className="kip-secrets">{content}</CardContent>
                 <CardFooter>
                     <Button type="success" href={`/user/appointments`}>
-                        <Trans id="wizard.leave" />
+                        <Trans id="wizard.leave">Zu den verfügbaren Terminen</Trans>
                     </Button>
                 </CardFooter>
             </F>

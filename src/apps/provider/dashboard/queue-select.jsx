@@ -89,8 +89,8 @@ export const QueueSelect = ({
                     onSelect={selectQueue}
                     setSearch={updateSearch}
                     candidates={candidates}
-                    label={<Trans id="queues.label" />}
-                    description={<Trans id="queues.description" />}
+                    label={<Trans id="queues.label">Einzugsgebiete</Trans>}
+                    description={<Trans id="queues.description">Hier können Sie festlegen, welche Einzugsgebiete für Sie relevant sind.</Trans>}
                 />
             )}
         </div>

@@ -43,8 +43,23 @@ import {
     cancelAppointment,
     openAppointments,
 } from '../actions';
-import { Trans } from '@lingui/macro';
+import { Trans, defineMessage } from '@lingui/macro';
 import './schedule.scss';
+
+const dayMessages = {
+    [0]: defineMessage({id: 'day-1', message: 'Montag'}),
+    [1]: defineMessage({id: 'day-2', message: 'Dienstag'}),
+    [2]: defineMessage({id: 'day-3', message: 'Mittwoch'}),
+    [3]: defineMessage({id: 'day-4', message: 'Donnerstag'}),
+    [4]: defineMessage({id: 'day-5', message: 'Freitag'}),
+    [5]: defineMessage({id: 'day-6', message: 'Samstag'}),
+    [6]: defineMessage({id: 'day-7', message: 'Sonntag'}),
+};
+
+const scheduleMessages = {
+    'calendar': defineMessage({id: 'schedule.calendar', message: 'Kalenderansicht'}),
+    'booking-list': defineMessage({id: 'schedule.booking-list', message: 'Buchungliste'}),
+};
 
 Date.prototype.addHours = function(h) {
     this.setHours(this.getHours() + h);
@@ -92,14 +107,16 @@ const AppointmentOverview = withActions(
                     onClose={() => setShowDelete(false)}
                     onCancel={() => setShowDelete(false)}
                     saveType="danger"
-                    save={<Trans id="appointment-overview.delete.confirm" />}
-                    cancel={<Trans id="appointment-overview.delete.cancel" />}
-                    title={<Trans id="appointment-overview.delete.title" />}
+                    save={<Trans id="appointment-overview.delete.confirm">Löschen bestätigen</Trans>}
+                    cancel={<Trans id="appointment-overview.delete.cancel">Abbrechen</Trans>}
+                    title={<Trans id="appointment-overview.delete.title">Termin löschen</Trans>}
                     {...props}
                     className="kip-appointment-overview"
                 >
                     <p>
-                        <Trans id="appointment-overview.delete.notice" />
+                        <Trans id="appointment-overview.delete.notice">
+                            Wollen Sie diesen Termin wirklich löschen?
+                        </Trans>
                     </p>
                 </Modal>
             );
@@ -112,7 +129,7 @@ const AppointmentOverview = withActions(
             >
                 <Card>
                     <CardHeader>
-                        <Trans id="appointment-overview.title" />
+                        <Trans id="appointment-overview.title">Terminübersicht</Trans>
                         <Button
                             type="info"
                             aria-label="Close modal"
@@ -132,11 +149,11 @@ const AppointmentOverview = withActions(
                                 ).toLocaleTimeString()}
                             </li>
                             <li>
-                                <Trans id="appointment-overview.details.slots" />
+                                <Trans id="appointment-overview.details.slots">Slots</Trans>
                                 : {appointment.slotData.length}{' '}
                             </li>
                             <li>
-                                <Trans id="appointment-overview.details.booked" />
+                                <Trans id="appointment-overview.details.booked">Gebucht</Trans>
                                 : {appointment.bookings.length}{' '}
                             </li>
                         </ul>
@@ -145,7 +162,7 @@ const AppointmentOverview = withActions(
                         {(acceptedItems.length > 0 && (
                             <F>
                                 <h3>
-                                    <Trans id="appointment-overview.details.booking-codes" />
+                                    <Trans id="appointment-overview.details.booking-codes">Buchungscodes</Trans>
                                 </h3>
                                 <ul className="kip-booking-codes">
                                     {acceptedItems}
@@ -153,8 +170,9 @@ const AppointmentOverview = withActions(
                             </F>
                         )) || (
                             <Message type="info">
-                                <Trans id="appointment-overview.details.no-booked-slots"
-                                />
+                                <Trans id="appointment-overview.details.no-booked-slots">
+                                    Keine gebuchten Slots bisher. Sobald Buchungen vorhanden sind werden hier die Buchungscodes angezeigt.
+                                </Trans>
                             </Message>
                         )}
                     </CardContent>
@@ -163,14 +181,14 @@ const AppointmentOverview = withActions(
                             type="warning"
                             href={`/provider/schedule/${action}/edit/${hexId}`}
                         >
-                            <Trans id="appointment-overview.edit.button" />
+                            <Trans id="appointment-overview.edit.button">Bearbeiten</Trans>
                         </Button>
                         &nbsp;
                         <Button
                             type="danger"
                             onClick={() => setShowDelete(true)}
                         >
-                            <Trans id="appointment-overview.delete.button" />
+                            <Trans id="appointment-overview.delete.button">Löschen bestätigen</Trans>
                         </Button>
                     </CardFooter>
                 </Card>
@@ -410,7 +428,7 @@ const DayLabelRow = ({ day, date }) => {
     return (
         <div className="kip-hour-row kip-is-day-label">
             <span className="kip-day">
-                <Trans id={`day-${day + 1}`} />
+                <Trans id={dayMessages[day]} />
             </span>
             <span className="kip-date">{date.toLocaleDateString()}</span>
         </div>
@@ -537,10 +555,10 @@ const WeekCalendar = withRouter(
                         type=""
                         onClick={goBackward}
                     >
-                        <Trans id="schedule.backward" />
+                        <Trans id="schedule.backward">vorherige Woche</Trans>
                     </Button>
                     <Button className="kip-forward" type="" onClick={goForward}>
-                        <Trans id="schedule.forward" />
+                        <Trans id="schedule.forward">nächste Woche</Trans>
                     </Button>
                 </div>
                 <div className="kip-week-calendar">{dayColumns}</div>
@@ -576,11 +594,11 @@ const AppointmentItem = ({ appointment }) => {
                     {new Date(appointment.timestamp).toLocaleTimeString()}
                 </li>
                 <li>
-                    <Trans id="appointment-overview.details.slots" />:{' '}
+                    <Trans id="appointment-overview.details.slots">Slots</Trans>:{' '}
                     {appointment.slotData.length}{' '}
                 </li>
                 <li>
-                    <Trans id="appointment-overview.details.booked" />:{' '}
+                    <Trans id="appointment-overview.details.booked">Gebucht</Trans>:{' '}
                     {appointment.bookings.length}{' '}
                 </li>
             </ul>
@@ -591,7 +609,9 @@ const AppointmentItem = ({ appointment }) => {
                 </F>
             )) || (
                 <Message type="info">
-                    <Trans id="appointment-overview.details.no-booked-slots" />
+                    <Trans id="appointment-overview.details.no-booked-slots">
+                        Keine gebuchten Slots bisher. Sobald Buchungen vorhanden sind werden hier die Buchungscodes angezeigt.
+                    </Trans>
                 </Message>
             )}
         </li>
@@ -607,7 +627,7 @@ const AppointmentsList = ({ appointments }) => {
     return (
         <div className="kip-appointments-list kip-printable">
             <h2>
-                <Trans id="appointments-list.title" />
+                <Trans id="appointments-list.title">Buchungen</Trans>
             </h2>
             <ul className="kip-appointments">{appointmentItems}</ul>
         </div>
@@ -774,7 +794,7 @@ const NewAppointment = withSettings(
                                         <Trans 
                                             values={{ t: properties }}
                                             id={`${k}.values.${kv}`}
-                                        />
+                                        >TODO</Trans>
                                     ),
                                 })
                             );
@@ -828,7 +848,9 @@ const NewAppointment = withSettings(
                     ].map(v => ({
                         value: v,
                         title: (
-                            <Trans id={`schedule.appointment.duration.title`} values={{ duration: v }}  />
+                            <Trans id='schedule.appointment.duration.title' values={{ duration: v }}>
+                                Dauer: {duration} Minuten
+                            </Trans>
                         ),
                     }));
 
@@ -847,14 +869,18 @@ const NewAppointment = withSettings(
                                         ? 'edit-appointment.title'
                                         : 'new-appointment.title'
                                     }
-                                />
+                                >{
+                                    appointment !== undefined
+                                        ? 'Termin bearbeiten'
+                                        : 'Neuen Termin erstellen'
+                                }</Trans>
                             }
                         >
                             <FormComponent>
                                 <FieldSet>
                                     <div className="kip-field">
                                         <Label htmlFor="date">
-                                            <Trans id="new-appointment.date" />
+                                            <Trans id="new-appointment.date">Datum</Trans>
                                         </Label>
                                         <ErrorFor error={error} field="date" />
                                         <input
@@ -868,7 +894,7 @@ const NewAppointment = withSettings(
                                     </div>
                                     <div className="kip-field">
                                         <Label htmlFor="time">
-                                            <Trans id="new-appointment.time" />
+                                            <Trans id="new-appointment.time">Uhrzeit</Trans>
                                         </Label>
                                         <ErrorFor error={error} field="time" />
                                         <input
@@ -883,8 +909,7 @@ const NewAppointment = withSettings(
                                     </div>
                                     <div className="kip-field kip-is-fullwidth kip-slider">
                                         <Label htmlFor="slots">
-                                            <Trans id="new-appointment.slots"
-                                            />
+                                            <Trans id="new-appointment.slots">Anzahl Impfdosen</Trans>
                                         </Label>
                                         <ErrorFor error={error} field="slots" />
                                         <input
@@ -1042,14 +1067,14 @@ const Invitations = withTimer(
                                         <Button
                                             href={`/provider/schedule/${dateString}/new`}
                                         >
-                                            <Trans id="schedule.appointment.add" />
+                                            <Trans id="schedule.appointment.add">Termin erstellen</Trans>
                                         </Button>
                                         &nbsp;
                                         <DropdownMenu
                                             title={
                                                 <F>
                                                     <Icon icon="calendar" />{' '}
-                                                    <Trans id={`schedule.${view}`} />
+                                                    <Trans id={scheduleMessages[view]} />
                                                 </F>
                                             }
                                         >
@@ -1059,7 +1084,7 @@ const Invitations = withTimer(
                                                     setView('calendar')
                                                 }
                                             >
-                                                <Trans id={`schedule.calendar`} />
+                                                <Trans id='schedule.calendar'>Kalenderansicht</Trans>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 icon="list"
@@ -1067,7 +1092,7 @@ const Invitations = withTimer(
                                                     setView('booking-list')
                                                 }
                                             >
-                                                <Trans id={`schedule.booking-list`} />
+                                                <Trans id='schedule.booking-list'>Buchungliste</Trans>
                                             </DropdownMenuItem>
                                         </DropdownMenu>
                                         <hr />
@@ -1075,7 +1100,9 @@ const Invitations = withTimer(
                                     {content}
                                 </CardContent>
                                 <Message type="info" waiting>
-                                    <Trans id="schedule.updating" values={{ lastUpdated }} />
+                                    <Trans id="schedule.updating" values={{ lastUpdated }}>
+                                        Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}
+                                    </Trans>
                                 </Message>
                             </div>
                         );

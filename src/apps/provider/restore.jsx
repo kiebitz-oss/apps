@@ -99,7 +99,9 @@ export default withForm(
                     )
                         notice = (
                             <Message type="danger">
-                                <Trans id="load-backup.failed" />
+                                <Trans id="load-backup.failed">
+                                    Das Laden Ihrer Daten ist leider fehlgeschlagen. Bitte prüfen Sie Ihren Datenschlüssel sowie die angegebene Datei.
+                                </Trans>
                             </Message>
                         );
 
@@ -125,7 +127,7 @@ export default withForm(
                         <CenteredCard className="kip-provider-restore-from-backup">
                             <CardContent>
                                 <h1 className="bulma-subtitle">
-                                    <Trans id="load-backup.title" />
+                                    <Trans id="load-backup.title">Einloggen</Trans>
                                 </h1>
                                 {notice}
                                 <FormComponent>
@@ -139,10 +141,12 @@ export default withForm(
                                                 set('secret', value)
                                             }
                                             label={
-                                                <Trans id="load-backup.secret.label" />
+                                                <Trans id="load-backup.secret.label">Datenschlüssel</Trans>
                                             }
                                             description={
-                                                <Trans id="load-backup.secret.description" />
+                                                <Trans id="load-backup.secret.description">
+                                                    Der Datenschlüssel, den Sie bei der Registrierung erhalten haben.
+                                                </Trans>
                                             }
                                         />
                                         <label
@@ -161,20 +165,22 @@ export default withForm(
                                                 onChange={e => readFile(e)}
                                             />
                                             {(data.file !== undefined && (
-                                                <Trans id="load-backup.input.change" values={{ filename: data.filename }} />
+                                                <Trans id="load-backup.input.change" values={{ filename: data.filename }}>{filename}</Trans>
                                             )) || (
-                                                <Trans id="load-backup.input" />
+                                                <Trans id="load-backup.input">Sicherungsdatei wählen</Trans>
                                             )}
                                         </label>
                                         <span className="kip-retracting-label-input">
                                             <p className="kip-description">
-                                                <Trans id="load-backup.input.description" />
+                                                <Trans id="load-backup.input.description">
+                                                    Bitte laden Sie hier Ihre Sicherungsdatei (booster-impfen-backup-2021[Datum&Uhrzeit].enc) hoch.
+                                                </Trans>
                                             </p>
                                         </span>
                                         {false && (
                                             <F>
                                                 <h3>
-                                                    <Trans id="load-backup.advanced-options" />
+                                                    <Trans id="load-backup.advanced-options">Erweiterte Optionen</Trans>
                                                 </h3>
                                                 <ul className="kip-properties">
                                                     <li className="kip-property">
@@ -197,7 +203,7 @@ export default withForm(
                                                         </Switch>
 
                                                         <label htmlFor="localOnly">
-                                                            <Trans id="load-backup.local-only.label" />
+                                                            <Trans id="load-backup.local-only.label">Nur lokale Daten laden (keine Cloud-Daten)</Trans>
                                                         </label>
                                                     </li>
                                                 </ul>
@@ -212,7 +218,7 @@ export default withForm(
                                     type="success"
                                     disabled={!valid || restoring}
                                 >
-                                    <Trans id="load-backup.load" />
+                                    <Trans id="load-backup.load">Einloggen</Trans>
                                 </Button>
                             </CardFooter>
                         </CenteredCard>

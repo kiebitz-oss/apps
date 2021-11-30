@@ -92,7 +92,7 @@ const Dashboard = withRouter(
                                 <A href={'/user/appointments'}>
                                     <span className="kip-icon">
                                         <Icon icon="chevron-left" />{' '}
-                                        <Trans id="go-back.button" />
+                                        <Trans id="go-back.button">Zurück</Trans>
                                     </span>
                                 </A>
                             );

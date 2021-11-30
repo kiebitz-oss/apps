@@ -5,7 +5,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from './button';
-import { T } from './t';
 import './modal.scss';
 import classnames from 'helpers/classnames';
 import { Trans } from '@lingui/macro';
@@ -87,7 +86,7 @@ export class Modal extends React.Component {
                                         !saveDisabled && !disabled && onSave()
                                     }
                                 >
-                                    {save || <Trans id="modal.save" />}
+                                    {save || <Trans id="modal.save">Speichern</Trans>}
                                 </Button>
                             )}
                             {onCancel && (
@@ -100,7 +99,7 @@ export class Modal extends React.Component {
                                         onCancel()
                                     }
                                 >
-                                    {cancel || <Trans id="modal.cancel" />}
+                                    {cancel || <Trans id="modal.cancel">Abbrechen</Trans>}
                                 </Button>
                             )}
                         </footer>
