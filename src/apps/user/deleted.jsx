@@ -21,7 +21,7 @@ export default withSettings(({ settings }) => (
             </h1>
         </CardHeader>
         <Message type="success">
-            <Trans id="thanks-for-using-us" values={{ title: settings.get('title') }}>Deine Daten wurden erfolgreich gelöscht. Vielen Dank, dass Du <strong key="service">{title}</strong> genutzt hast!</Trans>
+            <Trans id="thanks-for-using-us">Deine Daten wurden erfolgreich gelöscht. Vielen Dank, dass Du <strong key="service">{settings.get('title')}</strong> genutzt hast!</Trans>
         </Message>
     </CenteredCard>
 ));

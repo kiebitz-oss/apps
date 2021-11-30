@@ -21,17 +21,14 @@ import {
     SubmitField,
     Button,
 } from 'components';
-import { Trans } from '@lingui/macro';
-import { i18n } from '@lingui/core';
+import { t, Trans } from '@lingui/macro';
 import './provider-data.scss';
 
 class ProviderDataForm extends Form {
     validate() {
         const errors = {};
         if (!this.data.name || this.data.name.length < 2)
-            errors.name = i18n._('provider-data.invalid-name', {}, {
-                defaults: 'Bitte gegen Sie einen gültigen Namen an'
-            });
+            errors.name = t({ id: 'provider-data.invalid-name', message: 'Bitte gegen Sie einen gültigen Namen an' });
         return errors;
     }
 }

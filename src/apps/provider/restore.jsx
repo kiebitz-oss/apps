@@ -21,9 +21,8 @@ import {
     A,
     T,
 } from 'components';
-import { i18n } from "@lingui/core"
 import { restoreFromBackup } from 'apps/provider/actions';
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import Form from 'helpers/form';
 import './restore.scss';
 
@@ -32,17 +31,15 @@ class LoadBackupForm extends Form {
         const errors = {};
         const { data } = this;
         if (!data.file)
-            errors.file = i18n._('load-backup.missing-file');
+            errors.file = t({ id: 'load-backup.missing-file', message: "load-backup.missing-file MISSING" });
         else if (data.file.data === undefined || data.file.iv === undefined)
-            errors.file = i18n._('load-backup.invalid-file', {
-                title: this.settings.get('title'),
-            });
+            errors.file = t({ id: 'load-backup.invalid-file', message: "load-backup.invalid-file MISSING" });
         if (data.secret !== undefined)
             data.secret = data.secret
                 .toLowerCase()
                 .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
         if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(data.secret))
-            errors.secret = i18n._('load-backup.invalid-secret');
+            errors.secret = t({ id: 'load-backup.invalid-secret', message: "load-backup.invalid-secret MISSING" });
 
         return errors;
     }
@@ -165,7 +162,7 @@ export default withForm(
                                                 onChange={e => readFile(e)}
                                             />
                                             {(data.file !== undefined && (
-                                                <Trans id="load-backup.input.change" values={{ filename: data.filename }}>{filename}</Trans>
+                                                <Trans id="load-backup.input.change">{data.filename}</Trans>
                                             )) || (
                                                 <Trans id="load-backup.input">Sicherungsdatei wählen</Trans>
                                             )}

@@ -28,22 +28,22 @@ import {
 } from 'components';
 import Form from 'helpers/form';
 import Wizard from './wizard';
-import { Trans, defineMessage } from '@lingui/macro';
+import { Trans, t, defineMessage } from '@lingui/macro';
 import './finalize.scss';
-import td from "./translations.yml"
+import td from './translations.yml';
 
 const contactDataPropertiesMessages = {
-    'location': {
-        'title': defineMessage({
+    location: {
+        title: defineMessage({
             id: 'contact-data.properties.location.title',
-            message: 'Impfort'
+            message: 'Impfort',
         }),
-        'values': {
-            'accessible': defineMessage({
+        values: {
+            accessible: defineMessage({
                 id: 'contact-data.properties.location.values.accessible',
-                message: 'Barrierefreier Impfort gewünscht'
+                message: 'Barrierefreier Impfort gewünscht',
             }),
-        }
+        },
     },
 };
 
@@ -52,8 +52,7 @@ class FinalizeForm extends Form {
         const errors = {};
         if (this.data.distance === undefined) this.data.distance = 5;
         if (!this.data.zipCode || this.data.zipCode.length != 5)
-            errors.zipCode = i18n._('contact-data.invalid-zip-code'
-            );
+            errors.zipCode = t({ id: 'contact-data.invalid-zip-code' });
         return errors;
     }
 }
@@ -151,7 +150,12 @@ const Finalize = withForm(
                                     </Switch>
 
                                     <label htmlFor={kv}>
-                                        <Trans id={contactDataPropertiesMessages[k].values[kv]} />
+                                        <Trans
+                                            id={
+                                                contactDataPropertiesMessages[k]
+                                                    .values[kv]
+                                            }
+                                        />
                                     </label>
                                 </li>
                             )
@@ -160,7 +164,12 @@ const Finalize = withForm(
                         return (
                             <F key={k}>
                                 <h2>
-                                    <Trans id={contactDataPropertiesMessages[k].title} />
+                                    <Trans
+                                        id={
+                                            contactDataPropertiesMessages[k]
+                                                .title
+                                        }
+                                    />
                                 </h2>
                                 <ul className="kip-properties">{items}</ul>
                             </F>
@@ -175,7 +184,10 @@ const Finalize = withForm(
                         if (noQueue)
                             noQueueMessage = (
                                 <Message type="danger">
-                                    <Trans id="wizard.no-queue.notice">Im gewählten Postleitzahlgebiet ist der Dienst noch nicht verfügar. Sorry!</Trans>
+                                    <Trans id="wizard.no-queue.notice">
+                                        Im gewählten Postleitzahlgebiet ist der
+                                        Dienst noch nicht verfügar. Sorry!
+                                    </Trans>
                                 </Message>
                             );
 
@@ -188,7 +200,9 @@ const Finalize = withForm(
                                 failedMessage = (
                                     <Message type="danger">
                                         <Trans id="wizard.failed.invalid-code">
-                                            Dein Zugangscode ist ungültig oder wurde bereits benutzt. Du kannst sich nicht mehrfach registrieren.
+                                            Dein Zugangscode ist ungültig oder
+                                            wurde bereits benutzt. Du kannst
+                                            sich nicht mehrfach registrieren.
                                         </Trans>
                                     </Message>
                                 );
@@ -199,7 +213,8 @@ const Finalize = withForm(
                             failedMessage = (
                                 <Message type="danger">
                                     <Trans id="wizard.failed.notice">
-                                        Sorry, hier ist etwas schief gelaufen. Bitte versuche es später erneut.
+                                        Sorry, hier ist etwas schief gelaufen.
+                                        Bitte versuche es später erneut.
                                     </Trans>
                                 </Message>
                             );
@@ -233,11 +248,15 @@ const Finalize = withForm(
                                             htmlFor="distance"
                                         >
                                             <Trans id="contact-data.distance.label">
-                                                Maximale Entfernung zum Impfort in Kilometern (km)
+                                                Maximale Entfernung zum Impfort
+                                                in Kilometern (km)
                                             </Trans>
                                             <span className="kip-control-notice">
                                                 <Trans id="contact-data.distance.notice">
-                                                    Achtung: Du kannst den Radius derzeit nur 1x einstellen und nicht mehr ändern!
+                                                    Achtung: Du kannst den
+                                                    Radius derzeit nur 1x
+                                                    einstellen und nicht mehr
+                                                    ändern!
                                                 </Trans>
                                             </span>
                                         </label>
@@ -257,60 +276,27 @@ const Finalize = withForm(
                                             options={[
                                                 {
                                                     value: 5,
-                                                    description: (
-                                                        <Trans id="contact-data.distance.option" values={{
-                                                            distance: 5
-                                                        }}  defaults="{distance} km" />
-                                                    ),
+                                                    description: t({ id: 'contact-data.distance.option.5', message: "5 km" }),
                                                 },
                                                 {
                                                     value: 10,
-                                                    description: (
-                                                        <Trans 
-                                                            id="contact-data.distance.option" values={{
-                                                                distance: 10
-                                                            }}  defaults="{distance} km" />
-                                                    ),
+                                                    description: t({ id: 'contact-data.distance.option.10', message: "10 km" }),
                                                 },
                                                 {
                                                     value: 20,
-                                                    description: (
-                                                        <Trans
-                                                            id="contact-data.distance.option"
-                                                            values={{
-                                                                distance: 20
-                                                            }}  defaults="{distance} km" />
-                                                    ),
+                                                    description: t({ id: 'contact-data.distance.option.20', message: "20 km" }),
                                                 },
                                                 {
                                                     value: 30,
-                                                    description: (
-                                                        <Trans
-                                                            id="contact-data.distance.option"
-                                                            values={{
-                                                                distance: 30
-                                                            }}  defaults="{distance} km" />
-                                                    ),
+                                                    description: t({ id: 'contact-data.distance.option.30', message: "30 km" }),
                                                 },
                                                 {
                                                     value: 40,
-                                                    description: (
-                                                        <Trans 
-                                                            id="contact-data.distance.option"
-                                                            values={{
-                                                                distance: 40
-                                                            }}  defaults="{distance} km" />
-                                                    ),
+                                                    description: t({ id: 'contact-data.distance.option.40', message: "40 km" }),
                                                 },
                                                 {
                                                     value: 50,
-                                                    description: (
-                                                        <Trans
-                                                            id="contact-data.distance.option"
-                                                            values={{
-                                                                distance: 50
-                                                            }}  defaults="{distance} km" />
-                                                    ),
+                                                    description: t({ id: 'contact-data.distance.option.50', message: "50 km" }),
                                                 },
                                             ]}
                                         />
@@ -328,7 +314,8 @@ const Finalize = withForm(
                                         onClick={submit}
                                         disabled={submitting || !valid}
                                     >
-                                        <Trans id={
+                                        <Trans
+                                            id={
                                                 noQueue
                                                     ? 'wizard.no-queue.title'
                                                     : failed
@@ -337,15 +324,15 @@ const Finalize = withForm(
                                                     ? 'wizard.please-wait'
                                                     : 'wizard.continue'
                                             }
-                                        >{
-                                            noQueue
+                                        >
+                                            {noQueue
                                                 ? 'Nicht verfügbar'
                                                 : failed
                                                 ? 'Fehlgeschlagen :/'
                                                 : submitting
                                                 ? 'Bitte warten...'
-                                                : 'Weiter'
-                                        }</Trans>
+                                                : 'Weiter'}
+                                        </Trans>
                                     </Button>
                                 </CardFooter>
                             </React.Fragment>

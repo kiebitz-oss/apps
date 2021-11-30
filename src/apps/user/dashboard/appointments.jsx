@@ -76,33 +76,8 @@ const OfferDetails = withSettings(({ settings, offer }) => {
                     <F key="k">
                         <p>{v.notice[lang]}</p>
                         <p>
-                            <Trans
-                                id="offer-notice-text"
-                                values={{
-                                vaccine: (
-                                    <strong key="vaccine">{v[lang]}</strong>
-                                ),
-                                info: (
-                                    <a
-                                        key="infos"
-                                        target="_blank"
-                                        href={v.infosUrl[lang]}
-                                    >
-                                        <Trans id="info">das Aufklärungsmerkblatt</Trans>
-                                    </a>
-                                ),
-                                anamnesis: (
-                                    <a
-                                        key="anamnesis"
-                                        target="_blank"
-                                        href={v.anamnesisUrl[lang]}
-                                    >
-                                        <Trans id="anamnesis">die Anamnese- und Einwilligungserklärung</Trans>
-                                    </a>
-                                )
-                                }}
-                            >
-                                Bitte füllen Sie nach Möglichkeit {anamnesis} sowie {info} für den Impfstoff {vaccine} aus und bringen Sie diese unterschrieben mit zur Impfung (falls Sie keine Möglichkeit haben die Dokumente zu drucken können Sie diese auch vor Ort ausfüllen).
+                            <Trans id="offer-notice-text">
+                                Bitte füllen Sie nach Möglichkeit <a target="_blank" href={v.anamnesisUrl[lang]}>die Anamnese- und Einwilligungserklärung</a> sowie <a target="_blank" href={v.infosUrl[lang]}>das Aufklärungsmerkblatt</a> für den Impfstoff <strong>{v[lang]}</strong> aus und bringen Sie diese unterschrieben mit zur Impfung (falls Sie keine Möglichkeit haben die Dokumente zu drucken können Sie diese auch vor Ort ausfüllen).
                             </Trans>
                         </p>
                     </F>

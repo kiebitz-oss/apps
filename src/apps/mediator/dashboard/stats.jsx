@@ -194,27 +194,7 @@ class Stats extends React.Component {
                     <div className="bulma-column bulma-is-full-desktop">
                         <Card size="fullwidth" flex>
                             <CardContent>
-                                <Trans
-                                    id="dateSpan"
-                                    values={{
-                                    from: (
-                                        <strong key="s1">
-                                            {new Date(
-                                                summary.from
-                                            ).toLocaleString('en-US', opts)}
-                                        </strong>
-                                    ),
-                                    to: (
-                                        <strong key="s2">
-                                            {new Date(
-                                                summary.to
-                                            ).toLocaleString('en-US', opts)}
-                                        </strong>
-                                    )
-                                    
-                                }}
-                                defaults="Zeige Daten von {from} bis {to}."
-                                />
+                                <Trans id="dateSpan">Zeige Daten von <strong>{new Date(summary.from).toLocaleString('en-US', opts)}</strong> bis <strong>{new Date(summary.to).toLocaleString('en-US', opts)}</strong>.</Trans>
                             </CardContent>
                         </Card>
                     </div>

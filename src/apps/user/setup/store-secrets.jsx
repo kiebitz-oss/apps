@@ -29,7 +29,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     const showBookmarkModal = () => {
         history.pushState(
             {},
-            i18n._('store-secrets.restore.title', {}, { defaults: 'store-secrets.restore.title MISSING' }),
+            t({ id: 'store-secrets.restore.title', message: 'store-secrets.restore.title MISSING' }),
             `/user/restore#${secret},v0.1`
         );
         setBookmarkModal(true);

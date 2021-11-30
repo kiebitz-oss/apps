@@ -22,9 +22,8 @@ import {
     T,
 } from 'components';
 import { restoreFromBackup } from 'apps/user/actions';
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import Form from 'helpers/form';
-import { i18n } from "@lingui/core"
 import './restore.scss';
 
 function formatSecret(secret) {
@@ -42,7 +41,7 @@ class LoadBackupForm extends Form {
                 .toLowerCase()
                 .replace(/[^abcdefghijkmnpqrstuvwxyz23456789]/g, '');
         if (!/[abcdefghijkmnpqrstuvwxyz23456789]{16,20}/i.exec(data.secret))
-            errors.secret = i18n._('load-backup.invalid-secret');
+            errors.secret = t({ id: 'load-backup.invalid-secret' });
         return errors;
     }
 }

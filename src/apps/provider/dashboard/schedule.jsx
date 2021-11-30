@@ -7,7 +7,6 @@ import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
 import { urlEncode } from 'helpers/data';
 import { formatDate, formatTime, getMonday } from 'helpers/time';
-import { i18n } from "@lingui/core"
 import Form from 'helpers/form';
 import {
     withRouter,
@@ -43,7 +42,7 @@ import {
     cancelAppointment,
     openAppointments,
 } from '../actions';
-import { Trans, defineMessage } from '@lingui/macro';
+import { t, Trans, defineMessage } from '@lingui/macro';
 import './schedule.scss';
 
 const dayMessages = {
@@ -638,31 +637,27 @@ class AppointmentForm extends Form {
     validate() {
         const errors = {};
         if (this.data.date === undefined)
-            errors.date = i18n._('new-appointment.please-enter-date'
-            );
+            errors.date = t({ id: 'new-appointment.please-enter-date'});
         else if (this.data.time === undefined)
-            errors.time = i18n._('new-appointment.please-enter-time'
-            );
+            errors.time = t({ id: 'new-appointment.please-enter-time'});
         else {
             this.data.timestamp = new Date(
                 `${this.data.date} ${this.data.time}`
             );
             if (this.data.timestamp < new Date())
-                errors.date = i18n._('new-appointment.in-the-past');
+                errors.date = t({ id: 'new-appointment.in-the-past'});
             // we allow appointments max. 30 days in the future
             if (
                 this.data.timestamp >
                 new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
             )
-                errors.date = i18n._('new-appointment.too-far-in-the-future', {}, {
-                    defaults: 'Bitte wählen Sie Termine die maximal 30 Tage in der Zukunft liegen'
-                });
+                errors.date = t({ id: 'new-appointment.too-far-in-the-future', message: 'Bitte wählen Sie Termine die maximal 30 Tage in der Zukunft liegen' });
         }
         if (this.data.slots > 50) {
-            errors.slots = i18n._('new-appointment.too-many-slots');
+            errors.slots = t({ id: 'new-appointment.too-many-slots' });
         }
         if (this.data.slots < 1) {
-            errors.slots = i18n._('new-appointment.too-few-slots');
+            errors.slots = t({ id: 'new-appointment.too-few-slots' });
         }
         return errors;
     }
@@ -787,13 +782,9 @@ const NewAppointment = withSettings(
                         ([k, v]) => {
                             const options = Object.entries(v.values).map(
                                 ([kv, vv]) => ({
-                                    value: kv,
                                     key: vv,
                                     title: (
-                                        <Trans 
-                                            values={{ t: properties }}
-                                            id={`${k}.values.${kv}`}
-                                        >TODO</Trans>
+                                        <Trans id={`${k}.values.${kv}`}>{v}</Trans>
                                     ),
                                 })
                             );
@@ -844,10 +835,9 @@ const NewAppointment = withSettings(
                         180,
                         210,
                         240,
-                    ].map(v => ({
-                        value: v,
+                    ].map(duration => ({
                         title: (
-                            <Trans id='schedule.appointment.duration.title' values={{ duration: v }} defaults="Dauer: {duration} Minuten" />
+                            <Trans id='schedule.appointment.duration.title'>Dauer: {duration} Minuten"</Trans>
                         ),
                     }));
 
@@ -1097,7 +1087,7 @@ const Invitations = withTimer(
                                     {content}
                                 </CardContent>
                                 <Message type="info" waiting>
-                                    <Trans id="schedule.updating" values={{ lastUpdated }} defaults="Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}" />
+                                    <Trans id="schedule.updating">Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}</Trans>
                                 </Message>
                             </div>
                         );

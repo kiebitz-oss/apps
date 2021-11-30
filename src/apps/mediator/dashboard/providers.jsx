@@ -121,14 +121,7 @@ const Providers = withTimer(
                                 <div className="kip-provider-data">
                                     {(reconfirmProviders.status ===
                                         'inProgress' && (
-                                        <Trans
-                                            id="providers.reconfirmProgressText"
-                                            values={{
-                                                i: reconfirmProviders.i,
-                                                n: reconfirmProviders.n
-                                            }}
-                                            defaults="Bestätige Anbieter {i} von {n}..."
-                                        />
+                                        <Trans id="providers.reconfirmProgressText">Bestätige Anbieter {reconfirmProviders.i} von {reconfirmProviders.n}...</Trans>
                                     )) || (
                                         <Trans id="providers.reconfirmText">
                                             Wollen Sie alle bestätigten Anbieter neu bestätigen?
