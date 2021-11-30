@@ -2,19 +2,26 @@
     "compileOnSave": false,
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "lib": ["dom", "es2015", "es2016", "es2019"],
-        "jsx": "preserve",
+        "lib": ["dom", "dom.iterable", "esnext"],
         "baseUrl": "src",
-        "target": "es2016",
-        "module": "es2015",
-        "moduleResolution": "node",
+        "target": "es5",
         "noImplicitAny": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "removeComments": false,
         "preserveConstEnums": true,
-        "skipLibCheck": true,
         "sourceMap": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true
     }
 }

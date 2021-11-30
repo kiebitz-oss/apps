@@ -3,10 +3,7 @@
 // README.md contains license information.
 
 import React, { useEffect, useState, Fragment as F } from 'react';
-
-import Settings from './settings';
-import { keys } from 'apps/provider/actions';
-import { formatDuration, formatDate, formatTime } from 'helpers/time';
+import { formatDuration } from 'helpers/time';
 import classNames from 'helpers/classnames';
 import {
     tokenData,
@@ -14,7 +11,6 @@ import {
     invitation,
     appointments,
     confirmOffers,
-    getAppointments,
     cancelInvitation,
     confirmDeletion,
     acceptedInvitation,
@@ -24,14 +20,10 @@ import {
     withActions,
     ButtonIcon,
     Button,
-    Card,
     Modal,
     CardContent,
-    CardHeader,
     CardFooter,
     WithLoader,
-    T,
-    A,
     Message,
 } from 'components';
 import { Trans } from '@lingui/macro';
@@ -47,7 +39,9 @@ const ProviderDetails = ({ data }) => {
                 <li>{data.json.city}</li>
                 {data.json.accessible && (
                     <li>
-                        <Trans id="provider-details.accessible">(barrierefreier Zugang)</Trans>
+                        <Trans id="provider-details.accessible">
+                            (barrierefreier Zugang)
+                        </Trans>
                     </li>
                 )}
             </ul>
@@ -77,7 +71,19 @@ const OfferDetails = withSettings(({ settings, offer }) => {
                         <p>{v.notice[lang]}</p>
                         <p>
                             <Trans id="offer-notice-text">
-                                Bitte füllen Sie nach Möglichkeit <a target="_blank" href={v.anamnesisUrl[lang]}>die Anamnese- und Einwilligungserklärung</a> sowie <a target="_blank" href={v.infosUrl[lang]}>das Aufklärungsmerkblatt</a> für den Impfstoff <strong>{v[lang]}</strong> aus und bringen Sie diese unterschrieben mit zur Impfung (falls Sie keine Möglichkeit haben die Dokumente zu drucken können Sie diese auch vor Ort ausfüllen).
+                                Bitte füllen Sie nach Möglichkeit{' '}
+                                <a target="_blank" href={v.anamnesisUrl[lang]}>
+                                    die Anamnese- und Einwilligungserklärung
+                                </a>{' '}
+                                sowie{' '}
+                                <a target="_blank" href={v.infosUrl[lang]}>
+                                    das Aufklärungsmerkblatt
+                                </a>{' '}
+                                für den Impfstoff <strong>{v[lang]}</strong> aus
+                                und bringen Sie diese unterschrieben mit zur
+                                Impfung (falls Sie keine Möglichkeit haben die
+                                Dokumente zu drucken können Sie diese auch vor
+                                Ort ausfüllen).
                             </Trans>
                         </p>
                     </F>
@@ -93,7 +99,11 @@ const InvitationDeleted = withActions(
         return (
             <F>
                 <Message type="danger">
-                    <Trans id="invitation-accepted.deleted">Der Termin wurde vom Arzt gelöscht. Sorry! Du kannst zurück zur Terminvergabe gehen, um neue Terminvorschläge zu erhalten.</Trans>
+                    <Trans id="invitation-accepted.deleted">
+                        Der Termin wurde vom Arzt gelöscht. Sorry! Du kannst
+                        zurück zur Terminvergabe gehen, um neue Terminvorschläge
+                        zu erhalten.
+                    </Trans>
                 </Message>
                 <CardFooter>
                     <Button
@@ -104,7 +114,9 @@ const InvitationDeleted = withActions(
                             )
                         }
                     >
-                        <Trans id="invitation-accepted.confirm-deletion">Zurück zur Terminvergabe</Trans>
+                        <Trans id="invitation-accepted.confirm-deletion">
+                            Zurück zur Terminvergabe
+                        </Trans>
                     </Button>
                 </CardFooter>
             </F>
@@ -170,7 +182,9 @@ const AcceptedInvitation = withActions(
             notice = (
                 <F>
                     <Message type="danger">
-                        <Trans id="invitation-accepted.changed">Details Deines Termins haben sich geändert!</Trans>
+                        <Trans id="invitation-accepted.changed">
+                            Details Deines Termins haben sich geändert!
+                        </Trans>
                     </Message>
                 </F>
             );
@@ -185,13 +199,27 @@ const AcceptedInvitation = withActions(
                     onClose={() => setShowDelete(false)}
                     onCancel={() => setShowDelete(false)}
                     saveType="danger"
-                    save={<Trans id="invitation-accepted.delete.confirm">Bestätigen</Trans>}
-                    cancel={<Trans id="invitation-accepted.delete.cancel">Abbrechen</Trans>}
-                    title={<Trans id="invitation-accepted.delete.title">Termin absagen</Trans>}
+                    save={
+                        <Trans id="invitation-accepted.delete.confirm">
+                            Bestätigen
+                        </Trans>
+                    }
+                    cancel={
+                        <Trans id="invitation-accepted.delete.cancel">
+                            Abbrechen
+                        </Trans>
+                    }
+                    title={
+                        <Trans id="invitation-accepted.delete.title">
+                            Termin absagen
+                        </Trans>
+                    }
                     className="kip-appointment-overview"
                 >
                     <p>
-                        <Trans id="invitation-accepted.delete.notice">Willst du den Termin wirklich absagen?</Trans>
+                        <Trans id="invitation-accepted.delete.notice">
+                            Willst du den Termin wirklich absagen?
+                        </Trans>
                     </p>
                 </Modal>
             );
@@ -202,7 +230,9 @@ const AcceptedInvitation = withActions(
                     {notice}
                     <div className="kip-accepted-invitation">
                         <h2>
-                            <Trans id="invitation-accepted.title">Termin bestätigt!</Trans>
+                            <Trans id="invitation-accepted.title">
+                                Termin bestätigt!
+                            </Trans>
                         </h2>
                         <ProviderDetails data={invitationData.provider} />
                         <OfferDetails offer={currentOffer} />
@@ -212,7 +242,9 @@ const AcceptedInvitation = withActions(
                         </p>
                         <p className="kip-booking-code">
                             <span>
-                                <Trans id={'invitation-accepted.booking-code'}>Buchungscode zur Vorlage: Bitte notieren!</Trans>
+                                <Trans id={'invitation-accepted.booking-code'}>
+                                    Buchungscode zur Vorlage: Bitte notieren!
+                                </Trans>
                             </span>
                             {userSecret.data.slice(0, 4)}
                         </p>
@@ -246,7 +278,11 @@ const NoInvitations = ({ tokenData }) => {
         content = (
             <F>
                 <Message type="success">
-                    <Trans id="no-invitations.please-wait">Deine Daten wurden im System gespeichert. Falls Termine in deiner Nähe verfügbar sind, werden diese in wenigen Minuten hier angezeigt.</Trans>
+                    <Trans id="no-invitations.please-wait">
+                        Deine Daten wurden im System gespeichert. Falls Termine
+                        in deiner Nähe verfügbar sind, werden diese in wenigen
+                        Minuten hier angezeigt.
+                    </Trans>
                 </Message>
             </F>
         );
@@ -254,7 +290,13 @@ const NoInvitations = ({ tokenData }) => {
         content = (
             <F>
                 <Message type="warning">
-                    <Trans id="no-invitations.notice">Im Moment sind scheinbar keine Termine in Deiner Umgebung verfügbar, oder leider bereits ausgebucht. Bitte schau ab jetzt regelmäßig hier vorbei. Sobald neue Termine in Deiner Nähe verfügbar sind, werden sie Dir hier angezeigt.</Trans>
+                    <Trans id="no-invitations.notice">
+                        Im Moment sind scheinbar keine Termine in Deiner
+                        Umgebung verfügbar, oder leider bereits ausgebucht.
+                        Bitte schau ab jetzt regelmäßig hier vorbei. Sobald neue
+                        Termine in Deiner Nähe verfügbar sind, werden sie Dir
+                        hier angezeigt.
+                    </Trans>
                 </Message>
             </F>
         );
@@ -266,7 +308,9 @@ const NoInvitations = ({ tokenData }) => {
             </CardContent>
             <Message type="info">
                 <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
-                <Trans id="no-invitations.update-notice">Diese Seite wird automatisch aktualisiert...</Trans>
+                <Trans id="no-invitations.update-notice">
+                    Diese Seite wird automatisch aktualisiert...
+                </Trans>
             </Message>
         </F>
     );
@@ -397,9 +441,7 @@ const InvitationDetails = withSettings(
                                     minute: '2-digit',
                                 })}
                             </td>
-                            <td>
-                                {formatDuration(offer.duration)}
-                            </td>
+                            <td>{formatDuration(offer.duration)}</td>
                             <td>
                                 <PropertyTags appointment={offer} />
                             </td>
@@ -412,7 +454,11 @@ const InvitationDetails = withSettings(
             if (offers.length === 0)
                 offerDetails = (
                     <Message type="warning">
-                        <Trans id="no-offers-anymore">Alle Terminangebote sind bereits abgelaufen. Bitte hab' etwas Geduld, du wirst voraussichtlich neue Angebote erhalten.</Trans>
+                        <Trans id="no-offers-anymore">
+                            Alle Terminangebote sind bereits abgelaufen. Bitte
+                            hab' etwas Geduld, du wirst voraussichtlich neue
+                            Angebote erhalten.
+                        </Trans>
                     </Message>
                 );
             else
@@ -421,16 +467,22 @@ const InvitationDetails = withSettings(
                         <thead>
                             <tr>
                                 <th>
-                                    <Trans id="appointment-preference">Rang</Trans>
+                                    <Trans id="appointment-preference">
+                                        Rang
+                                    </Trans>
                                 </th>
                                 <th>
                                     <Trans id="appointment-date">Datum</Trans>
                                 </th>
                                 <th>
-                                    <Trans id="appointment-duration">Dauer</Trans>
+                                    <Trans id="appointment-duration">
+                                        Dauer
+                                    </Trans>
                                 </th>
                                 <th>
-                                    <Trans id="appointment-vaccine">Impfstoff</Trans>
+                                    <Trans id="appointment-vaccine">
+                                        Impfstoff
+                                    </Trans>
                                 </th>
                             </tr>
                         </thead>
@@ -444,7 +496,14 @@ const InvitationDetails = withSettings(
                         <div className="kip-invitation-details">
                             <ProviderDetails data={data.provider} />
                             <p>
-                                <Trans id="appointments-notice">Bitte wähle alle für Dich passenden Termine aus und bestätige anschließend Deine Auswahl. Beachte bitte, dass du pünktlich zum Termin erscheinst. Die angegebene Dauer entspricht dem maximal zu erwartenden Zeitbedarf.</Trans>
+                                <Trans id="appointments-notice">
+                                    Bitte wähle alle für Dich passenden Termine
+                                    aus und bestätige anschließend Deine
+                                    Auswahl. Beachte bitte, dass du pünktlich
+                                    zum Termin erscheinst. Die angegebene Dauer
+                                    entspricht dem maximal zu erwartenden
+                                    Zeitbedarf.
+                                </Trans>
                             </p>
                             {offerDetails}
                         </div>
@@ -463,7 +522,9 @@ const InvitationDetails = withSettings(
                             }
                             type="success"
                         >
-                            <Trans id="confirm-appointment">Terminauswahl bestätigen</Trans>
+                            <Trans id="confirm-appointment">
+                                Terminauswahl bestätigen
+                            </Trans>
                         </Button>
                     </CardFooter>
                 </F>

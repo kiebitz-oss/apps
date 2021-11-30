@@ -6,22 +6,19 @@ import React, { useState, useEffect } from 'react';
 import Form from 'helpers/form';
 import { contactData } from 'apps/user/actions';
 import {
-    withRouter,
     withForm,
     withActions,
-    WithLoader,
     Form as FormComponent,
     FieldSet,
     RetractingLabelInput,
     ErrorFor,
-    T,
     CardFooter,
     CardContent,
     SubmitField,
-    Button,
 } from 'components';
 import { Trans } from '@lingui/macro';
 import './contact-data.scss';
+import { useNavigate } from 'react-router-dom';
 
 class ContactDataForm extends Form {
     validate() {
@@ -30,31 +27,19 @@ class ContactDataForm extends Form {
     }
 }
 
-/*
-            <ErrorFor error={error} field="email" />
-            <RetractingLabelInput
-                description={<Trans id="contact-data.email.description" />}
-                value={data.email || ''}
-                onChange={value => setAndMarkModified('email', value)}
-                label={<Trans id="contact-data.email.label" />}
-            />
-
-*/
-
 const BaseContactData = ({
-    contactData,
     contactDataAction,
     form: { set, data, error, valid, reset },
-    router,
 }) => {
     const [modified, setModified] = useState(false);
     const [initialized, setInitialized] = useState(false);
+    const navigate = useNavigate();
 
     const onSubmit = () => {
         if (!valid) return;
         contactDataAction(data);
         // we redirect to the 'verify' step
-        router.navigateToUrl(`/user/setup/finalize`);
+        navigate(`/user/setup/finalize`);
     };
 
     useEffect(() => {
@@ -124,7 +109,7 @@ const BaseContactData = ({
 };
 
 const ContactData = withActions(
-    withForm(withRouter(BaseContactData), ContactDataForm, 'form'),
+    withForm(BaseContactData, ContactDataForm, 'form'),
     [contactData]
 );
 

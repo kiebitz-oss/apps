@@ -27,6 +27,7 @@ import {
 import { keyPairs, validKeyPairs } from '../actions';
 import { Trans } from '@lingui/macro';
 import './index.scss';
+import { useParams } from 'react-router';
 
 const UploadKeyPairsModal = ({ keyPairsAction }) => {
     const [invalidFile, setInvalidFile] = useState(false);
@@ -55,12 +56,18 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
     if (invalidFile)
         notice = (
             <Message type="danger">
-                <Trans id="upload-key-pairs.invalid-file">Die von Ihnen gewählte Datei ist ungültig.</Trans>
+                <Trans id="upload-key-pairs.invalid-file">
+                    Die von Ihnen gewählte Datei ist ungültig.
+                </Trans>
             </Message>
         );
-    else notice = <Trans id="upload-key-pairs.notice">
-        Bitte laden Sie die Datei mit Ihren geheimen Vermittlerschlüsseln.
-    </Trans>;
+    else
+        notice = (
+            <Trans id="upload-key-pairs.notice">
+                Bitte laden Sie die Datei mit Ihren geheimen
+                Vermittlerschlüsseln.
+            </Trans>
+        );
 
     const footer = (
         <Form>
@@ -81,7 +88,11 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
         <Modal
             footer={footer}
             className="kip-upload-key-pairs"
-            title={<Trans id="upload-key-pairs.title">Geheime Schlüssel laden</Trans>}
+            title={
+                <Trans id="upload-key-pairs.title">
+                    Geheime Schlüssel laden
+                </Trans>
+            }
         >
             {notice}
         </Modal>
@@ -91,11 +102,6 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
 const Dashboard = withActions(
     withSettings(
         ({
-            route: {
-                handler: {
-                    props: { tab, action, secondaryAction, id },
-                },
-            },
             settings,
             keyPairs,
             keyPairsAction,
@@ -104,6 +110,7 @@ const Dashboard = withActions(
         }) => {
             const [key, setKey] = useState(false);
             const [validKey, setValidKey] = useState(false);
+            const { tab, action, secondaryAction, id } = useParams();
 
             useEffect(() => {
                 if (!key) {
@@ -133,11 +140,7 @@ const Dashboard = withActions(
                             />
                         );
                         break;
-                    case 'providers':
-                        content = (
-                            <Providers action={action} id={secondaryAction} />
-                        );
-                        break;
+                    
                     case 'stats':
                         content = (
                             <Stats
@@ -145,6 +148,13 @@ const Dashboard = withActions(
                                 secondaryAction={secondaryAction}
                                 id={id}
                             />
+                        );
+                        break;
+
+                    default: 
+                    case 'providers':
+                        content = (
+                            <Providers action={action} id={secondaryAction} />
                         );
                         break;
                 }

@@ -2,29 +2,46 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-    T,
     A,
     Button,
-    withRouter,
     withActions,
     withSettings,
     WithLoader,
     CenteredCard,
     CardContent,
     CardFooter,
-    Switch,
-    Message,
     CardNav,
 } from 'components';
 import ProviderData from './provider-data';
 import StoreSecrets from './store-secrets';
 import Verify from './verify';
-import { Trans } from '@lingui/macro';
+import { Trans, defineMessage } from '@lingui/macro';
 import './wizard.scss';
+import { useNavigate } from 'react-router-dom';
 
 const pages = ['hi', 'enter-provider-data', 'verify', 'store-secrets'];
+
+
+const wizardStepsMessages = {
+    'hi': defineMessage({
+        id: 'wizard.steps.hi',
+        message: 'Jetzt starten'
+    }),
+    'enter-provider-data': defineMessage({
+        id: 'wizard.steps.enter-provider-data',
+        message: 'Kontaktdaten eingeben'
+    }),
+    'verify': defineMessage({
+        id: 'wizard.steps.verify',
+        message: 'Daten prüfen'
+    }),
+    'store-secrets': defineMessage({
+        id: 'wizard.steps.store-secrets',
+        message: 'Sicherungsdatei & Datenschlüssel'
+    }),
+};
 
 const Hi = withSettings(({ settings }) => (
     <React.Fragment>
@@ -44,8 +61,9 @@ const Hi = withSettings(({ settings }) => (
     </React.Fragment>
 ));
 
-const Wizard = ({ route, router, page, status }) => {
+const Wizard = ({ page, status }) => {
     const pageRef = useRef(null);
+    const navigate = useNavigate();
 
     const checkPage = () => {
         return true;
@@ -69,7 +87,6 @@ const Wizard = ({ route, router, page, status }) => {
     });
 
     const renderLoaded = () => {
-        const { app } = route.handler;
         const components = new Map([]);
         let i = 1;
 
@@ -83,12 +100,11 @@ const Wizard = ({ route, router, page, status }) => {
                         key={p}
                         disabled={!canShow(p)}
                         onClick={() => {
-                            if (canShow(p))
-                                router.navigateToUrl(`/provider/setup/${p}`);
+                            if (canShow(p)) navigate(`/provider/setup/${p}`);
                         }}
                         active={page === p}
                     >
-                        {i++}. <Trans id={`wizard.steps.${p}`}>TODO</Trans>
+                        {i++}. <Trans id={wizardStepsMessages[p]} />
                     </CardNav>
                 </a>
             );
@@ -137,4 +153,4 @@ const Wizard = ({ route, router, page, status }) => {
     );
 };
 
-export default withActions(withRouter(Wizard), []);
+export default withActions(Wizard, []);

@@ -34,4 +34,3 @@ export * from './charts/bar';
 export * from './store';
 export * from './with-form';
 export * from './settings';
-export * from './router';
