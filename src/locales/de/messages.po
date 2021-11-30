@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-11-30 15:20+0100\n"
+"POT-Creation-Date: 2021-11-30 15:31+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -116,7 +116,7 @@ msgstr "Datenbackup anfertigen"
 msgid "booked"
 msgstr "Gebuchte Termine"
 
-#: src/apps/mediator/dashboard/stats.jsx:231
+#: src/apps/mediator/dashboard/stats.jsx:232
 msgid "bookingRate"
 msgstr "bookingRate"
 
@@ -136,7 +136,7 @@ msgstr "Zugangscodes sind nur für bestimmte Impfstellen notwendig. Wenn kein Zu
 msgid "contact-data.access-code.label"
 msgstr "Zugangscode"
 
-#: src/apps/user/setup/verify.jsx:76
+#: src/apps/user/setup/verify.jsx:62
 msgid "contact-data.change"
 msgstr "Anpassen"
 
@@ -157,11 +157,11 @@ msgstr "Achtung: Du kannst den Radius derzeit nur 1x einstellen und nicht mehr �
 msgid "contact-data.distance.option"
 msgstr "contact-data.distance.option"
 
-#: src/apps/user/setup/verify.jsx:63
+#: src/apps/user/setup/verify.jsx:49
 msgid "contact-data.email.label"
 msgstr "E-Mail Adresse"
 
-#: src/apps/user/setup/verify.jsx:66
+#: src/apps/user/setup/verify.jsx:52
 msgid "contact-data.not-given"
 msgstr "(keine Angabe)"
 
@@ -393,9 +393,9 @@ msgstr "log-out-modal.text MISSING"
 msgid "log-out-modal.title"
 msgstr "Abmelden"
 
-#: src/apps/mediator/logged-out.jsx:43
-#: src/apps/provider/logged-out.jsx:43
-#: src/apps/user/logged-out.jsx:43
+#: src/apps/mediator/logged-out.jsx:36
+#: src/apps/provider/logged-out.jsx:36
+#: src/apps/user/logged-out.jsx:36
 msgid "logged-out.log-in-again"
 msgstr "Anmelden"
 
@@ -419,15 +419,15 @@ msgstr "Abbrechen"
 msgid "modal.save"
 msgstr "Speichern"
 
-#: src/apps/provider/dashboard/schedule.jsx:882
+#: src/apps/provider/dashboard/schedule.jsx:880
 msgid "new-appointment.date"
 msgstr "Datum"
 
-#: src/apps/provider/dashboard/schedule.jsx:911
+#: src/apps/provider/dashboard/schedule.jsx:909
 msgid "new-appointment.slots"
 msgstr "Anzahl Impfdosen"
 
-#: src/apps/provider/dashboard/schedule.jsx:896
+#: src/apps/provider/dashboard/schedule.jsx:894
 msgid "new-appointment.time"
 msgstr "Uhrzeit"
 
@@ -485,25 +485,25 @@ msgstr "Barrierefreier Zugang zur Praxis/zum Impfzentrum"
 msgid "provider-data.change"
 msgstr "Anpassen"
 
-#: src/apps/mediator/dashboard/providers.jsx:197
+#: src/apps/mediator/dashboard/providers.jsx:198
 #: src/apps/provider/setup/provider-data.jsx:100
 #: src/apps/provider/setup/verify.jsx:65
 msgid "provider-data.city"
 msgstr "Ort"
 
-#: src/apps/mediator/dashboard/providers.jsx:229
+#: src/apps/mediator/dashboard/providers.jsx:230
 #: src/apps/provider/setup/provider-data.jsx:110
 #: src/apps/provider/setup/verify.jsx:78
 msgid "provider-data.description"
 msgstr "Informationen für Impfwillige (z.B. wenn Sie spezielle Impfstoffe nur bestimmten Gruppen empfehlen)"
 
-#: src/apps/mediator/dashboard/providers.jsx:213
+#: src/apps/mediator/dashboard/providers.jsx:214
 #: src/apps/provider/setup/provider-data.jsx:137
 #: src/apps/provider/setup/verify.jsx:98
 msgid "provider-data.email"
 msgstr "provider-data.email"
 
-#: src/apps/mediator/dashboard/providers.jsx:171
+#: src/apps/mediator/dashboard/providers.jsx:172
 msgid "provider-data.field"
 msgstr "Feld"
 
@@ -511,7 +511,7 @@ msgstr "Feld"
 msgid "provider-data.for-mediator"
 msgstr "Die folgenden Kontaktdaten dienen ausschließlich zur Kommunikation mit dem Support-Team."
 
-#: src/apps/mediator/dashboard/providers.jsx:181
+#: src/apps/mediator/dashboard/providers.jsx:182
 #: src/apps/provider/setup/provider-data.jsx:82
 #: src/apps/provider/setup/verify.jsx:52
 msgid "provider-data.name"
@@ -528,7 +528,7 @@ msgstr "(keine Angabe)"
 msgid "provider-data.not-verified-yet"
 msgstr "Ihre Daten wurden noch nicht verifiziert.  Bitte haben Sie Verständnis, dass die Verifizierung bis zu 48h dauern kann."
 
-#: src/apps/mediator/dashboard/providers.jsx:221
+#: src/apps/mediator/dashboard/providers.jsx:222
 #: src/apps/provider/setup/provider-data.jsx:131
 #: src/apps/provider/setup/verify.jsx:90
 msgid "provider-data.phone"
@@ -542,7 +542,7 @@ msgstr "Weiter"
 msgid "provider-data.saving"
 msgstr "provider-data.saving MISSING"
 
-#: src/apps/mediator/dashboard/providers.jsx:189
+#: src/apps/mediator/dashboard/providers.jsx:190
 #: src/apps/provider/setup/provider-data.jsx:88
 #: src/apps/provider/setup/verify.jsx:58
 msgid "provider-data.street"
@@ -552,7 +552,7 @@ msgstr "Straße & Hausnummer"
 msgid "provider-data.title"
 msgstr "Ihre Daten"
 
-#: src/apps/mediator/dashboard/providers.jsx:174
+#: src/apps/mediator/dashboard/providers.jsx:175
 msgid "provider-data.value"
 msgstr "Wert"
 
@@ -565,56 +565,53 @@ msgstr "Ihre Daten unterlaufen einer Überprüfung unsererseits. Sobald Ihre Dat
 msgid "provider-data.website"
 msgstr "Webseite"
 
+#: src/apps/mediator/dashboard/providers.jsx:206
 #: src/apps/provider/setup/provider-data.jsx:94
 #: src/apps/provider/setup/verify.jsx:64
 msgid "provider-data.zip-code"
-msgstr "Postleitzahl"
-
-#: src/apps/mediator/dashboard/providers.jsx:205
-msgid "provider-data.zipCode"
 msgstr "Postleitzahl"
 
 #: src/apps/user/dashboard/appointments.jsx:50
 msgid "provider-details.accessible"
 msgstr "(barrierefreier Zugang)"
 
-#: src/apps/mediator/dashboard/providers.jsx:297
+#: src/apps/mediator/dashboard/providers.jsx:298
 msgid "providers.address"
 msgstr "Adresse"
 
-#: src/apps/mediator/dashboard/providers.jsx:159
+#: src/apps/mediator/dashboard/providers.jsx:160
 msgid "providers.confirm"
 msgstr "Anbieter freischalten"
 
-#: src/apps/mediator/dashboard/providers.jsx:166
+#: src/apps/mediator/dashboard/providers.jsx:167
 msgid "providers.confirmText"
 msgstr "Wollen Sie den Anbieter wirklich freischalten?"
 
-#: src/apps/mediator/dashboard/providers.jsx:158
+#: src/apps/mediator/dashboard/providers.jsx:159
 msgid "providers.edit"
 msgstr "Anbieter bearbeiten"
 
-#: src/apps/mediator/dashboard/providers.jsx:294
+#: src/apps/mediator/dashboard/providers.jsx:295
 msgid "providers.name"
 msgstr "Name"
 
 #: src/apps/mediator/dashboard/providers.jsx:38
-#: src/apps/mediator/dashboard/providers.jsx:285
+#: src/apps/mediator/dashboard/providers.jsx:286
 msgid "providers.pending"
 msgstr "Unbestätigt"
 
 #: src/apps/mediator/dashboard/providers.jsx:39
 #: src/apps/mediator/dashboard/providers.jsx:111
 #: src/apps/mediator/dashboard/providers.jsx:112
-#: src/apps/mediator/dashboard/providers.jsx:289
+#: src/apps/mediator/dashboard/providers.jsx:290
 msgid "providers.reconfirm"
 msgstr "Alle neu bestätigen"
 
 #: src/apps/mediator/dashboard/providers.jsx:124
 msgid "providers.reconfirmProgressText"
-msgstr "Bestätige Anbieter {i} von {n}..."
+msgstr "providers.reconfirmProgressText"
 
-#: src/apps/mediator/dashboard/providers.jsx:132
+#: src/apps/mediator/dashboard/providers.jsx:133
 msgid "providers.reconfirmText"
 msgstr "Wollen Sie alle bestätigten Anbieter neu bestätigen?"
 
@@ -623,7 +620,7 @@ msgid "providers.title"
 msgstr "Anbieter"
 
 #: src/apps/mediator/dashboard/providers.jsx:37
-#: src/apps/mediator/dashboard/providers.jsx:279
+#: src/apps/mediator/dashboard/providers.jsx:280
 msgid "providers.verified"
 msgstr "Bestätigt"
 
@@ -648,25 +645,25 @@ msgstr "Seite neu laden"
 msgid "restore"
 msgstr "Termin und Profil bearbeiten"
 
-#: src/apps/provider/dashboard/schedule.jsx:1069
+#: src/apps/provider/dashboard/schedule.jsx:1067
 msgid "schedule.appointment.add"
 msgstr "Termin erstellen"
 
 #: src/apps/provider/dashboard/schedule.jsx:850
 msgid "schedule.appointment.duration.title"
-msgstr "Dauer: {duration} Minuten"
+msgstr "schedule.appointment.duration.title"
 
 #: src/apps/provider/dashboard/schedule.jsx:558
 msgid "schedule.backward"
 msgstr "vorherige Woche"
 
 #: src/apps/provider/dashboard/schedule.jsx:61
-#: src/apps/provider/dashboard/schedule.jsx:1094
+#: src/apps/provider/dashboard/schedule.jsx:1092
 msgid "schedule.booking-list"
 msgstr "Buchungliste"
 
 #: src/apps/provider/dashboard/schedule.jsx:60
-#: src/apps/provider/dashboard/schedule.jsx:1086
+#: src/apps/provider/dashboard/schedule.jsx:1084
 msgid "schedule.calendar"
 msgstr "Kalenderansicht"
 
@@ -678,9 +675,9 @@ msgstr "nächste Woche"
 msgid "schedule.title"
 msgstr "Terminplan"
 
-#: src/apps/provider/dashboard/schedule.jsx:1102
+#: src/apps/provider/dashboard/schedule.jsx:1100
 msgid "schedule.updating"
-msgstr "Ansicht wird automatisch aktualisiert. Letzte Aktualisierung: {lastUpdated}"
+msgstr "schedule.updating"
 
 #: src/components/search-select.jsx:37
 msgid "search-select.no-candidates"
@@ -765,7 +762,7 @@ msgstr "Queue-Datei testen"
 #: src/apps/provider/deleted.jsx:25
 #: src/apps/user/deleted.jsx:24
 msgid "thanks-for-using-us"
-msgstr "Deine Daten wurden erfolgreich gelöscht. Vielen Dank, dass Du {service} genutzt hast!"
+msgstr "Deine Daten wurden erfolgreich gelöscht. Vielen Dank, dass Du <0>{title}</0> genutzt hast!"
 
 #: src/apps/mediator/dashboard/index.jsx:69
 msgid "upload-key-pairs.input"
@@ -822,7 +819,7 @@ msgid "what-to-do"
 msgstr "Was möchtest Du tun?"
 
 #: src/apps/provider/setup/wizard.jsx:51
-#: src/apps/user/setup/verify.jsx:82
+#: src/apps/user/setup/verify.jsx:68
 #: src/apps/user/setup/wizard.jsx:83
 msgid "wizard.continue"
 msgstr "Weiter"
@@ -857,7 +854,6 @@ msgstr "Zu den verfügbaren Terminen"
 
 #: src/apps/provider/setup/verify.jsx:231
 #: src/apps/provider/setup/wizard.jsx:40
-#: src/apps/user/setup/verify.jsx:51
 #: src/apps/user/setup/wizard.jsx:71
 msgid "wizard.letUsKnow"
 msgstr "wizard.letUsKnow"
@@ -886,7 +882,7 @@ msgstr "Sicherheitscode notieren"
 msgid "wizard.steps.verify"
 msgstr "Kontaktdaten prüfen"
 
-#: src/apps/provider/dashboard/schedule.jsx:867
+#: src/apps/provider/dashboard/schedule.jsx:865
 #: src/apps/provider/dashboard/settings.jsx:184
 #: src/apps/provider/dashboard/settings.jsx:210
 #: src/apps/provider/setup/store-secrets.jsx:86

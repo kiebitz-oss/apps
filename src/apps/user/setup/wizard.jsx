@@ -60,19 +60,7 @@ const Hi = withSettings(({ settings }) => (
     <React.Fragment>
         <CardContent>
             <p>
-                <Trans id="wizard.hi"
-                values={{
-                    link: (
-                        <A
-                            key="letUsKnow"
-                            external
-                            href={settings.get('supportEmail')}
-                        >
-                            <Trans id="wizard.letUsKnow" key="letUsKnow"></Trans>
-                        </A>
-                    )
-                }}
-                >
+                <Trans id="wizard.hi">
                    Willkommen.
                    Dieser Assistent hilft Dir bei der Impfanmeldung.
                 </Trans>

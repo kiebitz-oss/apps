@@ -14,12 +14,9 @@ import { Trans } from '@lingui/macro';
 const BaseDefaultErrorMessage = ({ settings }) => (
     <CenteredCard>
         <Message type="danger">
-            <Trans id="errorBoundary.somethingWentWrong" values={{
-                    email: settings.get(['supportEmail'])
-                }}
-            >
+            <Trans id="errorBoundary.somethingWentWrong">
                 Es tut uns schrecklich leid aber es ist ein unerwarteter Fehler passiert. Bitte 
-                <A href="mailto:{email}" external>kontaktieren Sie uns zur Behebung</A>.
+                <A href={`mailto:${settings.get(['supportEmail'])}`} external>kontaktieren Sie uns zur Behebung</A>.
             </Trans>
             {' '}
         </Message>

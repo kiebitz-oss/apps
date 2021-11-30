@@ -30,17 +30,7 @@ const Hi = withSettings(({ settings }) => (
     <React.Fragment>
         <CardContent>
             <p>
-                <Trans id="wizard.hi"
-                    link={
-                        <A
-                            key="letUsKnow"
-                            external
-                            href={settings.get('supportEmail')}
-                        >
-                            <Trans id="wizard.letUsKnow" key="letUsKnow">wizard.letUsKnow MISSING</Trans>
-                        </A>
-                    }
-                >
+                <Trans id="wizard.hi">
                     Willkommen.
                     Dieser Assistent führt Sie Schritt für Schritt zur Terminverwaltung.
                 </Trans>

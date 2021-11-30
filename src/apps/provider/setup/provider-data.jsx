@@ -187,7 +187,7 @@ const BaseProviderData = ({
                                     waiting={submitting}
                                     title={
                                         submitting ? (
-                                            <Trans id="provider-data.saving">provider-data.saving MISSING</Trans>
+                                            <Trans id="provider-data.saving">Speichere...</Trans>
                                         ) : (
                                             <Trans id='provider-data.save-and-continue'>Weiter</Trans>
                                         )

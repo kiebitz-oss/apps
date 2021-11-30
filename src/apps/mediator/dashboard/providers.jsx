@@ -203,7 +203,7 @@ const Providers = withTimer(
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <Trans id="provider-data.zipCode">Postleitzahl</Trans>
+                                                        <Trans id="provider-data.zip-code">Postleitzahl</Trans>
                                                     </td>
                                                     <td>
                                                         {provider.data.zipCode}

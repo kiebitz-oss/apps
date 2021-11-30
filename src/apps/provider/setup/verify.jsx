@@ -221,20 +221,7 @@ const Verify = withRouter(
                         <CardContent>
                             {failedMessage}
                             <p className="kip-verify-notice">
-                                <Trans id="verify.text"
-                                    link={
-                                        <A
-                                            key="letUsKnow"
-                                            external
-                                            href={settings.get('supportEmail')}
-                                        >
-                                            <Trans
-                                                id="wizard.letUsKnow"
-                                                key="letUsKnow"
-                                            >wizard.letUsKnow MISSING</Trans>
-                                        </A>
-                                    }
-                                >Bitte überprüfen Sie Ihre Daten, bevor Sie den Vorgang abschließen.</Trans>
+                                <Trans id="verify.text">Bitte überprüfen Sie Ihre Daten, bevor Sie den Vorgang abschließen.</Trans>
                             </p>
                             <ProviderData providerData={providerData || {}} />
                         </CardContent>
