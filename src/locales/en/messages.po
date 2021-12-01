@@ -1,270 +1,257 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-11-30 16:37+0100\n"
+"POT-Creation-Date: 2021-12-01 10:59+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
-#: src/apps/provider/setup/wizard.jsx:91
-#~ msgid "TODO"
-#~ msgstr ""
-
-#: src/apps/mediator/dashboard/summary-box.jsx:31
+#: src/apps/mediator/dashboard/summary-box.tsx:30
 msgid "active"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:475
+#: src/apps/user/dashboard/appointments.tsx:465
 msgid "appointment-date"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:478
+#: src/apps/user/dashboard/appointments.tsx:468
 msgid "appointment-duration"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:220
+#: src/apps/provider/dashboard/schedule.tsx:206
 msgid "appointment-overview.delete.button"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:121
+#: src/apps/provider/dashboard/schedule.tsx:108
 msgid "appointment-overview.delete.cancel"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:116
+#: src/apps/provider/dashboard/schedule.tsx:103
 msgid "appointment-overview.delete.confirm"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:134
+#: src/apps/provider/dashboard/schedule.tsx:121
 msgid "appointment-overview.delete.notice"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:126
+#: src/apps/provider/dashboard/schedule.tsx:113
 msgid "appointment-overview.delete.title"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:177
-#: src/apps/provider/dashboard/schedule.jsx:627
+#: src/apps/provider/dashboard/schedule.tsx:166
+#: src/apps/provider/dashboard/schedule.tsx:628
 msgid "appointment-overview.details.booked"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:188
+#: src/apps/provider/dashboard/schedule.tsx:177
 msgid "appointment-overview.details.booking-codes"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:198
-#: src/apps/provider/dashboard/schedule.jsx:640
+#: src/apps/provider/dashboard/schedule.tsx:187
+#: src/apps/provider/dashboard/schedule.tsx:641
 msgid "appointment-overview.details.no-booked-slots"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:171
-#: src/apps/provider/dashboard/schedule.jsx:623
+#: src/apps/provider/dashboard/schedule.tsx:160
+#: src/apps/provider/dashboard/schedule.tsx:624
 msgid "appointment-overview.details.slots"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:211
+#: src/apps/provider/dashboard/schedule.tsx:200
 msgid "appointment-overview.edit.button"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:149
+#: src/apps/provider/dashboard/schedule.tsx:138
 msgid "appointment-overview.title"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:470
+#: src/apps/user/dashboard/appointments.tsx:462
 msgid "appointment-preference"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:483
+#: src/apps/user/dashboard/appointments.tsx:471
 msgid "appointment-vaccine"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:659
+#: src/apps/provider/dashboard/schedule.tsx:661
 msgid "appointments-list.title"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:499
+#: src/apps/user/dashboard/appointments.tsx:485
 msgid "appointments-notice"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:312
+#: src/apps/provider/dashboard/settings.tsx:296
 msgid "backup"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:130
+#: src/apps/provider/dashboard/settings.tsx:123
 msgid "backup-modal.close"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:158
-#: src/apps/provider/dashboard/settings.jsx:237
+#: src/apps/provider/dashboard/settings.tsx:150
+#: src/apps/provider/dashboard/settings.tsx:227
 msgid "backup-modal.download-backup"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:135
+#: src/apps/provider/dashboard/settings.tsx:127
 msgid "backup-modal.text"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:124
+#: src/apps/provider/dashboard/settings.tsx:118
 msgid "backup-modal.title"
 msgstr ""
 
-#: src/apps/mediator/dashboard/summary-box.jsx:27
+#: src/apps/mediator/dashboard/summary-box.tsx:26
 msgid "booked"
 msgstr ""
 
-#: src/apps/mediator/dashboard/stats.jsx:209
+#: src/apps/mediator/dashboard/stats.jsx:232
 msgid "bookingRate"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:255
+#: src/apps/user/dashboard/appointments.tsx:254
 msgid "cancel-appointment"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:525
+#: src/apps/user/dashboard/appointments.tsx:510
 msgid "confirm-appointment"
 msgstr ""
 
-#: src/apps/user/setup/contact-data.jsx:66
+#: src/apps/user/setup/contact-data.tsx:52
 msgid "contact-data.access-code.description"
 msgstr ""
 
-#: src/apps/user/setup/contact-data.jsx:70
+#: src/apps/user/setup/contact-data.tsx:48
 msgid "contact-data.access-code.label"
 msgstr ""
 
-#: src/apps/user/setup/verify.jsx:62
+#: src/apps/user/setup/verify.tsx:59
 msgid "contact-data.change"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:238
+#: src/apps/user/setup/finalize.tsx:239
 msgid "contact-data.distance.label"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:243
+#: src/apps/user/setup/finalize.tsx:244
 msgid "contact-data.distance.notice"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:271
+#: src/apps/user/setup/finalize.tsx:261
 msgid "contact-data.distance.option.10"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:279
+#: src/apps/user/setup/finalize.tsx:268
 msgid "contact-data.distance.option.20"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:287
+#: src/apps/user/setup/finalize.tsx:275
 msgid "contact-data.distance.option.30"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:295
+#: src/apps/user/setup/finalize.tsx:282
 msgid "contact-data.distance.option.40"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:263
+#: src/apps/user/setup/finalize.tsx:254
 msgid "contact-data.distance.option.5"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:303
+#: src/apps/user/setup/finalize.tsx:289
 msgid "contact-data.distance.option.50"
 msgstr ""
 
-#: src/apps/user/setup/verify.jsx:49
+#: src/apps/user/setup/verify.tsx:42
 msgid "contact-data.email.label"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:55
+#: src/apps/user/setup/finalize.tsx:213
+#: src/apps/user/setup/finalize.tsx:221
+#: src/apps/user/setup/finalize.tsx:229
 msgid "contact-data.invalid-zip-code"
 msgstr ""
 
-#: src/apps/user/setup/verify.jsx:52
+#: src/apps/user/setup/verify.tsx:47
 msgid "contact-data.not-given"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:37
+#: src/apps/user/setup/finalize.tsx:40
 msgid "contact-data.properties.location.title"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:42
+#: src/apps/user/setup/finalize.tsx:45
 msgid "contact-data.properties.location.values.accessible"
 msgstr ""
 
-#: src/apps/user/setup/contact-data.jsx:97
+#: src/apps/user/setup/contact-data.tsx:71
 msgid "contact-data.save-and-continue"
 msgstr ""
 
-#: src/apps/user/setup/contact-data.jsx:95
+#: src/apps/user/setup/contact-data.tsx:69
 msgid "contact-data.saving"
 msgstr ""
 
-#: src/apps/user/setup/contact-data.jsx:93
-msgid "contact-data.success"
-msgstr ""
-
-#: src/apps/user/setup/finalize.jsx:229
+#: src/apps/user/setup/finalize.tsx:204
 msgid "contact-data.zip-code"
 msgstr ""
 
-#: src/apps/provider/deleted.jsx:21
-#: src/apps/user/deleted.jsx:20
+#: src/apps/provider/deleted.tsx:17
+#: src/apps/user/deleted.tsx:17
 msgid "data-deleted"
 msgstr ""
 
-#: src/apps/mediator/dashboard/stats.jsx:194
+#: src/apps/mediator/dashboard/stats.jsx:201
 msgid "dateSpan"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:49
+#: src/apps/provider/dashboard/schedule.tsx:42
 msgid "day-1"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:50
+#: src/apps/provider/dashboard/schedule.tsx:43
 msgid "day-2"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:51
+#: src/apps/provider/dashboard/schedule.tsx:44
 msgid "day-3"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:52
+#: src/apps/provider/dashboard/schedule.tsx:45
 msgid "day-4"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:53
+#: src/apps/provider/dashboard/schedule.tsx:46
 msgid "day-5"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:54
+#: src/apps/provider/dashboard/schedule.tsx:47
 msgid "day-6"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:55
+#: src/apps/provider/dashboard/schedule.tsx:48
 msgid "day-7"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:170
-#: src/apps/provider/dashboard/settings.jsx:327
+#: src/apps/provider/dashboard/settings.tsx:162
+#: src/apps/provider/dashboard/settings.tsx:306
 msgid "delete"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:174
+#: src/apps/provider/dashboard/settings.tsx:166
 msgid "delete-modal.title"
 msgstr ""
 
-#: src/apps/provider/menu.jsx:18
-#: src/apps/user/menu.jsx:18
-#~ msgid "drawingBoard"
-#~ msgstr ""
+#: src/apps/provider/dashboard/schedule.tsx:888
+msgid "edit-appointment.title"
+msgstr ""
 
-#: src/components/main-error-boundary.jsx:17
+#: src/components/main-error-boundary.jsx:19
 msgid "errorBoundary.somethingWentWrong"
 msgstr ""
 
-#: src/apps/user/dashboard/index.jsx:77
+#: src/apps/user/dashboard/index.tsx:71
 msgid "go-back.button"
 msgstr ""
 
@@ -276,47 +263,43 @@ msgstr ""
 msgid "hour-string"
 msgstr ""
 
-#: src/apps/provider/dashboard/index.jsx:137
+#: src/apps/provider/dashboard/index.tsx:160
 msgid "invalid-key"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:165
-msgid "invalidKey"
-msgstr ""
-
-#: src/apps/user/dashboard/appointments.jsx:245
+#: src/apps/user/dashboard/appointments.tsx:244
 msgid "invitation-accepted.booking-code"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:185
+#: src/apps/user/dashboard/appointments.tsx:186
 msgid "invitation-accepted.changed"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:117
+#: src/apps/user/dashboard/appointments.tsx:126
 msgid "invitation-accepted.confirm-deletion"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:208
+#: src/apps/user/dashboard/appointments.tsx:207
 msgid "invitation-accepted.delete.cancel"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:203
+#: src/apps/user/dashboard/appointments.tsx:202
 msgid "invitation-accepted.delete.confirm"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:220
+#: src/apps/user/dashboard/appointments.tsx:219
 msgid "invitation-accepted.delete.notice"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:213
+#: src/apps/user/dashboard/appointments.tsx:212
 msgid "invitation-accepted.delete.title"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:102
+#: src/apps/user/dashboard/appointments.tsx:113
 msgid "invitation-accepted.deleted"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:233
+#: src/apps/user/dashboard/appointments.tsx:232
 msgid "invitation-accepted.title"
 msgstr ""
 
@@ -328,69 +311,61 @@ msgstr ""
 msgid "leave.leave"
 msgstr ""
 
-#: src/components/leave-guard.jsx:94
+#: src/components/leave-guard.jsx:99
 msgid "leave.text"
 msgstr ""
 
-#: src/components/leave-guard.jsx:92
+#: src/components/leave-guard.jsx:93
 msgid "leave.title"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:193
-msgid "load-backup.advanced-options"
-msgstr ""
-
-#: src/apps/provider/restore.jsx:103
-#: src/apps/user/restore.jsx:75
+#: src/apps/provider/restore.tsx:109
+#: src/apps/user/restore.tsx:74
 msgid "load-backup.failed"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:175
+#: src/apps/provider/restore.tsx:155
 msgid "load-backup.input"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:171
+#: src/apps/provider/restore.tsx:151
 msgid "load-backup.input.change"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:182
+#: src/apps/provider/restore.tsx:163
 msgid "load-backup.input.description"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:36
+#: src/apps/provider/restore.tsx:37
 msgid "load-backup.invalid-file"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:45
-#: src/apps/user/restore.jsx:41
+#: src/apps/provider/restore.tsx:50
+#: src/apps/user/restore.tsx:37
 msgid "load-backup.invalid-secret"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:237
-#: src/apps/user/restore.jsx:118
+#: src/apps/provider/restore.tsx:179
+#: src/apps/user/restore.tsx:108
 msgid "load-backup.load"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:218
-msgid "load-backup.local-only.label"
-msgstr ""
-
-#: src/apps/provider/restore.jsx:31
+#: src/apps/provider/restore.tsx:32
 msgid "load-backup.missing-file"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:148
-#: src/apps/user/restore.jsx:103
+#: src/apps/provider/restore.tsx:127
+#: src/apps/user/restore.tsx:91
 msgid "load-backup.secret.description"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:143
-#: src/apps/user/restore.jsx:98
+#: src/apps/provider/restore.tsx:123
+#: src/apps/user/restore.tsx:87
 msgid "load-backup.secret.label"
 msgstr ""
 
-#: src/apps/provider/restore.jsx:133
-#: src/apps/user/restore.jsx:86
+#: src/apps/provider/restore.tsx:103
+#: src/apps/user/restore.tsx:68
 msgid "load-backup.title"
 msgstr ""
 
@@ -406,45 +381,45 @@ msgstr ""
 msgid "loader.updating"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:136
-#: src/apps/mediator/dashboard/settings.jsx:181
-#: src/apps/provider/dashboard/index.jsx:173
-#: src/apps/provider/dashboard/settings.jsx:201
-#: src/apps/provider/dashboard/settings.jsx:320
-#: src/apps/user/dashboard/settings.jsx:47
-#: src/apps/user/dashboard/settings.jsx:98
+#: src/apps/mediator/dashboard/settings.tsx:136
+#: src/apps/mediator/dashboard/settings.tsx:188
+#: src/apps/provider/dashboard/index.tsx:185
+#: src/apps/provider/dashboard/settings.tsx:191
+#: src/apps/provider/dashboard/settings.tsx:299
+#: src/apps/user/dashboard/settings.tsx:51
+#: src/apps/user/dashboard/settings.tsx:103
 msgid "log-out"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:147
+#: src/apps/mediator/dashboard/settings.tsx:146
 msgid "log-out-modal.logging-out"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:148
+#: src/apps/mediator/dashboard/settings.tsx:150
 msgid "log-out-modal.text"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:139
-#: src/apps/provider/dashboard/settings.jsx:204
-#: src/apps/user/dashboard/settings.jsx:50
+#: src/apps/mediator/dashboard/settings.tsx:139
+#: src/apps/provider/dashboard/settings.tsx:194
+#: src/apps/user/dashboard/settings.tsx:54
 msgid "log-out-modal.title"
 msgstr ""
 
-#: src/apps/mediator/logged-out.jsx:36
-#: src/apps/provider/logged-out.jsx:36
-#: src/apps/user/logged-out.jsx:36
+#: src/apps/mediator/logged-out.tsx:34
+#: src/apps/provider/logged-out.tsx:34
+#: src/apps/user/logged-out.tsx:34
 msgid "logged-out.log-in-again"
 msgstr ""
 
-#: src/apps/mediator/logged-out.jsx:29
-#: src/apps/provider/logged-out.jsx:29
-#: src/apps/user/logged-out.jsx:29
+#: src/apps/mediator/logged-out.tsx:26
+#: src/apps/provider/logged-out.tsx:25
+#: src/apps/user/logged-out.tsx:25
 msgid "logged-out.notice"
 msgstr ""
 
-#: src/apps/mediator/logged-out.jsx:24
-#: src/apps/provider/logged-out.jsx:24
-#: src/apps/user/logged-out.jsx:24
+#: src/apps/mediator/logged-out.tsx:21
+#: src/apps/provider/logged-out.tsx:20
+#: src/apps/user/logged-out.tsx:20
 msgid "logged-out.title"
 msgstr ""
 
@@ -452,304 +427,295 @@ msgstr ""
 msgid "minute-string"
 msgstr ""
 
-#: src/components/modal.jsx:102
+#: src/components/modal.jsx:111
 msgid "modal.cancel"
 msgstr ""
 
-#: src/components/modal.jsx:89
+#: src/components/modal.jsx:96
 msgid "modal.save"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:902
+#: src/apps/provider/dashboard/schedule.tsx:905
 msgid "new-appointment.date"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:678
+#: src/apps/provider/dashboard/schedule.tsx:687
 msgid "new-appointment.in-the-past"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:670
+#: src/apps/provider/dashboard/schedule.tsx:680
 msgid "new-appointment.please-enter-date"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:672
+#: src/apps/provider/dashboard/schedule.tsx:682
 msgid "new-appointment.please-enter-time"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:935
+#: src/apps/provider/dashboard/schedule.tsx:928
 msgid "new-appointment.slots"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:918
+#: src/apps/provider/dashboard/schedule.tsx:916
 msgid "new-appointment.time"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:684
+#: src/apps/provider/dashboard/schedule.tsx:892
+msgid "new-appointment.title"
+msgstr ""
+
+#: src/apps/provider/dashboard/schedule.tsx:695
 msgid "new-appointment.too-far-in-the-future"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:694
+#: src/apps/provider/dashboard/schedule.tsx:708
 msgid "new-appointment.too-few-slots"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:691
+#: src/apps/provider/dashboard/schedule.tsx:704
 msgid "new-appointment.too-many-slots"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:293
+#: src/apps/user/dashboard/appointments.tsx:297
 msgid "no-invitations.notice"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:281
+#: src/apps/user/dashboard/appointments.tsx:285
 msgid "no-invitations.please-wait"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:311
+#: src/apps/user/dashboard/appointments.tsx:315
 msgid "no-invitations.update-notice"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:457
+#: src/apps/user/dashboard/appointments.tsx:449
 msgid "no-offers-anymore"
 msgstr ""
 
-#: src/apps/mediator/dashboard/stats.jsx:183
+#: src/apps/mediator/dashboard/stats.jsx:190
 msgid "noData"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:73
+#: src/apps/user/dashboard/appointments.tsx:74
 msgid "offer-notice-text"
 msgstr ""
 
-#: src/apps/mediator/dashboard/summary-box.jsx:23
+#: src/apps/mediator/dashboard/summary-box.tsx:22
 msgid "open"
 msgstr ""
-
-#: src/main/app.jsx:93
-#~ msgid "outdated"
-#~ msgstr ""
 
 #: src/components/not-found.jsx:15
 msgid "pageDoesNotExist"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:164
+#: src/apps/provider/setup/provider-data.tsx:174
 msgid "provider-data.access-code.description"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:170
-#: src/apps/provider/setup/verify.jsx:122
+#: src/apps/provider/setup/provider-data.tsx:181
+#: src/apps/provider/setup/verify.tsx:122
 msgid "provider-data.access-code.label"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:193
-#: src/apps/provider/setup/verify.jsx:145
+#: src/apps/provider/setup/provider-data.tsx:193
+#: src/apps/provider/setup/verify.tsx:145
 msgid "provider-data.accessible"
 msgstr ""
 
-#: src/apps/provider/setup/verify.jsx:157
+#: src/apps/provider/setup/verify.tsx:157
 msgid "provider-data.change"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:220
-#: src/apps/provider/setup/provider-data.jsx:108
-#: src/apps/provider/setup/verify.jsx:72
+#: src/apps/mediator/dashboard/providers.tsx:203
+#: src/apps/provider/setup/provider-data.tsx:116
+#: src/apps/provider/setup/verify.tsx:72
 msgid "provider-data.city"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:252
-#: src/apps/provider/setup/provider-data.jsx:118
-#: src/apps/provider/setup/verify.jsx:85
+#: src/apps/mediator/dashboard/providers.tsx:235
+#: src/apps/provider/setup/provider-data.tsx:130
+#: src/apps/provider/setup/verify.tsx:85
 msgid "provider-data.description"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:236
-#: src/apps/provider/setup/provider-data.jsx:152
-#: src/apps/provider/setup/verify.jsx:112
+#: src/apps/mediator/dashboard/providers.tsx:219
+#: src/apps/provider/setup/provider-data.tsx:161
+#: src/apps/provider/setup/verify.tsx:112
 msgid "provider-data.email"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:190
+#: src/apps/mediator/dashboard/providers.tsx:173
 msgid "provider-data.field"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:132
+#: src/apps/provider/setup/provider-data.tsx:143
 msgid "provider-data.for-mediator"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:29
+#: src/apps/provider/setup/provider-data.tsx:39
 msgid "provider-data.invalid-name"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:204
-#: src/apps/provider/setup/provider-data.jsx:81
-#: src/apps/provider/setup/verify.jsx:53
+#: src/apps/mediator/dashboard/providers.tsx:187
+#: src/apps/provider/setup/provider-data.tsx:90
+#: src/apps/provider/setup/verify.tsx:53
 msgid "provider-data.name"
 msgstr ""
 
-#: src/apps/provider/setup/verify.jsx:92
-#: src/apps/provider/setup/verify.jsx:105
-#: src/apps/provider/setup/verify.jsx:115
-#: src/apps/provider/setup/verify.jsx:127
+#: src/apps/provider/setup/verify.tsx:92
+#: src/apps/provider/setup/verify.tsx:105
+#: src/apps/provider/setup/verify.tsx:115
+#: src/apps/provider/setup/verify.tsx:127
 msgid "provider-data.not-given"
 msgstr ""
 
-#: src/apps/provider/setup/verify.jsx:33
+#: src/apps/provider/setup/verify.tsx:33
 msgid "provider-data.not-verified-yet"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:244
-#: src/apps/provider/setup/provider-data.jsx:142
-#: src/apps/provider/setup/verify.jsx:99
+#: src/apps/mediator/dashboard/providers.tsx:227
+#: src/apps/provider/setup/provider-data.tsx:151
+#: src/apps/provider/setup/verify.tsx:99
 msgid "provider-data.phone"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:220
+#: src/apps/provider/setup/provider-data.tsx:214
 msgid "provider-data.save-and-continue"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:216
+#: src/apps/provider/setup/provider-data.tsx:210
 msgid "provider-data.saving"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:212
-#: src/apps/provider/setup/provider-data.jsx:91
-#: src/apps/provider/setup/verify.jsx:61
+#: src/apps/mediator/dashboard/providers.tsx:195
+#: src/apps/provider/setup/provider-data.tsx:99
+#: src/apps/provider/setup/verify.tsx:61
 msgid "provider-data.street"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:252
+#: src/apps/provider/dashboard/settings.tsx:242
 msgid "provider-data.title"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:195
+#: src/apps/mediator/dashboard/providers.tsx:178
 msgid "provider-data.value"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:258
+#: src/apps/provider/dashboard/settings.tsx:246
 msgid "provider-data.verified-vs-unverifired-desc"
 msgstr ""
 
-#: src/apps/provider/setup/provider-data.jsx:114
-#: src/apps/provider/setup/verify.jsx:79
+#: src/apps/provider/setup/provider-data.tsx:122
+#: src/apps/provider/setup/verify.tsx:79
 msgid "provider-data.website"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:228
-#: src/apps/provider/setup/provider-data.jsx:101
-#: src/apps/provider/setup/verify.jsx:69
+#: src/apps/mediator/dashboard/providers.tsx:211
+#: src/apps/provider/setup/provider-data.tsx:108
+#: src/apps/provider/setup/verify.tsx:69
 msgid "provider-data.zip-code"
 msgstr ""
 
-#: src/apps/user/dashboard/appointments.jsx:42
+#: src/apps/user/dashboard/appointments.tsx:42
 msgid "provider-details.accessible"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:324
+#: src/apps/mediator/dashboard/providers.tsx:299
 msgid "providers.address"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:172
+#: src/apps/mediator/dashboard/providers.tsx:156
 msgid "providers.confirm"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:182
+#: src/apps/mediator/dashboard/providers.tsx:166
 msgid "providers.confirmText"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:167
+#: src/apps/mediator/dashboard/providers.tsx:151
 msgid "providers.edit"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:321
+#: src/apps/mediator/dashboard/providers.tsx:296
 msgid "providers.name"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:38
-#: src/apps/mediator/dashboard/providers.jsx:308
+#: src/apps/mediator/dashboard/providers.tsx:35
+#: src/apps/mediator/dashboard/providers.tsx:285
 msgid "providers.pending"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:39
-#: src/apps/mediator/dashboard/providers.jsx:113
-#: src/apps/mediator/dashboard/providers.jsx:118
-#: src/apps/mediator/dashboard/providers.jsx:314
+#: src/apps/mediator/dashboard/providers.tsx:36
+#: src/apps/mediator/dashboard/providers.tsx:103
+#: src/apps/mediator/dashboard/providers.tsx:108
+#: src/apps/mediator/dashboard/providers.tsx:289
 msgid "providers.reconfirm"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:133
+#: src/apps/mediator/dashboard/providers.tsx:120
 msgid "providers.reconfirmProgressText"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:139
+#: src/apps/mediator/dashboard/providers.tsx:125
 msgid "providers.reconfirmText"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:178
+#: src/apps/mediator/dashboard/index.tsx:155
 msgid "providers.title"
 msgstr ""
 
-#: src/apps/mediator/dashboard/providers.jsx:37
-#: src/apps/mediator/dashboard/providers.jsx:300
+#: src/apps/mediator/dashboard/providers.tsx:34
+#: src/apps/mediator/dashboard/providers.tsx:279
 msgid "providers.verified"
 msgstr ""
 
-#: src/apps/provider/dashboard/queue-select.jsx:93
+#: src/apps/provider/dashboard/queue-select.tsx:94
 msgid "queues.description"
 msgstr ""
 
-#: src/apps/provider/dashboard/queue-select.jsx:92
+#: src/apps/provider/dashboard/queue-select.tsx:92
 msgid "queues.label"
 msgstr ""
 
-#: src/main/app.jsx:108
-#~ msgid "redirecting"
-#~ msgstr ""
-
-#: src/main/app.jsx:98
-#~ msgid "reload"
-#~ msgstr ""
-
-#: src/actions/settings.js:72
+#: src/actions/settings.js:74
 msgid "requestFailed"
 msgstr ""
 
-#: src/apps/provider/start.jsx:44
-#: src/apps/user/start.jsx:34
+#: src/apps/provider/start.tsx:43
 #: src/apps/user/start.tsx:37
 msgid "restore"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:1082
+#: src/apps/provider/dashboard/schedule.tsx:1048
 msgid "schedule.appointment.add"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:868
+#: src/apps/provider/dashboard/schedule.tsx:870
 msgid "schedule.appointment.duration.title"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:585
+#: src/apps/provider/dashboard/schedule.tsx:586
 msgid "schedule.backward"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:63
-#: src/apps/provider/dashboard/schedule.jsx:1111
+#: src/apps/provider/dashboard/schedule.tsx:56
+#: src/apps/provider/dashboard/schedule.tsx:1073
 msgid "schedule.booking-list"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:59
-#: src/apps/provider/dashboard/schedule.jsx:1101
+#: src/apps/provider/dashboard/schedule.tsx:52
+#: src/apps/provider/dashboard/schedule.tsx:1065
 msgid "schedule.calendar"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:588
+#: src/apps/provider/dashboard/schedule.tsx:589
 msgid "schedule.forward"
 msgstr ""
 
-#: src/apps/provider/dashboard/index.jsx:155
+#: src/apps/provider/dashboard/index.tsx:174
 msgid "schedule.title"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:1121
+#: src/apps/provider/dashboard/schedule.tsx:1083
 msgid "schedule.updating"
 msgstr ""
 
@@ -757,220 +723,221 @@ msgstr ""
 msgid "search-select.no-candidates"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:39
-#: src/apps/provider/dashboard/settings.jsx:292
+#: src/apps/provider/dashboard/settings.tsx:39
+#: src/apps/provider/dashboard/settings.tsx:279
 msgid "settings.local"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:190
-#: src/apps/provider/dashboard/index.jsx:163
+#: src/apps/mediator/dashboard/index.tsx:161
+#: src/apps/provider/dashboard/index.tsx:177
 msgid "settings.title"
 msgstr ""
 
-#: src/apps/provider/dashboard/settings.jsx:35
-#: src/apps/provider/dashboard/settings.jsx:284
+#: src/apps/provider/dashboard/settings.tsx:35
+#: src/apps/provider/dashboard/settings.tsx:271
 msgid "settings.verified"
 msgstr ""
 
-#: src/apps/provider/start.jsx:39
-#: src/apps/user/start.jsx:29
+#: src/apps/provider/start.tsx:38
 #: src/apps/user/start.tsx:32
 msgid "setup"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:184
+#: src/apps/mediator/dashboard/index.tsx:158
 msgid "stats.title"
 msgstr ""
 
-#: src/apps/user/setup/store-secrets.jsx:106
+#: src/apps/user/setup/store-secrets.tsx:132
 msgid "store-secrets.bookmark"
 msgstr ""
 
-#: src/apps/user/setup/store-secrets.jsx:51
+#: src/apps/user/setup/store-secrets.tsx:61
 msgid "store-secrets.bookmark-modal.text"
 msgstr ""
 
-#: src/apps/user/setup/store-secrets.jsx:46
+#: src/apps/user/setup/store-secrets.tsx:55
 msgid "store-secrets.bookmark-modal.title"
 msgstr ""
 
-#: src/apps/user/setup/store-secrets.jsx:131
+#: src/apps/user/setup/store-secrets.tsx:159
 msgid "store-secrets.download"
 msgstr ""
 
-#: src/apps/user/setup/store-secrets.jsx:124
+#: src/apps/user/setup/store-secrets.tsx:150
 msgid "store-secrets.local.text"
 msgstr ""
 
-#: src/apps/provider/setup/store-secrets.jsx:247
+#: src/apps/provider/setup/store-secrets.tsx:246
 msgid "store-secrets.notice"
 msgstr ""
 
-#: src/apps/provider/setup/store-secrets.jsx:50
-#: src/apps/user/setup/store-secrets.jsx:75
+#: src/apps/provider/setup/store-secrets.tsx:48
+#: src/apps/user/setup/store-secrets.tsx:89
 msgid "store-secrets.online.text"
 msgstr ""
 
-#: src/apps/provider/setup/store-secrets.jsx:68
-#: src/apps/user/setup/store-secrets.jsx:90
+#: src/apps/user/setup/store-secrets.tsx:37
+msgid "store-secrets.restore.title"
+msgstr ""
+
+#: src/apps/provider/setup/store-secrets.tsx:66
+#: src/apps/user/setup/store-secrets.tsx:116
 msgid "store-secrets.secret"
 msgstr ""
 
-#: src/apps/provider/setup/store-secrets.jsx:224
+#: src/apps/provider/setup/store-secrets.tsx:223
 msgid "store-secrets.secrets-modal.title"
 msgstr ""
 
-#: src/apps/mediator/dashboard/summary-box.jsx:17
+#: src/apps/mediator/dashboard/summary-box.tsx:16
 msgid "summary"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:173
+#: src/apps/mediator/dashboard/settings.tsx:180
 msgid "test-queues.button"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:164
+#: src/apps/mediator/dashboard/settings.tsx:168
 msgid "test-queues.text"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:161
+#: src/apps/mediator/dashboard/settings.tsx:165
 msgid "test-queues.title"
 msgstr ""
 
-#: src/apps/provider/deleted.jsx:25
-#: src/apps/user/deleted.jsx:24
+#: src/apps/provider/deleted.tsx:21
+#: src/apps/user/deleted.tsx:21
 msgid "thanks-for-using-us"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:76
+#: src/apps/mediator/dashboard/index.tsx:66
 msgid "upload-key-pairs.input"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:59
+#: src/apps/mediator/dashboard/index.tsx:50
 msgid "upload-key-pairs.invalid-file"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:66
+#: src/apps/mediator/dashboard/index.tsx:57
 msgid "upload-key-pairs.notice"
 msgstr ""
 
-#: src/apps/mediator/dashboard/index.jsx:92
+#: src/apps/mediator/dashboard/index.tsx:82
 msgid "upload-key-pairs.title"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:76
+#: src/apps/mediator/dashboard/settings.tsx:79
 msgid "upload-queues.input"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:52
+#: src/apps/mediator/dashboard/settings.tsx:53
 msgid "upload-queues.invalid-file"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:65
+#: src/apps/mediator/dashboard/settings.tsx:70
 msgid "upload-queues.notice"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:97
+#: src/apps/mediator/dashboard/settings.tsx:96
 msgid "upload-queues.title"
 msgstr ""
 
-#: src/apps/mediator/dashboard/settings.jsx:60
+#: src/apps/mediator/dashboard/settings.tsx:62
 msgid "upload-queues.valid-file"
 msgstr ""
 
-#: src/apps/user/dashboard/settings.jsx:88
+#: src/apps/user/dashboard/settings.tsx:93
 msgid "user-data.notice"
 msgstr ""
 
-#: src/apps/user/dashboard/settings.jsx:85
+#: src/apps/user/dashboard/settings.tsx:90
 msgid "user-data.title"
 msgstr ""
 
-#: src/apps/provider/setup/verify.jsx:248
-#: src/apps/user/setup/verify.jsx:43
+#: src/apps/provider/setup/verify.tsx:245
+#: src/apps/user/setup/verify.tsx:36
 msgid "verify.text"
 msgstr ""
 
-#: src/apps/provider/start.jsx:34
-#: src/apps/user/start.jsx:24
+#: src/apps/provider/start.tsx:33
 #: src/apps/user/start.tsx:26
 msgid "what-to-do"
 msgstr ""
 
-#: src/apps/provider/setup/wizard.jsx:58
-#: src/apps/user/setup/verify.jsx:68
-#: src/apps/user/setup/wizard.jsx:67
+#: src/apps/provider/setup/wizard.tsx:59
+#: src/apps/user/setup/verify.tsx:65
+#: src/apps/user/setup/wizard.tsx:60
 msgid "wizard.continue"
 msgstr ""
 
-#: src/apps/provider/setup/store-secrets.jsx:182
+#: src/apps/provider/setup/store-secrets.tsx:178
 msgid "wizard.download-backup-data"
 msgstr ""
 
-#: src/apps/provider/setup/verify.jsx:225
-#: src/apps/user/setup/finalize.jsx:196
+#: src/apps/provider/setup/verify.tsx:222
+#: src/apps/user/setup/finalize.tsx:170
 msgid "wizard.failed.invalid-code"
 msgstr ""
 
-#: src/apps/provider/setup/verify.jsx:236
-#: src/apps/user/setup/finalize.jsx:209
+#: src/apps/provider/setup/verify.tsx:233
+#: src/apps/user/setup/finalize.tsx:182
 msgid "wizard.failed.notice"
 msgstr ""
 
-#: src/apps/provider/setup/store-secrets.jsx:192
+#: src/apps/provider/setup/store-secrets.tsx:188
 msgid "wizard.generating-backup-data"
 msgstr ""
 
-#: src/apps/provider/setup/wizard.jsx:50
-#: src/apps/user/setup/wizard.jsx:59
+#: src/apps/provider/setup/wizard.tsx:48
+#: src/apps/user/setup/wizard.tsx:52
 msgid "wizard.hi"
 msgstr ""
 
-#: src/apps/provider/setup/store-secrets.jsx:230
-#: src/apps/user/setup/store-secrets.jsx:160
+#: src/apps/provider/setup/store-secrets.tsx:229
+#: src/apps/user/setup/store-secrets.tsx:184
 msgid "wizard.leave"
 msgstr ""
 
-#: src/apps/user/setup/finalize.jsx:181
+#: src/apps/user/setup/finalize.tsx:157
 msgid "wizard.no-queue.notice"
 msgstr ""
 
-#: src/apps/user/setup/wizard.jsx:37
+#: src/apps/user/setup/wizard.tsx:30
 msgid "wizard.steps.enter-contact-data"
 msgstr ""
 
-#: src/apps/provider/setup/wizard.jsx:32
+#: src/apps/provider/setup/wizard.tsx:29
 msgid "wizard.steps.enter-provider-data"
 msgstr ""
 
-#: src/apps/user/setup/wizard.jsx:45
+#: src/apps/user/setup/wizard.tsx:38
 msgid "wizard.steps.finalize"
 msgstr ""
 
-#: src/apps/provider/setup/wizard.jsx:28
-#: src/apps/user/setup/wizard.jsx:33
+#: src/apps/provider/setup/wizard.tsx:25
+#: src/apps/user/setup/wizard.tsx:26
 msgid "wizard.steps.hi"
 msgstr ""
 
-#: src/apps/provider/setup/wizard.jsx:40
-#: src/apps/user/setup/wizard.jsx:49
+#: src/apps/provider/setup/wizard.tsx:37
+#: src/apps/user/setup/wizard.tsx:42
 msgid "wizard.steps.store-secrets"
 msgstr ""
 
-#: src/apps/provider/setup/wizard.jsx:36
-#: src/apps/user/setup/wizard.jsx:41
+#: src/apps/provider/setup/wizard.tsx:33
+#: src/apps/user/setup/wizard.tsx:34
 msgid "wizard.steps.verify"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:885
-#: src/apps/provider/dashboard/settings.jsx:183
-#: src/apps/provider/dashboard/settings.jsx:210
-#: src/apps/provider/setup/store-secrets.jsx:86
-#: src/apps/provider/setup/verify.jsx:261
-#: src/apps/user/dashboard/settings.jsx:56
-#: src/apps/user/setup/finalize.jsx:323
+#: src/apps/provider/dashboard/settings.tsx:173
+#: src/apps/provider/dashboard/settings.tsx:200
+#: src/apps/provider/setup/store-secrets.tsx:84
+#: src/apps/provider/setup/verify.tsx:258
+#: src/apps/user/dashboard/settings.tsx:60
+#: src/apps/user/setup/finalize.tsx:309
 msgid "{0}"
 msgstr ""
 
-#: src/apps/provider/dashboard/schedule.jsx:812
+#: src/apps/provider/dashboard/schedule.tsx:828
 msgid "{v}"
 msgstr ""

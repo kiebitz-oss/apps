@@ -7,7 +7,7 @@ import classnames from 'helpers/classnames';
 import './select.scss';
 
 type SelectOption = {
-    value: string;
+    value: string | number;
     description: string;
 };
 

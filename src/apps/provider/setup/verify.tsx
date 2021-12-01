@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState, Fragment as F } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     withActions,
     Message,
@@ -19,12 +19,19 @@ import { Trans } from '@lingui/macro';
 import { useNavigate } from 'react-router';
 import './verify.scss';
 
-export const ProviderData: React.FC<any> = ({
+interface ProviderDataProps {
+    providerData: any;
+    changeHref?: string;
+    verified?: boolean;
+}
+
+export const ProviderData: React.FC<ProviderDataProps> = ({
     providerData,
     changeHref,
-    verified,
+    verified = false,
 }) => {
     let data;
+
     if (verified) {
         if (providerData.data === null)
             return (

@@ -24,7 +24,7 @@ import {
 import { Trans, t, defineMessage } from '@lingui/macro';
 import type { MessageDescriptor } from '@lingui/core';
 import { useNavigate } from 'react-router';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { useEffectOnce } from 'react-use';
 import props from './properties.json';
 import './finalize.scss';
@@ -75,16 +75,17 @@ const FinalizePage: React.FC<any> = ({
     const [noQueue, setNoQueue] = useState(false);
     const navigate = useNavigate();
 
-    const { register, reset, handleSubmit, getValues, formState } =
-        useForm<FormData>({
-            mode: 'onBlur',
-            reValidateMode: 'onBlur',
-            defaultValues: {
-                distance: 5,
-                accessible: false,
-                zipCode: undefined,
-            },
-        });
+    const methods = useForm<FormData>({
+        mode: 'onBlur',
+        reValidateMode: 'onBlur',
+        defaultValues: {
+            distance: 5,
+            accessible: false,
+            zipCode: undefined,
+        },
+    });
+
+    const { register, reset, handleSubmit, formState } = methods;
 
     useEffectOnce(() => {
         contactDataAction();
@@ -187,147 +188,148 @@ const FinalizePage: React.FC<any> = ({
             );
 
         return (
-            <form name="finalize" onSubmit={handleSubmit(onSubmit)}>
-                <CardContent>
-                    {noQueueMessage}
+            <FormProvider {...methods}>
+                <form name="finalize" onSubmit={handleSubmit(onSubmit)}>
+                    <CardContent>
+                        {noQueueMessage}
 
-                    {failedMessage}
+                        {failedMessage}
 
-                    <div className="kip-finalize-fields">
-                        {formState.errors['zipCode'] && (
-                            <p className="bulma-help bulma-is-info">
-                                {formState.errors['zipCode'].message}
-                                error
-                            </p>
-                        )}
-                        <Input
-                            label={t({
-                                id: 'contact-data.zip-code',
-                                message: 'Postleitzahl Deines Wohnorts',
-                            })}
-                            minLength={5}
-                            required
-                            {...register('zipCode', {
-                                required: {
-                                    value: true,
-                                    message: t({
-                                        id: 'contact-data.invalid-zip-code',
-                                        message:
-                                            'Bitte trage eine gültige Postleitzahl ein.',
-                                    }),
-                                },
-                                minLength: {
-                                    value: 5,
-                                    message: t({
-                                        id: 'contact-data.invalid-zip-code',
-                                        message:
-                                            'Bitte trage eine gültige Postleitzahl ein.',
-                                    }),
-                                },
-                                maxLength: {
-                                    value: 5,
-                                    message: t({
-                                        id: 'contact-data.invalid-zip-code',
-                                        message:
-                                            'Bitte trage eine gültige Postleitzahl ein.',
-                                    }),
-                                },
-                            })}
-                        />
-
-                        <label className="kip-control-label" htmlFor="distance">
-                            <Trans id="contact-data.distance.label">
-                                Maximale Entfernung zum Impfort in Kilometern
-                                (km)
-                            </Trans>
-                            <span className="kip-control-notice">
-                                <Trans id="contact-data.distance.notice">
-                                    Achtung: Du kannst den Radius derzeit nur 1x
-                                    einstellen und nicht mehr ändern!
-                                </Trans>
-                            </span>
-
-                            <Select
-                                options={[
-                                    {
+                        <div className="kip-finalize-fields">
+                            <Input
+                                label={t({
+                                    id: 'contact-data.zip-code',
+                                    message: 'Postleitzahl Deines Wohnorts',
+                                })}
+                                minLength={5}
+                                required
+                                {...register('zipCode', {
+                                    required: {
+                                        value: true,
+                                        message: t({
+                                            id: 'contact-data.invalid-zip-code',
+                                            message:
+                                                'Bitte trage eine gültige Postleitzahl ein.',
+                                        }),
+                                    },
+                                    minLength: {
                                         value: 5,
-                                        description: t({
-                                            id: 'contact-data.distance.option.5',
-                                            message: '5 km',
+                                        message: t({
+                                            id: 'contact-data.invalid-zip-code',
+                                            message:
+                                                'Bitte trage eine gültige Postleitzahl ein.',
                                         }),
                                     },
-                                    {
-                                        value: 10,
-                                        description: t({
-                                            id: 'contact-data.distance.option.10',
-                                            message: '10 km',
+                                    maxLength: {
+                                        value: 5,
+                                        message: t({
+                                            id: 'contact-data.invalid-zip-code',
+                                            message:
+                                                'Bitte trage eine gültige Postleitzahl ein.',
                                         }),
                                     },
-                                    {
-                                        value: 20,
-                                        description: t({
-                                            id: 'contact-data.distance.option.20',
-                                            message: '20 km',
-                                        }),
-                                    },
-                                    {
-                                        value: 30,
-                                        description: t({
-                                            id: 'contact-data.distance.option.30',
-                                            message: '30 km',
-                                        }),
-                                    },
-                                    {
-                                        value: 40,
-                                        description: t({
-                                            id: 'contact-data.distance.option.40',
-                                            message: '40 km',
-                                        }),
-                                    },
-                                    {
-                                        value: 50,
-                                        description: t({
-                                            id: 'contact-data.distance.option.50',
-                                            message: '50 km',
-                                        }),
-                                    },
-                                ]}
-                                {...register('distance')}
+                                })}
                             />
-                        </label>
-                        {properties}
-                    </div>
-                </CardContent>
 
-                <CardFooter>
-                    <Button
-                        waiting={formState.isSubmitting}
-                        type={noQueue || failed ? 'danger' : 'success'}
-                        htmlType="submit"
-                        disabled={formState.isSubmitting || !formState.isValid}
-                    >
-                        <Trans
-                            id={
-                                noQueue
-                                    ? 'wizard.no-queue.title'
-                                    : failed
-                                    ? 'wizard.failed.title'
-                                    : formState.isSubmitting
-                                    ? 'wizard.please-wait'
-                                    : 'wizard.continue'
+                            <label
+                                className="kip-control-label"
+                                htmlFor="distance"
+                            >
+                                <Trans id="contact-data.distance.label">
+                                    Maximale Entfernung zum Impfort in
+                                    Kilometern (km)
+                                </Trans>
+                                <span className="kip-control-notice">
+                                    <Trans id="contact-data.distance.notice">
+                                        Achtung: Du kannst den Radius derzeit
+                                        nur 1x einstellen und nicht mehr ändern!
+                                    </Trans>
+                                </span>
+
+                                <Select
+                                    options={[
+                                        {
+                                            value: 5,
+                                            description: t({
+                                                id: 'contact-data.distance.option.5',
+                                                message: '5 km',
+                                            }),
+                                        },
+                                        {
+                                            value: 10,
+                                            description: t({
+                                                id: 'contact-data.distance.option.10',
+                                                message: '10 km',
+                                            }),
+                                        },
+                                        {
+                                            value: 20,
+                                            description: t({
+                                                id: 'contact-data.distance.option.20',
+                                                message: '20 km',
+                                            }),
+                                        },
+                                        {
+                                            value: 30,
+                                            description: t({
+                                                id: 'contact-data.distance.option.30',
+                                                message: '30 km',
+                                            }),
+                                        },
+                                        {
+                                            value: 40,
+                                            description: t({
+                                                id: 'contact-data.distance.option.40',
+                                                message: '40 km',
+                                            }),
+                                        },
+                                        {
+                                            value: 50,
+                                            description: t({
+                                                id: 'contact-data.distance.option.50',
+                                                message: '50 km',
+                                            }),
+                                        },
+                                    ]}
+                                    {...register('distance')}
+                                />
+                            </label>
+                            {properties}
+                        </div>
+                    </CardContent>
+
+                    <CardFooter>
+                        <Button
+                            waiting={formState.isSubmitting}
+                            type={noQueue || failed ? 'danger' : 'success'}
+                            htmlType="submit"
+                            disabled={
+                                formState.isSubmitting || !formState.isValid
                             }
                         >
-                            {noQueue
-                                ? 'Nicht verfügbar'
-                                : failed
-                                ? 'Fehlgeschlagen :/'
-                                : formState.isSubmitting
-                                ? 'Bitte warten...'
-                                : 'Weiter'}
-                        </Trans>
-                    </Button>
-                </CardFooter>
-            </form>
+                            <Trans
+                                id={
+                                    noQueue
+                                        ? 'wizard.no-queue.title'
+                                        : failed
+                                        ? 'wizard.failed.title'
+                                        : formState.isSubmitting
+                                        ? 'wizard.please-wait'
+                                        : 'wizard.continue'
+                                }
+                            >
+                                {noQueue
+                                    ? 'Nicht verfügbar'
+                                    : failed
+                                    ? 'Fehlgeschlagen :/'
+                                    : formState.isSubmitting
+                                    ? 'Bitte warten...'
+                                    : 'Weiter'}
+                            </Trans>
+                        </Button>
+                    </CardFooter>
+                </form>
+            </FormProvider>
         );
     };
 

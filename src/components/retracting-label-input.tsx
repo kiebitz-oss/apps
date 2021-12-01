@@ -5,6 +5,7 @@
 import React, { forwardRef } from 'react';
 import { Input } from './form';
 import classNames from 'helpers/classnames';
+import { useFormContext } from 'react-hook-form';
 import './retracting-label-input.scss';
 
 interface InputFieldProps extends React.HTMLAttributes<HTMLInputElement> {
@@ -18,29 +19,44 @@ interface InputFieldProps extends React.HTMLAttributes<HTMLInputElement> {
  * to the top when an input is made.
  */
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
-    ({ children, name, label, description, className, ...props }, ref) => (
-        <div className={classNames('kip-retracting-label-input', className)}>
-            {label && (
-                <label
-                    id={`kip-${name}-label`}
-                    htmlFor={name}
-                    className="kip-label"
-                >
-                    {label}
-                </label>
-            )}
+    ({ children, name, label, description, className, ...props }, ref) => {
+        const formContext = useFormContext();
 
-            <Input
-                aria-labelledby={name + 'label'}
-                className="kip-input"
-                name={name}
-                {...props}
-                ref={ref}
-            />
-            <p className="kip-description">{description}</p>
-            {children}
-        </div>
-    )
+        return (
+            <div
+                className={classNames('kip-retracting-label-input', className)}
+            >
+                {label && (
+                    <label
+                        id={`kip-${name}-label`}
+                        htmlFor={name}
+                        className="kip-label"
+                    >
+                        {label}
+                    </label>
+                )}
+
+                <Input
+                    aria-labelledby={name + 'label'}
+                    className="kip-input"
+                    name={name}
+                    {...props}
+                    ref={ref}
+                />
+
+                {formContext?.formState &&
+                    formContext?.formState?.errors?.[name] && (
+                        <p className="bulma-help bulma-is-info">
+                            {formContext.formState.errors[name].message}
+                        </p>
+                    )}
+
+                <p className="kip-description">{description}</p>
+
+                {children}
+            </div>
+        );
+    }
 );
 
 InputField.displayName = 'InputField';
