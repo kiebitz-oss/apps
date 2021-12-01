@@ -35,10 +35,9 @@ jobs:
     - name: Compress Artifacts
       run: tar -cvzf apps.tar.gz -C build .
 
-    - name: Upload binaries (Linux)
-      uses: actions/upload-artifact@v2
+    - name: Upload binaries to release page
+      uses: softprops/action-gh-release@v1
       with:
-        name: apps.tar.gz
-        path: apps.tar.gz
+        files: apps.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
