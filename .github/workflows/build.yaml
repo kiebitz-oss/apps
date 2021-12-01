@@ -38,7 +38,7 @@ jobs:
     - name: Upload binaries (Linux)
       uses: actions/upload-artifact@v2
       with:
-        name: apps
+        name: apps.tar.gz
         path: apps.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
