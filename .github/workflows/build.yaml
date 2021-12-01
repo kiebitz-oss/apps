@@ -33,17 +33,12 @@ jobs:
       run: rm -rf build/*.json
     
     - name: Compress Artifacts
-      run: tar -cvf apps-$GITHUB_REF_NAME.tar build
+      run: tar -cvzf apps.tar.gz -C build .
 
-    - name: Upload Artifact
+    - name: Upload binaries (Linux)
       uses: actions/upload-artifact@v2
       with:
         name: apps
-        path: apps-$GITHUB_REF_NAME.tar
-
-    - name: Upload Artifacts to release page
-      uses: softprops/action-gh-release@v1
-      with:
-        files: apps-$GITHUB_REF_NAME.tar
+        path: apps.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
