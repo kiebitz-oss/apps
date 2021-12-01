@@ -68,12 +68,6 @@ const RestorePage: React.FC<any> = ({
         resolver,
     });
 
-    const handleKeyDown: React.KeyboardEventHandler = event => {
-        if (event.which === 13 || event.which === 23) {
-            fileInput.current?.click();
-        }
-    };
-
     const readFile: FormEventHandler<HTMLInputElement> = event => {
         const file = event.currentTarget.files?.[0];
         const reader = new FileReader();

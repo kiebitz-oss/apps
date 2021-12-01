@@ -29,7 +29,7 @@ const defaultConfig = {
         yoda: 'error',
         'react/jsx-uses-react': 'error',
         'react/jsx-uses-vars': 'error',
-        'react/prop-types': 'warn', // to become an error
+        'react/prop-types': 'off', // to become an error
         'react/default-props-match-prop-types': 'error',
         'react/forbid-foreign-prop-types': 'error',
         'react/no-unused-prop-types': 'error',
