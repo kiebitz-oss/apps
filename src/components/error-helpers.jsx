@@ -22,21 +22,3 @@ ErrorMessage.propTypes = {
         message: PropTypes.node,
     }),
 };
-
-export const ErrorFor = ({ error, field }) => {
-    let message;
-    if (
-        error === undefined ||
-        error.errors === undefined ||
-        !error.errors[field]
-    )
-        message = <React.Fragment>&nbsp;</React.Fragment>;
-    else message = error.errors[field];
-    return <p className="bulma-help bulma-is-info">{message}</p>;
-};
-ErrorFor.propTypes = {
-    error: PropTypes.shape({
-        errors: PropTypes.object,
-    }),
-    field: PropTypes.string.isRequired,
-};

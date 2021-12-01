@@ -31,5 +31,4 @@ export * from './charts/bar';
 
 // these are helper classes that work with the context mechanism
 export * from './store';
-export * from './with-form';
 export * from './settings';

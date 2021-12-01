@@ -4,7 +4,6 @@
 
 import React, { useState, useEffect, Fragment as F } from 'react';
 import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
-import Form from 'helpers/form';
 import {
     reconfirmProviders,
     pendingProviders,
@@ -15,7 +14,6 @@ import {
 import {
     withActions,
     withTimer,
-    Message,
     Modal,
     CardContent,
     WithLoader,

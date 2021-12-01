@@ -84,8 +84,15 @@ const RestorePage: React.FC<any> = ({
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <RetractingLabelInput
-                        label={t({ id: "load-backup.secret.label", message: "Sicherheitscode" })}
-                        description={{ id: "load-backup.secret.description", message: "Der Sicherheitscode, den Du bei der Registrierung erhalten hast." })}
+                        label={t({
+                            id: 'load-backup.secret.label',
+                            message: 'Sicherheitscode',
+                        })}
+                        description={t({
+                            id: 'load-backup.secret.description',
+                            message:
+                                'Der Sicherheitscode, den Du bei der Registrierung erhalten hast.',
+                        })}
                         {...register('secret', {
                             onChange: event =>
                                 formatSecret(event.target.value || ''),

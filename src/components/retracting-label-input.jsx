@@ -5,6 +5,7 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { Input } from './form';
+import classNames from 'helpers/classnames';
 import './retracting-label-input.scss';
 
 /**
@@ -13,7 +14,7 @@ import './retracting-label-input.scss';
  */
 export const RetractingLabelInput = forwardRef(
     ({ children, name, label, description, className, ...props }, ref) => (
-        <span className={className('kip-retracting-label-input' + className)}>
+        <span className={classNames('kip-retracting-label-input' + className)}>
             <Input
                 aria-labelledby={name + 'label'}
                 {...props}
