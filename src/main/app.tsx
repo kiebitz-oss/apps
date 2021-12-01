@@ -12,14 +12,14 @@ import {
 } from 'react-router-dom';
 import './app.scss';
 
-const MediatorApp = React.lazy(() =>
-    import(/* webpackChunkName: "mediator-app" */ '../apps/mediator/App')
+const MediatorApp = React.lazy(
+    () => import(/* webpackChunkName: "mediator-app" */ '../apps/mediator/App')
 );
-const ProviderApp = React.lazy(() =>
-    import(/* webpackChunkName: "provider-app" */ '../apps/provider/App')
+const ProviderApp = React.lazy(
+    () => import(/* webpackChunkName: "provider-app" */ '../apps/provider/App')
 );
-const UserApp = React.lazy(() =>
-    import(/* webpackChunkName: "user-app" */ '../apps/user/App')
+const UserApp = React.lazy(
+    () => import(/* webpackChunkName: "user-app" */ '../apps/user/App')
 );
 
 export default function App() {

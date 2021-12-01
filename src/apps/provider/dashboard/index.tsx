@@ -67,8 +67,8 @@ const DashboardPage: React.FC<any> = ({
         setTv(timer);
         setLastUpdated(new Date().toLocaleTimeString());
         openAppointmentsAction();
-        keysAction().then(ks =>
-            keyPairsAction().then(kp => {
+        keysAction().then((ks) =>
+            keyPairsAction().then((kp) => {
                 // we first publish appointments to e.g.
                 // notify the backend of changes
                 publishAppointmentsAction(kp.data).finally(() => {
@@ -76,11 +76,11 @@ const DashboardPage: React.FC<any> = ({
                     getAppointmentsAction(kp.data);
                 });
 
-                providerSecretAction().then(ps =>
+                providerSecretAction().then((ps) =>
                     backupDataAction(kp.data, ps.data)
                 );
 
-                providerDataAction().then(pd => {
+                providerDataAction().then((pd) => {
                     if (
                         pd.data.submittedAt === undefined ||
                         pd.data.version !== '0.4'
@@ -88,7 +88,7 @@ const DashboardPage: React.FC<any> = ({
                         // we try to submit the data...
                         submitProviderDataAction(pd.data, kp.data, ks.data);
                     } else {
-                        verifiedProviderDataAction().then(vd => {
+                        verifiedProviderDataAction().then((vd) => {
                             if (vd === undefined) {
                                 return;
                             }

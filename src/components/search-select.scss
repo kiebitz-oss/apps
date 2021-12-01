@@ -34,7 +34,8 @@
         }
     }
 
-    .kip-candidates:hover {
+    .kip-candidates:hover,
+    .kip-candidates:focus {
         display: block !important;
     }
 

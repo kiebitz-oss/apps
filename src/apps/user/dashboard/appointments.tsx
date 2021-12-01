@@ -73,11 +73,19 @@ const OfferDetails: React.FC<any> = ({ offer }) => {
                         <p>
                             <Trans id="offer-notice-text">
                                 Bitte füllen Sie nach Möglichkeit{' '}
-                                <a target="_blank" href={v.anamnesisUrl[lang]}>
+                                <a
+                                    target="_blank"
+                                    href={v.anamnesisUrl[lang]}
+                                    rel="noreferrer"
+                                >
                                     die Anamnese- und Einwilligungserklärung
                                 </a>{' '}
                                 sowie{' '}
-                                <a target="_blank" href={v.infosUrl[lang]}>
+                                <a
+                                    target="_blank"
+                                    href={v.infosUrl[lang]}
+                                    rel="noreferrer"
+                                >
                                     das Aufklärungsmerkblatt
                                 </a>{' '}
                                 für den Impfstoff <strong>{v[lang]}</strong> aus
@@ -153,7 +161,7 @@ const AcceptedInvitationBase: React.FC<any> = ({
 
     const { offer, invitation: invitationData } = acceptedInvitation.data;
 
-    const currentOffer = offers.find(of => of.id == offer.id);
+    const currentOffer = offers.find((of) => of.id == offer.id);
 
     let notice;
     let changed = false;
@@ -314,19 +322,19 @@ const NoInvitations: React.FC<any> = ({ tokenData }) => {
 
 async function toggleOffers(state, keyStore, settings, offer, offers) {
     if (offer === null) return { data: [] };
-    if (state.data.find(i => i === offer.id) !== undefined) {
-        state.data = state.data.filter(i => i !== offer.id);
+    if (state.data.find((i) => i === offer.id) !== undefined) {
+        state.data = state.data.filter((i) => i !== offer.id);
     } else {
         state.data.push(offer.id);
     }
     // we remove non-existing offers
-    state.data = state.data.filter(i =>
-        offers.map(offer => offer.id).includes(i)
+    state.data = state.data.filter((i) =>
+        offers.map((offer) => offer.id).includes(i)
     );
     return { data: state.data };
 }
 
-toggleOffers.init = function() {
+toggleOffers.init = function () {
     return { data: [] };
 };
 
@@ -335,7 +343,7 @@ toggleOffers.actionName = 'toggleOffers';
 const PropertyTags: React.FC<any> = ({ appointment }) => {
     const props = Object.entries(appointment.properties)
         .map(([, v]) => <PropertyTag key={v} property={v} />)
-        .filter(p => p !== undefined);
+        .filter((p) => p !== undefined);
 
     return <>{props}</>;
 };
@@ -374,7 +382,7 @@ const InvitationDetailsBase: React.FC<any> = ({
         toggleOffersAction(null);
     });
 
-    const toggle = offer => {
+    const toggle = (offer) => {
         toggleOffersAction(offer, data.offers);
     };
 
@@ -382,7 +390,7 @@ const InvitationDetailsBase: React.FC<any> = ({
         const selectedOffers = [];
         // we add the selected offers in the order the user chose
         for (const offerID of toggleOffers.data) {
-            const offer = data.offers.find(offer => offer.id === offerID);
+            const offer = data.offers.find((offer) => offer.id === offerID);
             selectedOffers.push(offer);
         }
         setConfirming(true);
@@ -398,8 +406,8 @@ const InvitationDetailsBase: React.FC<any> = ({
 
     // to do: use something better than the index i for the key?
     const offers = data.offers
-        .filter(offer => offer.slotData.some(sl => sl.open))
-        .filter(a => new Date(a.timestamp) > new Date())
+        .filter((offer) => offer.slotData.some((sl) => sl.open))
+        .filter((a) => new Date(a.timestamp) > new Date())
         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
         .map((offer, i) => {
             const d = new Date(offer.timestamp);
@@ -492,8 +500,8 @@ const InvitationDetailsBase: React.FC<any> = ({
                     disabled={
                         confirming ||
                         Object.keys(
-                            toggleOffers.data.filter(id =>
-                                data.offers.find(of => of.id === id)
+                            toggleOffers.data.filter((id) =>
+                                data.offers.find((of) => of.id === id)
                             )
                         ).length === 0
                     }
@@ -515,7 +523,7 @@ const InvitationDetails = withActions(InvitationDetailsBase, [
     userSecret,
 ]);
 
-const filterInvitations = invitation => {
+const filterInvitations = (invitation) => {
     if (invitation.offers === null) {
         return false;
     }
@@ -553,7 +561,7 @@ const AppointmentsPage: React.FC<any> = ({
             for (const offer of invitation.data) {
                 if (
                     invitations.some(
-                        inv => inv.provider.name === offer.provider.name
+                        (inv) => inv.provider.name === offer.provider.name
                     )
                 )
                     continue;
@@ -564,12 +572,12 @@ const AppointmentsPage: React.FC<any> = ({
             acceptedInvitation !== undefined &&
             acceptedInvitation.data !== null
         ) {
-            const ai = invitations.find(inv => {
+            const ai = invitations.find((inv) => {
                 if (inv === null) return false;
-                return inv.offers.some(offer =>
-                    offer.slotData.some(sla =>
+                return inv.offers.some((offer) =>
+                    offer.slotData.some((sla) =>
                         acceptedInvitation.data.offer.slotData.some(
-                            slb => slb.id === sla.id
+                            (slb) => slb.id === sla.id
                         )
                     )
                 );
@@ -579,14 +587,14 @@ const AppointmentsPage: React.FC<any> = ({
         }
 
         // we only show relevant invitations
-        invitations = invitations.filter(inv =>
+        invitations = invitations.filter((inv) =>
             filterInvitations(inv, acceptedInvitation)
         );
 
         if (invitations.length === 0)
             return <NoInvitations tokenData={tokenData.data} />;
 
-        const details = invitations.map(data => (
+        const details = invitations.map((data) => (
             <InvitationDetails
                 tokenData={tokenData}
                 data={data}

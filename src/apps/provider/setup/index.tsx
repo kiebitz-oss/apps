@@ -20,7 +20,7 @@ const SetupPage: React.FC<any> = ({ providerDataAction }) => {
         if (initialized) return;
         setInitialized(true);
 
-        providerDataAction(hash).then(pd => {
+        providerDataAction(hash).then((pd) => {
             if (page === undefined && pd.data?.submittedAt !== undefined)
                 navigate('/provider/schedule');
         });

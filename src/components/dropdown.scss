@@ -55,7 +55,8 @@
                         margin-right: 0.45em;
                     }
 
-                    &:hover {
+                    &:hover,
+                    &:focus {
                         background-color: $kip-blue;
                         color: $kip-white;
                     }

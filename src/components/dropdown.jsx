@@ -30,7 +30,7 @@ DropdownMenu.propTypes = {
 export const DropdownMenuItem = ({ icon, children, onClick }) => (
     <li>
         <A
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 onClick();
@@ -58,7 +58,7 @@ export class Dropdown extends React.Component {
             right: false,
         };
         this.ref = React.createRef();
-        this.handler = e => this.handleClick(e);
+        this.handler = (e) => this.handleClick(e);
     }
 
     hide() {
@@ -92,7 +92,7 @@ export class Dropdown extends React.Component {
         }
     }
 
-    handleToggle = event => {
+    handleToggle = (event) => {
         const { expanded } = this.state;
         event.preventDefault();
         event.stopPropagation();

@@ -5,6 +5,24 @@
     position: relative;
     width: 100%; // Needed for a bug in Chrome
     padding-top: 8px;
+    @media screen and (prefers-reduced-motion: reduce) {
+        > .kip-label {
+            background-color: $kip-white;
+            position: absolute;
+            top: 16px;
+            left: 8px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: calc(100% - (2 * 8px));
+            overflow: hidden;
+            pointer-events: none;
+            transition: none;
+            padding: 0 8px;
+            transform: scale(0.75) translateX(-16%) translateY(-26px);
+            border-radius: $kip-border-radius;
+            border: 1px solid $kip-link;
+        }
+    }
 
     > .kip-label {
         background-color: $kip-white;

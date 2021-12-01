@@ -31,11 +31,11 @@ const TestQueuesModalBase: React.FC<any> = ({
         testQueuesAction(keyPairs);
     });
 
-    const readFile = e => {
+    const readFile = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const json = JSON.parse(e.target.result);
             testQueuesAction(keyPairs, json);
         };
@@ -82,7 +82,7 @@ const TestQueuesModalBase: React.FC<any> = ({
                     disabled={keyPairs === undefined || keyPairs.data === null}
                     className="bulma-input"
                     type="file"
-                    onChange={e => readFile(e)}
+                    onChange={(e) => readFile(e)}
                 />
             </label>
         </form>

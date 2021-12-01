@@ -8,21 +8,19 @@ import { contactData, queueData, tokenData } from 'apps/user/actions';
 import Wizard from './wizard';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './index.scss';
+import { useEffectOnce } from 'react-use';
 
 const SetupPage: React.FC<any> = ({
     contactDataAction,
     tokenDataAction,
     queueDataAction,
 }) => {
-    const [initialized, setInitialized] = useState(false);
     const navigate = useNavigate();
     const { hash } = useLocation();
     const { page } = useParams();
 
-    useEffect(() => {
-        if (initialized) return;
-        setInitialized(true);
-        tokenDataAction().then(td => {
+    useEffectOnce(() => {
+        tokenDataAction().then((td: any) => {
             if (td.data !== null) navigate('/user/appointments');
         });
 

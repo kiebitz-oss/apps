@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import BaseActions from 'actions/base';
-import { t } from "@lingui/macro"
+import { t } from '@lingui/macro';
 
 export default class Settings extends BaseActions {
     static get defaultKey() {
@@ -69,14 +69,19 @@ export default class Settings extends BaseActions {
             xhr.onerror = () => {
                 reject({
                     status: xhr.status,
-                    message: xhr.statusText || t({ id: 'requestFailed', message: 'requestFailed MISSING' }),
+                    message:
+                        xhr.statusText ||
+                        t({
+                            id: 'requestFailed',
+                            message: 'requestFailed MISSING',
+                        }),
                     errors: {},
                 });
             };
         });
         promise
             .then(({ data, response }) => loadSettings({ data, response }))
-            .catch(error => this.set({ status: 'failed', error: error }));
+            .catch((error) => this.set({ status: 'failed', error: error }));
         xhr.send();
     }
 }

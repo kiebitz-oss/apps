@@ -24,7 +24,7 @@ interface FormData {
     secret: string;
 }
 
-const resolver: Resolver<FormData> = async values => {
+const resolver: Resolver<FormData> = async (values) => {
     const errors: Partial<FormData> = {};
 
     if (values.secret !== undefined) {
@@ -49,7 +49,7 @@ const RestorePage: React.FC<any> = ({
 }) => {
     const navigate = useNavigate();
 
-    const onSubmit: SubmitHandler<FormData> = data => {
+    const onSubmit: SubmitHandler<FormData> = (data) => {
         restoreFromBackupAction(data.secret).then((data: any) => {
             if (data.status === 'succeeded') {
                 navigate('/user/appointments');
@@ -94,7 +94,7 @@ const RestorePage: React.FC<any> = ({
                                 'Der Sicherheitscode, den Du bei der Registrierung erhalten hast.',
                         })}
                         {...register('secret', {
-                            onChange: event =>
+                            onChange: (event) =>
                                 formatSecret(event.target.value || ''),
                         })}
                     />

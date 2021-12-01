@@ -27,7 +27,9 @@ export const RenderWait = () => (
 
 export const RenderFailed = () => (
     <Message type="danger">
-        <Trans id="loader.failed">Das Laden von Ressourcen ist leider fehlgeschlagen.</Trans>
+        <Trans id="loader.failed">
+            Das Laden von Ressourcen ist leider fehlgeschlagen.
+        </Trans>
     </Message>
 );
 

@@ -32,7 +32,7 @@ interface FormData {
     accessCode: string;
 }
 
-const resolver: Resolver<FormData> = async values => {
+const resolver: Resolver<FormData> = async (values) => {
     const errors: any = {};
 
     if (!values.name || values.name.length < 2) {
@@ -62,7 +62,7 @@ const BaseProviderData: React.FC<any> = ({
         defaultValues: {},
     });
 
-    const onSubmit: SubmitHandler<FormData> = data => {
+    const onSubmit: SubmitHandler<FormData> = (data) => {
         providerDataAction(data);
 
         // we redirect to the 'verify' step

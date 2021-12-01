@@ -198,7 +198,7 @@ const VerifyPage: React.FC<any> = ({
             providerData.data,
             keyPairs.data,
             keys.data
-        ).then(pd => {
+        ).then((pd) => {
             setSubmitting(false);
             if (pd.status === 'succeeded')
                 navigate('/provider/setup/store-secrets');

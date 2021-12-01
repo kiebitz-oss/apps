@@ -17,7 +17,7 @@ export const QueueSelect: React.FC<any> = ({
 }) => {
     const [search, setSearch] = useState('');
     const [updated, setUpdated] = useState(false);
-    const queueMap = queue => ({
+    const queueMap = (queue) => ({
         name: queue.name,
         id: queue.id,
         description: '',
@@ -27,13 +27,13 @@ export const QueueSelect: React.FC<any> = ({
 
     const generateInitialQueues = () =>
         queues
-            .filter(queue => !existingQueues.includes(queue.id))
+            .filter((queue) => !existingQueues.includes(queue.id))
             .map(queueMap);
     const [candidates, setCandidates] = useState(generateInitialQueues());
 
-    const updateSearch = value => {
+    const updateSearch = (value) => {
         const candidateQueues = queues.filter(
-            queue =>
+            (queue) =>
                 !existingQueues.includes(queue.id) &&
                 (value === '' ||
                     queue.name.toLowerCase().includes(value.toLowerCase()))
@@ -46,9 +46,9 @@ export const QueueSelect: React.FC<any> = ({
 
     const queuesById = {};
 
-    queues.forEach(queue => (queuesById[queue.id] = queue));
+    queues.forEach((queue) => (queuesById[queue.id] = queue));
 
-    const queueItems = existingQueues.map(queueId => {
+    const queueItems = existingQueues.map((queueId) => {
         const queue = queuesById[queueId];
         if (queue === undefined) return;
         return (
@@ -73,7 +73,7 @@ export const QueueSelect: React.FC<any> = ({
         }
     });
 
-    const selectQueue = queue => {
+    const selectQueue = (queue) => {
         addQueue(queue);
         setSearch('');
         setUpdated(true);

@@ -18,7 +18,8 @@ li.kip-nav-item {
             background: $kip-darkblue;
         }
 
-        &:hover {
+        &:hover,
+        &:focus {
             color: #fff;
             background-color: $kip-darkblue;
         }
@@ -34,7 +35,8 @@ li.kip-nav-item {
 }
 
 @media (min-width: $kip-desktop) {
-    .kip-sidebar:not(:hover) {
+    .kip-sidebar:not(:hover),
+    .kip-sidebar:not(:focus) {
         li.kip-nav-item {
             // we hide submenus if the menubar is not active
             ul {
@@ -48,7 +50,8 @@ li.kip-nav-item {
     }
 
     // we only show different colors when the menubar is active
-    .kip-sidebar:hover {
+    .kip-sidebar:hover,
+    .kip-sidebar:focus {
         li.kip-nav-item {
             a.is-active {
                 background: $kip-darkblue;

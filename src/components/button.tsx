@@ -66,7 +66,9 @@ export const Button: React.FC<ButtonProps> = ({
     <A
         external={external}
         target={target}
-        onClick={e => (!disabled && onClick !== undefined ? onClick(e) : false)}
+        onClick={(e) =>
+            !disabled && onClick !== undefined ? onClick(e) : false
+        }
         href={href}
         params={params}
     >

@@ -157,14 +157,14 @@ export class NavbarDropdownMenu extends React.Component {
         return this.state.active;
     }
 
-    handleToggleItem = event => {
+    handleToggleItem = (event) => {
         this.toggleActive();
         if (this.props.onToggle) {
             this.props.onToggle(event);
         }
     };
 
-    handleClickTitle = event => {
+    handleClickTitle = (event) => {
         event.preventDefault();
         this.toggleActive();
     };

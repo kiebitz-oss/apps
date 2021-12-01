@@ -44,10 +44,10 @@ const DashboardPage: React.FC<any> = ({
         // we do this only once per timer interval...
         if (timer === tv) return;
         setTv(timer);
-        userSecretAction().then(us =>
+        userSecretAction().then((us) =>
             tokenDataAction().then(() =>
-                keysAction().then(kd =>
-                    queueDataAction().then(qd => {
+                keysAction().then((kd) =>
+                    queueDataAction().then((qd) => {
                         getAppointmentsAction(qd.data, kd.data);
                         backupDataAction(us.data);
                         invitationAction();

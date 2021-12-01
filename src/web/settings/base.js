@@ -5,9 +5,6 @@
 import Store from 'helpers/store';
 import Settings from 'helpers/settings';
 
-
-const settings = new Settings([
-    ['store', new Store()],
-]);
+const settings = new Settings([['store', new Store()]]);
 
 export default settings;

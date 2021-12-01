@@ -73,7 +73,7 @@ const Wizard: React.FC<any> = ({ page, status }) => {
 
     const index = pages.indexOf(page);
 
-    const canShow = _page => {
+    const canShow = (_page) => {
         return pages.indexOf(_page) <= index;
     };
 

@@ -60,11 +60,11 @@ const ProvidersPage: React.FC<any> = ({
     const [view, setView] = useState('pending');
     const navigate = useNavigate();
 
-    const getData = t => {
+    const getData = (t) => {
         if (keyPairs !== undefined && keyPairs.data !== undefined) {
             setLastRun(t);
-            pendingProvidersAction(keyPairs.data).then(pd =>
-                verifiedProvidersAction(keyPairs.data).then(vp => {
+            pendingProvidersAction(keyPairs.data).then((pd) =>
+                verifiedProvidersAction(keyPairs.data).then((vp) => {
                     // do something
                 })
             );
@@ -78,7 +78,7 @@ const ProvidersPage: React.FC<any> = ({
     const providers = view === 'pending' ? pendingProviders : verifiedProviders;
 
     const render = () => {
-        const showProvider = i => {
+        const showProvider = (i) => {
             const id = buf2hex(b642buf(i));
             navigate(`/mediator/providers/show/${id}`);
         };
@@ -134,7 +134,7 @@ const ProvidersPage: React.FC<any> = ({
         if (action === 'show' && id !== undefined) {
             const base64Id = buf2b64(hex2buf(id));
             const provider = providers.data.find(
-                provider => provider.id === base64Id
+                (provider) => provider.id === base64Id
             );
 
             const doConfirmProvider = () => {
@@ -247,7 +247,7 @@ const ProvidersPage: React.FC<any> = ({
 
         const providerItems = providers.data
             .sort(sortProviderByDate)
-            .map(provider => (
+            .map((provider) => (
                 <ListItem
                     onClick={() => showProvider(provider.id)}
                     key={provider.id}

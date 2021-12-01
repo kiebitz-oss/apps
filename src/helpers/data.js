@@ -6,7 +6,7 @@ export function urlEncode(data) {
     if (data && typeof data === 'object') {
         return Object.keys(data)
             .map(
-                key =>
+                (key) =>
                     encodeURIComponent(key) +
                     '=' +
                     encodeURIComponent(data[key])

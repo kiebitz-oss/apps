@@ -23,7 +23,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
 
         const signedAppointments = [];
         const relevantAppointments = openAppointments.filter(
-            oa =>
+            (oa) =>
                 new Date(oa.timestamp) >
                     new Date(new Date().getTime() - 1000 * 60 * 60 * 4) &&
                 oa.modified
@@ -37,7 +37,7 @@ export async function publishAppointments(state, keyStore, settings, keyPairs) {
                     timestamp: appointment.timestamp,
                     publicKey: keyPairs.encryption.publicKey,
                     properties: {},
-                    slotData: appointment.slotData.map(sl => ({
+                    slotData: appointment.slotData.map((sl) => ({
                         id: sl.id,
                     })),
                 };

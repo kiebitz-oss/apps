@@ -144,8 +144,8 @@ const BackupDataLinkBase: React.FC<any> = ({
     useEffect(() => {
         if (initialized) return;
         setInitialized(true);
-        keyPairsAction().then(kp =>
-            providerSecretAction().then(ps =>
+        keyPairsAction().then((kp) =>
+            providerSecretAction().then((ps) =>
                 backupDataAction(kp.data, ps.data)
             )
         );

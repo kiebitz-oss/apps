@@ -66,9 +66,9 @@ export const StoreOnline: React.FC<StoreOnlineProps> = ({
             </Modal>
         );
 
-    const chunks = secret.match(/.{1,4}/g);
+    const chunks = secret.match(/.{1,4}/g) || [];
 
-    const fragments: React.ReactNodeArray = [];
+    const fragments: React.ReactNode[] = [];
 
     for (let i = 0; i < chunks.length; i++) {
         fragments.push(<F key={`${i}-main`}>{chunks[i]}</F>);

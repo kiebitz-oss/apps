@@ -21,7 +21,7 @@ export function update(
     clone = false
 ) {
     if (!(ed instanceof Map) || !(d instanceof Map)) {
-        throw new Error("Parameters are not maps!");
+        throw new Error('Parameters are not maps!');
     }
     if (clone) d = new Map(d);
     for (const key of ed.keys()) {
@@ -45,7 +45,7 @@ function hget(d, key, defaultValue) {
     let cv = d;
     for (let i = 0; i < kl.length; i++) {
         if (cv === undefined) return defaultValue;
-        if (kl[i] !== undefined && kl[i].endsWith("?")) {
+        if (kl[i] !== undefined && kl[i].endsWith('?')) {
             const kle = kl[i].slice(0, kl[i].length - 1);
             let cvn;
             if (cv instanceof Map) cvn = cv.get(kle);
@@ -60,7 +60,7 @@ function hget(d, key, defaultValue) {
     }
     if (cv === undefined) return defaultValue;
     // we convert empty strings to 'undefined'
-    if (cv === "") return undefined;
+    if (cv === '') return undefined;
     return cv;
 }
 
@@ -117,7 +117,7 @@ export default class Settings {
      * Get the current language for the app. This will affect translations.
      */
     lang(): string {
-        return this.get("lang", "en");
+        return this.get('lang', 'en');
     }
 
     // /**

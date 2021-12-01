@@ -25,7 +25,7 @@ interface FormData {
     localOnly: boolean;
 }
 
-const resolver: Resolver<FormData> = async values => {
+const resolver: Resolver<FormData> = async (values) => {
     const errors: any = {};
 
     if (!values.file) {
@@ -67,13 +67,13 @@ const RestorePage: React.FC<any> = ({
         resolver,
     });
 
-    const readFile: FormEventHandler<HTMLInputElement> = event => {
+    const readFile: FormEventHandler<HTMLInputElement> = (event) => {
         const file = event.currentTarget.files?.[0];
         const reader = new FileReader();
 
         setValue('filename', file?.name as string);
 
-        reader.onload = e => {
+        reader.onload = (e) => {
             try {
                 setValue('file', JSON.parse(e.target?.result as string));
             } catch (e) {
@@ -86,7 +86,7 @@ const RestorePage: React.FC<any> = ({
         }
     };
 
-    const onSubmit: SubmitHandler<FormData> = data => {
+    const onSubmit: SubmitHandler<FormData> = (data) => {
         restoreFromBackupAction(data.secret, data.file, data.localOnly).then(
             (data: any) => {
                 if (data.status === 'succeeded') {
@@ -130,7 +130,7 @@ const RestorePage: React.FC<any> = ({
                                 'Der Datenschlüssel, den Sie bei der Registrierung erhalten haben.',
                         })}
                         {...register('secret', {
-                            onChange: event => {
+                            onChange: (event) => {
                                 return formatSecret(event.target.secret || '');
                             },
                         })}

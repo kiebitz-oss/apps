@@ -16,7 +16,7 @@ export const SearchSelect = ({
     setSearch,
     candidates,
 }) => {
-    const items = candidates.map(candidate => (
+    const items = candidates.map((candidate) => (
         <li
             onClick={() => onSelect(candidate)}
             key={candidate.name}
@@ -34,7 +34,9 @@ export const SearchSelect = ({
         searchCandidates = (
             <ul className="kip-candidates">
                 <li className="kip-candidate" key="not-found">
-                    <Trans id="search-select.no-candidates">Keine Kandidaten gefunden</Trans>
+                    <Trans id="search-select.no-candidates">
+                        Keine Kandidaten gefunden
+                    </Trans>
                 </li>
             </ul>
         );
@@ -44,7 +46,7 @@ export const SearchSelect = ({
         <div className="kip-search-select">
             <RetractingLabelInput
                 onChange={setSearch}
-                onEnter={e => e.preventDefault()}
+                onEnter={(e) => e.preventDefault()}
                 label={label}
                 disabled={disabled}
                 description={description}

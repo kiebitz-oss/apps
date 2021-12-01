@@ -33,7 +33,7 @@ i18n.load({
 
 i18n.activate('de');
 
-export const render = settings => {
+export const render = (settings) => {
     if (settings.get('backend') === undefined) {
         const backend = new Backend(
             settings,

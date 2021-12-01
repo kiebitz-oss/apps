@@ -30,7 +30,7 @@ const ContactDataBase: React.FC<any> = ({ contactDataAction }) => {
         contactDataAction().then((ct: any) => reset(ct.data));
     });
 
-    const onSubmit: SubmitHandler<FormData> = data => {
+    const onSubmit: SubmitHandler<FormData> = (data) => {
         contactDataAction(data);
 
         // we redirect to the 'verify' step

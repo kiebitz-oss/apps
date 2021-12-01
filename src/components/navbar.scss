@@ -23,6 +23,9 @@
     @media screen and (min-width: $kip-desktop) {
         .bulma-navbar-item.bulma-has-dropdown:hover .bulma-navbar-link,
         .bulma-navbar-item.bulma-has-dropdown.bulma-is-active
+        .bulma-navbar-link,
+        .bulma-navbar-item.bulma-has-dropdown:focus .bulma-navbar-link,
+        .bulma-navbar-item.bulma-has-dropdown.bulma-is-active
         .bulma-navbar-link {
             background-color: $kip-darkblue;
         }
@@ -102,6 +105,8 @@
     }
 
     .bulma-navbar-link:hover,
+    .bulma-navbar-item.bulma-is-active .bulma-navbar-link,
+    .bulma-navbar-link:focus,
     .bulma-navbar-item.bulma-is-active .bulma-navbar-link {
         color: $kip-white-transparent;
 
@@ -120,7 +125,13 @@
 }
 
 @media (max-width: $kip-desktop) {
-    .kip-navbar {
+    .kip-navbar {@media screen and (prefers-reduced-motion: reduce) {
+            .bulma-navbar-menu {
+                width: 0;
+                transition: none;
+            }
+        }
+
         .bulma-navbar-menu {
             width: 0;
             transition: width 0.5s;

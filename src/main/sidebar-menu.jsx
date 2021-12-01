@@ -47,7 +47,7 @@ class DropdownMenu extends React.Component {
         return this.state.active;
     };
 
-    onToggle = event => {
+    onToggle = (event) => {
         this.toggleActive();
         this.props.onToggle(event);
     };
@@ -59,7 +59,7 @@ class DropdownMenu extends React.Component {
     render() {
         const { title, items, user } = this.props;
         const navItems = items
-            .filter(item => {
+            .filter((item) => {
                 if (item.show !== undefined && item.show(user.user) === false)
                     return false;
                 return true;
@@ -71,7 +71,7 @@ class DropdownMenu extends React.Component {
                     <DropdownItem
                         key={i}
                         href={href}
-                        onToggle={e => this.props.onToggle(e)}
+                        onToggle={(e) => this.props.onToggle(e)}
                     >
                         {item.title}
                     </DropdownItem>
@@ -105,7 +105,7 @@ class MenuItems extends React.Component {
         }
 
         return items
-            .filter(item => {
+            .filter((item) => {
                 if (item.show !== undefined && item.show(user.user) === false)
                     return false;
                 return true;

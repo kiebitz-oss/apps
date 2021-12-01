@@ -18,7 +18,7 @@ import { shuffle } from 'helpers/lists';
 import { e } from 'helpers/async';
 
 function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 // The appointments backend
 export default class AppointmentsBackend {
@@ -253,8 +253,8 @@ export default class AppointmentsBackend {
         await e(this.initialized());
         // we just look at nearest neighbors here...
         return this.queues
-            .filter(q => q.zipCode === zipCode.slice(0, 2))
-            .map(queue => ({
+            .filter((q) => q.zipCode === zipCode.slice(0, 2))
+            .map((queue) => ({
                 name: queue.name,
                 type: queue.type,
                 id: queue.id,
@@ -522,8 +522,8 @@ export default class AppointmentsBackend {
         queueIDs = new Set(queueIDs);
         await e(this.initialized());
         return this.queues
-            .filter(queue => queueIDs.has(queue.id))
-            .map(queue => ({
+            .filter((queue) => queueIDs.has(queue.id))
+            .map((queue) => ({
                 name: queue.name,
                 type: queue.type,
                 id: queue.id,

@@ -2,18 +2,18 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import BaseActions from "actions/base";
-import Store from "helpers/store";
-import { uuidv4 } from "helpers/uuid";
-import Settings from "helpers/settings";
+import BaseActions from 'actions/base';
+import Store from 'helpers/store';
+import { uuidv4 } from 'helpers/uuid';
+import Settings from 'helpers/settings';
 
 export enum NotificationType {
-    NONE = "none",
-    PRIMARY = "primary",
-    INFO = "info",
-    SUCCESS = "success",
-    WARNING = "warning",
-    DANGER = "danger"
+    NONE = 'none',
+    PRIMARY = 'primary',
+    INFO = 'info',
+    SUCCESS = 'success',
+    WARNING = 'warning',
+    DANGER = 'danger',
 }
 
 interface Notification {
@@ -26,13 +26,13 @@ interface Notification {
 
 export default class NotificationManager extends BaseActions {
     static get defaultKey() {
-        return "notification";
+        return 'notification';
     }
 
     constructor(store: Store, settings: Settings, key?: string) {
         super(store, settings, key);
         this.set({
-            list: []
+            list: [],
         });
     }
 
@@ -51,7 +51,7 @@ export default class NotificationManager extends BaseActions {
             type: type,
             title: title,
             text: text,
-            timeout: timeout
+            timeout: timeout,
         });
         this.update({ list });
     };
@@ -62,7 +62,7 @@ export default class NotificationManager extends BaseActions {
     removeNotification = (id: string) => {
         const list: Notification[] = this.get().list;
         this.update({
-            list: list.filter(notification => notification.id !== id)
+            list: list.filter((notification) => notification.id !== id),
         });
     };
 }

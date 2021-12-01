@@ -49,7 +49,7 @@ interface FormData {
     [key: string]: any;
 }
 
-const resolver: Resolver<FormData> = async values => {
+const resolver: Resolver<FormData> = async (values) => {
     const errors: any = {};
 
     if (values.distance === undefined) {
@@ -99,7 +99,7 @@ const FinalizePage: React.FC<any> = ({
         contactDataAction();
         userSecretAction();
         getTokenAction.reset();
-        queueDataAction().then(qd => {
+        queueDataAction().then((qd) => {
             const initialData = {
                 distance: 5,
             };
@@ -115,7 +115,7 @@ const FinalizePage: React.FC<any> = ({
         });
     });
 
-    const onSubmit: SubmitHandler<FormData> = data => {
+    const onSubmit: SubmitHandler<FormData> = (data) => {
         queueDataAction(data).then(() => {
             getTokenAction(contactData.data, userSecret.data).then(
                 (hd: any) => {
@@ -230,48 +230,42 @@ const FinalizePage: React.FC<any> = ({
                                     {
                                         value: 5,
                                         description: t({
-                                            id:
-                                                'contact-data.distance.option.5',
+                                            id: 'contact-data.distance.option.5',
                                             message: '5 km',
                                         }),
                                     },
                                     {
                                         value: 10,
                                         description: t({
-                                            id:
-                                                'contact-data.distance.option.10',
+                                            id: 'contact-data.distance.option.10',
                                             message: '10 km',
                                         }),
                                     },
                                     {
                                         value: 20,
                                         description: t({
-                                            id:
-                                                'contact-data.distance.option.20',
+                                            id: 'contact-data.distance.option.20',
                                             message: '20 km',
                                         }),
                                     },
                                     {
                                         value: 30,
                                         description: t({
-                                            id:
-                                                'contact-data.distance.option.30',
+                                            id: 'contact-data.distance.option.30',
                                             message: '30 km',
                                         }),
                                     },
                                     {
                                         value: 40,
                                         description: t({
-                                            id:
-                                                'contact-data.distance.option.40',
+                                            id: 'contact-data.distance.option.40',
                                             message: '40 km',
                                         }),
                                     },
                                     {
                                         value: 50,
                                         description: t({
-                                            id:
-                                                'contact-data.distance.option.50',
+                                            id: 'contact-data.distance.option.50',
                                             message: '50 km',
                                         }),
                                     },

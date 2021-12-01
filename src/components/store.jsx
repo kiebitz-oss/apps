@@ -114,7 +114,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
                                 settings
                             );
                             if (initialValue instanceof Promise) {
-                                initialValue.then(value => {
+                                initialValue.then((value) => {
                                     if (value !== undefined)
                                         store.set(key, value);
                                 });
@@ -122,7 +122,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
                                 store.set(key, initialValue);
                             }
                         }
-                        const wrapper = function() {
+                        const wrapper = function () {
                             const state = store.get(key);
                             try {
                                 const result = ActionProvider(
@@ -135,13 +135,13 @@ export function withActions(Component, actionNames, keyList, noStore) {
                                 if (result instanceof Promise) {
                                     result
                                         .then(
-                                            data =>
+                                            (data) =>
                                                 data !== undefined &&
                                                 data !== null &&
                                                 store.set(key, data)
                                         )
                                         .catch(
-                                            error =>
+                                            (error) =>
                                                 error !== undefined &&
                                                 error !== null &&
                                                 store.set(key, error)
@@ -253,11 +253,11 @@ export function withActions(Component, actionNames, keyList, noStore) {
     }
 
     // eslint-disable-next-line react/display-name
-    const WithActions = props => (
+    const WithActions = (props) => (
         <SettingsContext.Consumer>
-            {settings => (
+            {(settings) => (
                 <StoreContext.Consumer>
-                    {store => (
+                    {(store) => (
                         <Actions store={store} settings={settings} {...props} />
                     )}
                 </StoreContext.Consumer>

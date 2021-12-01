@@ -110,7 +110,7 @@ class Notifications extends React.Component {
 
         const notificationsList = notification.list
             .reverse()
-            .map(notification => {
+            .map((notification) => {
                 return (
                     <Notification
                         key={notification.id}

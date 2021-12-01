@@ -23,7 +23,7 @@ export const RichSelectItem = ({ onClick, option, selected }) => {
 
 export const RichSelect = ({ id, options, onChange, value }) => {
     const [active, setActive] = useState(false);
-    const items = options.map(option => (
+    const items = options.map((option) => (
         <RichSelectItem
             key={option.value}
             selected={option.value === value}

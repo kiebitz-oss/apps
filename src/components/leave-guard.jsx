@@ -36,7 +36,7 @@ class BaseLeaveGuard extends React.Component {
         }
     };
 
-    onBeforeUnload = e => {
+    onBeforeUnload = (e) => {
         const { saveToReload } = this.props;
         const { confirmed } = this.state;
         if (!saveToReload() && !confirmed) {
@@ -89,11 +89,19 @@ class BaseLeaveGuard extends React.Component {
                         saveType="danger"
                         save={<Trans id="leave.leave">Seite verlassen</Trans>}
                         cancel={<Trans id="leave.cancel">Zurück</Trans>}
-                        title={<Trans id="leave.title">Möchten Sie diese Seite wirklich verlassen?</Trans> }
+                        title={
+                            <Trans id="leave.title">
+                                Möchten Sie diese Seite wirklich verlassen?
+                            </Trans>
+                        }
                     >
-                        {text || <Trans id="leave.text">
-                            Es gibt ungespeicherte Änderungen auf der aktuellen Seite. Wollen Sie diese wirklich verlassen?
-                        </Trans>}
+                        {text || (
+                            <Trans id="leave.text">
+                                Es gibt ungespeicherte Änderungen auf der
+                                aktuellen Seite. Wollen Sie diese wirklich
+                                verlassen?
+                            </Trans>
+                        )}
                     </Modal>
                 )}
                 {children}
