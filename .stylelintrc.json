@@ -5,7 +5,7 @@
         "stylelint-a11y/recommended",
         "stylelint-config-sass-guidelines"
     ],
-
+    "customSyntax": "postcss-scss",
     "rules": {
         "plugin/no-unsupported-browser-features": [
             true,
