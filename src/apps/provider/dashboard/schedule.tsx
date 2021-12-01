@@ -914,9 +914,9 @@ const NewAppointmentBase: React.FC<any> = ({
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div className="kip-field">
-                    <Label htmlFor="date">
+                    <label className="bulma-label" htmlFor="date">
                         <Trans id="new-appointment.date">Datum</Trans>
-                    </Label>
+                    </label>
                     <input
                         type="date"
                         className="bulma-input"
@@ -925,9 +925,9 @@ const NewAppointmentBase: React.FC<any> = ({
                 </div>
 
                 <div className="kip-field">
-                    <Label htmlFor="time">
+                    <label className="bulma-label" htmlFor="time">
                         <Trans id="new-appointment.time">Uhrzeit</Trans>
-                    </Label>
+                    </label>
                     <input
                         type="time"
                         className="bulma-input"
@@ -937,11 +937,11 @@ const NewAppointmentBase: React.FC<any> = ({
                 </div>
 
                 <div className="kip-field kip-is-fullwidth kip-slider">
-                    <Label htmlFor="slots">
+                    <label className="bulma-label" htmlFor="slots">
                         <Trans id="new-appointment.slots">
                             Anzahl Impfdosen
                         </Trans>
-                    </Label>
+                    </label>
 
                     <input
                         type="number"

@@ -3,25 +3,46 @@
 // README.md contains license information.
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import classnames from 'helpers/classnames';
 import './button.scss';
 
 import { A } from './a';
 
-export const ButtonIcon = ({ icon, brand }) => (
+export const ButtonIcon = ({ icon, brand }: any) => (
     <span className="bulma-icon bulma-is-small">
         <i className={(brand ? 'fab' : 'fas') + ` fa-${icon}`} />
     </span>
 );
 
-export const ButtonLogo = ({ logo }) => (
+export const ButtonLogo = ({ logo }: any) => (
     <span className="bulma-icon bulma-is-small kip-logo">
         <img src={logo} />
     </span>
 );
 
-export const Button = ({
+interface ButtonProps
+    extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'type'> {
+    brand?: boolean;
+    children?: React.ReactNode;
+    flex?: boolean;
+    href?: string;
+    icon?: React.ReactNode;
+    large?: boolean;
+    light?: boolean;
+    type?: string;
+    htmlType?: string;
+    waiting?: boolean;
+    primary?: boolean;
+    params?: any;
+    logo?: string;
+    external?: boolean;
+    noText?: boolean;
+    target?: string;
+    disabled?: boolean;
+}
+
+export const Button: React.FC<ButtonProps> = ({
     children,
     flex,
     href,
@@ -31,15 +52,15 @@ export const Button = ({
     light,
     brand,
     large,
-    type,
-    external,
+    type = 'primary',
+    external = false,
     noText,
-    htmlType,
-    onClick,
+    htmlType = 'button',
     target,
     waiting,
     className,
     disabled,
+    onClick,
     ...props
 }) => (
     <A
@@ -72,32 +93,3 @@ export const Button = ({
         </button>
     </A>
 );
-
-Button.defaultProps = {
-    children: undefined,
-    brand: false,
-    flex: false,
-    waiting: false,
-    href: undefined,
-    light: false,
-    htmlType: 'button',
-    icon: undefined,
-    large: false,
-    type: 'primary',
-    onClick: undefined,
-};
-
-Button.propTypes = {
-    brand: PropTypes.bool,
-    children: PropTypes.node,
-    flex: PropTypes.bool,
-    href: PropTypes.string,
-    icon: PropTypes.node,
-    large: PropTypes.bool,
-    light: PropTypes.bool,
-    type: PropTypes.string,
-    htmlType: PropTypes.string,
-    waiting: PropTypes.bool,
-    primary: PropTypes.bool,
-    onClick: PropTypes.func,
-};

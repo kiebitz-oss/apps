@@ -7,21 +7,14 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 import Settings from './settings';
 import Providers from './providers';
 import Stats from './stats';
-
 import {
     withActions,
     Tabs,
     Tab,
-    T,
-    A,
     Message,
-    FieldSet,
-    Form,
-    Input,
     Modal,
     CenteredCard,
     CardHeader,
-    CardContent,
 } from 'components';
 import { keyPairs, validKeyPairs } from '../actions';
 import { Trans } from '@lingui/macro';
@@ -68,20 +61,19 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
         );
 
     const footer = (
-        <Form>
-            <FieldSet>
-                <label htmlFor="file-upload" className="custom-file-upload">
-                    <Trans id="upload-key-pairs.input">Datei auswählen</Trans>
-                    <input
-                        id="file-upload"
-                        className="bulma-input"
-                        type="file"
-                        onChange={e => readFile(e)}
-                    />
-                </label>
-            </FieldSet>
-        </Form>
+        <form name="upload-queues" className="kip-form">
+            <label htmlFor="file-upload" className="custom-file-upload">
+                <Trans id="upload-key-pairs.input">Datei auswählen</Trans>
+                <input
+                    id="file-upload"
+                    className="bulma-input"
+                    type="file"
+                    onChange={e => readFile(e)}
+                />
+            </label>
+        </form>
     );
+
     return (
         <Modal
             footer={footer}
