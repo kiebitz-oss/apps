@@ -18,12 +18,8 @@ import { t, Trans } from '@lingui/macro';
 import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
 import './restore.scss';
 import { useNavigate } from 'react-router-dom';
+import { formatSecret } from 'helpers/string';
 
-function formatSecret(secret: string) {
-    const parts = secret.match(/.{1,4}/g);
-    if (parts === null) return secret;
-    return parts.join('  ');
-}
 interface FormData {
     secret: string;
 }
