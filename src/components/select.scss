@@ -1,52 +1,21 @@
 @import 'scss/variables';
 
 .kip-select {
+    @include font-open-sans;
+
     position: relative;
-    background: $kip-white;
-    border-radius: $kip-border-radius;
+    background-color: $kip-white;
     box-shadow: $kip-box-shadow;
     margin-bottom: map-get($kip-space, lg);
-    display: flex;
-    flex-wrap: wrap;
     cursor: pointer;
+    font-size: 14px;
+    border: 1px solid $kip-blue;
+    border-radius: $kip-border-radius;
+    box-sizing: border-box;
+    padding: 12px 18px;
+    width: 100%;
 
-    .kip-select-item {
-        padding: map-get($kip-space, md);
-        border-bottom: 1px solid $kip-gray-light;
-        width: 100%;
-        order: 2;
-
-        h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: map-get($kip-space, sm);
-        }
-
-        p {
-            font-size: 14px;
-            color: $kip-gray-dark;
-        }
-
-        &.kip-is-selected {
-            order: 1;
-        }
-
-    }
-
-    span.bulma-more {
-        position: absolute;
-        right: 0.5em;
-        padding-top: 1em;
-        padding-right: 0.3em;
-        transform: scaleY(0.6) scaleX(0.8);
-        font-weight: 800;
-    }
-
-    &:not(.kip-is-active) {
-        .kip-select-item {
-            &:not(.kip-is-selected) {
-                display: none;
-            }
-        }
+    &[disabled] {
+        background-color: $kip-gray-light;
     }
 }

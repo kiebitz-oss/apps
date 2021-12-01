@@ -20,6 +20,7 @@ export const RetractingLabelInput = forwardRef(
                 {...props}
                 className="kip-input"
                 placeholder=" " // Used to determine if the input is empty; needs to be a space for Chrome
+                name={name}
                 ref={ref}
             />
             <span
