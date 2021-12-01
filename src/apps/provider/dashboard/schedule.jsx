@@ -848,7 +848,7 @@ const NewAppointmentBase = ({
     ].map(duration => ({
         title: (
             <Trans id="schedule.appointment.duration.title">
-                Dauer: {duration} Minuten"
+                Dauer: {duration} Minuten
             </Trans>
         ),
     }));
