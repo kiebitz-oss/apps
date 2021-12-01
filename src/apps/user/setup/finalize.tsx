@@ -14,21 +14,28 @@ import {
     CardContent,
     CardFooter,
     Message,
-    RetractingLabelInput,
-    RichSelect,
+    RetractingLabelInput as Input,
+    Select,
     Switch,
     Button,
     WithLoader,
     withActions,
 } from 'components';
 import { Trans, t, defineMessage } from '@lingui/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import { useNavigate } from 'react-router';
-import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { useEffectOnce } from 'react-use';
 import props from './properties.json';
 import './finalize.scss';
 
-const contactDataPropertiesMessages = {
+const contactDataPropertiesMessages: Record<
+    string,
+    {
+        title: MessageDescriptor;
+        values: Record<string, MessageDescriptor>;
+    }
+> = {
     location: {
         title: defineMessage({
             id: 'contact-data.properties.location.title',
@@ -46,28 +53,9 @@ const contactDataPropertiesMessages = {
 interface FormData {
     distance: number;
     zipCode: number;
+    accessible: boolean;
     [key: string]: any;
 }
-
-const resolver: Resolver<FormData> = async (values) => {
-    const errors: any = {};
-
-    if (values.distance === undefined) {
-        values.distance = 5;
-    }
-
-    if (!values.zipCode || String(values.zipCode).length !== 5) {
-        errors.zipCode = t({
-            id: 'contact-data.invalid-zip-code',
-            message: 'Bitte trage eine gültige Postleitzahl ein.',
-        });
-    }
-
-    return {
-        values,
-        errors,
-    };
-};
 
 /*
 Here the user has a chance to review all data that was entered before confirming
@@ -85,21 +73,24 @@ const FinalizePage: React.FC<any> = ({
     userSecretAction,
 }) => {
     const [noQueue, setNoQueue] = useState(false);
-
-    const { register, reset, handleSubmit, formState } = useForm<FormData>({
-        resolver,
-        defaultValues: {
-            distance: 5,
-        },
-    });
-
     const navigate = useNavigate();
+
+    const { register, reset, handleSubmit, getValues, formState } =
+        useForm<FormData>({
+            mode: 'onBlur',
+            reValidateMode: 'onBlur',
+            defaultValues: {
+                distance: 5,
+                accessible: false,
+                zipCode: undefined,
+            },
+        });
 
     useEffectOnce(() => {
         contactDataAction();
         userSecretAction();
         getTokenAction.reset();
-        queueDataAction().then((qd) => {
+        queueDataAction().then((qd: any) => {
             const initialData = {
                 distance: 5,
             };
@@ -138,7 +129,7 @@ const FinalizePage: React.FC<any> = ({
 
                     <label htmlFor={kv}>
                         <Trans
-                            id={contactDataPropertiesMessages[k].values[kv]}
+                            id={contactDataPropertiesMessages[k].values[kv].id}
                         />
                     </label>
                 </li>
@@ -147,7 +138,7 @@ const FinalizePage: React.FC<any> = ({
             return (
                 <Fragment key={k}>
                     <h2>
-                        <Trans id={contactDataPropertiesMessages[k].title} />
+                        <Trans id={contactDataPropertiesMessages[k].title.id} />
                     </h2>
                     <ul className="kip-properties">{items}</ul>
                 </Fragment>
@@ -203,13 +194,45 @@ const FinalizePage: React.FC<any> = ({
                     {failedMessage}
 
                     <div className="kip-finalize-fields">
-                        <RetractingLabelInput
-                            label={
-                                <Trans id="contact-data.zip-code">
-                                    Postleitzahl Deines Wohnorts
-                                </Trans>
-                            }
-                            {...register('zipCode')}
+                        {formState.errors['zipCode'] && (
+                            <p className="bulma-help bulma-is-info">
+                                {formState.errors['zipCode'].message}
+                                error
+                            </p>
+                        )}
+                        <Input
+                            label={t({
+                                id: 'contact-data.zip-code',
+                                message: 'Postleitzahl Deines Wohnorts',
+                            })}
+                            minLength={5}
+                            required
+                            {...register('zipCode', {
+                                required: {
+                                    value: true,
+                                    message: t({
+                                        id: 'contact-data.invalid-zip-code',
+                                        message:
+                                            'Bitte trage eine gültige Postleitzahl ein.',
+                                    }),
+                                },
+                                minLength: {
+                                    value: 5,
+                                    message: t({
+                                        id: 'contact-data.invalid-zip-code',
+                                        message:
+                                            'Bitte trage eine gültige Postleitzahl ein.',
+                                    }),
+                                },
+                                maxLength: {
+                                    value: 5,
+                                    message: t({
+                                        id: 'contact-data.invalid-zip-code',
+                                        message:
+                                            'Bitte trage eine gültige Postleitzahl ein.',
+                                    }),
+                                },
+                            })}
                         />
 
                         <label className="kip-control-label" htmlFor="distance">
@@ -224,8 +247,7 @@ const FinalizePage: React.FC<any> = ({
                                 </Trans>
                             </span>
 
-                            <RichSelect
-                                id="distance"
+                            <Select
                                 options={[
                                     {
                                         value: 5,

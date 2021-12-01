@@ -94,8 +94,8 @@ const RestorePage: React.FC<any> = ({
                                 'Der Sicherheitscode, den Du bei der Registrierung erhalten hast.',
                         })}
                         {...register('secret', {
-                            onChange: (event) =>
-                                formatSecret(event.target.value || ''),
+                            // setValueAs: (value) => formatSecret(value || ''),
+                            required: true,
                         })}
                     />
                 </form>
