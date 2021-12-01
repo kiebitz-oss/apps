@@ -7,9 +7,8 @@ import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
 import { urlEncode } from 'helpers/data';
 import { formatDate, formatTime, getMonday } from 'helpers/time';
-import Form from 'helpers/form';
+import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
 import {
-    withForm,
     withActions,
     WithLoader,
     withTimer,
@@ -18,15 +17,11 @@ import {
     CardContent,
     CardFooter,
     Modal,
-    Label,
     DropdownMenu,
     DropdownMenuItem,
-    Form as FormComponent,
     Message,
     RichSelect,
-    FieldSet,
     Icon,
-    ErrorFor,
     Button,
 } from 'components';
 import {
@@ -38,9 +33,10 @@ import {
     openAppointments,
 } from '../actions';
 import { t, Trans, defineMessage } from '@lingui/macro';
-import './schedule.scss';
 import { useLocation, useNavigate } from 'react-router';
 import { useSettings } from 'hooks';
+import { useEffectOnce } from 'react-use';
+import './schedule.scss';
 
 const dayMessages = {
     [0]: defineMessage({ id: 'day-1', message: 'Montag' }),
@@ -63,16 +59,11 @@ const scheduleMessages = {
     }),
 };
 
-Date.prototype.addHours = function(h) {
-    this.setHours(this.getHours() + h);
-    return this;
-};
-
 function getHexId(id) {
     return buf2hex(b642buf(id));
 }
 
-const AppointmentOverviewBase = ({
+const AppointmentOverviewBase: React.FC<any> = ({
     openAppointmentsAction,
     cancelAppointmentAction,
     appointment,
@@ -101,7 +92,7 @@ const AppointmentOverviewBase = ({
 
     const hexId = getHexId(appointment.id);
 
-    if (showDelete)
+    if (showDelete) {
         return (
             <Modal
                 onSave={doDelete}
@@ -133,6 +124,8 @@ const AppointmentOverviewBase = ({
                 </p>
             </Modal>
         );
+    }
+
     return (
         <Modal
             bare
@@ -225,7 +218,7 @@ const AppointmentOverview = withActions(AppointmentOverviewBase, [
     openAppointments,
 ]);
 
-const PropertyTags = ({ appointment, verbose, tiny }) => {
+const PropertyTags: React.FC<any> = ({ appointment, verbose, tiny }) => {
     const props = Object.entries(appointment)
         .filter(([k, v]) => v === true)
         .map(([k, v]) => (
@@ -235,7 +228,7 @@ const PropertyTags = ({ appointment, verbose, tiny }) => {
     return <F>{props}</F>;
 };
 
-const PropertyTag = ({ property, tiny, verbose }) => {
+const PropertyTag: React.FC<any> = ({ property, tiny, verbose }) => {
     const settings = useSettings();
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
@@ -268,7 +261,13 @@ const PropertyTag = ({ property, tiny, verbose }) => {
     }
 };
 
-const AppointmentCard = ({ action, secondaryAction, id, appointment, n }) => {
+const AppointmentCard: React.FC<any> = ({
+    action,
+    secondaryAction,
+    id,
+    appointment,
+    n,
+}) => {
     const navigate = useNavigate();
 
     const p = Math.floor((appointment.duration / 60) * 100);
@@ -335,14 +334,12 @@ const AppointmentCard = ({ action, secondaryAction, id, appointment, n }) => {
     );
 };
 
-const CalendarAppointments = ({
+const CalendarAppointments: React.FC<any> = ({
     action,
     secondaryAction,
     id,
     appointments,
 }) => {
-    const [showModal, setShowModal] = useState(false);
-    let modal;
     const appointmentsItems = appointments
         .filter(ap => ap.startsHere && ap.appointment.slots > 0)
         .map(({ appointment }) => (
@@ -355,14 +352,11 @@ const CalendarAppointments = ({
                 n={appointments.length}
             />
         ));
-    return (
-        <F>
-            <div className="kip-appointments">{appointmentsItems}</div>
-        </F>
-    );
+
+    return <div className="kip-appointments">{appointmentsItems}</div>;
 };
 
-const HourRow = ({
+const HourRow: React.FC<any> = ({
     appointments,
     action,
     secondaryAction,
@@ -380,8 +374,11 @@ const HourRow = ({
             ':00:00'
     );
     const ote = new Date(ots);
-    ote.addHours(1);
+
+    ote.setHours(ote.getHours() + 1);
+
     const relevantAppointments = [];
+
     for (const oa of appointments) {
         // beginning of appointment
         const oas = new Date(`${oa.timestamp}`);
@@ -413,6 +410,7 @@ const HourRow = ({
     };
 
     const hasAppointments = relevantAppointments.length > 0;
+
     return (
         <div
             onClick={showNewAppointment}
@@ -435,7 +433,7 @@ const HourRow = ({
     );
 };
 
-const HourLabelRow = ({ hour }) => {
+const HourLabelRow: React.FC<any> = ({ hour }) => {
     let content;
     if (hour !== '-')
         content = (
@@ -446,10 +444,11 @@ const HourLabelRow = ({ hour }) => {
                 })}
             </F>
         );
+
     return <div className="kip-hour-row kip-is-hour-label">{content}</div>;
 };
 
-const DayLabelRow = ({ day, date }) => {
+const DayLabelRow: React.FC<any> = ({ day, date }) => {
     return (
         <div className="kip-hour-row kip-is-day-label">
             <span className="kip-day">
@@ -460,7 +459,7 @@ const DayLabelRow = ({ day, date }) => {
     );
 };
 
-const DayColumn = ({
+const DayColumn: React.FC<any> = ({
     day,
     date,
     fromHour,
@@ -478,6 +477,7 @@ const DayColumn = ({
             key="-"
         />,
     ];
+
     for (let i = fromHour; i <= toHour; i++) {
         hourRows.push(
             <HourRow
@@ -492,18 +492,21 @@ const DayColumn = ({
             />
         );
     }
+
     return <div className="kip-day-column">{hourRows}</div>;
 };
 
-const DayLabelColumn = ({ fromHour, toHour }) => {
+const DayLabelColumn: React.FC<any> = ({ fromHour, toHour }) => {
     const hourRows = [<HourLabelRow hour="-" key="-" />];
+
     for (let i = fromHour; i <= toHour; i++) {
         hourRows.push(<HourLabelRow hour={i} key={i} />);
     }
+
     return <div className="kip-day-column kip-is-day-label">{hourRows}</div>;
 };
 
-const WeekCalendar = ({
+const WeekCalendar: React.FC<any> = ({
     action,
     secondaryAction,
     id,
@@ -591,7 +594,7 @@ const WeekCalendar = ({
     );
 };
 
-const AppointmentItem = ({ appointment }) => {
+const AppointmentItem: React.FC<any> = ({ appointment }) => {
     const acceptedItems = appointment.bookings
         .sort((a, b) => {
             try {
@@ -645,7 +648,7 @@ const AppointmentItem = ({ appointment }) => {
     );
 };
 
-const AppointmentsList = ({ appointments }) => {
+const AppointmentsList: React.FC<any> = ({ appointments }) => {
     const appointmentItems = appointments
         .filter(app => app.bookings.length > 0)
         .map(appointment => (
@@ -662,90 +665,90 @@ const AppointmentsList = ({ appointments }) => {
     );
 };
 
-class AppointmentForm extends Form {
-    validate() {
-        const errors = {};
-        if (this.data.date === undefined)
-            errors.date = t({ id: 'new-appointment.please-enter-date' });
-        else if (this.data.time === undefined)
-            errors.time = t({ id: 'new-appointment.please-enter-time' });
-        else {
-            this.data.timestamp = new Date(
-                `${this.data.date} ${this.data.time}`
-            );
-            if (this.data.timestamp < new Date())
-                errors.date = t({ id: 'new-appointment.in-the-past' });
-            // we allow appointments max. 30 days in the future
-            if (
-                this.data.timestamp >
-                new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
-            )
-                errors.date = t({
-                    id: 'new-appointment.too-far-in-the-future',
-                    message:
-                        'Bitte wählen Sie Termine die maximal 30 Tage in der Zukunft liegen',
-                });
-        }
-        if (this.data.slots > 50) {
-            errors.slots = t({ id: 'new-appointment.too-many-slots' });
-        }
-        if (this.data.slots < 1) {
-            errors.slots = t({ id: 'new-appointment.too-few-slots' });
-        }
-        return errors;
-    }
+interface FormData {
+    date?: string;
+    time?: string;
+    timestamp: Date;
+    slots: number;
+    duration: number;
 }
 
-const NewAppointmentBase = ({
-    updateAppointment,
-    createAppointment,
+const resolver: Resolver<FormData> = async values => {
+    const errors: any = {};
+
+    if (values.date === undefined) {
+        errors.date = t({ id: 'new-appointment.please-enter-date' });
+    } else if (values.time === undefined) {
+        errors.time = t({ id: 'new-appointment.please-enter-time' });
+    } else {
+        values.timestamp = new Date(`${values.date} ${values.time}`);
+
+        if (values.timestamp < new Date()) {
+            errors.date = t({ id: 'new-appointment.in-the-past' });
+        }
+
+        // we allow appointments max. 30 days in the future
+        if (
+            values.timestamp >
+            new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+        ) {
+            errors.date = t({
+                id: 'new-appointment.too-far-in-the-future',
+                message:
+                    'Bitte wählen Sie Termine die maximal 30 Tage in der Zukunft liegen',
+            });
+        }
+    }
+
+    if (values.slots > 50) {
+        errors.slots = t({ id: 'new-appointment.too-many-slots' });
+    }
+
+    if (values.slots < 1) {
+        errors.slots = t({ id: 'new-appointment.too-few-slots' });
+    }
+
+    return {
+        values,
+        errors,
+    };
+};
+
+const NewAppointmentBase: React.FC<any> = ({
     appointments,
-    existingAppointment,
     action,
     id,
     createAppointmentAction,
     updateAppointmentAction,
     openAppointmentsAction,
-    form: { valid, error, data, set, reset },
 }) => {
-    let actionUrl = '';
-
     const navigate = useNavigate();
     const { hash } = useLocation();
     const settings = useSettings();
 
-    if (action !== undefined) actionUrl = `/${action}`;
-    if (id !== undefined) actionUrl += `/view/${id}`;
-    const [initialized, setInitialized] = useState(false);
-    const [saving, setSaving] = useState(false);
+    const { register, handleSubmit, formState, reset } = useForm<FormData>({
+        resolver,
+    });
+
+    let actionUrl = '';
+
+    if (action !== undefined) {
+        actionUrl = `/${action}`;
+    }
+
+    if (id !== undefined) {
+        actionUrl += `/view/${id}`;
+    }
+
     const cancel = () => navigate(`/provider/schedule${actionUrl}`);
 
     let appointment;
 
-    if (id !== undefined)
+    if (id !== undefined) {
         appointment = appointments.find(app => getHexId(app.id) === id);
+    }
 
-    const save = () => {
-        let action;
-        setSaving(true);
-        // we remove unnecessary fields like 'time' and 'date'
-        delete data.time;
-        delete data.date;
-        if (appointment !== undefined) action = updateAppointmentAction;
-        else action = createAppointmentAction;
-        const promise = action(data, appointment);
-        promise.finally(() => setSaving(false));
-        promise.then(() => {
-            // we reload the appointments
-            openAppointmentsAction();
-            // and we go back to the schedule view
-            navigate(`/provider/schedule${actionUrl}`);
-        });
-    };
-
-    useEffect(() => {
-        if (initialized) return;
-        setInitialized(true);
+    useEffectOnce(() => {
         if (appointment !== undefined) {
             const appointmentData = {
                 time: formatTime(appointment.timestamp),
@@ -769,6 +772,7 @@ const NewAppointmentBase = ({
 
             let firstProperty;
             let found = false;
+
             addProps: for (const [_, v] of Object.entries(properties)) {
                 for (const [kk, _] of Object.entries(v.values)) {
                     if (firstProperty === undefined) firstProperty = kk;
@@ -791,6 +795,31 @@ const NewAppointmentBase = ({
         }
     });
 
+    const onSubmit: SubmitHandler<FormData> = data => {
+        let action;
+
+        // we remove unnecessary fields like 'time' and 'date'
+        delete data.time;
+        delete data.date;
+
+        if (appointment !== undefined) {
+            action = updateAppointmentAction;
+        } else {
+            action = createAppointmentAction;
+        }
+
+        const promise = action(data, appointment);
+
+        promise.finally(() => setSaving(false));
+
+        promise.then(() => {
+            // we reload the appointments
+            openAppointmentsAction();
+            // and we go back to the schedule view
+            navigate(`/provider/schedule${actionUrl}`);
+        });
+    };
+
     const properties = settings.get('appointmentProperties');
 
     const apptProperties = Object.entries(properties).map(([k, v]) => {
@@ -809,8 +838,13 @@ const NewAppointmentBase = ({
 
         const changeTo = option => {
             const newData = { ...data };
-            for (const option of options) newData[option.value] = undefined;
+
+            for (const option of options) {
+                newData[option.value] = undefined;
+            }
+
             newData[option.value] = true;
+
             reset(newData);
         };
 
@@ -819,10 +853,12 @@ const NewAppointmentBase = ({
                 <h2>
                     <trans values={properties} id={`${k}.title`} />
                 </h2>
+
                 <RichSelect
                     options={options}
                     value={currentOption}
                     onChange={option => changeTo(option)}
+                    {...register(k)}
                 />
             </F>
         );
@@ -843,118 +879,105 @@ const NewAppointmentBase = ({
         210,
         240,
     ].map(duration => ({
-        title: (
-            <Trans id="schedule.appointment.duration.title">
-                Dauer: {duration} Minuten"
-            </Trans>
-        ),
+        title: t({
+            id: 'schedule.appointment.duration.title',
+            message: `Dauer: ${duration} Minuten`,
+        }),
     }));
 
     return (
         <Modal
-            saveDisabled={!valid || saving}
-            cancelDisabled={saving}
-            closeDisabled={saving}
+            saveDisabled={!formState.isValid || formState.isSubmitting}
+            cancelDisabled={formState.isSubmitting}
+            closeDisabled={formState.isSubmitting}
             className="kip-new-appointment"
-            onSave={save}
-            waiting={saving}
+            onSave={handleSubmit(onSubmit)}
+            waiting={formState.isSubmitting}
             onCancel={cancel}
             onClose={cancel}
             title={
-                <Trans
-                    id={
-                        appointment !== undefined
-                            ? 'edit-appointment.title'
-                            : 'new-appointment.title'
-                    }
-                >
-                    {appointment !== undefined
-                        ? 'Termin bearbeiten'
-                        : 'Neuen Termin erstellen'}
-                </Trans>
+                appointment !== undefined
+                    ? t({
+                          id: 'edit-appointment.title',
+                          message: 'Termin bearbeiten',
+                      })
+                    : t({
+                          id: 'new-appointment.title',
+                          message: 'Neuen Termin erstellen',
+                      })
             }
         >
-            <FormComponent>
-                <FieldSet>
-                    <div className="kip-field">
-                        <Label htmlFor="date">
-                            <Trans id="new-appointment.date">Datum</Trans>
-                        </Label>
-                        <ErrorFor error={error} field="date" />
-                        <input
-                            value={data.date || ''}
-                            type="date"
-                            className="bulma-input"
-                            onChange={e => set('date', e.target.value)}
-                        />
-                    </div>
-                    <div className="kip-field">
-                        <Label htmlFor="time">
-                            <Trans id="new-appointment.time">Uhrzeit</Trans>
-                        </Label>
-                        <ErrorFor error={error} field="time" />
-                        <input
-                            type="time"
-                            className="bulma-input"
-                            value={data.time || ''}
-                            onChange={e => set('time', e.target.value)}
-                            step={60}
-                        />
-                    </div>
-                    <div className="kip-field kip-is-fullwidth kip-slider">
-                        <Label htmlFor="slots">
-                            <Trans id="new-appointment.slots">
-                                Anzahl Impfdosen
-                            </Trans>
-                        </Label>
-                        <ErrorFor error={error} field="slots" />
-                        <input
-                            type="number"
-                            className="bulma-input"
-                            value={data.slots || 1}
-                            onChange={e =>
-                                set('slots', parseInt(e.target.value))
-                            }
-                            step={1}
-                            min={1}
-                            max={50}
-                        />
-                    </div>
-                    <div className="kip-field kip-is-fullwidth">
-                        <RichSelect
-                            id="duration"
-                            value={data.duration || 30}
-                            onChange={value => set('duration', value.value)}
-                            options={durations}
-                        />
-                    </div>
+            <form
+                className="kip-form"
+                name="new-appointment"
+                onSubmit={handleSubmit(onSubmit)}
+            >
+                <div className="kip-field">
+                    <label className="bulma-label" htmlFor="date">
+                        <Trans id="new-appointment.date">Datum</Trans>
+                    </label>
+                    <input
+                        type="date"
+                        className="bulma-input"
+                        {...register('date')}
+                    />
+                </div>
 
-                    <div className="kip-field kip-is-fullwidth">
-                        {apptProperties}
-                    </div>
-                </FieldSet>
-            </FormComponent>
+                <div className="kip-field">
+                    <label className="bulma-label" htmlFor="time">
+                        <Trans id="new-appointment.time">Uhrzeit</Trans>
+                    </label>
+                    <input
+                        type="time"
+                        className="bulma-input"
+                        step={60}
+                        {...register('time')}
+                    />
+                </div>
+
+                <div className="kip-field kip-is-fullwidth kip-slider">
+                    <label className="bulma-label" htmlFor="slots">
+                        <Trans id="new-appointment.slots">
+                            Anzahl Impfdosen
+                        </Trans>
+                    </label>
+
+                    <input
+                        type="number"
+                        className="bulma-input"
+                        step={1}
+                        min={1}
+                        max={50}
+                        {...register('slots')}
+                    />
+                </div>
+
+                <div className="kip-field kip-is-fullwidth">
+                    <RichSelect options={durations} {...register('duration')} />
+                </div>
+
+                <div className="kip-field kip-is-fullwidth">
+                    {apptProperties}
+                </div>
+            </form>
         </Modal>
     );
 };
 
-const NewAppointment = withActions(
-    withForm(NewAppointmentBase, AppointmentForm, 'form'),
-    [createAppointment, updateAppointment, openAppointments]
-);
+const NewAppointment = withActions(NewAppointmentBase, [
+    createAppointment,
+    updateAppointment,
+    openAppointments,
+]);
 
-const InvitationsPage = ({
+const InvitationsPage: React.FC<any> = ({
     action,
     secondaryAction,
     id,
-    keys,
     keysAction,
     lastUpdated,
     keyPairs,
-    timer,
     keyPairsAction,
-    invitationQueues,
-    invitationQueuesAction,
     openAppointments,
     openAppointmentsAction,
 }) => {

@@ -7,14 +7,11 @@ import React, { useEffect, useState } from 'react';
 import Settings from './settings';
 import Providers from './providers';
 import Stats from './stats';
-
 import {
     withActions,
     Tabs,
     Tab,
     Message,
-    FieldSet,
-    Form,
     Modal,
     CenteredCard,
     CardHeader,
@@ -64,20 +61,19 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
         );
 
     const footer = (
-        <Form>
-            <FieldSet>
-                <label htmlFor="file-upload" className="custom-file-upload">
-                    <Trans id="upload-key-pairs.input">Datei auswählen</Trans>
-                    <input
-                        id="file-upload"
-                        className="bulma-input"
-                        type="file"
-                        onChange={e => readFile(e)}
-                    />
-                </label>
-            </FieldSet>
-        </Form>
+        <form name="upload-queues" className="kip-form">
+            <label htmlFor="file-upload" className="custom-file-upload">
+                <Trans id="upload-key-pairs.input">Datei auswählen</Trans>
+                <input
+                    id="file-upload"
+                    className="bulma-input"
+                    type="file"
+                    onChange={e => readFile(e)}
+                />
+            </label>
+        </form>
     );
+
     return (
         <Modal
             footer={footer}
@@ -147,16 +143,6 @@ const DashboardPage = ({
                 content = <Providers action={action} id={secondaryAction} />;
                 break;
         }
-    }
-
-    let invalidKeyMessage;
-
-    if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
-        invalidKeyMessage = (
-            <Message type="danger">
-                <Trans id="invalidKey">invalidKey MISSING</Trans>
-            </Message>
-        );
     }
 
     return (

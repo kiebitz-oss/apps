@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState, Fragment as F } from 'react';
+import React, { useState, Fragment } from 'react';
 import {
     getToken,
     contactData,
@@ -11,23 +11,22 @@ import {
     backupData,
 } from 'apps/user/actions';
 import {
-    withActions,
-    withForm,
     CardContent,
     CardFooter,
-    ErrorFor,
     Message,
     RetractingLabelInput,
     RichSelect,
-    WithLoader,
     Switch,
     Button,
+    WithLoader,
+    withActions,
 } from 'components';
-import Form from 'helpers/form';
 import { Trans, t, defineMessage } from '@lingui/macro';
-import './finalize.scss';
-import props from './properties.json';
 import { useNavigate } from 'react-router';
+import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
+import { useEffectOnce } from 'react-use';
+import props from './properties.json';
+import './finalize.scss';
 
 const contactDataPropertiesMessages = {
     location: {
@@ -44,28 +43,39 @@ const contactDataPropertiesMessages = {
     },
 };
 
-class FinalizeForm extends Form {
-    validate() {
-        const errors = {};
-        if (this.data.distance === undefined) this.data.distance = 5;
-        if (!this.data.zipCode || this.data.zipCode.length != 5)
-            errors.zipCode = t({
-                id: 'contact-data.invalid-zip-code',
-                message: 'Bitte trage eine gültige Postleitzahl ein.',
-            });
-        return errors;
-    }
+interface FormData {
+    distance: number;
+    zipCode: number;
+    [key: string]: any;
 }
+
+const resolver: Resolver<FormData> = async values => {
+    const errors: any = {};
+
+    if (values.distance === undefined) {
+        values.distance = 5;
+    }
+
+    if (!values.zipCode || String(values.zipCode).length !== 5) {
+        errors.zipCode = t({
+            id: 'contact-data.invalid-zip-code',
+            message: 'Bitte trage eine gültige Postleitzahl ein.',
+        });
+    }
+
+    return {
+        values,
+        errors,
+    };
+};
 
 /*
 Here the user has a chance to review all data that was entered before confirming
 the finalization. Once the button gets clicked, the system generates the QR
 codes, encrypts the contact data and stores the settings in the storage backend.
 */
-const FinalizePage = ({
-    queueData,
+const FinalizePage: React.FC<any> = ({
     queueDataAction,
-    backupData,
     backupDataAction,
     contactData,
     contactDataAction,
@@ -73,18 +83,19 @@ const FinalizePage = ({
     getTokenAction,
     userSecret,
     userSecretAction,
-    form: { set, data, error, valid, reset },
 }) => {
-    const [initialized, setInitialized] = useState(false);
     const [noQueue, setNoQueue] = useState(false);
-    const [modified, setModified] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
-    const [tv, setTV] = useState(0);
+
+    const { register, reset, handleSubmit, formState } = useForm<FormData>({
+        resolver,
+        defaultValues: {
+            distance: 5,
+        },
+    });
+
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (initialized) return;
-        setInitialized(true);
+    useEffectOnce(() => {
         contactDataAction();
         userSecretAction();
         getTokenAction.reset();
@@ -92,6 +103,7 @@ const FinalizePage = ({
             const initialData = {
                 distance: 5,
             };
+
             for (const [k, v] of Object.entries(
                 props['contact-data'].properties
             )) {
@@ -103,36 +115,26 @@ const FinalizePage = ({
         });
     });
 
-    const submit = () => {
-        setSubmitting(true);
+    const onSubmit: SubmitHandler<FormData> = data => {
         queueDataAction(data).then(() => {
-            getTokenAction(contactData.data, userSecret.data).then(hd => {
-                setSubmitting(false);
-                if (hd.status === 'failed') return;
+            getTokenAction(contactData.data, userSecret.data).then(
+                (hd: any) => {
+                    if (hd.status === 'failed') {
+                        return;
+                    }
 
-                backupDataAction(userSecret.data);
-                navigate('/user/setup/store-secrets');
-            });
+                    backupDataAction(userSecret.data);
+                    navigate('/user/setup/store-secrets');
+                }
+            );
         });
-    };
-
-    const setAndMarkModified = (key, value) => {
-        setNoQueue(false);
-        setModified(true);
-        queueDataAction(set(key, value));
     };
 
     const properties = Object.entries(props['contact-data'].properties).map(
         ([k, v]) => {
             const items = Object.entries(v.values).map(([kv, vv]) => (
                 <li key={kv}>
-                    <Switch
-                        id={kv}
-                        checked={data[kv] || false}
-                        onChange={value => setAndMarkModified(kv, value)}
-                    >
-                        &nbsp;
-                    </Switch>
+                    <Switch {...register(kv)}>&nbsp;</Switch>
 
                     <label htmlFor={kv}>
                         <Trans
@@ -143,12 +145,12 @@ const FinalizePage = ({
             ));
 
             return (
-                <F key={k}>
+                <Fragment key={k}>
                     <h2>
                         <Trans id={contactDataPropertiesMessages[k].title} />
                     </h2>
                     <ul className="kip-properties">{items}</ul>
-                </F>
+                </Fragment>
             );
         }
     );
@@ -156,7 +158,7 @@ const FinalizePage = ({
     const render = () => {
         let noQueueMessage;
         let failedMessage;
-        let failed;
+        let failed = false;
 
         if (noQueue)
             noQueueMessage = (
@@ -194,23 +196,22 @@ const FinalizePage = ({
             );
 
         return (
-            <>
+            <form name="finalize" onSubmit={handleSubmit(onSubmit)}>
                 <CardContent>
                     {noQueueMessage}
+
                     {failedMessage}
+
                     <div className="kip-finalize-fields">
-                        <ErrorFor error={error} field="zipCode" />
                         <RetractingLabelInput
-                            value={data.zipCode || ''}
-                            onChange={value =>
-                                setAndMarkModified('zipCode', value)
-                            }
                             label={
                                 <Trans id="contact-data.zip-code">
                                     Postleitzahl Deines Wohnorts
                                 </Trans>
                             }
+                            {...register('zipCode')}
                         />
+
                         <label className="kip-control-label" htmlFor="distance">
                             <Trans id="contact-data.distance.label">
                                 Maximale Entfernung zum Impfort in Kilometern
@@ -222,68 +223,72 @@ const FinalizePage = ({
                                     einstellen und nicht mehr ändern!
                                 </Trans>
                             </span>
+
+                            <RichSelect
+                                id="distance"
+                                options={[
+                                    {
+                                        value: 5,
+                                        description: t({
+                                            id:
+                                                'contact-data.distance.option.5',
+                                            message: '5 km',
+                                        }),
+                                    },
+                                    {
+                                        value: 10,
+                                        description: t({
+                                            id:
+                                                'contact-data.distance.option.10',
+                                            message: '10 km',
+                                        }),
+                                    },
+                                    {
+                                        value: 20,
+                                        description: t({
+                                            id:
+                                                'contact-data.distance.option.20',
+                                            message: '20 km',
+                                        }),
+                                    },
+                                    {
+                                        value: 30,
+                                        description: t({
+                                            id:
+                                                'contact-data.distance.option.30',
+                                            message: '30 km',
+                                        }),
+                                    },
+                                    {
+                                        value: 40,
+                                        description: t({
+                                            id:
+                                                'contact-data.distance.option.40',
+                                            message: '40 km',
+                                        }),
+                                    },
+                                    {
+                                        value: 50,
+                                        description: t({
+                                            id:
+                                                'contact-data.distance.option.50',
+                                            message: '50 km',
+                                        }),
+                                    },
+                                ]}
+                                {...register('distance')}
+                            />
                         </label>
-                        <ErrorFor error={error} field="distance" />
-                        <RichSelect
-                            id="distance"
-                            value={data.distance || 5}
-                            onChange={value =>
-                                setAndMarkModified('distance', value.value)
-                            }
-                            options={[
-                                {
-                                    value: 5,
-                                    description: t({
-                                        id: 'contact-data.distance.option.5',
-                                        message: '5 km',
-                                    }),
-                                },
-                                {
-                                    value: 10,
-                                    description: t({
-                                        id: 'contact-data.distance.option.10',
-                                        message: '10 km',
-                                    }),
-                                },
-                                {
-                                    value: 20,
-                                    description: t({
-                                        id: 'contact-data.distance.option.20',
-                                        message: '20 km',
-                                    }),
-                                },
-                                {
-                                    value: 30,
-                                    description: t({
-                                        id: 'contact-data.distance.option.30',
-                                        message: '30 km',
-                                    }),
-                                },
-                                {
-                                    value: 40,
-                                    description: t({
-                                        id: 'contact-data.distance.option.40',
-                                        message: '40 km',
-                                    }),
-                                },
-                                {
-                                    value: 50,
-                                    description: t({
-                                        id: 'contact-data.distance.option.50',
-                                        message: '50 km',
-                                    }),
-                                },
-                            ]}
-                        />
                         {properties}
                     </div>
                 </CardContent>
+
                 <CardFooter>
                     <Button
-                        waiting={submitting}
+                        waiting={formState.isSubmitting}
                         type={noQueue || failed ? 'danger' : 'success'}
-                        onClick={submit}
-                        disabled={submitting || !valid}
+                        htmlType="submit"
+                        disabled={formState.isSubmitting || !formState.isValid}
                     >
                         <Trans
                             id={
@@ -291,7 +296,7 @@ const FinalizePage = ({
                                     ? 'wizard.no-queue.title'
                                     : failed
                                     ? 'wizard.failed.title'
-                                    : submitting
+                                    : formState.isSubmitting
                                     ? 'wizard.please-wait'
                                     : 'wizard.continue'
                             }
@@ -300,27 +305,23 @@ const FinalizePage = ({
                                 ? 'Nicht verfügbar'
                                 : failed
                                 ? 'Fehlgeschlagen :/'
-                                : submitting
+                                : formState.isSubmitting
                                 ? 'Bitte warten...'
                                 : 'Weiter'}
                         </Trans>
                     </Button>
                 </CardFooter>
-            </>
+            </form>
         );
     };
 
     return <WithLoader resources={[]} renderLoaded={render} />;
 };
 
-export default withForm(
-    withActions(FinalizePage, [
-        getToken,
-        queueData,
-        contactData,
-        userSecret,
-        backupData,
-    ]),
-    FinalizeForm,
-    'form'
-);
+export default withActions(FinalizePage, [
+    getToken,
+    queueData,
+    contactData,
+    userSecret,
+    backupData,
+]);

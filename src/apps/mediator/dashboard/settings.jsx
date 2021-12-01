@@ -8,8 +8,6 @@ import {
     withActions,
     Message,
     Modal,
-    Form,
-    FieldSet,
     CardFooter,
     CardContent,
     Button,
@@ -72,22 +70,18 @@ const TestQueuesModalBase = ({ keyPairs, testQueues, testQueuesAction }) => {
         );
 
     const footer = (
-        <Form>
-            <FieldSet>
-                <label htmlFor="file-upload" className="custom-file-upload">
-                    <Trans id="upload-queues.input">Datei wählen</Trans>
-                    <input
-                        id="file-upload"
-                        disabled={
-                            keyPairs === undefined || keyPairs.data === null
-                        }
-                        className="bulma-input"
-                        type="file"
-                        onChange={e => readFile(e)}
-                    />
-                </label>
-            </FieldSet>
-        </Form>
+        <form name="upload-queues" className="kip-form">
+            <label htmlFor="file-upload" className="custom-file-upload">
+                <Trans id="upload-queues.input">Datei wählen</Trans>
+                <input
+                    id="file-upload"
+                    disabled={keyPairs === undefined || keyPairs.data === null}
+                    className="bulma-input"
+                    type="file"
+                    onChange={e => readFile(e)}
+                />
+            </label>
+        </form>
     );
 
     return (
