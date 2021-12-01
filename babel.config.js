@@ -3,21 +3,21 @@
 module.exports = {
     presets: [
         [
-            "@babel/preset-env",
+            '@babel/preset-env',
             {
                 targets: {
-                    node: "current"
-                }
-            }
+                    node: 'current',
+                },
+            },
         ],
-        "@babel/preset-react",
-        "@babel/preset-typescript"
+        '@babel/preset-react',
+        '@babel/preset-typescript',
     ],
     plugins: [
-        "@babel/plugin-proposal-class-static-block",
-        "@babel/plugin-proposal-class-properties",
-        "@babel/plugin-transform-async-to-generator",
-        "@babel/plugin-proposal-object-rest-spread",
+        '@babel/plugin-proposal-class-static-block',
+        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-transform-async-to-generator',
+        '@babel/plugin-proposal-object-rest-spread',
         'macros',
-    ]
+    ],
 };

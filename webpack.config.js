@@ -22,7 +22,7 @@ switch (APP_ENV) {
         break;
 }
 
-const withSourceMap = function(url) {
+const withSourceMap = function (url) {
     const loader = {
         loader: url,
         options: {},
@@ -33,7 +33,7 @@ const withSourceMap = function(url) {
 
 //we collect static files from various places
 const staticPaths = ['web/static/'];
-const copyPlugins = staticPaths.map(function(path) {
+const copyPlugins = staticPaths.map(function (path) {
     return new CopyWebpackPlugin({
         patterns: [
             {
