@@ -12,9 +12,8 @@ import {
     Button,
 } from 'components';
 import { Trans } from '@lingui/macro';
-import './logged-out.scss';
 
-const LoggedOutPage = () => (
+const LoggedOutPage: React.FC<any> = () => (
     <CenteredCard className="kip-logged-out">
         <CardHeader>
             <h1 className="bulma-subtitle">
@@ -24,15 +23,15 @@ const LoggedOutPage = () => (
         <CardContent>
             <Message type="success">
                 <Trans id="logged-out.notice">
-                    Du wurdest erfolgreich abgemeldet. Du kannst dich jederzeit
-                    wieder mit deinem Sicherheitscode anmelden um deine Termine
-                    zu prüfen.
+                    Sie wurden erfolgreich abgemeldet. Sie können Ihre Daten
+                    jederzeit mit Ihrem Datenschlüssel und Ihrer
+                    Sicherheitsdatei wiederherstellen.
                 </Trans>
             </Message>
         </CardContent>
         <CardFooter>
-            <Button href="/user/restore">
-                <Trans id="logged-out.log-in-again">Anmelden</Trans>
+            <Button href="/provider/restore">
+                <Trans id="logged-out.log-in-again">Einloggen</Trans>
             </Button>
         </CardFooter>
     </CenteredCard>

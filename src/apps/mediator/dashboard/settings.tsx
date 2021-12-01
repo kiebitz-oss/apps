@@ -17,7 +17,11 @@ import './settings.scss';
 import { useNavigate } from 'react-router-dom';
 import { useBackend } from 'hooks';
 
-const TestQueuesModalBase = ({ keyPairs, testQueues, testQueuesAction }) => {
+const TestQueuesModalBase: React.FC<any> = ({
+    keyPairs,
+    testQueues,
+    testQueuesAction,
+}) => {
     const [initialized, setInitialized] = useState(false);
     const navigate = useNavigate();
 
@@ -98,7 +102,7 @@ const TestQueuesModalBase = ({ keyPairs, testQueues, testQueuesAction }) => {
 
 const TestQueuesModal = withActions(TestQueuesModalBase, [testQueues]);
 
-const BaseSettings = ({ keyPairs, keyPairsAction, action }) => {
+const BaseSettings: React.FC<any> = ({ keyPairs, keyPairsAction, action }) => {
     let modal;
 
     const [initialized, setInitialized] = useState(false);

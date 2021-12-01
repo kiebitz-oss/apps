@@ -9,7 +9,11 @@ import Wizard from './wizard';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './index.scss';
 
-const SetupPage = ({ contactDataAction, tokenDataAction, queueDataAction }) => {
+const SetupPage: React.FC<any> = ({
+    contactDataAction,
+    tokenDataAction,
+    queueDataAction,
+}) => {
     const [initialized, setInitialized] = useState(false);
     const navigate = useNavigate();
     const { hash } = useLocation();

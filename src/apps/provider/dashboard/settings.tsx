@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, useEffect, Fragment as F } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     withActions,
     WithLoader,
@@ -42,9 +42,8 @@ const settingsMessages = {
     }),
 };
 
-const SettingsPage = ({
+const SettingsPage: React.FC<any> = ({
     action,
-    settings,
     keysAction,
     keyPairs,
     keyPairsAction,
@@ -259,10 +258,10 @@ const SettingsPage = ({
 
                     <DropdownMenu
                         title={
-                            <F>
+                            <>
                                 <Icon icon="calendar" />{' '}
                                 <Trans id={settingsMessages[view]} />
-                            </F>
+                            </>
                         }
                     >
                         <DropdownMenuItem

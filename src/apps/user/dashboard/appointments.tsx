@@ -26,10 +26,10 @@ import {
     Message,
 } from 'components';
 import { Trans } from '@lingui/macro';
-import './appointments.scss';
 import { useSettings } from 'hooks';
+import './appointments.scss';
 
-const ProviderDetails = ({ data }) => {
+const ProviderDetails: React.FC<any> = ({ data }) => {
     return (
         <div className="kip-provider-details">
             <ul>
@@ -52,7 +52,7 @@ const ProviderDetails = ({ data }) => {
     );
 };
 
-const OfferDetails = ({ offer }) => {
+const OfferDetails: React.FC<any> = ({ offer }) => {
     const settings = useSettings();
     const lang = settings.get('lang');
     const notices = [];
@@ -95,12 +95,12 @@ const OfferDetails = ({ offer }) => {
     return <div className="kip-offer-details">{notices}</div>;
 };
 
-const InvitationDeletedBase = ({
+const InvitationDeletedBase: React.FC<any> = ({
     confirmDeletionAction,
     acceptedInvitationAction,
 }) => {
     return (
-        <F>
+        <>
             <Message type="danger">
                 <Trans id="invitation-accepted.deleted">
                     Der Termin wurde vom Arzt gelöscht. Sorry! Du kannst zurück
@@ -120,7 +120,7 @@ const InvitationDeletedBase = ({
                     </Trans>
                 </Button>
             </CardFooter>
-        </F>
+        </>
     );
 };
 const InvitationDeleted = withActions(InvitationDeletedBase, [
@@ -128,7 +128,7 @@ const InvitationDeleted = withActions(InvitationDeletedBase, [
     acceptedInvitation,
 ]);
 
-const AcceptedInvitationBase = ({
+const AcceptedInvitationBase: React.FC<any> = ({
     tokenData,
     acceptedInvitation,
     acceptedInvitationAction,
@@ -151,21 +151,13 @@ const AcceptedInvitationBase = ({
         );
     };
 
-    const {
-        offer,
-        invitation: invitationData,
-        slotData,
-    } = acceptedInvitation.data;
-    const currentOffer = offers.find(of => of.id == offer.id);
-    let currentSlotData;
+    const { offer, invitation: invitationData } = acceptedInvitation.data;
 
-    if (currentOffer !== undefined)
-        currentSlotData = currentOffer.slotData.find(
-            sl => sl.id === slotData.id
-        );
+    const currentOffer = offers.find(of => of.id == offer.id);
 
     let notice;
     let changed = false;
+
     for (const [k, v] of Object.entries(currentOffer)) {
         if (
             k === 'open' ||
@@ -181,17 +173,15 @@ const AcceptedInvitationBase = ({
     }
     if (changed)
         notice = (
-            <F>
+            <>
                 <Message type="danger">
                     <Trans id="invitation-accepted.changed">
                         Details Deines Termins haben sich geändert!
                     </Trans>
                 </Message>
-            </F>
+            </>
         );
     const d = new Date(currentOffer.timestamp);
-
-    let modal;
 
     if (showDelete)
         return (
@@ -226,7 +216,7 @@ const AcceptedInvitationBase = ({
         );
 
     return (
-        <F>
+        <>
             <CardContent>
                 {notice}
                 <div className="kip-accepted-invitation">
@@ -256,7 +246,7 @@ const AcceptedInvitationBase = ({
                     <Trans id="cancel-appointment">Termin absagen</Trans>
                 </Button>
             </CardFooter>
-        </F>
+        </>
     );
 };
 const AcceptedInvitation = withActions(AcceptedInvitationBase, [
@@ -267,7 +257,7 @@ const AcceptedInvitation = withActions(AcceptedInvitationBase, [
     tokenData,
 ]);
 
-const NoInvitations = ({ tokenData }) => {
+const NoInvitations: React.FC<any> = ({ tokenData }) => {
     let createdAt;
 
     if (tokenData.createdAt !== undefined)
@@ -282,7 +272,7 @@ const NoInvitations = ({ tokenData }) => {
         new Date(createdAt.getTime() + 1000 * 60 * 10) > new Date()
     ) {
         content = (
-            <F>
+            <>
                 <Message type="success">
                     <Trans id="no-invitations.please-wait">
                         Deine Daten wurden im System gespeichert. Falls Termine
@@ -290,11 +280,11 @@ const NoInvitations = ({ tokenData }) => {
                         Minuten hier angezeigt.
                     </Trans>
                 </Message>
-            </F>
+            </>
         );
     } else {
         content = (
-            <F>
+            <>
                 <Message type="warning">
                     <Trans id="no-invitations.notice">
                         Im Moment sind scheinbar keine Termine in Deiner
@@ -304,11 +294,11 @@ const NoInvitations = ({ tokenData }) => {
                         hier angezeigt.
                     </Trans>
                 </Message>
-            </F>
+            </>
         );
     }
     return (
-        <F>
+        <>
             <CardContent>
                 <div className="kip-no-invitations">{content}</div>
             </CardContent>
@@ -318,7 +308,7 @@ const NoInvitations = ({ tokenData }) => {
                     Diese Seite wird automatisch aktualisiert...
                 </Trans>
             </Message>
-        </F>
+        </>
     );
 };
 
@@ -342,15 +332,15 @@ toggleOffers.init = function() {
 
 toggleOffers.actionName = 'toggleOffers';
 
-const PropertyTags = ({ appointment }) => {
-    let props;
-    props = Object.entries(appointment.properties)
+const PropertyTags: React.FC<any> = ({ appointment }) => {
+    const props = Object.entries(appointment.properties)
         .map(([, v]) => <PropertyTag key={v} property={v} />)
         .filter(p => p !== undefined);
-    return <F>{props}</F>;
+
+    return <>{props}</>;
 };
 
-const PropertyTag = ({ property }) => {
+const PropertyTag: React.FC<any> = ({ property }) => {
     const settings = useSettings();
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
@@ -367,15 +357,12 @@ const PropertyTag = ({ property }) => {
     }
 };
 
-const InvitationDetailsBase = ({
+const InvitationDetailsBase: React.FC<any> = ({
     data,
     tokenData,
-    settings,
-    userSecret,
     toggleOffers,
     toggleOffersAction,
     acceptedInvitationAction,
-    confirmOffers,
     confirmOffersAction,
 }) => {
     const [confirming, setConfirming] = useState(false);
@@ -409,9 +396,6 @@ const InvitationDetailsBase = ({
         });
     };
 
-    let content;
-
-    const properties = settings.get('appointmentProperties');
     // to do: use something better than the index i for the key?
     const offers = data.offers
         .filter(offer => offer.slotData.some(sl => sl.open))
@@ -485,7 +469,7 @@ const InvitationDetailsBase = ({
         );
 
     return (
-        <F>
+        <>
             <CardContent>
                 <div className="kip-invitation-details">
                     <ProviderDetails data={data.provider} />
@@ -520,7 +504,7 @@ const InvitationDetailsBase = ({
                     </Trans>
                 </Button>
             </CardFooter>
-        </F>
+        </>
     );
 };
 
@@ -532,8 +516,10 @@ const InvitationDetails = withActions(InvitationDetailsBase, [
 ]);
 
 const filterInvitations = invitation => {
-    if (invitation.offers === null) return false;
-    const expired = true;
+    if (invitation.offers === null) {
+        return false;
+    }
+
     const noOpenSlots = false;
 
     if (noOpenSlots) {
@@ -543,8 +529,7 @@ const filterInvitations = invitation => {
     return true;
 };
 
-const AppointmentsPage = ({
-    settings,
+const AppointmentsPage: React.FC<any> = ({
     invitation,
     appointments,
     acceptedInvitation,
@@ -609,7 +594,7 @@ const AppointmentsPage = ({
             />
         ));
 
-        return <F>{details}</F>;
+        return <>{details}</>;
     };
     return (
         <WithLoader

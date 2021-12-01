@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { contactData } from 'apps/user/actions';
 import {
     withActions,

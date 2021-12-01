@@ -19,7 +19,7 @@ import './store-secrets.scss';
 import { copyToClipboard } from '../../../helpers/clipboard';
 import { useNavigate } from 'react-router-dom';
 
-export const DataSecret = ({ secret, embedded, hideNotice }) => {
+export const DataSecret: React.FC<any> = ({ secret, embedded, hideNotice }) => {
     const [succeeded, setSucceeded] = useState(false);
     const [failed, setFailed] = useState(false);
 
@@ -120,7 +120,7 @@ function formatDate(date) {
     return `${year}-${month}-${day}-${hours}-${minutes}`;
 }
 
-const BackupDataLinkBase = ({
+const BackupDataLinkBase: React.FC<any> = ({
     onSuccess,
     settings,
     downloadText,
@@ -199,7 +199,7 @@ export const BackupDataLink = withActions(BackupDataLinkBase, [
     providerData,
 ]);
 
-const StoreSecretsPage = ({ providerSecret, status }) => {
+const StoreSecretsPage: React.FC<any> = ({ providerSecret, status }) => {
     const navigate = useNavigate();
 
     const goToDashboard = () => {

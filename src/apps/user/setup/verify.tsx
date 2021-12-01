@@ -11,9 +11,7 @@ import {
     Button,
     A,
 } from 'components';
-
 import { contactData } from 'apps/user/actions';
-
 import { Trans } from '@lingui/macro';
 import './verify.scss';
 
@@ -22,7 +20,7 @@ Here the user has a chance to review all data that was entered before confirming
 the setup. Once the button gets clicked, the system generates the QR
 codes, encrypts the contact data and stores the settings in the storage backend.
 */
-const VerifyPage = ({ contactData, contactDataAction }) => {
+const VerifyPage: React.FC<any> = ({ contactData, contactDataAction }) => {
     const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {

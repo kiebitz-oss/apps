@@ -12,9 +12,8 @@ import {
     Button,
 } from 'components';
 import { Trans } from '@lingui/macro';
-import './logged-out.scss';
 
-const LoggedOutPage = () => {
+const LoggedOutPage: React.FC<any> = () => {
     return (
         <CenteredCard className="kip-logged-out">
             <CardHeader>

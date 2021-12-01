@@ -48,7 +48,7 @@ const resolver: Resolver<FormData> = async values => {
     };
 };
 
-const BaseProviderData = ({
+const BaseProviderData: React.FC<any> = ({
     keyPairs,
     keyPairsAction,
     providerData,

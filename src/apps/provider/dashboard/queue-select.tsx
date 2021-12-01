@@ -3,11 +3,11 @@
 // README.md contains license information.
 
 import React, { useState, useEffect } from 'react';
-import { SearchSelect, T } from 'components';
+import { SearchSelect } from 'components';
 import { Trans } from '@lingui/macro';
 import './queue-select.scss';
 
-export const QueueSelect = ({
+export const QueueSelect: React.FC<any> = ({
     disabled,
     queues,
     existingQueues,
@@ -90,7 +90,12 @@ export const QueueSelect = ({
                     setSearch={updateSearch}
                     candidates={candidates}
                     label={<Trans id="queues.label">Einzugsgebiete</Trans>}
-                    description={<Trans id="queues.description">Hier können Sie festlegen, welche Einzugsgebiete für Sie relevant sind.</Trans>}
+                    description={
+                        <Trans id="queues.description">
+                            Hier können Sie festlegen, welche Einzugsgebiete für
+                            Sie relevant sind.
+                        </Trans>
+                    }
                 />
             )}
         </div>

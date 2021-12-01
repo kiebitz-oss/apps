@@ -11,12 +11,12 @@ import './dropdown.scss';
 export const DropdownMenu = ({ title, children }) => (
     <Dropdown
         title={
-            <F>
+            <>
                 {title && <span>{title}</span>}
                 <span aria-label="More options" className="bulma-icon">
                     <i className="fas fa-caret-down" />
                 </span>
-            </F>
+            </>
         }
     >
         <ul className="kip-dropdownmenu">{children}</ul>

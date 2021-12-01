@@ -3,10 +3,8 @@
 // README.md contains license information.
 
 import React, { useEffect, useState } from 'react';
-
 import Settings from './settings';
 import Appointments from './appointments';
-
 import { keys } from 'apps/provider/actions';
 import {
     userSecret,
@@ -28,7 +26,7 @@ import {
 import { Trans } from '@lingui/macro';
 import { useParams } from 'react-router-dom';
 
-const DashboardPage = ({
+const DashboardPage: React.FC<any> = ({
     timer,
     userSecretAction,
     keysAction,

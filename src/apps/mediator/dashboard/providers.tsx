@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, useEffect, Fragment as F } from 'react';
+import React, { useState, useEffect } from 'react';
 import { b642buf, buf2b64, buf2hex, hex2buf } from 'helpers/conversion';
 import {
     reconfirmProviders,
@@ -43,11 +43,10 @@ const sortProviderByDate = (a, b) => {
     return new Date(b.entry.timestamp) - new Date(a.entry.timestamp);
 };
 
-const ProvidersPage = ({
+const ProvidersPage: React.FC<any> = ({
     action,
     id,
     timer,
-    confirmProvider,
     confirmProviderAction,
     reconfirmProviders,
     reconfirmProvidersAction,
@@ -267,10 +266,10 @@ const ProvidersPage = ({
                     {modal}
                     <DropdownMenu
                         title={
-                            <F>
+                            <>
                                 <Icon icon="check-circle" />
                                 <Trans id={providersMessages[view]} />
-                            </F>
+                            </>
                         }
                     >
                         <DropdownMenuItem

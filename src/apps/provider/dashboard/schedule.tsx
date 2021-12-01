@@ -172,7 +172,7 @@ const AppointmentOverviewBase: React.FC<any> = ({
                     <hr />
                     <PropertyTags verbose appointment={appointment} />
                     {(acceptedItems.length > 0 && (
-                        <F>
+                        <>
                             <h3>
                                 <Trans id="appointment-overview.details.booking-codes">
                                     Buchungscodes
@@ -181,7 +181,7 @@ const AppointmentOverviewBase: React.FC<any> = ({
                             <ul className="kip-booking-codes">
                                 {acceptedItems}
                             </ul>
-                        </F>
+                        </>
                     )) || (
                         <Message type="info">
                             <Trans id="appointment-overview.details.no-booked-slots">
@@ -225,7 +225,7 @@ const PropertyTags: React.FC<any> = ({ appointment, verbose, tiny }) => {
             <PropertyTag tiny={tiny} verbose={verbose} key={k} property={k} />
         ))
         .filter(p => p !== undefined);
-    return <F>{props}</F>;
+    return <>{props}</>;
 };
 
 const PropertyTag: React.FC<any> = ({ property, tiny, verbose }) => {
@@ -320,7 +320,7 @@ const AppointmentCard: React.FC<any> = ({
         >
             {modal}
             {!tiny && (
-                <F>
+                <>
                     <span className="kip-tag kip-is-open kip-is-tiny">
                         {appointment.slots}
                     </span>
@@ -328,7 +328,7 @@ const AppointmentCard: React.FC<any> = ({
                         · {appointment.bookings.length} ·
                     </span>
                     <PropertyTags appointment={appointment} tiny />
-                </F>
+                </>
             )}
         </div>
     );
@@ -437,12 +437,12 @@ const HourLabelRow: React.FC<any> = ({ hour }) => {
     let content;
     if (hour !== '-')
         content = (
-            <F>
+            <>
                 {hour.toLocaleString('en-US', { minimumIntegerDigits: 2 })} -{' '}
                 {(hour + 1).toLocaleString('en-US', {
                     minimumIntegerDigits: 2,
                 })}
-            </F>
+            </>
         );
 
     return <div className="kip-hour-row kip-is-hour-label">{content}</div>;
@@ -580,7 +580,7 @@ const WeekCalendar: React.FC<any> = ({
     };
 
     return (
-        <F>
+        <>
             <div className="kip-schedule-navigation">
                 <Button className="kip-backward" type="" onClick={goBackward}>
                     <Trans id="schedule.backward">vorherige Woche</Trans>
@@ -590,7 +590,7 @@ const WeekCalendar: React.FC<any> = ({
                 </Button>
             </div>
             <div className="kip-week-calendar">{dayColumns}</div>
-        </F>
+        </>
     );
 };
 
@@ -633,9 +633,9 @@ const AppointmentItem: React.FC<any> = ({ appointment }) => {
             </ul>
             <PropertyTags verbose appointment={appointment} />
             {(acceptedItems.length > 0 && (
-                <F>
+                <>
                     <ul className="kip-booking-codes">{acceptedItems}</ul>
-                </F>
+                </>
             )) || (
                 <Message type="info">
                     <Trans id="appointment-overview.details.no-booked-slots">
@@ -1064,10 +1064,10 @@ const InvitationsPage: React.FC<any> = ({
                         &nbsp;
                         <DropdownMenu
                             title={
-                                <F>
+                                <>
                                     <Icon icon="calendar" />{' '}
                                     <Trans id={scheduleMessages[view]} />
-                                </F>
+                                </>
                             }
                         >
                             <DropdownMenuItem

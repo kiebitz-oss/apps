@@ -4,7 +4,6 @@
 
 import React, { useEffect, useRef } from 'react';
 import {
-    A,
     Button,
     withActions,
     WithLoader,
@@ -13,58 +12,58 @@ import {
     CardFooter,
     CardNav,
 } from 'components';
-import ContactData from './contact-data';
+import ProviderData from './provider-data';
 import StoreSecrets from './store-secrets';
 import Verify from './verify';
-import Finalize from './finalize';
 import { Trans, defineMessage } from '@lingui/macro';
 import './wizard.scss';
 import { useNavigate } from 'react-router-dom';
 
-const pages = ['hi', 'enter-contact-data', 'finalize', 'store-secrets'];
+const pages = ['hi', 'enter-provider-data', 'verify', 'store-secrets'];
 
 const wizardStepsMessages = {
     hi: defineMessage({
         id: 'wizard.steps.hi',
-        message: "Los geht's!",
+        message: 'Jetzt starten',
     }),
-    'enter-contact-data': defineMessage({
-        id: 'wizard.steps.enter-contact-data',
-        message: 'Registrierungsdaten eingeben',
+    'enter-provider-data': defineMessage({
+        id: 'wizard.steps.enter-provider-data',
+        message: 'Kontaktdaten eingeben',
     }),
     verify: defineMessage({
         id: 'wizard.steps.verify',
-        message: 'Kontaktdaten prüfen',
-    }),
-    finalize: defineMessage({
-        id: 'wizard.steps.finalize',
-        message: 'Daten zu Impfung eingeben',
+        message: 'Daten prüfen',
     }),
     'store-secrets': defineMessage({
         id: 'wizard.steps.store-secrets',
-        message: 'Sicherheitscode notieren',
+        message: 'Sicherungsdatei & Datenschlüssel',
     }),
 };
 
-const Hi = () => (
-    <React.Fragment>
-        <CardContent>
-            <p>
-                <Trans id="wizard.hi">
-                    Willkommen. Dieser Assistent hilft Dir bei der
-                    Impfanmeldung.
-                </Trans>
-            </p>
-        </CardContent>
-        <CardFooter>
-            <Button type="success" href={`/user/setup/enter-contact-data`}>
-                <Trans id="wizard.continue">Weiter</Trans>
-            </Button>
-        </CardFooter>
-    </React.Fragment>
-);
+const Hi: React.FC<any> = () => {
+    return (
+        <React.Fragment>
+            <CardContent>
+                <p>
+                    <Trans id="wizard.hi">
+                        Willkommen. Dieser Assistent führt Sie Schritt für
+                        Schritt zur Terminverwaltung.
+                    </Trans>
+                </p>
+            </CardContent>
+            <CardFooter>
+                <Button
+                    type="success"
+                    href={`/provider/setup/enter-provider-data`}
+                >
+                    <Trans id="wizard.continue">Weiter</Trans>
+                </Button>
+            </CardFooter>
+        </React.Fragment>
+    );
+};
 
-const Wizard = ({ page }) => {
+const Wizard: React.FC<any> = ({ page, status }) => {
     const pageRef = useRef(null);
     const navigate = useNavigate();
 
@@ -103,7 +102,7 @@ const Wizard = ({ page }) => {
                         key={p}
                         disabled={!canShow(p)}
                         onClick={() => {
-                            if (canShow(p)) navigate(`/user/setup/${p}`);
+                            if (canShow(p)) navigate(`/provider/setup/${p}`);
                         }}
                         active={page === p}
                     >
@@ -127,20 +126,20 @@ const Wizard = ({ page }) => {
             case 'hi':
                 populate('hi', <Hi key="hiNotice" />);
                 break;
-            case 'enter-contact-data':
+            case 'enter-provider-data':
                 populate(
-                    'enter-contact-data',
-                    <ContactData key="enterContactData" />
+                    'enter-provider-data',
+                    <ProviderData key="enterProviderData" />
                 );
                 break;
             case 'store-secrets':
-                populate('store-secrets', <StoreSecrets key="storeSecrets" />);
+                populate(
+                    'store-secrets',
+                    <StoreSecrets key="storeSecrets" status={status} />
+                );
                 break;
             case 'verify':
                 populate('verify', <Verify key="verify" />);
-                break;
-            case 'finalize':
-                populate('finalize', <Finalize key="finalize" />);
                 break;
         }
 

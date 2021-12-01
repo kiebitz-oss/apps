@@ -14,11 +14,10 @@ import {
 } from 'components';
 import { restoreFromBackup } from 'apps/provider/actions';
 import { t, Trans } from '@lingui/macro';
-import './restore.scss';
 import { useNavigate } from 'react-router-dom';
 import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
 import { formatSecret } from 'helpers/string';
-
+import './restore.scss';
 interface FormData {
     file: any;
     filename: string;

@@ -6,10 +6,10 @@ import React, { useEffect, useState } from 'react';
 import { withActions, CenteredCard, CardContent, A } from 'components';
 import { providerData } from 'apps/provider/actions';
 import { Trans } from '@lingui/macro';
-import './start.scss';
 import { useNavigate } from 'react-router-dom';
+import './start.scss';
 
-const StartPage = ({ providerDataAction }) => {
+const StartPage: React.FC<any> = ({ providerDataAction }) => {
     const [initialized, setInitialized] = useState(false);
     const navigate = useNavigate();
 

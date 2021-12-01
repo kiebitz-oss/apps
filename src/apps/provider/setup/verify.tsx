@@ -16,15 +16,19 @@ import {
 import classNames from 'helpers/classnames';
 import { submitProviderData, providerData, keyPairs, keys } from '../actions';
 import { Trans } from '@lingui/macro';
-import './verify.scss';
 import { useNavigate } from 'react-router';
+import './verify.scss';
 
-export const ProviderData = ({ providerData, changeHref, verified }) => {
+export const ProviderData: React.FC<any> = ({
+    providerData,
+    changeHref,
+    verified,
+}) => {
     let data;
     if (verified) {
         if (providerData.data === null)
             return (
-                <F>
+                <>
                     <p>
                         <Trans id="provider-data.not-verified-yet">
                             Ihre Daten wurden noch nicht verifiziert. Bitte
@@ -32,12 +36,12 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                             48h dauern kann.
                         </Trans>
                     </p>
-                </F>
+                </>
             );
         data = providerData.data.signedData.json;
     } else data = providerData.data.data;
     return (
-        <F>
+        <>
             <div
                 className={classNames('kip-provider-data', 'kip-is-box', {
                     'kip-is-verified': verified,
@@ -153,7 +157,7 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                     <Trans id="provider-data.change">Anpassen</Trans>
                 </A>
             </div>
-        </F>
+        </>
     );
 };
 
@@ -162,7 +166,7 @@ Here the user has a chance to review all data that was entered before confirming
 the setup. Once the button gets clicked, the system generates the QR
 codes, encrypts the contact data and stores the settings in the storage backend.
 */
-const VerifyPage = ({
+const VerifyPage: React.FC<any> = ({
     providerData,
     submitProviderData,
     submitProviderDataAction,

@@ -16,7 +16,17 @@ import { userSecret } from 'apps/user/actions';
 import { t, Trans } from '@lingui/macro';
 import './store-secrets.scss';
 
-export const StoreOnline = ({ secret, embedded, hideNotice }) => {
+interface StoreOnlineProps {
+    secret: string;
+    embedded?: boolean;
+    hideNotice?: boolean;
+}
+
+export const StoreOnline: React.FC<StoreOnlineProps> = ({
+    secret,
+    embedded,
+    hideNotice,
+}) => {
     const [bookmarkModal, setBookmarkModal] = useState(false);
 
     let modal;
@@ -58,9 +68,11 @@ export const StoreOnline = ({ secret, embedded, hideNotice }) => {
 
     const chunks = secret.match(/.{1,4}/g);
 
-    const fragments = [];
+    const fragments: React.ReactNodeArray = [];
+
     for (let i = 0; i < chunks.length; i++) {
         fragments.push(<F key={`${i}-main`}>{chunks[i]}</F>);
+
         if (i < chunks.length - 1)
             fragments.push(
                 <strong key={`${i}-dot`} style={{ userSelect: 'none' }}>
@@ -97,7 +109,7 @@ export const StoreOnline = ({ secret, embedded, hideNotice }) => {
                 }
             >
                 {
-                    <F>
+                    <>
                         <div className="kip-uid">
                             {!hideNotice && (
                                 <span>
@@ -108,7 +120,7 @@ export const StoreOnline = ({ secret, embedded, hideNotice }) => {
                             )}
                             <code>{fragments}</code>
                         </div>
-                    </F>
+                    </>
                 }
             </div>
             {!embedded && (
@@ -127,13 +139,13 @@ export const StoreOnline = ({ secret, embedded, hideNotice }) => {
     );
 };
 
-const StoreLocal = ({ data }) => {
+const StoreLocal: React.FC<{ data: any }> = ({ data }) => {
     const blob = new Blob([b642buf(data)], {
         type: 'application/octet-stream',
     });
 
     return (
-        <F>
+        <>
             <p className="kip-secrets-notice">
                 <Trans id="store-secrets.local.text">
                     store-secrects.local.text MISSING
@@ -146,11 +158,11 @@ const StoreLocal = ({ data }) => {
             >
                 <Trans id="store-secrets.download">Datei speichern</Trans>
             </a>
-        </F>
+        </>
     );
 };
 
-const StoreSecretPage = ({ userSecret }) => {
+const StoreSecretPage: React.FC<any> = ({ userSecret }) => {
     const [tab, setTab] = useState('online');
 
     let content;

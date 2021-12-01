@@ -10,7 +10,7 @@ import { useNavigate, useParams, useLocation } from 'react-router';
 
 import './index.scss';
 
-const SetupPage = ({ providerDataAction }) => {
+const SetupPage: React.FC<any> = ({ providerDataAction }) => {
     const [initialized, setInitialized] = useState(false);
     const { page, status } = useParams();
     const navigate = useNavigate();

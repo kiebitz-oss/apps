@@ -2,10 +2,9 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, Fragment as F } from 'react';
+import React, { useState } from 'react';
 import { StoreOnline } from 'apps/user/setup/store-secrets';
 import { userSecret, backupData } from 'apps/user/actions';
-import './settings.scss';
 import { Trans } from '@lingui/macro';
 
 import {
@@ -17,8 +16,13 @@ import {
 } from 'components';
 import { useNavigate } from 'react-router-dom';
 import { useBackend } from 'hooks';
+import './settings.scss';
 
-const SettingsPage = ({ action, userSecret, backupDataAction }) => {
+const SettingsPage: React.FC<any> = ({
+    action,
+    userSecret,
+    backupDataAction,
+}) => {
     const [loggingOut, setLoggingOut] = useState(false);
     const navigate = useNavigate();
     const backend = useBackend();
@@ -78,7 +82,7 @@ const SettingsPage = ({ action, userSecret, backupDataAction }) => {
     }
 
     return (
-        <F>
+        <>
             <CardContent>
                 <div className="kip-user-settings">
                     {logOutModal}
@@ -100,7 +104,7 @@ const SettingsPage = ({ action, userSecret, backupDataAction }) => {
                     </Button>
                 </div>
             </CardFooter>
-        </F>
+        </>
     );
 };
 

@@ -3,12 +3,11 @@
 // README.md contains license information.
 
 import React from 'react';
-import { Message, CenteredCard, CardHeader, A } from 'components';
+import { Message, CenteredCard, CardHeader } from 'components';
 import { Trans } from '@lingui/macro';
-import './deleted.scss';
 import { useSettings } from 'hooks';
 
-const DeletedPage = () => {
+const DeletedPage: React.FC = () => {
     const settings = useSettings();
 
     return (

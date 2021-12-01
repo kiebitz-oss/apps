@@ -33,7 +33,7 @@ import {
 import { Trans } from '@lingui/macro';
 import { useParams } from 'react-router';
 
-const DashboardPage = ({
+const DashboardPage: React.FC<any> = ({
     openAppointmentsAction,
     providerDataAction,
     submitProviderDataAction,

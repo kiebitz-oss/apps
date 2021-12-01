@@ -7,9 +7,9 @@ import { Card, CardHeader, CardContent } from 'components';
 import './summary-box.scss';
 import { Trans } from '@lingui/macro';
 
-const formatNumbers = n => n;
+const formatNumbers = (n: number) => n;
 
-const SummaryBox = ({ open, booked, active }) => (
+const SummaryBox: React.FC<any> = ({ open, booked, active }) => (
     <Card className="kip-is-fullheight kip-is-fullwidth kip-summary-box" flex>
         <CardHeader>
             <h2>

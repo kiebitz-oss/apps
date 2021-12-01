@@ -18,10 +18,10 @@ import {
 } from 'components';
 import { keyPairs, validKeyPairs } from '../actions';
 import { Trans } from '@lingui/macro';
-import './index.scss';
 import { useParams } from 'react-router';
+import './index.scss';
 
-const UploadKeyPairsModal = ({ keyPairsAction }) => {
+const UploadKeyPairsModal: React.FC<any> = ({ keyPairsAction }) => {
     const [invalidFile, setInvalidFile] = useState(false);
 
     const readFile = e => {
@@ -89,10 +89,9 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
     );
 };
 
-const DashboardPage = ({
+const DashboardPage: React.FC<any> = ({
     keyPairs,
     keyPairsAction,
-    validKeyPairs,
     validKeyPairsAction,
 }) => {
     const [key, setKey] = useState(false);
