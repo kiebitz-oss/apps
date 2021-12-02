@@ -24,22 +24,30 @@ import './index.scss';
 const UploadKeyPairsModal: React.FC<any> = ({ keyPairsAction }) => {
     const [invalidFile, setInvalidFile] = useState(false);
 
-    const readFile = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
+    const readFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
 
-        reader.onload = function (e) {
-            const json = JSON.parse(e.target.result);
-            if (
-                json.signing === undefined ||
-                json.encryption === undefined ||
-                json.provider === undefined
-            )
-                setInvalidFile(true);
-            else keyPairsAction(json);
-        };
+        if (files) {
+            const file = files[0];
+            const reader = new FileReader();
 
-        reader.readAsBinaryString(file);
+            reader.onload = function (e) {
+                if (e.target && e.target.result && typeof(e.target.result) === 'string') {
+                    const json = JSON.parse(e.target.result);
+                    if (
+                        json.signing === undefined ||
+                        json.encryption === undefined ||
+                        json.provider === undefined
+                    ) {
+                        setInvalidFile(true);
+                    } else {
+                        keyPairsAction(json);
+                    }
+                }
+            };
+
+            reader.readAsBinaryString(file);
+        }
     };
 
     let notice;

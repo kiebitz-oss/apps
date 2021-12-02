@@ -43,7 +43,7 @@ export const Tab = ({
     icon,
     params,
     onClick,
-    last,
+    last = false,
 }) => (
     <li
         className={classnames(

@@ -2,7 +2,6 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState } from 'react';
 import { withActions } from 'components';
 import { contactData, queueData, tokenData } from 'apps/user/actions';
 import Wizard from './wizard';

@@ -113,7 +113,7 @@ const Wizard: React.FC<{ page: string }> = ({ page }) => {
                 </a>
             );
 
-        const populate = (p, component) => {
+        const populate = (p: any, component: any) => {
             const existingComponent = components.get(p);
             const newComponent = (
                 <React.Fragment key={p}>

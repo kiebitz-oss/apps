@@ -65,6 +65,7 @@ CardContent.propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
     noPadding: PropTypes.bool,
+    centered: PropTypes.bool,
 };
 
 export const CardNav = ({ children, disabled, active, ...props }) => (
@@ -101,7 +102,7 @@ CardIcon.propTypes = {
     icon: PropTypes.string.isRequired,
 };
 
-export const CenteredCard = ({ embedded, children, ...props }) => (
+export const CenteredCard = ({ embedded = false, children, ...props }) => (
     <section
         className={classnames(
             'kip-centered-card',

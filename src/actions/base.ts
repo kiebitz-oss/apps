@@ -16,6 +16,7 @@ export enum ActionStates {
     updating = 'updating',
     deleting = 'deleting',
     confirming = 'confirming',
+    initialized = 'initialized',
 }
 
 /**
@@ -28,6 +29,7 @@ export default class Base {
     protected key: string;
     protected settings: Settings;
     protected requests: Record<string, any>;
+    protected promises: Record<string, any>;
 
     ActionStates = ActionStates;
 
@@ -49,14 +51,15 @@ export default class Base {
      * being accessed and written to.
      */
     constructor(store: Store, settings: Settings, key?: string) {
-        if (!(store instanceof Store))
-            throw new Error('store (1st parameter) must be a Store');
-        if (!(settings instanceof Settings))
-            throw new Error('settings (2nd parameter) must be a Setting');
+        //if (!(store instanceof Store))
+        //    throw new Error('store (1st parameter) must be a Store');
+        //if (!(settings instanceof Settings))
+        //    throw new Error('settings (2nd parameter) must be a Setting');
         this.settings = settings;
         this.store = store;
         this.promises = {};
-        this.key = key || this.defaultKey;
+        this.requests = {};
+        this.key = key || Base.defaultKey;
     }
 
     get persistentStore() {
@@ -125,7 +128,7 @@ export default class Base {
     ) {
         const { status } = this.get();
         const cts = Object.entries(conditionalTargets || {});
-        const setStatus = (status) => {
+        const setStatus = (status: any) => {
             if (set) this.set({ status: status });
             else this.update({ status: status });
         };
@@ -190,7 +193,7 @@ export default class Base {
         return promise;
     }
 
-    public copy(a) {
+    public copy(a: any) {
         return copy(a);
     }
 }
