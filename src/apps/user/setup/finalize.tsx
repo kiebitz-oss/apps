@@ -72,7 +72,7 @@ const FinalizePage: React.FC<any> = ({
     userSecret,
     userSecretAction,
 }) => {
-    const [noQueue, setNoQueue] = useState(false);
+    const [noQueue, _] = useState(false);
     const navigate = useNavigate();
 
     const methods = useForm<FormData>({
@@ -96,13 +96,13 @@ const FinalizePage: React.FC<any> = ({
                 distance: 5,
             };
 
-            for (const [k, v] of Object.entries(
+            Object.entries(
                 props['contact-data'].properties
-            )) {
-                for (const [kv, vv] of Object.entries(v.values)) {
+            ).forEach(([_, v]: [string, any]) => {
+                Object.entries(v.values).forEach(([kv, vv]: [string, any]) => {
                     initialData[kv] = vv._default;
-                }
-            }
+                });
+            });
             reset(qd.data || initialData);
         });
     });
@@ -124,7 +124,7 @@ const FinalizePage: React.FC<any> = ({
 
     const properties = Object.entries(props['contact-data'].properties).map(
         ([k, v]) => {
-            const items = Object.entries(v.values).map(([kv, vv]) => (
+            const items = Object.entries(v.values).map(([kv, _]) => (
                 <li key={kv}>
                     <Switch {...register(kv)}>&nbsp;</Switch>
 

@@ -75,7 +75,14 @@ type WithLoaderProps = {
     onLoad: () => {};
 };
 
+interface WithLoaderState {
+    showLoader: boolean;
+};
+
 export class WithLoader extends Component<WithLoaderProps> {
+    private mounted: boolean;
+    private state: WithLoaderState;
+
     static defaultProps = {
         renderWait: RenderWait,
         renderFailed: RenderFailed,
@@ -83,6 +90,7 @@ export class WithLoader extends Component<WithLoaderProps> {
 
     constructor(props: WithLoaderProps) {
         super(props);
+        this.mounted = false;
         this.state = {
             showLoader: false,
         };

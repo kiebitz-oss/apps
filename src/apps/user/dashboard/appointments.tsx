@@ -55,10 +55,10 @@ const ProviderDetails: React.FC<any> = ({ data }) => {
 const OfferDetails: React.FC<any> = ({ offer }) => {
     const settings = useSettings();
     const lang = settings.get('lang');
-    const notices = [];
+    const notices: any[] = [];
     const properties = settings.get('appointmentProperties');
-    for (const [category, values] of Object.entries(properties)) {
-        for (const [k, v] of Object.entries(values.values)) {
+    Object.entries(properties).forEach(([category, values]: any[]) => {
+        Object.entries(values.values).forEach(([k, v]: any[]) => {
             if (
                 (offer[k] === true ||
                     (offer.properties !== undefined &&
@@ -97,8 +97,8 @@ const OfferDetails: React.FC<any> = ({ offer }) => {
                         </p>
                     </F>
                 );
-        }
-    }
+        });
+    });
 
     return <div className="kip-offer-details">{notices}</div>;
 };
@@ -140,7 +140,6 @@ const AcceptedInvitationBase: React.FC<any> = ({
     tokenData,
     acceptedInvitation,
     acceptedInvitationAction,
-    cancelInvitation,
     invitationAction,
     cancelInvitationAction,
     offers,
@@ -161,7 +160,7 @@ const AcceptedInvitationBase: React.FC<any> = ({
 
     const { offer, invitation: invitationData } = acceptedInvitation.data;
 
-    const currentOffer = offers.find((of) => of.id == offer.id);
+    const currentOffer = offers.find((of: any) => of.id == offer.id);
 
     let notice;
     let changed = false;
@@ -320,16 +319,16 @@ const NoInvitations: React.FC<any> = ({ tokenData }) => {
     );
 };
 
-async function toggleOffers(state, keyStore, settings, offer, offers) {
+async function toggleOffers(state: any, _keyStore: any, _settings: any, offer: any, offers: any) {
     if (offer === null) return { data: [] };
-    if (state.data.find((i) => i === offer.id) !== undefined) {
-        state.data = state.data.filter((i) => i !== offer.id);
+    if (state.data.find((i: any) => i === offer.id) !== undefined) {
+        state.data = state.data.filter((i: any) => i !== offer.id);
     } else {
         state.data.push(offer.id);
     }
     // we remove non-existing offers
-    state.data = state.data.filter((i) =>
-        offers.map((offer) => offer.id).includes(i)
+    state.data = state.data.filter((i: any) =>
+        offers.map((offer: any) => offer.id).includes(i)
     );
     return { data: state.data };
 }
@@ -353,7 +352,7 @@ const PropertyTag: React.FC<any> = ({ property }) => {
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
 
-    for (const [category, values] of Object.entries(properties)) {
+    Object.entries(properties).map(([_, values]: any[]) => {
         const prop = values.values[property];
         if (prop !== undefined) {
             return (
@@ -362,7 +361,7 @@ const PropertyTag: React.FC<any> = ({ property }) => {
                 </span>
             );
         }
-    }
+    });
 };
 
 const InvitationDetailsBase: React.FC<any> = ({
@@ -382,7 +381,7 @@ const InvitationDetailsBase: React.FC<any> = ({
         toggleOffersAction(null);
     });
 
-    const toggle = (offer) => {
+    const toggle = (offer: any) => {
         toggleOffersAction(offer, data.offers);
     };
 
@@ -390,7 +389,7 @@ const InvitationDetailsBase: React.FC<any> = ({
         const selectedOffers = [];
         // we add the selected offers in the order the user chose
         for (const offerID of toggleOffers.data) {
-            const offer = data.offers.find((offer) => offer.id === offerID);
+            const offer = data.offers.find((offer: any) => offer.id === offerID);
             selectedOffers.push(offer);
         }
         setConfirming(true);
@@ -406,10 +405,10 @@ const InvitationDetailsBase: React.FC<any> = ({
 
     // to do: use something better than the index i for the key?
     const offers = data.offers
-        .filter((offer) => offer.slotData.some((sl) => sl.open))
-        .filter((a) => new Date(a.timestamp) > new Date())
-        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-        .map((offer, i) => {
+        .filter((offer: any) => offer.slotData.some((sl: any) => sl.open))
+        .filter((a: any) => new Date(a.timestamp) > new Date())
+        .sort((a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+        .map((offer: any) => {
             const d = new Date(offer.timestamp);
             const selected = toggleOffers.data.includes(offer.id);
             let pref;
@@ -500,8 +499,8 @@ const InvitationDetailsBase: React.FC<any> = ({
                     disabled={
                         confirming ||
                         Object.keys(
-                            toggleOffers.data.filter((id) =>
-                                data.offers.find((of) => of.id === id)
+                            toggleOffers.data.filter((id: any) =>
+                                data.offers.find((of: any) => of.id === id)
                             )
                         ).length === 0
                     }
@@ -523,7 +522,7 @@ const InvitationDetails = withActions(InvitationDetailsBase, [
     userSecret,
 ]);
 
-const filterInvitations = (invitation) => {
+const filterInvitations = (invitation: any) => {
     if (invitation.offers === null) {
         return false;
     }
@@ -574,10 +573,10 @@ const AppointmentsPage: React.FC<any> = ({
         ) {
             const ai = invitations.find((inv) => {
                 if (inv === null) return false;
-                return inv.offers.some((offer) =>
-                    offer.slotData.some((sla) =>
+                return inv.offers.some((offer: any) =>
+                    offer.slotData.some((sla: any) =>
                         acceptedInvitation.data.offer.slotData.some(
-                            (slb) => slb.id === sla.id
+                            (slb: any) => slb.id === sla.id
                         )
                     )
                 );
@@ -588,7 +587,7 @@ const AppointmentsPage: React.FC<any> = ({
 
         // we only show relevant invitations
         invitations = invitations.filter((inv) =>
-            filterInvitations(inv, acceptedInvitation)
+            filterInvitations(inv)
         );
 
         if (invitations.length === 0)

@@ -9,8 +9,9 @@ import classnames from 'helpers/classnames';
 import './message.scss';
 
 type MessageProps = {
-    children: ReactChild;
+    children: ReactChild | ReactChild[];
     type: string;
+    className?: string;
 };
 
 export const Message = ({

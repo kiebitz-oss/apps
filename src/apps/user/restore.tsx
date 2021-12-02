@@ -18,7 +18,7 @@ import { t, Trans } from '@lingui/macro';
 import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
 import './restore.scss';
 import { useNavigate } from 'react-router-dom';
-import { formatSecret } from 'helpers/string';
+//import { formatSecret } from 'helpers/string';
 
 interface FormData {
     secret: string;

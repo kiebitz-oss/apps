@@ -9,8 +9,8 @@ This function deep-copies objects and ensures only valid object types are store
 in our store (maps, array, objects, numbers, strings). It can handle self-referencing,
 circular data structures as well.
 */
-export function copy(value, memo) {
-    memo = memo || new Map();
+export function copy(value: any, memo?: Map<any, any>) {
+    memo = memo || new Map<any, any>();
     if (memo.has(value)) return memo.get(value);
     let newValue = value;
     if (value instanceof Array) {
@@ -78,7 +78,7 @@ export default class Store {
         this.notify('', copy(this.state));
     }
 
-    public get(key?: string) {
+    public get(key?: string): any {
         if (key === '' || key === null)
             //we return the whole store
             return copy(this.state);

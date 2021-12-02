@@ -163,7 +163,7 @@ const StoreLocal: React.FC<{ data: any }> = ({ data }) => {
 };
 
 const StoreSecretPage: React.FC<any> = ({ userSecret }) => {
-    const [tab, setTab] = useState('online');
+    const [tab, _] = useState('online');
 
     let content;
 
