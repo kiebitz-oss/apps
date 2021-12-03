@@ -2,19 +2,12 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useState, Fragment as F } from 'react';
+import React, { useState } from 'react';
 import { b642buf } from 'helpers/conversion';
-import {
-    Modal,
-    withActions,
-    CardContent,
-    CardFooter,
-    Button,
-    A,
-} from 'components';
+import { withActions, CardContent, CardFooter, A, Button } from 'components';
 import { userSecret } from 'apps/user/actions';
 import { t, Trans } from '@lingui/macro';
-import './store-secrets.scss';
+// import './store-secrets.scss';
 
 interface StoreOnlineProps {
     secret: string;
@@ -48,30 +41,14 @@ export const StoreOnline: React.FC<StoreOnlineProps> = ({
         setBookmarkModal(false);
     };
 
-    if (bookmarkModal)
-        modal = (
-            <Modal
-                title={
-                    <Trans id="store-secrets.bookmark-modal.title">
-                        Lesezeichen erstellen
-                    </Trans>
-                }
-                onClose={hideBookmarkModal}
-            >
-                <Trans id="store-secrets.bookmark-modal.text">
-                    Nutze Dein Browser-Menü um ein Lesezeichen für diese Seite
-                    zu erstellen. Du kannst dieses Lesezeichen öffnen, um Deinen
-                    Sicherheitscode wiederherzustellen.
-                </Trans>
-            </Modal>
-        );
-
-    const chunks = secret.match(/.{1,4}/g) || [];
+    const chunks = secret?.match(/.{1,4}/g) || [];
 
     const fragments: React.ReactNode[] = [];
 
     for (let i = 0; i < chunks.length; i++) {
-        fragments.push(<F key={`${i}-main`}>{chunks[i]}</F>);
+        fragments.push(
+            <React.Fragment key={`${i}-main`}>{chunks[i]}</React.Fragment>
+        );
 
         if (i < chunks.length - 1)
             fragments.push(
@@ -86,7 +63,7 @@ export const StoreOnline: React.FC<StoreOnlineProps> = ({
             {modal}
             {!embedded && (
                 <p className="kip-secrets-notice">
-                    <Trans id="store-secrets.online.text" safe>
+                    <Trans id="store-secrets.online.text">
                         Bitte notiere Dir Deinen vertraulichen Sicherheitscode.
                         Alternativ kannst Du auch ein Bildschirmfoto machen.
                         Bitte beachte, dass Dir der Code NICHT per E-Mail
@@ -103,6 +80,7 @@ export const StoreOnline: React.FC<StoreOnlineProps> = ({
                     </Trans>
                 </p>
             )}
+
             <div
                 className={
                     'kip-secrets-box' + (embedded ? ' kip-is-embedded' : '')
@@ -123,16 +101,17 @@ export const StoreOnline: React.FC<StoreOnlineProps> = ({
                     </>
                 }
             </div>
+
             {!embedded && (
                 <div className="kip-secrets-links">
-                    <A
+                    <Button
                         className="bulma-button bulma-is-small"
                         onClick={showBookmarkModal}
                     >
                         <Trans id="store-secrets.bookmark">
                             Als Lesezeichen speichern
                         </Trans>
-                    </A>
+                    </Button>
                 </div>
             )}
         </>
@@ -169,7 +148,7 @@ const StoreSecretPage: React.FC<any> = ({ userSecret }) => {
 
     switch (tab) {
         case 'online':
-            content = <StoreOnline secret={userSecret.data} />;
+            content = <StoreOnline secret={userSecret?.data} />;
             break;
         case 'local':
             content = <StoreLocal data={'data'} />;
@@ -179,10 +158,11 @@ const StoreSecretPage: React.FC<any> = ({ userSecret }) => {
     return (
         <>
             <CardContent className="kip-secrets">{content}</CardContent>
+
             <CardFooter>
-                <Button type="success" href={`/user/appointments`}>
+                <A type="button" variant="success" href={`/user/appointments`}>
                     <Trans id="wizard.leave">Zu den verfügbaren Terminen</Trans>
-                </Button>
+                </A>
             </CardFooter>
         </>
     );

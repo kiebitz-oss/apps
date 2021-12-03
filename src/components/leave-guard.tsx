@@ -78,7 +78,7 @@ class BaseLeaveGuard extends React.Component {
         const { ask } = this.state;
         const stayOnPage = () => this.setState({ ask: false });
         return (
-            <React.Fragment>
+            <>
                 {ask && (
                     <Modal
                         onClose={stayOnPage}
@@ -105,7 +105,7 @@ class BaseLeaveGuard extends React.Component {
                     </Modal>
                 )}
                 {children}
-            </React.Fragment>
+            </>
         );
     }
 }

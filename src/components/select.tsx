@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { forwardRef } from 'react';
+import React from 'react';
 import classnames from 'helpers/classnames';
 import './select.scss';
 
@@ -11,11 +11,11 @@ type SelectOption = {
     description: string;
 };
 
-interface SelectProps extends React.HTMLAttributes<HTMLSelectElement> {
+interface SelectProps extends React.ComponentPropsWithoutRef<'select'> {
     options: SelectOption[];
 }
 
-export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     ({ className, options, ...props }, ref) => {
         return (
             <select

@@ -225,7 +225,7 @@ const VerifyPage: React.FC<any> = ({
             submitProviderData.error.error.code === 401
         ) {
             failedMessage = (
-                <Message type="danger">
+                <Message variant="danger">
                     <Trans id="wizard.failed.invalid-code">
                         Ihr Zugangscode ist leider ungültig.
                     </Trans>
@@ -236,7 +236,7 @@ const VerifyPage: React.FC<any> = ({
 
     if (failed && !failedMessage)
         failedMessage = (
-            <Message type="danger">
+            <Message variant="danger">
                 <Trans id="wizard.failed.notice">
                     Sorry, hier ist etwas schief gelaufen. Bitte versuche es
                     später erneut.
@@ -245,7 +245,7 @@ const VerifyPage: React.FC<any> = ({
         );
 
     const render = () => (
-        <React.Fragment>
+        <>
             <CardContent>
                 {failedMessage}
                 <p className="kip-verify-notice">
@@ -258,7 +258,7 @@ const VerifyPage: React.FC<any> = ({
             </CardContent>
             <CardFooter>
                 <Button
-                    type={failed ? 'danger' : 'success'}
+                    variant={failed ? 'danger' : 'success'}
                     disabled={submitting}
                     onClick={submit}
                 >
@@ -279,7 +279,7 @@ const VerifyPage: React.FC<any> = ({
                     </Trans>
                 </Button>
             </CardFooter>
-        </React.Fragment>
+        </>
     );
     return (
         <WithLoader

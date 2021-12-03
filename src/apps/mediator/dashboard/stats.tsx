@@ -2,11 +2,10 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     BarChart,
     withActions,
-    withSettings,
     Message,
     WithLoader,
     Card,
@@ -18,6 +17,7 @@ import SummaryBox from './summary-box';
 import { Trans } from '@lingui/macro';
 import { i18n } from '@lingui/core';
 import './stats.scss';
+import settings from 'helpers/settings';
 
 export const todayPlusN = (n) => {
     const d = new Date();
@@ -85,7 +85,7 @@ const timeOpts = { hour: 'numeric' };
 const dateOpts = { month: 'numeric', year: 'numeric', day: 'numeric' };
 const opts = { ...timeOpts, ...dateOpts };
 
-const prepareHourlyStats = (hourlyStats, settings) => {
+const prepareHourlyStats = (hourlyStats) => {
     const { data } = hourlyStats;
     const mnd = minDate(data);
     const mxd = maxDate(data);
@@ -160,111 +160,103 @@ const prepareHourlyStats = (hourlyStats, settings) => {
     };
 };
 
-class Stats extends React.Component {
-    constructor(props) {
-        super(props);
-        this.fetchStatistics();
-    }
+const fetchStatistics = ({ getStatsAction }) => {
+    const params = {
+        filter: { zipCode: null },
+        id: 'queues',
+        type: 'hour',
+        from: todayPlusN(-1).toISOString(),
+        to: todayPlusN(1).toISOString(),
+    };
+    getStatsAction(params);
+};
 
-    fetchStatistics() {
-        const { getStatsAction } = this.props;
-        const params = {
-            filter: { zipCode: null },
-            id: 'queues',
-            type: 'hour',
-            from: todayPlusN(-1).toISOString(),
-            to: todayPlusN(1).toISOString(),
-        };
-        getStatsAction(params);
-    }
+const renderLoaded = ({ getStats }) => {
+    const summary = prepareOverallStats(getStats);
 
-    renderLoaded = () => {
-        const { getStats, settings } = this.props;
-        const summary = prepareOverallStats(getStats);
-        let content;
-        if (summary.show === 0) {
-            content = (
-                <div className="bulma-column bulma-is-fullwidth-desktop">
-                    <Card size="fullwidth">
-                        <Message type="warning">
-                            <Trans id="noData" />
-                        </Message>
+    let content;
+
+    if (summary.show === 0) {
+        content = (
+            <div className="bulma-column bulma-is-fullwidth-desktop">
+                <Card size="fullwidth">
+                    <Message variant="warning">
+                        <Trans id="noData" />
+                    </Message>
+                </Card>
+            </div>
+        );
+    } else {
+        content = (
+            <>
+                <div className="bulma-column bulma-is-full-desktop">
+                    <Card size="fullwidth" flex>
+                        <CardContent>
+                            <Trans id="dateSpan">
+                                Zeige Daten von{' '}
+                                <strong>
+                                    {new Date(summary.from).toLocaleString(
+                                        'en-US',
+                                        opts
+                                    )}
+                                </strong>{' '}
+                                bis{' '}
+                                <strong>
+                                    {new Date(summary.to).toLocaleString(
+                                        'en-US',
+                                        opts
+                                    )}
+                                </strong>
+                                .
+                            </Trans>
+                        </CardContent>
                     </Card>
                 </div>
-            );
-        } else {
-            content = (
-                <React.Fragment>
-                    <div className="bulma-column bulma-is-full-desktop">
-                        <Card size="fullwidth" flex>
-                            <CardContent>
-                                <Trans id="dateSpan">
-                                    Zeige Daten von{' '}
-                                    <strong>
-                                        {new Date(summary.from).toLocaleString(
-                                            'en-US',
-                                            opts
-                                        )}
-                                    </strong>{' '}
-                                    bis{' '}
-                                    <strong>
-                                        {new Date(summary.to).toLocaleString(
-                                            'en-US',
-                                            opts
-                                        )}
-                                    </strong>
-                                    .
-                                </Trans>
-                            </CardContent>
-                        </Card>
-                    </div>
-                    <div className="bulma-column bulma-is-one-quarter-desktop">
-                        <SummaryBox
-                            open={summary.open}
-                            booked={summary.booked}
-                            active={summary.active}
-                        />
-                    </div>
-                    <div className="bulma-column bulma-is-three-quarters-desktop bulma-is-flex">
-                        <Card size="fullwidth" flex>
-                            <CardHeader>
-                                <h2>
-                                    <Trans id="bookingRate" />
-                                </h2>
-                            </CardHeader>
-                            <CardContent className="kip-cm-overview">
-                                <BarChart
-                                    hash={getStats.hash}
-                                    data={prepareHourlyStats(
-                                        getStats,
-                                        settings
-                                    )}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </React.Fragment>
-            );
-        }
-        return (
-            <CardContent>
-                <div className="bulma-columns bulma-is-multiline bulma-is-desktop">
-                    {content}
+                <div className="bulma-column bulma-is-one-quarter-desktop">
+                    <SummaryBox
+                        open={summary.open}
+                        booked={summary.booked}
+                        active={summary.active}
+                    />
                 </div>
-            </CardContent>
-        );
-    };
-
-    render() {
-        const { getStats } = this.props;
-
-        return (
-            <WithLoader
-                resources={[getStats]}
-                renderLoaded={this.renderLoaded}
-            />
+                <div className="bulma-column bulma-is-three-quarters-desktop bulma-is-flex">
+                    <Card size="fullwidth" flex>
+                        <CardHeader>
+                            <h2>
+                                <Trans id="bookingRate" />
+                            </h2>
+                        </CardHeader>
+                        <CardContent className="kip-cm-overview">
+                            <BarChart
+                                hash={getStats.hash}
+                                data={prepareHourlyStats(getStats)}
+                            />
+                        </CardContent>
+                    </Card>
+                </div>
+            </>
         );
     }
-}
+    return (
+        <CardContent>
+            <div className="bulma-columns bulma-is-multiline bulma-is-desktop">
+                {content}
+            </div>
+        </CardContent>
+    );
+};
 
-export default withActions(withSettings(Stats), [getStats], []);
+const Stats: React.FC<any> = ({ getStats }) => {
+    useEffect(() => {
+        fetchStatistics(getStats);
+    }, [getStats]);
+
+    return (
+        <WithLoader
+            resources={[getStats]}
+            renderLoaded={() => renderLoaded(getStats)}
+        />
+    );
+};
+
+export default withActions(Stats, [getStats], []);

@@ -217,21 +217,20 @@ const BaseProviderData: React.FC<any> = ({
                                     !formState.isValid ||
                                     (embedded && formState.isDirty)
                                 }
-                                type="success"
-                                htmlType="submit"
+                                variant="success"
+                                type="submit"
                                 waiting={formState.isSubmitting}
-                                title={
-                                    formState.isSubmitting ? (
-                                        <Trans id="provider-data.saving">
-                                            Speichere...
-                                        </Trans>
-                                    ) : (
-                                        <Trans id="provider-data.save-and-continue">
-                                            Weiter
-                                        </Trans>
-                                    )
-                                }
-                            />
+                            >
+                                {formState.isSubmitting ? (
+                                    <Trans id="provider-data.saving">
+                                        Speichere...
+                                    </Trans>
+                                ) : (
+                                    <Trans id="provider-data.save-and-continue">
+                                        Weiter
+                                    </Trans>
+                                )}
+                            </SubmitField>
                         </CardFooter>
                     </form>
                 </FormProvider>

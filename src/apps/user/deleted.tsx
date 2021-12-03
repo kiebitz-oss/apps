@@ -5,10 +5,10 @@
 import React from 'react';
 import { Message, CenteredCard, CardHeader } from 'components';
 import { Trans } from '@lingui/macro';
-import { useSettings } from 'hooks';
+import { useServiceName } from 'hooks/useServiceName';
 
 const DeletedPage: React.FC = () => {
-    const settings = useSettings();
+    const serviceName = useServiceName();
 
     return (
         <CenteredCard className="kip-deleted">
@@ -17,11 +17,12 @@ const DeletedPage: React.FC = () => {
                     <Trans id="data-deleted">Daten erfolgreich gelöscht</Trans>
                 </h1>
             </CardHeader>
-            <Message type="success">
+
+            <Message variant="success">
                 <Trans id="thanks-for-using-us">
                     Deine Daten wurden erfolgreich gelöscht. Vielen Dank, dass
-                    Du <strong key="service">{settings.get('title')}</strong>{' '}
-                    genutzt hast!
+                    Du <strong key="service">{serviceName}</strong> genutzt
+                    hast!
                 </Trans>
             </Message>
         </CenteredCard>

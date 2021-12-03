@@ -6,16 +6,16 @@ import React from 'react';
 import { contactData } from 'apps/user/actions';
 import {
     withActions,
-    RetractingLabelInput,
     CardFooter,
     CardContent,
-    SubmitField,
+    InputField,
+    Button,
 } from 'components';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { t, Trans } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import './contact-data.scss';
+// import './contact-data.scss';
 
 interface FormData {
     code: string;
@@ -30,8 +30,8 @@ const ContactDataBase: React.FC<any> = ({ contactDataAction }) => {
         contactDataAction().then((ct: any) => reset(ct.data));
     });
 
-    const onSubmit: SubmitHandler<FormData> = (data) => {
-        contactDataAction(data);
+    const onSubmit: SubmitHandler<FormData> = async (data) => {
+        const result = await contactDataAction(data);
 
         // we redirect to the 'verify' step
         navigate(`/user/setup/finalize`);
@@ -44,7 +44,8 @@ const ContactDataBase: React.FC<any> = ({ contactDataAction }) => {
             onSubmit={handleSubmit(onSubmit)}
         >
             <CardContent>
-                <RetractingLabelInput
+                <InputField
+                    {...register('code')}
                     label={t({
                         id: 'contact-data.access-code.label',
                         message: 'Zugangscode',
@@ -54,26 +55,24 @@ const ContactDataBase: React.FC<any> = ({ contactDataAction }) => {
                         message:
                             'Zugangscodes sind nur für bestimmte Impfstellen notwendig. Wenn kein Zugangscode vorliegt, leer lassen.',
                     })}
-                    {...register('code')}
                 />
             </CardContent>
 
             <CardFooter>
-                <SubmitField
+                <Button
+                    type="submit"
+                    variant="success"
                     disabled={!formState.isValid}
-                    type={'success'}
-                    onClick={onSubmit}
                     waiting={formState.isSubmitting}
-                    title={
-                        formState.isSubmitting ? (
-                            <Trans id="contact-data.saving">Speichere...</Trans>
-                        ) : (
-                            <Trans id="contact-data.save-and-continue">
-                                Weiter
-                            </Trans>
-                        )
-                    }
-                />
+                >
+                    {formState.isSubmitting ? (
+                        <Trans id="contact-data.saving">Speichere...</Trans>
+                    ) : (
+                        <Trans id="contact-data.save-and-continue">
+                            Weiter
+                        </Trans>
+                    )}
+                </Button>
             </CardFooter>
         </form>
     );

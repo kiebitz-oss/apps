@@ -15,7 +15,7 @@ const BaseDefaultErrorMessage = () => {
 
     return (
         <CenteredCard>
-            <Message type="danger">
+            <Message variant="danger">
                 <Trans id="errorBoundary.somethingWentWrong">
                     Es tut uns schrecklich leid aber es ist ein unerwarteter
                     Fehler passiert. Bitte

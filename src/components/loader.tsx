@@ -13,20 +13,20 @@ type Resource = {
 
 export const LoadingIndicator = () => (
     <div className="kip-loading-indicator">
-        <Message waiting type="info">
+        <Message waiting variant="info">
             <Trans id="loader.updating">Aktualisiere Daten...</Trans>
         </Message>
     </div>
 );
 
 export const RenderWait = () => (
-    <Message waiting type="info">
+    <Message waiting variant="info">
         <Trans id="loader.please-wait">Bitte warten, lade Daten...</Trans>
     </Message>
 );
 
 export const RenderFailed = () => (
-    <Message type="danger">
+    <Message variant="danger">
         <Trans id="loader.failed">
             Das Laden von Ressourcen ist leider fehlgeschlagen.
         </Trans>
@@ -77,7 +77,7 @@ type WithLoaderProps = {
 
 interface WithLoaderState {
     showLoader: boolean;
-};
+}
 
 export class WithLoader extends Component<WithLoaderProps> {
     private mounted: boolean;
@@ -129,20 +129,29 @@ export class WithLoader extends Component<WithLoaderProps> {
     render() {
         const { resources } = this.props;
         const { showLoader } = this.state;
+
         if (isLoaded(resources)) {
             const component = this.props.renderLoaded();
             let loadingIndicator;
-            if (isUpdating(resources))
+
+            if (isUpdating(resources)) {
                 loadingIndicator = <LoadingIndicator key="loadingIndicator" />;
+            }
+
             return (
-                <React.Fragment>
+                <>
                     {loadingIndicator}
                     {component}
-                </React.Fragment>
+                </>
             );
-        } else if (isFailed(resources))
+        } else if (isFailed(resources)) {
             return this.props.renderFailed(resources);
-        if (showLoader) return this.props.renderWait();
-        return <React.Fragment />;
+        }
+
+        if (showLoader) {
+            return this.props.renderWait();
+        }
+
+        return null;
     }
 }

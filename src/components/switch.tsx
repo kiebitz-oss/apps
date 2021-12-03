@@ -6,40 +6,19 @@ import classNames from 'helpers/classnames';
 import React, { forwardRef } from 'react';
 import './switch.scss';
 
-interface SwitchProps extends React.HTMLAttributes<HTMLInputElement> {}
+type SwitchProps = React.ComponentPropsWithoutRef<'input'>;
 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
     ({ children, className, ...props }, ref) => {
         return (
-            <div>
-                <label
-                    // tabIndex="0"
-                    className={
-                        classNames('kip-switch', className)
+            <label className={classNames('kip-switch', className)}>
+                <input type="checkbox" {...props} ref={ref} />
 
-                        // + (updating ? ' kip-switch-updating' : '')
-                    }
-                    // style={{ width: textWidth + 54 + 'px' }}
-                >
-                    <input
-                        type="checkbox"
-                        {...props}
-                        ref={ref}
-                        // tabIndex="0"
-                        // role="button"
-                        // checked={checked}
-                        // onChange={(e) => {
-                        //     if (onChange !== undefined) onChange(!checked);
-                        // }}
-                    />
-                    <span className="kip-slider kip-round">
-                        <span className="kip-knob" />
-                        <span className="kip-text" /* ref={this.textRef} */>
-                            {children}
-                        </span>
-                    </span>
-                </label>
-            </div>
+                <span className="kip-slider kip-round">
+                    <span className="kip-knob" />
+                    <span className="kip-text">{children}</span>
+                </span>
+            </label>
         );
     }
 );

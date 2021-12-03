@@ -1,5 +1,10 @@
 @import 'scss/variables';
 
+input#secret {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
 .bulma-message.kip-outdated-notice {
     margin-bottom: 0 !important;
     padding-bottom: 0;
@@ -22,7 +27,6 @@
 }
 
 .kip-with-logo-wrapper {
-
     position: relative;
 
     .kip-centered-card {
@@ -58,6 +62,4 @@
             margin-top: 0.75rem;
         }
     }
-
 }
-

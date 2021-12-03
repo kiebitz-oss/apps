@@ -4,7 +4,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from 'main/app';
+import App from 'apps/App';
 import {
     Store,
     MainErrorBoundary,

@@ -1,10 +1,12 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
         "lib": ["dom", "dom.iterable", "esnext"],
-        "baseUrl": "src",
+        "module": "esnext",
+        "moduleResolution": "node",
         "target": "es5",
+        "jsx": "preserve",
+        "baseUrl": "src",
         "noImplicitAny": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -17,11 +19,9 @@
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
-        "module": "esnext",
-        "moduleResolution": "node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "jsx": "preserve",
+        "allowSyntheticDefaultImports": true,
         "incremental": true
     }
 }

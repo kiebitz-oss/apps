@@ -3,15 +3,15 @@
 // README.md contains license information.
 
 import React, { forwardRef } from 'react';
-import { Input } from './form';
+import { Input, InputProps } from './form';
 import classNames from 'helpers/classnames';
 import { useFormContext } from 'react-hook-form';
 import './retracting-label-input.scss';
 
-interface InputFieldProps extends React.HTMLAttributes<HTMLInputElement> {
+export interface InputFieldProps extends InputProps {
     name: string;
     label: string;
-    description: string;
+    description?: string;
 }
 
 /**
@@ -21,6 +21,7 @@ interface InputFieldProps extends React.HTMLAttributes<HTMLInputElement> {
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     ({ children, name, label, description, className, ...props }, ref) => {
         const formContext = useFormContext();
+        const id = props.id ? props.id : name;
 
         return (
             <div
@@ -37,7 +38,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
                 )}
 
                 <Input
-                    aria-labelledby={name + 'label'}
+                    id={id}
                     className="kip-input"
                     name={name}
                     {...props}

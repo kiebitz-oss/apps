@@ -16,9 +16,8 @@ import {
 import { restoreFromBackup } from 'apps/user/actions';
 import { t, Trans } from '@lingui/macro';
 import { Resolver, SubmitHandler, useForm } from 'react-hook-form';
-import './restore.scss';
-import { useNavigate } from 'react-router-dom';
-//import { formatSecret } from 'helpers/string';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { formatSecret } from 'helpers/string';
 
 interface FormData {
     secret: string;
@@ -48,6 +47,7 @@ const RestorePage: React.FC<any> = ({
     restoreFromBackupAction,
 }) => {
     const navigate = useNavigate();
+    const { hash } = useLocation();
 
     const onSubmit: SubmitHandler<FormData> = (data) => {
         restoreFromBackupAction(data.secret).then((data: any) => {
@@ -59,6 +59,11 @@ const RestorePage: React.FC<any> = ({
 
     const { register, handleSubmit, formState } = useForm<FormData>({
         resolver,
+        mode: 'onChange',
+        reValidateMode: 'onChange',
+        defaultValues: {
+            secret: hash.match(/#(\S*),v0\.1/i)?.[1],
+        },
     });
 
     return (
@@ -68,21 +73,23 @@ const RestorePage: React.FC<any> = ({
                     <Trans id="load-backup.title">Anmelden</Trans>
                 </h1>
             </CardHeader>
-            <CardContent>
-                {restoreFromBackup?.status === 'failed' && (
-                    <Message type="danger">
-                        <Trans id="load-backup.failed">
-                            Das Laden Deiner Daten ist leider fehlgeschlagen.
-                            Bitte prüfe Deinen Sicherheitscode.
-                        </Trans>
-                    </Message>
-                )}
 
-                <form
-                    className="kip-form"
-                    name="restore"
-                    onSubmit={handleSubmit(onSubmit)}
-                >
+            <form
+                className="kip-form"
+                name="restore"
+                onSubmit={handleSubmit(onSubmit)}
+            >
+                <CardContent>
+                    {restoreFromBackup?.status === 'failed' && (
+                        <Message variant="danger">
+                            <Trans id="load-backup.failed">
+                                Das Laden Deiner Daten ist leider
+                                fehlgeschlagen. Bitte prüfe Deinen
+                                Sicherheitscode.
+                            </Trans>
+                        </Message>
+                    )}
+
                     <RetractingLabelInput
                         label={t({
                             id: 'load-backup.secret.label',
@@ -94,20 +101,22 @@ const RestorePage: React.FC<any> = ({
                                 'Der Sicherheitscode, den Du bei der Registrierung erhalten hast.',
                         })}
                         {...register('secret', {
-                            // setValueAs: (value) => formatSecret(value || ''),
                             required: true,
+                            setValueAs: (value) => formatSecret(value || ''),
                         })}
                     />
-                </form>
-            </CardContent>
-            <CardFooter>
-                <Button
-                    type="success"
-                    disabled={!formState.isValid || formState.isSubmitting}
-                >
-                    <Trans id="load-backup.load">Anmelden</Trans>
-                </Button>
-            </CardFooter>
+                </CardContent>
+
+                <CardFooter>
+                    <Button
+                        variant="success"
+                        type="submit"
+                        disabled={!formState.isValid || formState.isSubmitting}
+                    >
+                        <Trans id="load-backup.load">Anmelden</Trans>
+                    </Button>
+                </CardFooter>
+            </form>
         </CenteredCard>
     );
 };

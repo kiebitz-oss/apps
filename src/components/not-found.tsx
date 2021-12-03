@@ -11,7 +11,7 @@ import { Trans } from '@lingui/macro';
 export const NotFound = () => {
     return (
         <CenteredCard>
-            <Message type="warning">
+            <Message variant="warning">
                 <Trans id="pageDoesNotExist">pageDoesNotExist MISSING</Trans>
             </Message>
         </CenteredCard>

@@ -105,7 +105,7 @@ const RestorePage: React.FC<any> = ({
 
                 {restoreFromBackup !== undefined &&
                     restoreFromBackup.status === 'failed' && (
-                        <Message type="danger">
+                        <Message variant="danger">
                             <Trans id="load-backup.failed">
                                 Das Laden Ihrer Daten ist leider fehlgeschlagen.
                                 Bitte prüfen Sie Ihren Datenschlüssel sowie die
@@ -172,8 +172,8 @@ const RestorePage: React.FC<any> = ({
 
             <CardFooter>
                 <Button
-                    type="success"
-                    htmlType="submit"
+                    variant="success"
+                    type="submit"
                     disabled={!formState.isValid || formState.isSubmitting}
                 >
                     <Trans id="load-backup.load">Einloggen</Trans>

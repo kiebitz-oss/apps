@@ -10,7 +10,7 @@ import './button.scss';
 interface ButtonIconProps {
     icon: string;
     brand?: boolean;
-};
+}
 
 export const ButtonIcon = ({ icon, brand = false }: ButtonIconProps) => (
     <span className="bulma-icon bulma-is-small">
@@ -20,7 +20,7 @@ export const ButtonIcon = ({ icon, brand = false }: ButtonIconProps) => (
 
 interface ButtonLogoProps {
     logo: string;
-};
+}
 
 export const ButtonLogo = ({ logo }: ButtonLogoProps) => (
     <span className="bulma-icon bulma-is-small kip-logo">
@@ -28,32 +28,35 @@ export const ButtonLogo = ({ logo }: ButtonLogoProps) => (
     </span>
 );
 
-type ButtonType = "primary" | "success" | "warning" | "danger";
+export interface ButtonProps extends React.ComponentProps<'button'> {
+    variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info';
 
-interface ButtonProps
-    extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'type'> {
-    children?: React.ReactNode;
-    type?: ButtonType;
-};
+    // BC
+    href?: string;
+    waiting?: boolean;
+    disabled?: boolean;
+}
 
 export const Button: React.FC<ButtonProps> = ({
     children,
-    type = 'primary',
+    variant = 'primary',
     className,
+    waiting,
     ...props
-}) => (
-    <button
-        className={classnames(
-            'bulma-button',
-            `bulma-is-${type}`,
-            className,
-        )}
-        onClick={onClick}
-        {...props}
-    >
-        {children}
-    </button>
-);
+}) => {
+    return (
+        <button
+            className={classnames(
+                'bulma-button',
+                `bulma-is-${variant}`,
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+};
 
 //{icon && !waiting && <ButtonIcon icon={icon} brand={brand} />}
 //{logo && !waiting && <ButtonLogo logo={logo} />}

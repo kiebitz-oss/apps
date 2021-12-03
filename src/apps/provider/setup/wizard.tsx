@@ -4,13 +4,13 @@
 
 import React, { useEffect, useRef } from 'react';
 import {
-    Button,
     withActions,
     WithLoader,
     CenteredCard,
     CardContent,
     CardFooter,
     CardNav,
+    A,
 } from 'components';
 import ProviderData from './provider-data';
 import StoreSecrets from './store-secrets';
@@ -42,7 +42,7 @@ const wizardStepsMessages = {
 
 const Hi: React.FC<any> = () => {
     return (
-        <React.Fragment>
+        <>
             <CardContent>
                 <p>
                     <Trans id="wizard.hi">
@@ -52,14 +52,15 @@ const Hi: React.FC<any> = () => {
                 </p>
             </CardContent>
             <CardFooter>
-                <Button
-                    type="success"
+                <A
+                    variant="success"
+                    type="button"
                     href={`/provider/setup/enter-provider-data`}
                 >
                     <Trans id="wizard.continue">Weiter</Trans>
-                </Button>
+                </A>
             </CardFooter>
-        </React.Fragment>
+        </>
     );
 };
 
@@ -143,9 +144,7 @@ const Wizard: React.FC<any> = ({ page, status }) => {
                 break;
         }
 
-        return (
-            <React.Fragment>{Array.from(components.values())}</React.Fragment>
-        );
+        return <>{Array.from(components.values())}</>;
     };
 
     return (

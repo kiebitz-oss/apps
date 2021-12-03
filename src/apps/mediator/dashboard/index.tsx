@@ -32,7 +32,11 @@ const UploadKeyPairsModal: React.FC<any> = ({ keyPairsAction }) => {
             const reader = new FileReader();
 
             reader.onload = function (e) {
-                if (e.target && e.target.result && typeof(e.target.result) === 'string') {
+                if (
+                    e.target &&
+                    e.target.result &&
+                    typeof e.target.result === 'string'
+                ) {
                     const json = JSON.parse(e.target.result);
                     if (
                         json.signing === undefined ||
@@ -54,7 +58,7 @@ const UploadKeyPairsModal: React.FC<any> = ({ keyPairsAction }) => {
 
     if (invalidFile)
         notice = (
-            <Message type="danger">
+            <Message variant="danger">
                 <Trans id="upload-key-pairs.invalid-file">
                     Die von Ihnen gewählte Datei ist ungültig.
                 </Trans>

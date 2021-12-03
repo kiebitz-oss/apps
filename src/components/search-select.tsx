@@ -2,12 +2,28 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import { RetractingLabelInput } from './retracting-label-input';
 import './search-select.scss';
 import { Trans } from '@lingui/macro';
 
-export const SearchSelect = ({
+interface SearchSelectOption {
+    name: string;
+    value: string;
+    description: string;
+}
+
+interface SearchSelectProps {
+    search: string;
+    disabled: boolean;
+    label: string;
+    description: string;
+    onSelect: MouseEventHandler;
+    setSearch: any;
+    candidates: SearchSelectOption[];
+}
+
+export const SearchSelect: React.FC<SearchSelectProps> = ({
     search,
     disabled,
     label,

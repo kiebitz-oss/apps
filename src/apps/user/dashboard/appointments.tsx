@@ -46,7 +46,7 @@ const ProviderDetails: React.FC<any> = ({ data }) => {
                 )}
             </ul>
             {data.json.description && (
-                <Message type="info">{data.json.description}</Message>
+                <Message variant="info">{data.json.description}</Message>
             )}
         </div>
     );
@@ -109,7 +109,7 @@ const InvitationDeletedBase: React.FC<any> = ({
 }) => {
     return (
         <>
-            <Message type="danger">
+            <Message variant="danger">
                 <Trans id="invitation-accepted.deleted">
                     Der Termin wurde vom Arzt gelöscht. Sorry! Du kannst zurück
                     zur Terminvergabe gehen, um neue Terminvorschläge zu
@@ -118,7 +118,7 @@ const InvitationDeletedBase: React.FC<any> = ({
             </Message>
             <CardFooter>
                 <Button
-                    type="warning"
+                    variant="warning"
                     onClick={() =>
                         confirmDeletionAction().then(acceptedInvitationAction)
                     }
@@ -131,6 +131,7 @@ const InvitationDeletedBase: React.FC<any> = ({
         </>
     );
 };
+
 const InvitationDeleted = withActions(InvitationDeletedBase, [
     confirmDeletion,
     acceptedInvitation,
@@ -181,7 +182,7 @@ const AcceptedInvitationBase: React.FC<any> = ({
     if (changed)
         notice = (
             <>
-                <Message type="danger">
+                <Message variant="danger">
                     <Trans id="invitation-accepted.changed">
                         Details Deines Termins haben sich geändert!
                     </Trans>
@@ -249,7 +250,7 @@ const AcceptedInvitationBase: React.FC<any> = ({
                 </div>
             </CardContent>
             <CardFooter>
-                <Button type="warning" onClick={() => setShowDelete(true)}>
+                <Button variant="warning" onClick={() => setShowDelete(true)}>
                     <Trans id="cancel-appointment">Termin absagen</Trans>
                 </Button>
             </CardFooter>
@@ -280,7 +281,7 @@ const NoInvitations: React.FC<any> = ({ tokenData }) => {
     ) {
         content = (
             <>
-                <Message type="success">
+                <Message variant="success">
                     <Trans id="no-invitations.please-wait">
                         Deine Daten wurden im System gespeichert. Falls Termine
                         in deiner Nähe verfügbar sind, werden diese in wenigen
@@ -292,7 +293,7 @@ const NoInvitations: React.FC<any> = ({ tokenData }) => {
     } else {
         content = (
             <>
-                <Message type="warning">
+                <Message variant="warning">
                     <Trans id="no-invitations.notice">
                         Im Moment sind scheinbar keine Termine in Deiner
                         Umgebung verfügbar, oder leider bereits ausgebucht.
@@ -309,7 +310,7 @@ const NoInvitations: React.FC<any> = ({ tokenData }) => {
             <CardContent>
                 <div className="kip-no-invitations">{content}</div>
             </CardContent>
-            <Message type="info">
+            <Message variant="info">
                 <ButtonIcon icon="circle-notch fa-spin" /> &nbsp;
                 <Trans id="no-invitations.update-notice">
                     Diese Seite wird automatisch aktualisiert...
@@ -319,7 +320,13 @@ const NoInvitations: React.FC<any> = ({ tokenData }) => {
     );
 };
 
-async function toggleOffers(state: any, _keyStore: any, _settings: any, offer: any, offers: any) {
+async function toggleOffers(
+    state: any,
+    _keyStore: any,
+    _settings: any,
+    offer: any,
+    offers: any
+) {
     if (offer === null) return { data: [] };
     if (state.data.find((i: any) => i === offer.id) !== undefined) {
         state.data = state.data.filter((i: any) => i !== offer.id);
@@ -389,7 +396,9 @@ const InvitationDetailsBase: React.FC<any> = ({
         const selectedOffers = [];
         // we add the selected offers in the order the user chose
         for (const offerID of toggleOffers.data) {
-            const offer = data.offers.find((offer: any) => offer.id === offerID);
+            const offer = data.offers.find(
+                (offer: any) => offer.id === offerID
+            );
             selectedOffers.push(offer);
         }
         setConfirming(true);
@@ -407,7 +416,11 @@ const InvitationDetailsBase: React.FC<any> = ({
     const offers = data.offers
         .filter((offer: any) => offer.slotData.some((sl: any) => sl.open))
         .filter((a: any) => new Date(a.timestamp) > new Date())
-        .sort((a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+        .sort(
+            (a: any, b: any) =>
+                new Date(a.timestamp).getTime() -
+                new Date(b.timestamp).getTime()
+        )
         .map((offer: any) => {
             const d = new Date(offer.timestamp);
             const selected = toggleOffers.data.includes(offer.id);
@@ -444,7 +457,7 @@ const InvitationDetailsBase: React.FC<any> = ({
 
     if (offers.length === 0)
         offerDetails = (
-            <Message type="warning">
+            <Message variant="warning">
                 <Trans id="no-offers-anymore">
                     Alle Terminangebote sind bereits abgelaufen. Bitte hab'
                     etwas Geduld, du wirst voraussichtlich neue Angebote
@@ -494,8 +507,8 @@ const InvitationDetailsBase: React.FC<any> = ({
             </CardContent>
             <CardFooter>
                 <Button
-                    waiting={confirming}
                     onClick={doConfirmOffers}
+                    waiting={confirming}
                     disabled={
                         confirming ||
                         Object.keys(
@@ -504,7 +517,7 @@ const InvitationDetailsBase: React.FC<any> = ({
                             )
                         ).length === 0
                     }
-                    type="success"
+                    variant="success"
                 >
                     <Trans id="confirm-appointment">
                         Terminauswahl bestätigen
@@ -586,9 +599,7 @@ const AppointmentsPage: React.FC<any> = ({
         }
 
         // we only show relevant invitations
-        invitations = invitations.filter((inv) =>
-            filterInvitations(inv)
-        );
+        invitations = invitations.filter((inv) => filterInvitations(inv));
 
         if (invitations.length === 0)
             return <NoInvitations tokenData={tokenData.data} />;

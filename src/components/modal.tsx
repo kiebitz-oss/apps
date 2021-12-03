@@ -67,7 +67,7 @@ export class Modal extends React.Component {
                             <p className="bulma-modal-card-title">{title}</p>
                             {onClose && (
                                 <Button
-                                    type="info"
+                                    variant="info"
                                     aria-label="Close modal"
                                     className="bulma-delete"
                                     data-test-id="modal-close"
@@ -84,7 +84,7 @@ export class Modal extends React.Component {
                             {footer}
                             {onSave && (
                                 <Button
-                                    type={saveType}
+                                    variant={saveType}
                                     data-test-id="modal-save"
                                     waiting={waiting}
                                     disabled={saveDisabled || disabled}
@@ -99,7 +99,6 @@ export class Modal extends React.Component {
                             )}
                             {onCancel && (
                                 <Button
-                                    type=""
                                     disabled={cancelDisabled || disabled}
                                     onClick={() =>
                                         !cancelDisabled &&

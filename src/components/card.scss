@@ -22,7 +22,6 @@
         &.kip-card-no-padding {
             padding: 0;
         }
-
     }
 
     .bulma-message {
@@ -33,9 +32,7 @@
         }
     }
 
-
     &.kip-is-centered {
-
         margin-top: map-get($kip-space, lg);
 
         @media (min-width: $kip-tablet) {
@@ -73,7 +70,6 @@
     }
 
     &.kip-is-lg {
-
         width: 100%;
 
         @media (min-width: $kip-tablet) {
@@ -138,7 +134,6 @@
     }
 
     .kip-card-header {
-
         @include font-oxanium;
 
         position: relative;
@@ -162,7 +157,6 @@
         }
 
         .kip-card-icon {
-
             display: none;
 
             @media (min-width: $kip-tablet) {
@@ -221,7 +215,6 @@
                     border-bottom-right-radius: $kip-border-radius;
                 }
             }
-
         }
 
         .kip-card-main-content {
@@ -244,18 +237,16 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;
+    margin: 0 auto;
 
     @media (min-width: $kip-desktop) {
         padding: 64px;
     }
 
     &:not(.kip-is-embedded) {
-        @include kip-gradient('to top');
-
         &.kip-is-fullheight {
             min-height: 100vh;
         }
-
     }
 
     h2.kip-title {

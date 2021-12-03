@@ -10,6 +10,6 @@ type IconProps = {
     iconClasses?: string;
 };
 
-export const Icon = ({ icon, iconClasses }: IconProps) => (
+export const Icon: React.FC<IconProps> = ({ icon, iconClasses }) => (
     <i className={classnames('fas', `fa-${icon}`, iconClasses)} />
 );

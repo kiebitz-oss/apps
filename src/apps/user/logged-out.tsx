@@ -9,7 +9,7 @@ import {
     CardHeader,
     CardContent,
     CardFooter,
-    Button,
+    A,
 } from 'components';
 import { Trans } from '@lingui/macro';
 
@@ -20,8 +20,9 @@ const LoggedOutPage: React.FC = () => (
                 <Trans id="logged-out.title">Erfolgreich abgemeldet.</Trans>
             </h1>
         </CardHeader>
+
         <CardContent>
-            <Message type="success">
+            <Message variant="success">
                 <Trans id="logged-out.notice">
                     Du wurdest erfolgreich abgemeldet. Du kannst dich jederzeit
                     wieder mit deinem Sicherheitscode anmelden um deine Termine
@@ -29,10 +30,11 @@ const LoggedOutPage: React.FC = () => (
                 </Trans>
             </Message>
         </CardContent>
+
         <CardFooter>
-            <Button href="/user/restore">
+            <A type="button" href="/user/restore">
                 <Trans id="logged-out.log-in-again">Anmelden</Trans>
-            </Button>
+            </A>
         </CardFooter>
     </CenteredCard>
 );

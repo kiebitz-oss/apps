@@ -153,7 +153,7 @@ export function withActions(Component, actionNames, keyList, noStore) {
                                 ) {
                                     store.set(key, result);
                                     // we always return a promise
-                                    return new Promise((resolve, reject) => {
+                                    return new Promise((resolve) => {
                                         resolve(result);
                                     });
                                 }
@@ -246,7 +246,6 @@ export function withActions(Component, actionNames, keyList, noStore) {
                     {...(this._state || this.state)}
                     {...this.actionProviders}
                     store={this.props.store}
-                    _original={this.props}
                 />
             );
         }

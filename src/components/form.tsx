@@ -7,8 +7,9 @@ import React, { forwardRef } from 'react';
 import classnames from 'helpers/classnames';
 import { Button } from './button';
 import './form.scss';
+import { ButtonProps } from 'components';
 
-type InputProps = React.HTMLAttributes<HTMLInputElement>;
+export type InputProps = React.ComponentPropsWithoutRef<'input'>;
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
     ({ className, ...props }, ref) => {
@@ -24,7 +25,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = 'Input';
 
-type TextAreaProps = React.HTMLAttributes<HTMLTextAreaElement>;
+type TextAreaProps = React.ComponentPropsWithoutRef<'textarea'>;
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     ({ className, ...props }, ref) => {
@@ -40,7 +41,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
 TextArea.displayName = 'TextArea';
 
-interface SubmitFieldProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface SubmitFieldProps extends ButtonProps {
     title?: string;
 }
 
@@ -54,7 +55,7 @@ export const SubmitField: React.FC<SubmitFieldProps> = ({
         <div className={classnames('bulma-control', className)}>
             <Button
                 className="bulma-button bulma-is-primary"
-                htmlType="submit"
+                type="submit"
                 {...props}
             >
                 {children}

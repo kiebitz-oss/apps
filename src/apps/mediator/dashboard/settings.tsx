@@ -10,7 +10,7 @@ import {
     Modal,
     CardFooter,
     CardContent,
-    Button,
+    A,
 } from 'components';
 import { Trans } from '@lingui/macro';
 import './settings.scss';
@@ -36,7 +36,7 @@ const TestQueuesModalBase: React.FC<any> = ({
         const reader = new FileReader();
 
         reader.onload = function (e) {
-            const json = JSON.parse(e.target.result);
+            const json = JSON.parse(e.target?.result?.toString() || '');
             testQueuesAction(keyPairs, json);
         };
 
@@ -49,7 +49,7 @@ const TestQueuesModalBase: React.FC<any> = ({
 
     if (status === 'invalid')
         notice = (
-            <Message type="danger">
+            <Message variant="danger">
                 <Trans id="upload-queues.invalid-file">
                     Die erzeugten Queue-Schlüssel sind nicht korrekt und können
                     mit Ihrem Vermittler-Schlüssel nicht entschlüsselt werden.
@@ -58,7 +58,7 @@ const TestQueuesModalBase: React.FC<any> = ({
         );
     else if (status === 'valid')
         notice = (
-            <Message type="success">
+            <Message variant="success">
                 <Trans id="upload-queues.valid-file">
                     Die erzeugten Queue-Schlüssel sind korrekt und können mit
                     Ihrem Vermittler-Schlüssel entschlüsselt werden.
@@ -173,20 +173,25 @@ const BaseSettings: React.FC<any> = ({ keyPairs, keyPairsAction, action }) => {
                         </Trans>
                     </p>
                     <div className="kip-buttons">
-                        <Button
-                            type="success"
+                        <A
+                            type="button"
+                            variant="success"
                             href="/mediator/settings/test-queues"
                         >
                             <Trans id="test-queues.button">Testen</Trans>
-                        </Button>
+                        </A>
                     </div>
                 </div>
             </CardContent>
             <CardFooter>
                 <div className="kip-buttons">
-                    <Button type="warning" href="/mediator/settings/logout">
+                    <A
+                        variant="warning"
+                        type="button"
+                        href="/mediator/settings/logout"
+                    >
                         <Trans id="log-out">Abmelden</Trans>
-                    </Button>
+                    </A>
                 </div>
             </CardFooter>
         </>

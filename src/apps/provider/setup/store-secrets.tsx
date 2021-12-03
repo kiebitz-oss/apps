@@ -11,6 +11,7 @@ import {
     CardContent,
     CardFooter,
     Button,
+    A,
 } from 'components';
 import { providerSecret, providerData, keyPairs, backupData } from '../actions';
 import { Trans } from '@lingui/macro';
@@ -42,7 +43,7 @@ export const DataSecret: React.FC<any> = ({ secret, embedded, hideNotice }) => {
     };
 
     return (
-        <React.Fragment>
+        <>
             {!embedded && (
                 <p className="kip-secrets-notice">
                     <Trans id="store-secrets.online.text" safe>
@@ -59,7 +60,7 @@ export const DataSecret: React.FC<any> = ({ secret, embedded, hideNotice }) => {
                 }
             >
                 {
-                    <React.Fragment>
+                    <>
                         <div className="kip-uid">
                             {!hideNotice && (
                                 <span>
@@ -70,13 +71,13 @@ export const DataSecret: React.FC<any> = ({ secret, embedded, hideNotice }) => {
                             )}
                             <code>{fragments}</code>
                         </div>
-                    </React.Fragment>
+                    </>
                 }
             </div>
             {!embedded && (
                 <div className="kip-secrets-links">
                     <Button
-                        type={failed ? 'danger' : succeeded ? '' : 'primary'}
+                        variant={failed ? 'danger' : 'primary'}
                         disabled={failed}
                         className="bulma-button bulma-is-small"
                         onClick={copy}
@@ -99,7 +100,7 @@ export const DataSecret: React.FC<any> = ({ secret, embedded, hideNotice }) => {
                     </Button>
                 </div>
             )}
-        </React.Fragment>
+        </>
     );
 };
 
@@ -167,12 +168,12 @@ const BackupDataLinkBase: React.FC<any> = ({
 
     if (blob !== undefined)
         return (
-            <a
+            <A
                 onClick={onSuccess}
-                className="bulma-button bulma-is-success"
+                type="button"
                 download={filename}
                 href={URL.createObjectURL(blob)}
-                type="success"
+                variant="success"
             >
                 {downloadText || (
                     <Trans id="wizard.download-backup-data">
@@ -180,7 +181,7 @@ const BackupDataLinkBase: React.FC<any> = ({
                         notieren
                     </Trans>
                 )}
-            </a>
+            </A>
         );
 
     return (
@@ -239,7 +240,7 @@ const StoreSecretsPage: React.FC<any> = ({ providerSecret, status }) => {
         );
 
     return (
-        <React.Fragment>
+        <>
             {modal}
             <CardContent className="kip-secrets">
                 <p>
@@ -256,7 +257,7 @@ const StoreSecretsPage: React.FC<any> = ({ providerSecret, status }) => {
             <CardFooter>
                 <BackupDataLink onSuccess={showSecrets} />
             </CardFooter>
-        </React.Fragment>
+        </>
     );
 };
 

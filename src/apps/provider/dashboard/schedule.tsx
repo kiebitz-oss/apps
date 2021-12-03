@@ -23,6 +23,7 @@ import {
     RichSelect,
     Icon,
     Button,
+    A,
 } from 'components';
 import {
     keys,
@@ -139,7 +140,7 @@ const AppointmentOverviewBase: React.FC<any> = ({
                         Terminübersicht
                     </Trans>
                     <Button
-                        type="info"
+                        variant="info"
                         aria-label="Close modal"
                         className="bulma-delete"
                         data-test-id="modal-close"
@@ -183,7 +184,7 @@ const AppointmentOverviewBase: React.FC<any> = ({
                             </ul>
                         </>
                     )) || (
-                        <Message type="info">
+                        <Message variant="info">
                             <Trans id="appointment-overview.details.no-booked-slots">
                                 Keine gebuchten Slots bisher. Sobald Buchungen
                                 vorhanden sind werden hier die Buchungscodes
@@ -193,16 +194,20 @@ const AppointmentOverviewBase: React.FC<any> = ({
                     )}
                 </CardContent>
                 <CardFooter>
-                    <Button
-                        type="warning"
+                    <A
+                        type="button"
+                        variant="success"
                         href={`/provider/schedule/${action}/edit/${hexId}`}
                     >
                         <Trans id="appointment-overview.edit.button">
                             Bearbeiten
                         </Trans>
-                    </Button>
+                    </A>
                     &nbsp;
-                    <Button type="danger" onClick={() => setShowDelete(true)}>
+                    <Button
+                        variant="danger"
+                        onClick={() => setShowDelete(true)}
+                    >
                         <Trans id="appointment-overview.delete.button">
                             Löschen bestätigen
                         </Trans>
@@ -582,10 +587,10 @@ const WeekCalendar: React.FC<any> = ({
     return (
         <>
             <div className="kip-schedule-navigation">
-                <Button className="kip-backward" type="" onClick={goBackward}>
+                <Button className="kip-backward" onClick={goBackward}>
                     <Trans id="schedule.backward">vorherige Woche</Trans>
                 </Button>
-                <Button className="kip-forward" type="" onClick={goForward}>
+                <Button className="kip-forward" onClick={goForward}>
                     <Trans id="schedule.forward">nächste Woche</Trans>
                 </Button>
             </div>
@@ -637,7 +642,7 @@ const AppointmentItem: React.FC<any> = ({ appointment }) => {
                     <ul className="kip-booking-codes">{acceptedItems}</ul>
                 </>
             )) || (
-                <Message type="info">
+                <Message variant="info">
                     <Trans id="appointment-overview.details.no-booked-slots">
                         Keine gebuchten Slots bisher. Sobald Buchungen vorhanden
                         sind werden hier die Buchungscodes angezeigt.
@@ -1044,11 +1049,14 @@ const InvitationsPage: React.FC<any> = ({
                 <CardContent>
                     <div className="kip-non-printable">
                         {newAppointmentModal}
-                        <Button href={`/provider/schedule/${dateString}/new`}>
+                        <A
+                            variant="link"
+                            href={`/provider/schedule/${dateString}/new`}
+                        >
                             <Trans id="schedule.appointment.add">
                                 Termin erstellen
                             </Trans>
-                        </Button>
+                        </A>
                         &nbsp;
                         <DropdownMenu
                             title={
@@ -1079,7 +1087,7 @@ const InvitationsPage: React.FC<any> = ({
                     </div>
                     {content}
                 </CardContent>
-                <Message type="info" waiting>
+                <Message variant="info" waiting>
                     <Trans id="schedule.updating">
                         Ansicht wird automatisch aktualisiert. Letzte
                         Aktualisierung: {lastUpdated}

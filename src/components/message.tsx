@@ -2,39 +2,34 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { ReactChild } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { ButtonIcon } from './button';
 import classnames from 'helpers/classnames';
 import './message.scss';
 
-type MessageProps = {
-    children: ReactChild | ReactChild[];
-    type: string;
-    className?: string;
-};
+interface MessageProps extends React.ComponentProps<'div'> {
+    variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info';
+    waiting?: boolean;
+}
 
-export const Message = ({
+export const Message: React.FC<MessageProps> = ({
     children,
     className,
     waiting,
-    type,
-}: MessageProps) => (
-    <div className={classnames(className, 'bulma-message', `bulma-is-${type}`)}>
+    variant,
+    ...props
+}) => (
+    <div
+        className={classnames(
+            className,
+            'bulma-message',
+            `bulma-is-${variant}`
+        )}
+        {...props}
+    >
         <div className="bulma-message-body">
-            {waiting && (
-                <React.Fragment>
-                    <ButtonIcon icon="circle-notch fa-spin" />
-                    &nbsp;
-                </React.Fragment>
-            )}
+            {waiting && <ButtonIcon icon="circle-notch fa-spin" />}
             {children}
         </div>
     </div>
 );
-
-Message.propTypes = {
-    children: PropTypes.node.isRequired,
-    waiting: PropTypes.bool,
-    type: PropTypes.oneOf(['info', 'success', 'danger', 'primary', 'warning']),
-};

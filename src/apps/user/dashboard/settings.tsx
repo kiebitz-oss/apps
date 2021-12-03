@@ -3,17 +3,10 @@
 // README.md contains license information.
 
 import React, { useState } from 'react';
-import { StoreOnline } from 'apps/user/setup/store-secrets';
+import { StoreOnline } from 'apps/user/setup/StepStoreSecrets';
 import { userSecret, backupData } from 'apps/user/actions';
 import { Trans } from '@lingui/macro';
-
-import {
-    withActions,
-    Modal,
-    CardContent,
-    CardFooter,
-    Button,
-} from 'components';
+import { withActions, Modal, CardContent, CardFooter, A } from 'components';
 import { useNavigate } from 'react-router-dom';
 import { useBackend } from 'hooks';
 import './settings.scss';
@@ -83,26 +76,25 @@ const SettingsPage: React.FC<any> = ({
 
     return (
         <>
-            <CardContent>
-                <div className="kip-user-settings">
-                    {logOutModal}
-                    <h2>
-                        <Trans id="user-data.title">Deine Daten</Trans>
-                    </h2>
-                    <p>
-                        <Trans id="user-data.notice">
-                            Du kannst Dich hier abmelden oder Deine Daten
-                            endgültig löschen
-                        </Trans>
-                    </p>
-                </div>
+            {logOutModal}
+
+            <CardContent className="kip-user-settings">
+                <h2>
+                    <Trans id="user-data.title">Deine Daten</Trans>
+                </h2>
+
+                <p>
+                    <Trans id="user-data.notice">
+                        Du kannst Dich hier abmelden oder Deine Daten endgültig
+                        löschen
+                    </Trans>
+                </p>
             </CardContent>
-            <CardFooter>
-                <div className="kip-buttons">
-                    <Button type="warning" href="/user/settings/logout">
-                        <Trans id="log-out">Abmelden</Trans>
-                    </Button>
-                </div>
+
+            <CardFooter className="kip-buttons">
+                <A type="button" variant="warning" href="/user/settings/logout">
+                    <Trans id="log-out">Abmelden</Trans>
+                </A>
             </CardFooter>
         </>
     );

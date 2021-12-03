@@ -2,15 +2,14 @@
 /* eslint-env node */
 module.exports = {
     presets: [
+        '@babel/preset-env',
         [
-            '@babel/preset-env',
+            '@babel/preset-react',
             {
-                targets: {
-                    node: 'current',
-                },
+                runtime: 'automatic',
+                development: process.env.BABEL_ENV === 'development',
             },
         ],
-        '@babel/preset-react',
         '@babel/preset-typescript',
     ],
     plugins: [

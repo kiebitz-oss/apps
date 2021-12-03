@@ -16,8 +16,9 @@ export default function UserApp() {
             <Route path="/restore" element={<Restore />} />
             <Route path="/deleted" element={<Deleted />} />
             <Route path="/logged-out" element={<LoggedOut />} />
-            <Route path="/setup/:page" element={<Setup />} />
-            <Route path="/setup" element={<Setup />} />
+            <Route path="/setup" element={<Setup />}>
+                <Route path=":page" element={<Setup />} />
+            </Route>
             <Route path="/:tab/:action" element={<Dashboard />} />
             <Route path="/:tab" element={<Dashboard />} />
             <Route index element={<Start />} />

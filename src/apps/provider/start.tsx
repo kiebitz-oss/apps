@@ -2,26 +2,20 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { withActions, CenteredCard, CardContent, A } from 'components';
 import { providerData } from 'apps/provider/actions';
 import { Trans } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 import './start.scss';
+import { useEffectOnce } from 'react-use';
 
 const StartPage: React.FC<any> = ({ providerDataAction }) => {
-    const [initialized, setInitialized] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (initialized) return;
-        setInitialized(true);
-        providerDataAction().then((pd) => {
-            if (
-                pd !== undefined &&
-                pd.data !== undefined &&
-                pd.data.submittedAt !== undefined
-            )
+    useEffectOnce(() => {
+        providerDataAction().then((pd: any) => {
+            if (pd?.data?.submittedAt !== undefined)
                 navigate('/provider/schedule');
         });
     });
@@ -32,6 +26,7 @@ const StartPage: React.FC<any> = ({ providerDataAction }) => {
                 <h1 className="bulma-subtitle">
                     <Trans id="what-to-do">Was möchten Sie tun?</Trans>
                 </h1>
+
                 <ul className="kip-cm-selector">
                     <li>
                         <A href="/provider/setup">

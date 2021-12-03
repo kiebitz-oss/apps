@@ -13,13 +13,13 @@ import {
 import './app.scss';
 
 const MediatorApp = React.lazy(
-    () => import(/* webpackChunkName: "mediator-app" */ '../apps/mediator/App')
+    () => import(/* webpackChunkName: "mediator-app" */ './mediator/App')
 );
 const ProviderApp = React.lazy(
-    () => import(/* webpackChunkName: "provider-app" */ '../apps/provider/App')
+    () => import(/* webpackChunkName: "provider-app" */ './provider/App')
 );
 const UserApp = React.lazy(
-    () => import(/* webpackChunkName: "user-app" */ '../apps/user/App')
+    () => import(/* webpackChunkName: "user-app" */ './user/App')
 );
 
 export default function App() {

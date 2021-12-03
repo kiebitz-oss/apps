@@ -5,18 +5,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'helpers/classnames';
-
 import './list.scss';
 
-export const List = ({ children }) => (
+export const List: React.FC = ({ children }) => (
     <div className="kip-list">{children}</div>
 );
 
-export const ListHeader = ({ children }) => (
+export const ListHeader: React.FC = ({ children }) => (
     <div className="kip-item kip-is-header">{children}</div>
 );
 
-export const ListColumn = ({ children, size = 'md', wraps = false }) => (
+export const ListColumn: React.FC = ({
+    children,
+    size = 'md',
+    wraps = false,
+}) => (
     <div
         className={classnames(`kip-col kip-is-${size}`, { 'kip-wraps': wraps })}
     >
@@ -24,7 +27,7 @@ export const ListColumn = ({ children, size = 'md', wraps = false }) => (
     </div>
 );
 
-export const ListItem = ({ children, isCard = true, onClick }) => (
+export const ListItem: React.FC = ({ children, isCard = true, onClick }) => (
     <div
         // Make focusable with the keyboard, if a handler is available
         tabIndex={onClick ? 0 : -1}

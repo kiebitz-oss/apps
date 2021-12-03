@@ -13,6 +13,7 @@ import {
     CardFooter,
     CardContent,
     Button,
+    A,
 } from 'components';
 import { ProviderData } from '../setup/verify';
 import { BackupDataLink } from '../setup/store-secrets';
@@ -140,7 +141,7 @@ const SettingsPage: React.FC<any> = ({
                 />
                 <Button
                     style={{ marginRight: '1em' }}
-                    type="success"
+                    variant="success"
                     onClick={() => copyToClipboard(providerSecret.data)}
                 >
                     Datenschlüssel kopieren
@@ -217,7 +218,7 @@ const SettingsPage: React.FC<any> = ({
                 />
                 <Button
                     style={{ marginRight: '1em' }}
-                    type="success"
+                    variant="success"
                     onClick={() => copyToClipboard(providerSecret.data)}
                 >
                     Datenschlüssel kopieren
@@ -292,19 +293,28 @@ const SettingsPage: React.FC<any> = ({
                 </CardContent>
                 <CardFooter>
                     <div className="kip-buttons">
-                        <Button type="success" href="/provider/settings/backup">
+                        <A
+                            type="button"
+                            variant="success"
+                            href="/provider/settings/backup"
+                        >
                             <Trans id="backup">Datenbackup anfertigen</Trans>
-                        </Button>
-                        <Button type="warning" href="/provider/settings/logout">
+                        </A>
+                        <A
+                            type="button"
+                            variant="warning"
+                            href="/provider/settings/logout"
+                        >
                             <Trans id="log-out">Abmelden</Trans>
-                        </Button>
+                        </A>
                         {false && (
-                            <Button
-                                type="danger"
+                            <A
+                                type="button"
+                                variant="danger"
                                 href="/provider/settings/delete"
                             >
                                 <Trans id="delete">Konto löschen</Trans>
-                            </Button>
+                            </A>
                         )}
                     </div>
                 </CardFooter>

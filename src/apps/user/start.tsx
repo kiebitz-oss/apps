@@ -6,38 +6,41 @@ import React, { useEffect } from 'react';
 import { CenteredCard, CardContent, A } from 'components';
 import { Trans } from '@lingui/macro';
 import { useNavigate } from 'react-router';
-import { useBackend } from 'hooks';
+import { useUserTokenData } from 'hooks/useUserTokenData';
 
 // styles are in 'apps/provider/start.scss'
 
 const StartPage: React.FC = () => {
     const navigate = useNavigate();
-    const backend = useBackend();
+    const userTokenData = useUserTokenData();
 
     useEffect(() => {
-        if (backend.local.get('user::tokenData') !== null)
+        if (userTokenData !== null) {
             navigate('/user/appointments');
-    });
+        }
+    }, [navigate, userTokenData]);
 
     return (
-        <CenteredCard className="kip-cm-welcome">
+        <CenteredCard className="kip-cm-welcome" style={{ maxWidth: '300px' }}>
             <CardContent>
                 <h1 className="bulma-subtitle">
-                    <Trans id="what-to-do" />
+                    <Trans id="what-to-do">Was möchtest Du tun?</Trans>
                 </h1>
 
-                <ul className="kip-cm-selector">
-                    <li>
-                        <A href="/user/setup">
-                            <Trans id="setup" />
-                        </A>
-                    </li>
-                    <li>
-                        <A href="/user/restore">
-                            <Trans id="restore" />
-                        </A>
-                    </li>
-                </ul>
+                <div
+                    className="bulma-is-flex"
+                    style={{
+                        flexDirection: 'column',
+                        gap: '.5rem',
+                    }}
+                >
+                    <A href="/user/setup" type="button" variant="primary">
+                        <Trans id="setup">Impftermin finden</Trans>
+                    </A>
+                    <A href="/user/restore" type="button" variant="primary">
+                        <Trans id="restore">Termin und Profil bearbeiten</Trans>
+                    </A>
+                </div>
             </CardContent>
         </CenteredCard>
     );

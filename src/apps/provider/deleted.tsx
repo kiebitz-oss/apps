@@ -17,7 +17,7 @@ const DeletedPage: React.FC<any> = () => {
                     <Trans id="data-deleted">Daten erfolgreich gelöscht</Trans>
                 </h1>
             </CardHeader>
-            <Message type="success">
+            <Message variant="success">
                 <Trans id="thanks-for-using-us">
                     Ihre Daten wurden erfolgreich gelöscht. Vielen Dank, dass
                     Sie <strong key="service">{settings.get('title')}</strong>{' '}
