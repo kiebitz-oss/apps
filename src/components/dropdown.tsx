@@ -2,13 +2,17 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { Fragment as F } from 'react';
-import PropTypes from 'prop-types';
+import { ReactElement, Component, createRef } from "react"
 import classnames from 'helpers/classnames';
 import { A } from './a';
 import './dropdown.scss';
 
-export const DropdownMenu = ({ title, children }) => (
+interface DropdownMenuProps {
+    title?: string;
+    children: ReactElement;
+}
+
+export const DropdownMenu = ({ title, children }: DropdownMenuProps) => (
     <Dropdown
         title={
             <>
@@ -23,11 +27,13 @@ export const DropdownMenu = ({ title, children }) => (
     </Dropdown>
 );
 
-DropdownMenu.propTypes = {
-    children: PropTypes.node,
-};
+interface DropdownMenuItemProps {
+    icon: string;
+    onClick: () => void;
+    children: ReactElement;
+}
 
-export const DropdownMenuItem = ({ icon, children, onClick }) => (
+export const DropdownMenuItem = ({ icon, children, onClick }: DropdownMenuItemProps) => (
     <li>
         <A
             onClick={(e) => {
@@ -44,21 +50,30 @@ export const DropdownMenuItem = ({ icon, children, onClick }) => (
     </li>
 );
 
-DropdownMenuItem.propTypes = {
-    children: PropTypes.node,
-    icon: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
-};
+interface DropdownState {
+    expanded: boolean;
+    right: boolean;
+}
 
-export class Dropdown extends React.Component {
-    constructor(props) {
+interface DropdownProps {
+    children: ReactElement;
+    title: ReactElement;
+}
+
+export class Dropdown extends Component<DropdownProps> {
+    private ref: any;
+    private handler: (event: any) => void;
+    state: DropdownState;
+
+    constructor(props: DropdownProps) {
         super(props);
         this.state = {
             expanded: false,
             right: false,
         };
-        this.ref = React.createRef();
-        this.handler = (e) => this.handleClick(e);
+
+        this.ref = createRef();
+        this.handler = (e: any) => this.handleClick(e);
     }
 
     hide() {
@@ -71,7 +86,7 @@ export class Dropdown extends React.Component {
         document.addEventListener('click', this.handler, false);
     }
 
-    handleClick(e) {
+    handleClick(e: any) {
         e.preventDefault();
         e.stopPropagation();
         this.hide();
@@ -92,7 +107,7 @@ export class Dropdown extends React.Component {
         }
     }
 
-    handleToggle = (event) => {
+    handleToggle = (event: any) => {
         const { expanded } = this.state;
         event.preventDefault();
         event.stopPropagation();
@@ -131,8 +146,3 @@ export class Dropdown extends React.Component {
         );
     }
 }
-
-Dropdown.propTypes = {
-    children: PropTypes.node,
-    title: PropTypes.node.isRequired,
-};
