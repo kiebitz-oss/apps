@@ -2,20 +2,31 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React from 'react';
-import PropTypes from 'prop-types';
+import { ReactElement, FC } from 'react';
 import classnames from 'helpers/classnames';
 import './list.scss';
 
-export const List: React.FC = ({ children }) => (
+interface ListProps {
+    children: ReactElement;
+}
+
+export const List: FC<ListProps> = ({ children }: ListProps) => (
     <div className="kip-list">{children}</div>
 );
 
-export const ListHeader: React.FC = ({ children }) => (
+export const ListHeader: FC = ({ children }) => (
     <div className="kip-item kip-is-header">{children}</div>
 );
 
-export const ListColumn: React.FC = ({
+type ListSize = "sm" | "md" | "lg";
+
+interface ListColumnProps {
+    children: ReactElement;
+    size?: ListSize;
+    wraps?: boolean;
+}
+
+export const ListColumn: FC<ListColumnProps> = ({
     children,
     size = 'md',
     wraps = false,
@@ -27,7 +38,15 @@ export const ListColumn: React.FC = ({
     </div>
 );
 
-export const ListItem: React.FC = ({ children, isCard = true, onClick }) => (
+interface ListItemProps {
+    children: ReactElement;
+    size?: ListSize;
+    wraps?: boolean;
+    isCard?: boolean;
+    onClick?: () => any;
+}
+
+export const ListItem: FC<ListItemProps> = ({ children, isCard = true, onClick }: ListItemProps) => (
     <div
         // Make focusable with the keyboard, if a handler is available
         tabIndex={onClick ? 0 : -1}
@@ -43,9 +62,3 @@ export const ListItem: React.FC = ({ children, isCard = true, onClick }) => (
         {children}
     </div>
 );
-
-ListItem.propTypes = {
-    children: PropTypes.node,
-    isCard: PropTypes.bool,
-    onClick: PropTypes.func,
-};
