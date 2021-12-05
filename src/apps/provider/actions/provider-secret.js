@@ -43,7 +43,7 @@ providerSecret.init = (keyStore, settings) => {
     const backend = settings.get('backend');
     let data = backend.local.get('provider::secret');
     if (data === null) {
-        data = buf2base32(b642buf(randomBytes(10)));
+        data = buf2base32(b642buf(randomBytes(15)));
         backend.local.set('provider::secret', data);
     }
     return {

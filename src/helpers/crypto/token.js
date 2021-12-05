@@ -7,7 +7,7 @@ import { e } from 'helpers/async';
 
 // salt for the key derivation (public information)
 export const salt = b642buf(
-    '352b73ebd067e1c17996ee2180dbd8a339de2ed97c3604a346ca07917a71091193003f56465a097c98aa572373969057'
+    'tlsfpYaKiH/WZUnWkoeE2g==' // 16 bytes
 );
 
 export async function deriveToken(secret, n) {
