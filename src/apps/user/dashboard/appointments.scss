@@ -33,7 +33,7 @@
 	}
 
 	.kip-appointment-date {
-		@include fs(large)
+		@include fs(large);
 		text-align: center;
 		font-weight: bolder;
 		padding: map-get($kip-space, lg);
