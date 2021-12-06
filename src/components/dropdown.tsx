@@ -2,14 +2,13 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { ReactElement, Component, createRef } from "react"
+import { ReactElement, MouseEventHandler, createRef, useEffect, useState } from "react"
 import classnames from 'helpers/classnames';
-import { A } from './a';
 import './dropdown.scss';
 
 interface DropdownMenuProps {
-    title?: string;
     children: ReactElement;
+    title?: string;
 }
 
 export const DropdownMenu = ({ title, children }: DropdownMenuProps) => (
@@ -28,31 +27,29 @@ export const DropdownMenu = ({ title, children }: DropdownMenuProps) => (
 );
 
 interface DropdownMenuItemProps {
+    children: ReactElement;
     icon: string;
     onClick: () => void;
-    children: ReactElement;
 }
 
-export const DropdownMenuItem = ({ icon, children, onClick }: DropdownMenuItemProps) => (
-    <li>
-        <A
-            onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onClick();
-            }}
-        >
-            <span className="bulma-icon">
-                <i className={`fas fa-${icon}`}></i>
-            </span>
-            <span>{children}</span>
-        </A>
-    </li>
-);
+export const DropdownMenuItem = ({ icon, children, onClick }: DropdownMenuItemProps) => {
+    const eventHandler: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
 
-interface DropdownState {
-    expanded: boolean;
-    right: boolean;
+        onClick();
+    }
+
+    return (
+        <li>
+            <button onClick={eventHandler} >
+                <span className="bulma-icon">
+                    <i className={`fas fa-${icon}`}></i>
+                </span>
+                <span>{children}</span>
+            </button>
+        </li>
+    );
 }
 
 interface DropdownProps {
@@ -60,89 +57,75 @@ interface DropdownProps {
     title: ReactElement;
 }
 
-export class Dropdown extends Component<DropdownProps> {
-    private ref: any;
-    private handler: (event: any) => void;
-    state: DropdownState;
+export const Dropdown = ({title, children}: DropdownProps) => {
+    const [expanded, setExpanded] = useState<boolean>(false);
+    const [right, setRight] = useState<boolean>(false);
+    const ref = createRef<HTMLDivElement>();
 
-    constructor(props: DropdownProps) {
-        super(props);
-        this.state = {
-            expanded: false,
-            right: false,
-        };
-
-        this.ref = createRef();
-        this.handler = (e: any) => this.handleClick(e);
+    const hide = () => {
+        setExpanded(false);
+        document.removeEventListener('click', handleClick, false);
     }
 
-    hide() {
-        this.setState({ expanded: false });
-        document.removeEventListener('click', this.handler, false);
+    const show = () => {
+        setExpanded(true);
+        document.addEventListener('click', handleClick, false);
     }
 
-    show() {
-        this.setState({ expanded: true });
-        document.addEventListener('click', this.handler, false);
-    }
-
-    handleClick(e: any) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.hide();
-    }
-
-    componentWillUnmount() {
-        this.hide();
-    }
-
-    componentDidMount() {
-        // we check where the dropdown is positioned so that we can
-        // display the content either left- or right-aligned
-        const rect = this.ref.current.getBoundingClientRect();
-        if (rect.left > window.innerWidth * 0.5) {
-            this.setState({
-                right: true,
-            });
-        }
-    }
-
-    handleToggle = (event: any) => {
-        const { expanded } = this.state;
+    const handleClick: EventListener = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        if (!expanded) {
-            this.show();
+
+        hide();
+    }
+
+    const handleToggle: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (expanded) {
+            hide();
         } else {
-            this.hide();
+            show();
         }
     };
 
-    render() {
-        const { expanded, right } = this.state;
-        const { title, children } = this.props;
+    useEffect(() => {
+        if (ref.current) {
+            // we check where the dropdown is positioned so that we can
+            // display the content either left- or right-aligned
+            const rect = ref.current.getBoundingClientRect();
+            if (rect.left > window.innerWidth * 0.5) {
+                setRight(true);
+            }
+        }
 
-        return (
-            <div
-                ref={this.ref}
-                className={classnames('kip-dropdown', { 'is-right': right })}
+        return () => {
+            hide();
+        };
+    }, [expanded]);
+
+
+    return (
+        <div
+            ref={ref}
+            className={classnames('kip-dropdown', { 'is-right': right })}
+        >
+            <button
+                aria-expanded={expanded}
+                className="bulma-button"
+                type="button"
+                onClick={handleToggle}
             >
-                <button
-                    aria-expanded={expanded}
-                    className="bulma-button"
-                    type="button"
-                    onClick={this.handleToggle}
-                >
-                    {title}
-                </button>
-                <div
-                    className={classnames('kip-dropdowncontent', {
-                        'kip-dropdownexpanded': expanded,
-                    })}
-                >
-                    {children}
-                </div>
+                {title}
+            </button>
+            <div
+                className={classnames('kip-dropdowncontent', {
+                    'kip-dropdownexpanded': expanded,
+                })}
+            >
+                {children}
             </div>
-        );
-    }
+        </div>
+    );
 }
