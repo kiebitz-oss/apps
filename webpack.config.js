@@ -83,7 +83,7 @@ let config = {
             // END(CSS) DO NOT MOVE
             {
                 test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-                use: "file-loader"
+                type: 'asset/resource'
             },
             {
                 test: /\.(yaml|yml)$/,
