@@ -73,7 +73,7 @@ const ProvidersTabBase: React.FC<any> = ({
             const base64Id = buf2b64(hex2buf(secondaryAction));
 
             const provider = providers.data.find(
-                (provider) => provider.id === base64Id
+                (provider) => provider.publicKeys.signing === base64Id
             );
 
             if (provider !== undefined) {
@@ -135,12 +135,14 @@ const ProvidersTabBase: React.FC<any> = ({
                         <tbody>
                             {providers.data
                                 .sort(sortProviderByDate)
-                                .map((provider: any, idx) => {
-                                    const id = buf2hex(b642buf(provider.id));
+                                .map((provider: any) => {
+                                    const id = buf2hex(
+                                        b642buf(provider.publicKeys.signing)
+                                    );
                                     const providerLink = `/mediator/providers/show/${id}`;
 
                                     return (
-                                        <tr key={provider.id}>
+                                        <tr key={provider.publicKeys.signing}>
                                             <td>
                                                 <Link href={providerLink}>
                                                     {provider.data.name ||
