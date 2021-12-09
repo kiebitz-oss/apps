@@ -1,0 +1,73 @@
+{
+    "vaccine": {
+        "title": {
+            "de": "Impfstofftyp"
+        },
+        "values": {
+            "moderna": {
+                "anamnesisUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Einwilligung-de.pdf?__blob=publicationFile"
+                },
+                "infosUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Aufklaerungsbogen-de.pdf?__blob=publicationFile"
+                },
+                "notice": {
+                    "de": ""
+                },
+                "tag": {
+                    "de": "MD"
+                },
+                "de": "Moderna",
+                "_default": true
+            },
+            "biontech": {
+                "anamnesisUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Einwilligung-de.pdf?__blob=publicationFile"
+                },
+                "infosUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19/Aufklaerungsbogen-de.pdf?__blob=publicationFile"
+                },
+                "notice": {
+                    "de": ""
+                },
+                "tag": {
+                    "de": "BT"
+                },
+                "de": "Biontech Pfizer (Comirnaty)",
+                "_default": true
+            },
+            "astrazeneca": {
+                "anamnesisUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Einwilligung-de.pdf?__blob=publicationFile"
+                },
+                "infosUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Aufklaerungsbogen-de.pdf?__blob=publicationFile"
+                },
+                "notice": {
+                    "de": ""
+                },
+                "tag": {
+                    "de": "AZ"
+                },
+                "de": "Astra Zeneca (Vaxzevria)",
+                "_default": true
+            },
+            "johnson-johnson": {
+                "anamnesisUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Einwilligung-de.pdf?__blob=publicationFile"
+                },
+                "infosUrl": {
+                    "de": "https://www.rki.de/DE/Content/Infekt/Impfen/Materialien/Downloads-COVID-19-Vektorimpfstoff/Aufklaerungsbogen-de.pdf?__blob=publicationFile"
+                },
+                "notice": {
+                    "de": ""
+                },
+                "tag": {
+                    "de": "JJ"
+                },
+                "de": "Johnson & Johnson",
+                "_default": true
+            }
+        }
+    }
+}

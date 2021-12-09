@@ -1,8 +1,9 @@
 {
-    "title":"impfentermin",
-    "commitSHA" : "COMMIT_SHA",
-    "storageApi" : "https://storage.kiebitz.eu/jsonrpc",
-    "appointmentsApi" : "https://appointments.kiebitz.eu/jsonrpc",
-    "termsUrl" : "https://app.kiebitz.eu/demo/resources/terms",
-    "privacyUrl" : "https://app.kiebitz.eu/demo/resources/privacy"
+    "title": "impfentermin",
+    "commitSHA": "COMMIT_SHA",
+    "supportEmail": "help@kiebitz.eu",
+    "storageApi": "https://storage.kiebitz.eu/jsonrpc",
+    "appointmentsApi": "https://appointments.kiebitz.eu/jsonrpc",
+    "termsUrl": "https://app.kiebitz.eu/demo/resources/terms",
+    "privacyUrl": "https://app.kiebitz.eu/demo/resources/privacy"
 }

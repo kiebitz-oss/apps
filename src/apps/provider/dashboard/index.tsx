@@ -2,11 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useState, Fragment as F } from 'react';
-
-import Settings from './settings';
-import Schedule from './schedule';
-
+import React, { useState } from 'react';
 import {
     keyPairs,
     keys,
@@ -19,19 +15,14 @@ import {
     submitProviderData,
     verifiedProviderData,
     checkVerifiedProviderData,
-} from '../actions';
-import {
-    withActions,
-    withTimer,
-    CenteredCard,
-    CardHeader,
-    Icon,
-    Tabs,
-    Tab,
-    Message,
-} from 'components';
+} from 'apps/provider/actions';
+import { withActions } from 'components';
+import { Box, BoxHeader, Tabs, Tab, Message } from 'ui';
 import { Trans } from '@lingui/macro';
 import { useParams } from 'react-router';
+import { useEffectOnce, useInterval } from 'react-use';
+import { SettingsTab } from './settings';
+import { ScheduleTab } from './schedule';
 
 const DashboardPage: React.FC<any> = ({
     openAppointmentsAction,
@@ -40,7 +31,6 @@ const DashboardPage: React.FC<any> = ({
     verifiedProviderData,
     verifiedProviderDataAction,
     checkVerifiedProviderDataAction,
-    timer,
     keysAction,
     backupDataAction,
     providerSecretAction,
@@ -49,26 +39,21 @@ const DashboardPage: React.FC<any> = ({
     keyPairs,
     keyPairsAction,
 }) => {
-    const [initialized, setInitialized] = useState(false);
     const [lastUpdated, setLastUpdated] = useState('');
-    const [tv, setTv] = useState(-1);
-    const { tab, action, secondaryAction, id } = useParams();
 
-    useEffect(() => {
-        if (initialized) return;
-        setInitialized(true);
+    const { tab } = useParams();
+
+    useEffectOnce(() => {
         verifiedProviderDataAction();
         keysAction().then(() => keyPairsAction());
     });
 
-    useEffect(() => {
+    useInterval(() => {
         // we do this only once per timer interval...
-        if (timer === tv) return;
-        setTv(timer);
         setLastUpdated(new Date().toLocaleTimeString());
         openAppointmentsAction();
-        keysAction().then((ks) =>
-            keyPairsAction().then((kp) => {
+        keysAction().then((ks: any) =>
+            keyPairsAction().then((kp: any) => {
                 // we first publish appointments to e.g.
                 // notify the backend of changes
                 publishAppointmentsAction(kp.data).finally(() => {
@@ -76,11 +61,11 @@ const DashboardPage: React.FC<any> = ({
                     getAppointmentsAction(kp.data);
                 });
 
-                providerSecretAction().then((ps) =>
+                providerSecretAction().then((ps: any) =>
                     backupDataAction(kp.data, ps.data)
                 );
 
-                providerDataAction().then((pd) => {
+                providerDataAction().then((pd: any) => {
                     if (
                         pd.data.submittedAt === undefined ||
                         pd.data.version !== '0.4'
@@ -88,7 +73,7 @@ const DashboardPage: React.FC<any> = ({
                         // we try to submit the data...
                         submitProviderDataAction(pd.data, kp.data, ks.data);
                     } else {
-                        verifiedProviderDataAction().then((vd) => {
+                        verifiedProviderDataAction().then((vd: any) => {
                             if (vd === undefined) {
                                 return;
                             }
@@ -125,26 +110,18 @@ const DashboardPage: React.FC<any> = ({
             verifiedProviderData.data === null
         )
             return;
-    });
+    }, 10000);
 
     let content;
 
     switch (tab) {
         case 'settings':
-            content = <Settings key="settings" action={action} />;
+            content = <SettingsTab />;
             break;
 
         default:
         case 'schedule':
-            content = (
-                <Schedule
-                    action={action}
-                    secondaryAction={secondaryAction}
-                    id={id}
-                    key="schedule"
-                    lastUpdated={lastUpdated}
-                />
-            );
+            content = <ScheduleTab lastUpdated={lastUpdated} />;
             break;
     }
 
@@ -156,7 +133,7 @@ const DashboardPage: React.FC<any> = ({
         verifiedProviderData.data === null
     ) {
         invalidKeyMessage = (
-            <Message waiting type="warning">
+            <Message waiting variant="warning">
                 <Trans id="invalid-key">
                     Ihre Daten wurden noch nicht verifiziert. Sie können bereits
                     Termine anlegen, allerdings werden Impfwillige noch nicht
@@ -167,32 +144,28 @@ const DashboardPage: React.FC<any> = ({
     }
 
     return (
-        <CenteredCard size="fullwidth" tight>
-            <CardHeader>
+        <Box variant="tight" className="mt-12">
+            <BoxHeader>
                 <Tabs>
-                    <Tab active={tab === 'schedule'} href="/provider/schedule">
+                    <Tab current={tab === 'schedule'} href="/provider/schedule">
                         <Trans id="schedule.title">Terminplan</Trans>
                     </Tab>
-                    <Tab active={tab === 'settings'} href="/provider/settings">
+                    <Tab current={tab === 'settings'} href="/provider/settings">
                         <Trans id="settings.title">Einstellungen</Trans>
                     </Tab>
-                    <Tab
-                        last
-                        icon={<Icon icon="sign-out-alt" />}
-                        active={tab === 'log-out'}
-                        href="/provider/settings/logout"
-                    >
+                    <Tab current={tab === 'log-out'} href="/provider/log-out">
                         <Trans id="log-out">Abmelden</Trans>
                     </Tab>
                 </Tabs>
-            </CardHeader>
+            </BoxHeader>
+
             {invalidKeyMessage}
             {content}
-        </CenteredCard>
+        </Box>
     );
 };
 
-export default withActions(withTimer(DashboardPage, 10000), [
+export default withActions(DashboardPage, [
     verifiedProviderData,
     getAppointments,
     publishAppointments,

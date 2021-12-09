@@ -3,9 +3,9 @@
 // README.md contains license information.
 
 import React, { Component, ReactChild } from 'react';
-import { Message } from './message';
+import { Message } from 'ui';
 import { Trans } from '@lingui/macro';
-import './loader.scss';
+// import './loader.scss';
 
 type Resource = {
     status: string | undefined;
@@ -35,15 +35,22 @@ export const RenderFailed = () => (
 
 function allAre(resources: Resource[], statuses: Array<string>) {
     for (const resource of resources) {
-        if (resource === undefined) return false;
+        if (resource === undefined) {
+            return false;
+        }
+
         let found = false;
+
         for (const status of statuses) {
             if (resource.status === status) {
                 found = true;
                 break;
             }
         }
-        if (!found) return false;
+
+        if (!found) {
+            return false;
+        }
     }
     return true;
 }

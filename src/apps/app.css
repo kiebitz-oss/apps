@@ -1,0 +1,485 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        @apply focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus:outline-none;
+    }
+
+    :disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    ::marker {
+        @apply text-primary-500;
+    }
+
+    #app {
+        @apply h-screen flex-col flex;
+
+        & > nav {
+            @apply min-w-full bg-white h-16 flex justify-center items-center;
+
+            & > img {
+                @apply max-h-full;
+            }
+        }
+    }
+
+    body {
+        @apply antialiased font-sans bg-gray-100;
+    }
+
+    main {
+        @apply flex flex-col justify-center items-start flex-1 container;
+    }
+
+    img {
+        @apply max-w-full h-auto;
+    }
+
+    dd {
+        @apply mb-2;
+    }
+}
+
+@layer components {
+    .h1 {
+        @apply text-lg tracking-tight font-semibold text-gray-900 sm:text-xl md:text-2xl;
+    }
+
+    .h2 {
+        @apply text-lg tracking-tight font-medium mb-4 text-gray-900 sm:text-xl md:text-xl;
+    }
+
+    .text {
+        @apply mb-6;
+    }
+
+    .field {
+        @apply flex;
+
+        &.field-inline {
+            @apply flex-row;
+        }
+
+        &:not(.field-inline) {
+            @apply flex-col;
+        }
+    }
+
+    .label {
+        @apply font-medium mb-2 select-none;
+    }
+
+    .input {
+        @apply form-input rounded-md;
+    }
+
+    .hint {
+        @apply text-gray-800 text-sm mt-1;
+    }
+
+    .select {
+        @apply form-select rounded-md;
+    }
+
+    .textarea {
+        @apply form-textarea rounded-md;
+    }
+
+    .checkbox {
+        @apply form-checkbox rounded-md  text-primary-500;
+    }
+
+    /* 
+    based on https://github.com/argyleink/gui-challenges/tree/main/switch
+    TODO: port to tailwind
+    */
+    .switch {
+        @apply appearance-none cursor-pointer box-content flex-shrink-0 grid items-center checked:bg-green-200 bg-gray-200 focus:outline-none focus:ring focus:border-primary-500 border-2;
+
+        --thumb-size: 2rem;
+        --thumb: hsl(0 0% 100%);
+        --thumb-highlight: hsl(0 0% 0% / 25%);
+
+        --track-size: calc(var(--thumb-size) * 2);
+        --track-padding: 2px;
+        --track-inactive: hsl(80 0% 80%);
+        --track-active: theme('colors.green.300');
+
+        --thumb-color: var(--thumb);
+        --thumb-color-highlight: var(--thumb-highlight);
+        --track-color-inactive: var(--track-inactive);
+        --track-color-active: var(--track-active);
+
+        --isLTR: 1;
+        --thumb-position: 0%;
+        --thumb-transition-duration: 0.25s;
+
+        padding: var(--track-padding);
+        background: var(--track-color-inactive);
+        inline-size: var(--track-size);
+        block-size: var(--thumb-size);
+        border-radius: var(--track-size);
+
+        touch-action: pan-y;
+
+        outline-offset: 5px;
+
+        grid: [track] 1fr / [track] 1fr;
+
+        transition: background-color 0.25s ease;
+
+        &::before {
+            --highlight-size: 0;
+
+            content: '';
+            grid-area: track;
+            inline-size: var(--thumb-size);
+            block-size: var(--thumb-size);
+            background: var(--thumb-color);
+            box-shadow: 0 0 0 var(--highlight-size) var(--thumb-color-highlight);
+            border-radius: 50%;
+            transform: translateX(var(--thumb-position));
+
+            & {
+                transition: transform var(--thumb-transition-duration) ease,
+                    box-shadow 0.25s ease;
+            }
+        }
+
+        &:not(:disabled):hover::before {
+            --highlight-size: 0.5rem;
+        }
+
+        &:checked {
+            --thumb-position: calc((var(--track-size) - 100%) * var(--isLTR));
+        }
+
+        &:indeterminate {
+            --thumb-position: calc(
+                calc(calc(var(--track-size) / 2) - calc(var(--thumb-size) / 2)) *
+                    var(--isLTR)
+            );
+        }
+
+        &:disabled {
+            --thumb-color: transparent;
+
+            &::before {
+                cursor: not-allowed;
+                box-shadow: inset 0 0 0 2px hsl(0 0% 100% / 50%);
+            }
+        }
+    }
+
+    .message {
+        @apply w-full px-4 py-3 rounded-md;
+
+        &.success {
+            @apply bg-green-100 text-green-600;
+        }
+
+        &.warning {
+            @apply bg-orange-100 text-orange-600;
+        }
+
+        &.danger {
+            @apply bg-red-100 text-red-600;
+        }
+
+        &.info {
+            @apply bg-blue-100 text-blue-600;
+        }
+    }
+
+    .link {
+        @apply underline;
+    }
+
+    .button {
+        @apply inline-flex items-center justify-center self-start rounded-md border-transparent focus:outline-none focus:ring focus:border-primary-500 border-2;
+
+        &.primary {
+            @apply text-white bg-primary-600 hover:bg-primary-700;
+        }
+
+        &.secondary {
+            @apply border-primary-600 text-primary-600 hover:text-white hover:bg-primary-700;
+        }
+
+        &.success {
+            @apply bg-green-100 text-green-600 hover:text-green-800 hover:bg-green-200;
+        }
+
+        &.warning {
+            @apply bg-orange-100 text-orange-600 hover:text-orange-800 hover:bg-orange-200;
+        }
+
+        &.danger {
+            @apply bg-red-100 text-red-600 hover:text-red-800 hover:bg-red-200;
+        }
+
+        &.sm {
+            @apply px-4 py-2 text-base font-medium;
+        }
+
+        &.md {
+            @apply px-8 py-3 md:py-2 md:text-lg md:px-6 text-base font-medium;
+        }
+    }
+
+    .box {
+        @apply bg-white  max-w-[90vw] w-full shadow-md rounded-md overflow-auto;
+
+        & .header {
+            @apply p-4 bg-gray-50 flex justify-between items-center;
+        }
+
+        & .content {
+            @apply px-4 py-8;
+        }
+
+        & .footer {
+            @apply p-4 bg-gray-50;
+        }
+    }
+
+    .modal {
+        @apply overflow-y-auto fixed inset-0 z-10;
+
+        & .overlay {
+            @apply fixed inset-0 bg-black opacity-80;
+        }
+
+        & .container {
+            @apply flex justify-center items-center min-h-screen mx-auto max-w-[80vw];
+        }
+
+        & .inner {
+            @apply relative mx-auto bg-white  rounded-md overflow-hidden md:min-w-[600px];
+        }
+
+        & .content {
+            @apply p-4;
+        }
+
+        & .header {
+            @apply p-4 bg-gray-50;
+        }
+
+        & .footer {
+            @apply p-4 bg-gray-50;
+        }
+
+        & .sm {
+            @apply max-w-[640px];
+        }
+    }
+
+    .tabs {
+        @apply items-center border-b border-gray-300 flex flex-grow flex-shrink-0 justify-start;
+
+        & a {
+            @apply no-underline items-center border-b border-gray-300 flex justify-center -mb-[1px] px-6 py-2 align-top hover:font-semibold;
+        }
+
+        & .current a {
+            @apply font-bold text-primary-700 border-primary-700;
+        }
+
+        & .tab {
+        }
+    }
+
+    .table {
+        @apply min-w-full divide-y divide-gray-50 table-fixed;
+
+        & thead {
+            @apply bg-gray-50;
+        }
+
+        & thead th {
+            @apply py-3 px-6 text-xs  font-medium tracking-wider text-left  uppercase text-gray-500;
+        }
+
+        & tbody {
+            & tr {
+            }
+
+            & th,
+            & td {
+                @apply py-4 px-6 text-sm text-gray-900 whitespace-nowrap;
+            }
+
+            & th {
+                @apply text-left font-medium;
+            }
+
+            & td {
+            }
+        }
+
+        &.striped tbody {
+            & tr:nth-child(odd) {
+                @apply bg-white;
+            }
+
+            & tr:nth-child(even) {
+                @apply bg-gray-50;
+            }
+        }
+    }
+
+    .invitation-details {
+        & tbody tr {
+            @apply cursor-pointer;
+
+            &.selected {
+                @apply !bg-green-100;
+            }
+        }
+    }
+
+    .tag {
+        @apply bg-lime-100 p-2 rounded;
+    }
+
+    .secret {
+        @apply uppercase tracking-wider;
+    }
+
+    .secrets-box {
+        @apply flex flex-col p-6 my-4 rounded-md text-center items-center bg-red-100 gap-4;
+
+        & h4 {
+        }
+
+        & code {
+            @apply font-semibold text-4xl text-center uppercase tracking-wider;
+        }
+    }
+
+    .provider-data-summary {
+        @apply p-4 rounded-md;
+
+        & dt {
+            @apply font-bold;
+        }
+
+        &:not(.verified) {
+            @apply bg-gray-50;
+        }
+
+        &.verified {
+            @apply bg-green-100;
+        }
+    }
+}
+
+.kip-week-calendar {
+    @apply relative border flex overflow-x-auto mt-5;
+
+    .kip-day-column {
+        @apply min-w-[120px] flex-grow-0 w-[200px];
+
+        .kip-hour-row {
+            @apply border-b block min-h-[100px] p-0 bg-white z-[3] cursor-pointer hover:bg-green-50;
+
+            &.kip-has-appointments {
+            }
+
+            &.kip-is-hour-label {
+                @apply flex bg-gray-50 items-center justify-center;
+            }
+
+            &.kip-is-day-label {
+                cursor: inherit;
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                justify-content: space-evenly;
+                text-align: center;
+                background: #fafafa;
+                /* padding-top: map-get($kip-space, md); */
+
+                span.kip-day,
+                span.kip-date {
+                    font-size: 18px;
+                    font-weight: bolder;
+                    display: block;
+                }
+                span.kip-date {
+                    font-size: 12px;
+                    font-weight: bolder;
+                }
+            }
+
+            & .kip-appointments {
+                position: relative;
+                height: 100%;
+            }
+
+            & .appointment-card {
+                overflow: hidden;
+                width: 95%;
+                top: 4px;
+                font-size: 14px;
+                font-weight: bolder;
+                left: 2.5%;
+                position: absolute;
+                z-index: 2;
+                padding: 0;
+                padding-left: 4px;
+                opacity: 0.8;
+                cursor: pointer;
+                background-color: #efa;
+                min-height: 45px;
+
+                &.kip-is-active {
+                    z-index: 3;
+                    opacity: 1;
+                }
+
+                .kip-appointment-overview {
+                    .kip-card-header {
+                        button {
+                            float: right;
+                        }
+                    }
+                    .kip-card-content {
+                        /* padding-top: map-get($kip-space, lg); */
+                    }
+
+                    .bulma-message {
+                        /* margin-top: map-get($kip-space, md); */
+                    }
+                }
+            }
+        }
+
+        &.kip-is-day-label {
+            min-width: 100px;
+            max-width: 100px;
+            font-size: 14px;
+            font-weight: bolder;
+        }
+
+        .kip-hour-row:not(:last-child) {
+            @apply border-b;
+        }
+    }
+
+    .kip-day-column:not(:last-child) {
+        @apply border-r;
+    }
+}
+
+@layer utilities {
+    .select:focus,
+    .input:focus {
+        @apply border-primary-500 ring-primary-500;
+    }
+}

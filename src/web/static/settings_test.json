@@ -1,9 +1,9 @@
 {
-    "title":"impftermin",
-    "commitSHA" : "ddssssd",
-    "apiUrl" : "http://localhost:8000",
+    "title": "impftermin",
+    "commitSHA": "ddssssd",
     "supportEmail": "help@kiebitz.eu",
-    "termsUrl" : "http://localhost:8111/resources/terms.html",
-    "privacyUrl" : "https://localhost:8111/resources/privacy.html",
+    "apiUrl": "http://localhost:8000",
+    "termsUrl": "http://localhost:8111/resources/terms.html",
+    "privacyUrl": "https://localhost:8111/resources/privacy.html",
     "test": true
 }

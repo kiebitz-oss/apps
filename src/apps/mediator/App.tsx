@@ -1,10 +1,11 @@
-import { Routes, Route } from 'react-router';
-import React from 'react';
+// Kiebitz - Privacy-Friendly Appointments
+// Copyright (C) 2021-2021 The Kiebitz Authors
+// README.md contains license information.
 
+import React from 'react';
+import { Routes, Route } from 'react-router';
 import Dashboard from './dashboard';
 import LoggedOut from './logged-out';
-
-import 'scss/main.scss';
 
 export default function MediatorApp() {
     return (

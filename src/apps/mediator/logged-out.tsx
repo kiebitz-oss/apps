@@ -3,38 +3,41 @@
 // README.md contains license information.
 
 import React from 'react';
+import { Trans } from '@lingui/macro';
 import {
     Message,
-    CenteredCard,
-    CardHeader,
-    CardContent,
-    CardFooter,
-    A,
-} from 'components';
-import { Trans } from '@lingui/macro';
+    Box,
+    BoxHeader,
+    BoxContent,
+    BoxFooter,
+    Link,
+    Title,
+} from 'ui';
 
-const LoggedOutPage: React.FC<any> = () => {
+const LoggedOutPage: React.FC = () => {
     return (
-        <CenteredCard className="kip-logged-out">
-            <CardHeader>
-                <h1 className="bulma-subtitle">
+        <Box className="kip-logged-out">
+            <BoxHeader>
+                <Title>
                     <Trans id="logged-out.title"></Trans>
-                </h1>
-            </CardHeader>
-            <CardContent>
+                </Title>
+            </BoxHeader>
+
+            <BoxContent>
                 <Message variant="success">
                     <Trans id="logged-out.notice">
                         Sie wurden erfolgreich abgemeldet. Sie können sich
                         jederzeit mit Ihrer Schlüsseldatei wieder anmelden.
                     </Trans>
                 </Message>
-            </CardContent>
-            <CardFooter>
-                <A href="/mediator" type="button">
+            </BoxContent>
+
+            <BoxFooter>
+                <Link href="/mediator" type="button">
                     <Trans id="logged-out.log-in-again">Einloggen</Trans>
-                </A>
-            </CardFooter>
-        </CenteredCard>
+                </Link>
+            </BoxFooter>
+        </Box>
     );
 };
 

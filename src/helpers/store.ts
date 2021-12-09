@@ -92,8 +92,8 @@ export default class Store {
     }
 
     public unwatch(key: string, watcherId: number) {
-        if (!this.watchers.has(key) || !this.watchers.get(key).has(watcherId))
-            throw new Error('unknown key');
+        // if (!this.watchers.has(key) || !this.watchers.get(key).has(watcherId))
+        //     throw new Error('unknown key');
         this.watchers.get(key).delete(watcherId);
     }
 

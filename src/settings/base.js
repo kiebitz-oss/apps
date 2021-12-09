@@ -9,7 +9,7 @@ import Settings from 'helpers/settings';
 import logo from 'assets/images/logo.png';
 import whiteLogo from 'assets/images/logo-white.png';
 import smallWhiteLogo from 'assets/images/logo-small-white.png';
-import properties from './properties.yml';
+import properties from './properties.json';
 
 const settings = new Settings([
     ['appointmentProperties', properties],
@@ -17,8 +17,6 @@ const settings = new Settings([
     ['logo', logo],
     ['whiteLogo', whiteLogo],
     ['smallWhiteLogo', smallWhiteLogo],
-    ['apps', new Map([])],
-    ['menu', new Map([])],
     ['lang', 'de'],
     ['showTitles', true],
     ['commitSHA', COMMIT_SHA],

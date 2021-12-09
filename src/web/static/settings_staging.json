@@ -1,8 +1,9 @@
 {
-    "title":"kiebitz staging",
-    "commitSHA" : "COMMIT_SHA",
-    "storageApi" : "https://storage-staging.kiebitz.eu/jsonrpc",
-    "appointmentsApi" : "https://appointments-staging.kiebitz.eu/jsonrpc",
-    "termsUrl" : "https://app-staging.kiebitz.eu/demo/resources/terms",
-    "privacyUrl" : "https://app-staging.kiebitz.eu/demo/resources/privacy"
+    "title": "kiebitz staging",
+    "commitSHA": "COMMIT_SHA",
+    "supportEmail": "help@kiebitz.eu",
+    "storageApi": "https://storage-staging.kiebitz.eu/jsonrpc",
+    "appointmentsApi": "https://appointments-staging.kiebitz.eu/jsonrpc",
+    "termsUrl": "https://app-staging.kiebitz.eu/demo/resources/terms",
+    "privacyUrl": "https://app-staging.kiebitz.eu/demo/resources/privacy"
 }

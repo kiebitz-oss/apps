@@ -1,27 +1,28 @@
-import { Routes, Route } from 'react-router';
-import React from 'react';
+// Kiebitz - Privacy-Friendly Appointments
+// Copyright (C) 2021-2021 The Kiebitz Authors
+// README.md contains license information.
 
+import React from 'react';
+import { Routes, Route } from 'react-router';
 import Setup from './setup';
-import Start from './start';
-import Restore from './restore';
+import WelcomePage from './WelcomePage';
 import Deleted from './deleted';
 import LoggedOut from './logged-out';
+import LogOut from './log-out';
 import Dashboard from './dashboard';
-
-import 'scss/main.scss';
 
 export default function UserApp() {
     return (
         <Routes>
-            <Route path="/restore" element={<Restore />} />
             <Route path="/deleted" element={<Deleted />} />
+            <Route path="/log-out" element={<LogOut />} />
             <Route path="/logged-out" element={<LoggedOut />} />
             <Route path="/setup" element={<Setup />}>
                 <Route path=":page" element={<Setup />} />
             </Route>
-            <Route path="/:tab/:action" element={<Dashboard />} />
-            <Route path="/:tab" element={<Dashboard />} />
-            <Route index element={<Start />} />
+            <Route path="/appointments/:action" element={<Dashboard />} />
+            <Route path="/appointments" element={<Dashboard />} />
+            <Route index element={<WelcomePage />} />
         </Routes>
     );
 }

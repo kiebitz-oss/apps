@@ -3,7 +3,7 @@
 // README.md contains license information.
 
 import React from 'react';
-import { Message, CenteredCard, CardHeader } from 'components';
+import { Message, Box, BoxHeader, Title } from 'ui';
 import { Trans } from '@lingui/macro';
 import { useServiceName } from 'hooks/useServiceName';
 
@@ -11,12 +11,12 @@ const DeletedPage: React.FC = () => {
     const serviceName = useServiceName();
 
     return (
-        <CenteredCard className="kip-deleted">
-            <CardHeader>
-                <h1 className="bulma-subtitle">
+        <Box>
+            <BoxHeader>
+                <Title>
                     <Trans id="data-deleted">Daten erfolgreich gelöscht</Trans>
-                </h1>
-            </CardHeader>
+                </Title>
+            </BoxHeader>
 
             <Message variant="success">
                 <Trans id="thanks-for-using-us">
@@ -25,7 +25,7 @@ const DeletedPage: React.FC = () => {
                     hast!
                 </Trans>
             </Message>
-        </CenteredCard>
+        </Box>
     );
 };
 

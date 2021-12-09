@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import { verify, ecdhDecrypt } from 'helpers/crypto';
+import { ecdhDecrypt } from 'helpers/crypto';
 import { markAsLoading } from 'helpers/actions';
 
 export async function verifiedProviders(state, keyStore, settings, keyPairs) {

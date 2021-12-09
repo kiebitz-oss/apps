@@ -6,7 +6,7 @@ import React from 'react';
 import { withActions } from './store';
 import { displayName } from 'helpers/hoc';
 import SettingsAction from 'actions/settings';
-import { SettingsContext } from './contexts';
+import { SettingsContext } from 'contexts';
 
 export function withSettings(Component) {
     class Settings extends React.Component {

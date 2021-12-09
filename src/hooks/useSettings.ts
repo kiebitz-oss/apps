@@ -1,4 +1,4 @@
-import { SettingsContext } from 'components/contexts';
+import { SettingsContext } from 'contexts';
 import { useContext } from 'react';
 
 export const useSettings = () => {

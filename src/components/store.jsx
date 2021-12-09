@@ -5,9 +5,8 @@
 import React from 'react';
 
 import Base from 'actions/base';
-import { SettingsContext } from './contexts';
+import { SettingsContext, StoreContext } from 'contexts';
 import { displayName } from 'helpers/hoc';
-import { StoreContext } from './contexts';
 // this is a global variable / singleton that holds details on actions
 const actions = {};
 

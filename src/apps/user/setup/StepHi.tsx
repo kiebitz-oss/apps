@@ -1,26 +1,40 @@
 import React from 'react';
-import { Trans } from '@lingui/macro';
-import { CardContent, CardFooter, A } from 'components';
+import { t, Trans } from '@lingui/macro';
+import { Box, BoxContent, BoxFooter, BoxHeader, Link, Title } from 'ui';
 
-export const StepHi: React.FC<any> = () => (
-    <>
-        <CardContent>
+const StepHiBase: React.FC = () => (
+    <Box>
+        <BoxHeader>
+            <Title>
+                <Trans id="wizard.steps.hi">Los geht's!</Trans>
+            </Title>
+        </BoxHeader>
+
+        <BoxContent>
             <p>
                 <Trans id="wizard.hi">
                     Willkommen. Dieser Assistent hilft Dir bei der
                     Impfanmeldung.
                 </Trans>
             </p>
-        </CardContent>
+        </BoxContent>
 
-        <CardFooter>
-            <A
+        <BoxFooter>
+            <Link
                 type="button"
-                variant="success"
+                variant="primary"
                 href={`/user/setup/enter-contact-data`}
             >
                 <Trans id="wizard.continue">Weiter</Trans>
-            </A>
-        </CardFooter>
-    </>
+            </Link>
+        </BoxFooter>
+    </Box>
 );
+
+export const StepHi = Object.assign(StepHiBase, {
+    step: 'hi',
+    title: t({
+        id: 'wizard.steps.hi',
+        message: "Los geht's!",
+    }),
+});

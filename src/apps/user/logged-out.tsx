@@ -3,25 +3,26 @@
 // README.md contains license information.
 
 import React from 'react';
+import { Trans } from '@lingui/macro';
 import {
     Message,
-    CenteredCard,
-    CardHeader,
-    CardContent,
-    CardFooter,
-    A,
-} from 'components';
-import { Trans } from '@lingui/macro';
+    Box,
+    BoxHeader,
+    BoxContent,
+    BoxFooter,
+    Link,
+    Title,
+} from 'ui';
 
 const LoggedOutPage: React.FC = () => (
-    <CenteredCard className="kip-logged-out">
-        <CardHeader>
-            <h1 className="bulma-subtitle">
+    <Box className="kip-logged-out">
+        <BoxHeader>
+            <Title>
                 <Trans id="logged-out.title">Erfolgreich abgemeldet.</Trans>
-            </h1>
-        </CardHeader>
+            </Title>
+        </BoxHeader>
 
-        <CardContent>
+        <BoxContent>
             <Message variant="success">
                 <Trans id="logged-out.notice">
                     Du wurdest erfolgreich abgemeldet. Du kannst dich jederzeit
@@ -29,14 +30,14 @@ const LoggedOutPage: React.FC = () => (
                     zu prüfen.
                 </Trans>
             </Message>
-        </CardContent>
+        </BoxContent>
 
-        <CardFooter>
-            <A type="button" href="/user/restore">
+        <BoxFooter>
+            <Link type="button" variant="primary" href="/user">
                 <Trans id="logged-out.log-in-again">Anmelden</Trans>
-            </A>
-        </CardFooter>
-    </CenteredCard>
+            </Link>
+        </BoxFooter>
+    </Box>
 );
 
 export default LoggedOutPage;

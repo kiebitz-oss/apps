@@ -4,20 +4,17 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from 'apps/App';
-import {
-    Store,
-    MainErrorBoundary,
-    Settings,
-    ExternalSettings,
-} from 'components';
-import Backend, { LocalStorageStore, SessionStorageStore } from 'backend';
+import { ErrorBoundary } from 'react-error-boundary';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import App from 'apps/App';
+import { Store, Settings, ExternalSettings } from 'components';
+import Backend, { LocalStorageStore, SessionStorageStore } from 'backend';
 import { de, en } from 'make-plural/plurals';
 
 import { messages as deMessages } from 'locales/de/messages';
 import { messages as enMessages } from 'locales/en/messages';
+import { ErrorFallback } from 'apps/common/ErrorFallback';
 
 const appElement = document.getElementById('app');
 
@@ -50,13 +47,13 @@ export const render = (settings) => {
     ReactDOM.render(
         <I18nProvider i18n={i18n}>
             <Settings settings={settings}>
-                <MainErrorBoundary>
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <Store store={settings.get('store')}>
                         <ExternalSettings>
-                            <App menu={settings.get('menu')} />
+                            <App />
                         </ExternalSettings>
                     </Store>
-                </MainErrorBoundary>
+                </ErrorBoundary>
             </Settings>
         </I18nProvider>,
 

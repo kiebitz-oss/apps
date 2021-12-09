@@ -1,6 +1,7 @@
 {
     "title": "impftermin",
     "commitSHA": "abcdef",
+    "supportEmail": "help@kiebitz.eu",
     "storageApi": "https://storage.kiebitz.eu/jsonrpc",
     "appointmentsApi": "https://appointments.kiebitz.eu/jsonrpc",
     "termsUrl": "https://app.kiebitz.eu/demo/resources/terms",

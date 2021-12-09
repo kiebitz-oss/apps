@@ -9,7 +9,9 @@ const PUBLIC_DIR = path.resolve(BUILD_DIR, 'public');
 const SRC_DIR = path.resolve(__dirname, 'src');
 const NODE_MODULES_DIR = path.resolve(__dirname, 'node_modules');
 const APP_ENV = process.env.APP_ENV || 'production';
+
 let indexPath = 'index.jsx';
+
 switch (APP_ENV) {
     case 'dev':
         indexPath = 'index_dev.jsx';
@@ -22,12 +24,14 @@ switch (APP_ENV) {
         break;
 }
 
-const withSourceMap = function (url) {
+const withSourceMap = function (url, options = {}) {
     const loader = {
         loader: url,
-        options: {},
+        options,
     };
-    if (APP_ENV === 'production') loader.options.sourceMap = true;
+
+    // if (APP_ENV === 'production') loader.options.sourceMap = true;
+
     return loader;
 };
 
@@ -53,7 +57,7 @@ let config = {
             buffer: require.resolve('buffer'),
             process: 'process/browser',
         },
-        symlinks: false,
+        // symlinks: false,
         extensions: [
             // if an import has no file ending, they will be resolved in this order
             '.tsx',
@@ -72,29 +76,22 @@ let config = {
             // them below for the production config
             // BEGIN(CSS) DO NOT MOVE
             {
-                test: /\.(scss|sass)$/,
+                test: /\.css$/,
                 use: [
                     'style-loader',
                     withSourceMap('css-loader'),
-                    withSourceMap('sass-loader'),
+                    withSourceMap('postcss-loader'),
                 ],
-            },
-            {
-                test: /\.css$/,
-                use: ['style-loader', withSourceMap('css-loader')],
             },
             // END(CSS) DO NOT MOVE
             {
                 test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-                use: 'file-loader',
-            },
-            {
-                test: /\.(yaml|yml)$/,
-                use: ['json-loader', 'yaml-loader'],
+                type: 'asset/resource',
             },
             {
                 test: /\.[tj]sx?$/,
                 include: [SRC_DIR],
+                exclude: /node_modules/,
                 use: 'babel-loader',
             },
         ],
@@ -140,21 +137,14 @@ if (APP_ENV === 'production') {
             rules: [
                 // make sure the CSS rules are the first two
                 {
-                    test: /\.(scss|sass)$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                        withSourceMap('css-loader'),
-                        withSourceMap('sass-loader'),
-                    ],
-                },
-                {
                     test: /\.css$/,
                     use: [
                         MiniCssExtractPlugin.loader,
                         withSourceMap('css-loader'),
+                        withSourceMap('postcss-loader'),
                     ],
                 },
-                ...config.module.rules.slice(2),
+                ...config.module.rules.slice(1),
             ],
         },
     };
@@ -163,19 +153,22 @@ if (APP_ENV === 'production') {
         ...config,
         mode: 'development',
         devtool: 'cheap-module-source-map',
+
         devServer: {
             // enable Hot Module Replacement on the server
             host: '0.0.0.0',
+            port: 3000,
+            hot: true,
+            compress: true,
+
+            //always render index.html if the document does not exist (we need this for correct routing)
+            historyApiFallback: true,
+
             // match the output `publicPath`
             static: {
                 publicPath: '/',
                 directory: path.join(process.cwd(), 'src/web/static'),
             },
-
-            compress: true,
-
-            //always render index.html if the document does not exist (we need this for correct routing)
-            historyApiFallback: true,
 
             proxy: {
                 '/api': {
@@ -183,6 +176,7 @@ if (APP_ENV === 'production') {
                     secure: false,
                 },
             },
+
             // we enable CORS requests (useful for testing)
             headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -194,7 +188,6 @@ if (APP_ENV === 'production') {
         },
         plugins: [
             ...config.plugins,
-            new webpack.HotModuleReplacementPlugin(),
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': '"development"',
                 COMMIT_SHA: JSON.stringify(
