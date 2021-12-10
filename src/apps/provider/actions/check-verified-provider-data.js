@@ -37,10 +37,13 @@ export async function checkVerifiedProviderData(
             };
         }
         try {
+            // to do: verify the signature of the encrypted data!
+
             const decryptedJSONData = await ecdhDecrypt(
-                verifiedData.encryptedProviderData,
+                verifiedData.encryptedProviderData.data,
                 keyPair.privateKey
             );
+
             if (decryptedJSONData === null) {
                 // can't decrypt
                 backend.local.set('provider::data::verified', null);

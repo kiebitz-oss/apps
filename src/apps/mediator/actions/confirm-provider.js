@@ -44,6 +44,7 @@ export async function confirmSingleProvider(providerData, keyPairs, backend) {
         keyPairs.signing.publicKey
     );
 
+    // this will be stored for the general public
     const signedPublicProviderData = await sign(
         keyPairs.signing.privateKey,
         publicProviderJSONData,
@@ -61,9 +62,11 @@ export async function confirmSingleProvider(providerData, keyPairs, backend) {
         providerData.entry.encryptedData.publicKey
     );
 
+    const signedEncryptedProviderData = await sign(keyPairs.signing.privateKey, encryptedProviderData, keyPairs.signing.publicKey)
+
     const result = await backend.appointments.confirmProvider(
         {
-            encryptedProviderData: encryptedProviderData,
+            encryptedProviderData: signedEncryptedProviderData,
             publicProviderData: signedPublicProviderData,
             signedKeyData: signedKeyData,
         },
