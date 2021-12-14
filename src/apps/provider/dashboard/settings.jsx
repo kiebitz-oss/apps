@@ -97,12 +97,12 @@ const Settings = withActions(
                     setLoggingOut(true);
 
                     const kpa = keyPairsAction('logoutKeyPairs');
-                    kpa.then(kp => {
+                    kpa.then((kp) => {
                         const psa = providerSecretAction(
                             undefined,
                             'logoutProviderSecret'
                         );
-                        psa.then(ps => {
+                        psa.then((ps) => {
                             // we give the backup data action a different name to avoid it being rejected
                             // in case there's already a backup in progress... It will still be queued
                             // up to ensure no conflicts can occur.

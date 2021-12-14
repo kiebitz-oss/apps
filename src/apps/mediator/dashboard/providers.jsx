@@ -58,13 +58,15 @@ const Providers = withTimer(
                 const [lastRun, setLastRun] = useState(-1);
                 const [view, setView] = useState('pending');
 
-                const getData = t => {
+                const getData = (t) => {
                     if (keyPairs !== undefined && keyPairs.data !== undefined) {
                         setLastRun(t);
-                        pendingProvidersAction(keyPairs.data).then(pd =>
-                            verifiedProvidersAction(keyPairs.data).then(vp => {
-                                // do something
-                            })
+                        pendingProvidersAction(keyPairs.data).then((pd) =>
+                            verifiedProvidersAction(keyPairs.data).then(
+                                (vp) => {
+                                    // do something
+                                }
+                            )
                         );
                     }
                 };
@@ -77,7 +79,7 @@ const Providers = withTimer(
                     view === 'pending' ? pendingProviders : verifiedProviders;
 
                 const render = () => {
-                    const showProvider = i => {
+                    const showProvider = (i) => {
                         const id = buf2hex(b642buf(i));
                         router.navigateToUrl(`/mediator/providers/show/${id}`);
                     };
@@ -131,7 +133,8 @@ const Providers = withTimer(
                     if (action === 'show' && id !== undefined) {
                         const base64Id = buf2b64(hex2buf(id));
                         const provider = providers.data.find(
-                            provider => provider.publicKeys.signing === base64Id
+                            (provider) =>
+                                provider.publicKeys.signing === base64Id
                         );
 
                         const doConfirmProvider = () => {
@@ -262,7 +265,7 @@ const Providers = withTimer(
 
                     const providerItems = providers.data
                         .sort(sortProviderByDate)
-                        .map(provider => (
+                        .map((provider) => (
                             <ListItem
                                 onClick={() =>
                                     showProvider(provider.publicKeys.signing)

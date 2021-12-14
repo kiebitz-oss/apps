@@ -12,7 +12,7 @@ export class BrowserHistory extends History {
         this.lastUrl = this.currentUrl;
         this.lastState = null;
         this.lastTitle = document.title;
-        window.onpopstate = event => {
+        window.onpopstate = (event) => {
             const result = this.notify(
                 this.currentUrl,
                 document.title,
@@ -91,7 +91,7 @@ export class Router extends Observer {
      */
     static parseParameters(query) {
         const result = {};
-        query.split('&').forEach(function(part) {
+        query.split('&').forEach(function (part) {
             const separatorIndex = part.indexOf('=');
             let key, value;
             if (separatorIndex === -1) {
@@ -129,9 +129,8 @@ export class Router extends Observer {
      * @param url {string}
      */
     handle = (url, state) => {
-        const [path, query, params, hashParams] = Router.extractPathAndParams(
-            url
-        );
+        const [path, query, params, hashParams] =
+            Router.extractPathAndParams(url);
         let matchingRoute;
         let defaultRoute;
         let found = false;
@@ -189,7 +188,7 @@ export class Router extends Observer {
         if (result !== undefined) this.notify('route', result);
     };
 
-    init = routes => {
+    init = (routes) => {
         this.routes = routes;
         this.history.watch(this.update);
         this.update(this.history, this.history.currentUrl);
@@ -198,7 +197,7 @@ export class Router extends Observer {
     /**
      * @param url {string}
      */
-    replaceUrl = url => {
+    replaceUrl = (url) => {
         const result = this.notify('replace', url);
         if (result !== undefined)
             // blocked
@@ -217,7 +216,7 @@ export class Router extends Observer {
         this.history.pushUrl(url, '', state);
     };
 
-    navigateToState = state => {
+    navigateToState = (state) => {
         const result = this.notify('navigate', this.history.currentUrl, state);
         if (result !== undefined) {
             return;

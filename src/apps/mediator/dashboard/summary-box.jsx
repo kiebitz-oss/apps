@@ -8,7 +8,7 @@ import { T, Card, CardHeader, CardContent } from 'components';
 import './summary-box.scss';
 import t from './translations.yml';
 
-const formatNumbers = n => n;
+const formatNumbers = (n) => n;
 
 const SummaryBox = ({ open, booked, active }) => (
     <Card className="kip-is-fullheight kip-is-fullwidth kip-summary-box" flex>

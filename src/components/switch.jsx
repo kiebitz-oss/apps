@@ -39,7 +39,7 @@ export class Switch extends React.Component {
             <fieldset disabled={disabled}>
                 <label
                     tabIndex="0"
-                    onKeyDown={e => {
+                    onKeyDown={(e) => {
                         switch (e.which) {
                             case 32:
                             case 13:
@@ -63,7 +63,7 @@ export class Switch extends React.Component {
                         tabIndex="0"
                         role="button"
                         checked={checked}
-                        onChange={e => {
+                        onChange={(e) => {
                             if (onChange !== undefined) onChange(!checked);
                         }}
                     />

@@ -76,7 +76,7 @@ export default class Settings extends BaseActions {
         });
         promise
             .then(({ data, response }) => loadSettings({ data, response }))
-            .catch(error => this.set({ status: 'failed', error: error }));
+            .catch((error) => this.set({ status: 'failed', error: error }));
         xhr.send();
     }
 }

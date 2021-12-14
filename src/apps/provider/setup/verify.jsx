@@ -168,7 +168,7 @@ const Verify = withRouter(
                         providerData.data,
                         keyPairs.data,
                         keys.data
-                    ).then(pd => {
+                    ).then((pd) => {
                         setSubmitting(false);
                         if (pd.status === 'succeeded')
                             router.navigateToUrl(

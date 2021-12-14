@@ -18,7 +18,7 @@ import 'scss/main.scss';
 
 const appElement = document.getElementById('app');
 
-export const render = settings => {
+export const render = (settings) => {
     if (settings.get('backend') === undefined) {
         const backend = new Backend(
             settings,

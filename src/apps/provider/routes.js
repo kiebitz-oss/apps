@@ -40,8 +40,7 @@ const routes = new Map([
     [
         'providerDashboard',
         {
-            url:
-                '/provider(?:/(schedule|settings)(?:/([a-z0-9-]+))?(?:/([a-z0-9-]+))?(?:/([a-z0-9]+))?)?',
+            url: '/provider(?:/(schedule|settings)(?:/([a-z0-9-]+))?(?:/([a-z0-9-]+))?(?:/([a-z0-9]+))?)?',
             handler: (tab, action, secondaryAction, id) => ({
                 t: t,
                 title: 'dashboard',

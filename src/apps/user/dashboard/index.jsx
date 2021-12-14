@@ -6,6 +6,7 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
 import Appointments from './appointments';
+import { deriveSecrets, randomBytes, b642buf } from 'vanellus';
 
 import { keys } from 'apps/provider/actions';
 import {
@@ -64,14 +65,27 @@ const Dashboard = withRouter(
                 }) => {
                     const [tv, setTv] = useState(-2);
 
+                    const f = async () => {
+                        const passcode = randomBytes(16);
+                        const idAndKey = await deriveSecrets(
+                            b642buf(passcode),
+                            32,
+                            2
+                        );
+                        console.log(idAndKey);
+                        console.log('hi');
+                    };
+
+                    new Promise(f);
+
                     useEffect(() => {
                         // we do this only once per timer interval...
                         if (timer === tv) return;
                         setTv(timer);
-                        userSecretAction().then(us =>
+                        userSecretAction().then((us) =>
                             tokenDataAction().then(() =>
-                                keysAction().then(kd =>
-                                    queueDataAction().then(qd => {
+                                keysAction().then((kd) =>
+                                    queueDataAction().then((qd) => {
                                         getAppointmentsAction(qd.data, kd.data);
                                         backupDataAction(us.data);
                                         invitationAction();

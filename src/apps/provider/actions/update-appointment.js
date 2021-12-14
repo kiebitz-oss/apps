@@ -28,18 +28,18 @@ export async function updateAppointment(
         );
 
         const otherAppointments = openAppointments.filter(
-            ap => ap.id !== appointment.id
+            (ap) => ap.id !== appointment.id
         );
-        if (!openAppointments.find(ap => ap.id === appointment.id))
+        if (!openAppointments.find((ap) => ap.id === appointment.id))
             return {
                 status: 'failed',
             };
 
         const openSlots = appointment.slotData.filter(
-            sl => !sl.canceled && sl.open
+            (sl) => !sl.canceled && sl.open
         );
         const closedSlots = appointment.slotData.filter(
-            sl => !sl.canceled && !sl.open
+            (sl) => !sl.canceled && !sl.open
         );
 
         // we take as many slots from the closed ones

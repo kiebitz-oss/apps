@@ -23,7 +23,7 @@ const Setup = withRouter(
             useEffect(() => {
                 if (initialized) return;
                 setInitialized(true);
-                tokenDataAction().then(td => {
+                tokenDataAction().then((td) => {
                     if (td.data !== null)
                         router.navigateToUrl('/user/appointments');
                 });

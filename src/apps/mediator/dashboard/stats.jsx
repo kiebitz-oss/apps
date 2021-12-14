@@ -20,7 +20,7 @@ import SummaryBox from './summary-box';
 import t from './translations.yml';
 import './stats.scss';
 
-export const todayPlusN = n => {
+export const todayPlusN = (n) => {
     const d = new Date();
     d.setDate(d.getDate() + n);
     d.setHours(0);
@@ -30,9 +30,10 @@ export const todayPlusN = n => {
     return d;
 };
 
-const minDate = data => Math.min(...data.map(entry => new Date(entry.from)));
+const minDate = (data) =>
+    Math.min(...data.map((entry) => new Date(entry.from)));
 const maxDate = (data, to) =>
-    Math.max(...data.map(entry => new Date(to ? entry.to : entry.from)));
+    Math.max(...data.map((entry) => new Date(to ? entry.to : entry.from)));
 const toSeries = (data, mnd, mxd, dt) => {
     const d = [];
     let cd = mnd;
@@ -61,7 +62,7 @@ const generateDates = (mnd, mxd, dt, offset) => {
     return d;
 };
 
-const prepareOverallStats = dailyStats => {
+const prepareOverallStats = (dailyStats) => {
     const { data } = dailyStats;
     // we just show summary statistics for declines, accepts
     const summary = {
@@ -72,8 +73,10 @@ const prepareOverallStats = dailyStats => {
         active: 0,
     };
     for (const key of ['open', 'booked', 'active']) {
-        data.filter(entry => entry.name === key && entry.data === null).forEach(
-            entry => (summary[key] = Math.max(entry.value, summary[key]))
+        data.filter(
+            (entry) => entry.name === key && entry.data === null
+        ).forEach(
+            (entry) => (summary[key] = Math.max(entry.value, summary[key]))
         );
     }
     return summary;
@@ -99,7 +102,9 @@ const prepareHourlyStats = (hourlyStats, settings) => {
             key,
             toSeries(
                 data
-                    .filter(entry => entry.name === key && entry.data === null)
+                    .filter(
+                        (entry) => entry.name === key && entry.data === null
+                    )
                     .sort((a, b) => new Date(a.from) - new Date(b.from)),
                 mnd,
                 mxd,
@@ -148,8 +153,8 @@ const prepareHourlyStats = (hourlyStats, settings) => {
             refTitles: refTitles,
             classNames: ['kip-open', 'kip-booked'],
             xTicks: [
-                dates.map(date => date.toLocaleTimeString('en-US', timeOpts)),
-                dates.map(date => date.toLocaleDateString('en-US', dateOpts)),
+                dates.map((date) => date.toLocaleTimeString('en-US', timeOpts)),
+                dates.map((date) => date.toLocaleDateString('en-US', dateOpts)),
             ],
             titles: titles,
         },

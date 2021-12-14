@@ -48,6 +48,9 @@ const copyPlugins = staticPaths.map(function(path) {
 let config = {
     target: "web",
     context: SRC_DIR,
+    watchOptions: {
+      ignored: [], 
+    },
     resolve: {
         fallback: { "buffer": require.resolve("buffer"), process: 'process/browser' },
         symlinks: false,

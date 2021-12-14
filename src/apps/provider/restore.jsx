@@ -73,7 +73,7 @@ export default withForm(
                         setInitialized(true);
                     });
 
-                    const keyDown = e => {
+                    const keyDown = (e) => {
                         if (e.which === 13 || e.which === 23)
                             fileInput.current.click();
                     };
@@ -84,7 +84,7 @@ export default withForm(
                             data.secret,
                             data.file,
                             data.localOnly
-                        ).then(data => {
+                        ).then((data) => {
                             setRestoring(false);
                             if (data.status === 'succeeded')
                                 router.navigateToUrl('/provider/schedule');
@@ -102,13 +102,13 @@ export default withForm(
                             </Message>
                         );
 
-                    const readFile = e => {
+                    const readFile = (e) => {
                         const file = e.target.files[0];
                         const reader = new FileReader();
 
                         set('filename', file.name);
 
-                        reader.onload = function(e) {
+                        reader.onload = function (e) {
                             try {
                                 const json = JSON.parse(e.target.result);
                                 set('file', json);
@@ -134,7 +134,7 @@ export default withForm(
                                             value={formatSecret(
                                                 data.secret || ''
                                             )}
-                                            onChange={value =>
+                                            onChange={(value) =>
                                                 set('secret', value)
                                             }
                                             label={
@@ -163,7 +163,7 @@ export default withForm(
                                                 className="bulma-input"
                                                 type="file"
                                                 role="button"
-                                                onChange={e => readFile(e)}
+                                                onChange={(e) => readFile(e)}
                                             />
                                             {(data.file !== undefined && (
                                                 <T
@@ -204,7 +204,7 @@ export default withForm(
                                                                     ? data.localOnly
                                                                     : false
                                                             }
-                                                            onChange={value =>
+                                                            onChange={(value) =>
                                                                 set(
                                                                     'localOnly',
                                                                     value

@@ -24,7 +24,7 @@ export default withActions(
                 useEffect(() => {
                     if (initialized) return;
                     setInitialized(true);
-                    providerDataAction().then(pd => {
+                    providerDataAction().then((pd) => {
                         if (
                             pd !== undefined &&
                             pd.data !== undefined &&

@@ -89,8 +89,8 @@ const Dashboard = withRouter(
                         setTv(timer);
                         setLastUpdated(new Date().toLocaleTimeString());
                         openAppointmentsAction();
-                        keysAction().then(ks =>
-                            keyPairsAction().then(kp => {
+                        keysAction().then((ks) =>
+                            keyPairsAction().then((kp) => {
                                 // we first publish appointments to e.g.
                                 // notify the backend of changes
                                 publishAppointmentsAction(kp.data).finally(
@@ -100,10 +100,10 @@ const Dashboard = withRouter(
                                     }
                                 );
 
-                                providerSecretAction().then(ps =>
+                                providerSecretAction().then((ps) =>
                                     backupDataAction(kp.data, ps.data)
                                 );
-                                providerDataAction().then(pd => {
+                                providerDataAction().then((pd) => {
                                     if (
                                         pd.data.submittedAt === undefined ||
                                         pd.data.version !== '0.4'
@@ -116,7 +116,7 @@ const Dashboard = withRouter(
                                         );
                                     } else {
                                         verifiedProviderDataAction().then(
-                                            vd => {
+                                            (vd) => {
                                                 if (vd === undefined) return;
                                                 if (
                                                     vd.data === null &&

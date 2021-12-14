@@ -55,7 +55,7 @@ const BaseProviderData = ({
     useEffect(() => {
         if (initialized) return;
         keyPairsAction();
-        providerDataAction().then(pd => {
+        providerDataAction().then((pd) => {
             reset(pd.data.data);
         });
         setInitialized(true);
@@ -75,31 +75,31 @@ const BaseProviderData = ({
                 <ErrorFor error={error} field="name" />
                 <RetractingLabelInput
                     value={data.name || ''}
-                    onChange={value => setAndMarkModified('name', value)}
+                    onChange={(value) => setAndMarkModified('name', value)}
                     label={<T t={t} k="provider-data.name" />}
                 />
                 <ErrorFor error={error} field="street" />
                 <RetractingLabelInput
                     value={data.street || ''}
-                    onChange={value => setAndMarkModified('street', value)}
+                    onChange={(value) => setAndMarkModified('street', value)}
                     label={<T t={t} k="provider-data.street" />}
                 />
                 <ErrorFor error={error} field="zipCode" />
                 <RetractingLabelInput
                     value={data.zipCode || ''}
-                    onChange={value => setAndMarkModified('zipCode', value)}
+                    onChange={(value) => setAndMarkModified('zipCode', value)}
                     label={<T t={t} k="provider-data.zip-code" />}
                 />
                 <ErrorFor error={error} field="city" />
                 <RetractingLabelInput
                     value={data.city || ''}
-                    onChange={value => setAndMarkModified('city', value)}
+                    onChange={(value) => setAndMarkModified('city', value)}
                     label={<T t={t} k="provider-data.city" />}
                 />
                 <ErrorFor error={error} field="website" />
                 <RetractingLabelInput
                     value={data.website || ''}
-                    onChange={value => setAndMarkModified('website', value)}
+                    onChange={(value) => setAndMarkModified('website', value)}
                     label={<T t={t} k="provider-data.website" />}
                 />
                 <ErrorFor error={error} field="description" />
@@ -110,7 +110,7 @@ const BaseProviderData = ({
                     id="description"
                     className="bulma-textarea"
                     value={data.description || ''}
-                    onChange={e =>
+                    onChange={(e) =>
                         setAndMarkModified('description', e.target.value)
                     }
                 />
@@ -120,20 +120,20 @@ const BaseProviderData = ({
                 <ErrorFor error={error} field="phone" />
                 <RetractingLabelInput
                     value={data.phone || ''}
-                    onChange={value => setAndMarkModified('phone', value)}
+                    onChange={(value) => setAndMarkModified('phone', value)}
                     label={<T t={t} k="provider-data.phone" />}
                 />
                 <ErrorFor error={error} field="email" />
                 <RetractingLabelInput
                     value={data.email || ''}
-                    onChange={value => setAndMarkModified('email', value)}
+                    onChange={(value) => setAndMarkModified('email', value)}
                     label={<T t={t} k="provider-data.email" />}
                 />
                 <hr />
                 <ErrorFor error={error} field="code" />
                 <RetractingLabelInput
                     value={data.code || ''}
-                    onChange={value => setAndMarkModified('code', value)}
+                    onChange={(value) => setAndMarkModified('code', value)}
                     description={
                         <T t={t} k="provider-data.access-code.description" />
                     }
@@ -149,7 +149,7 @@ const BaseProviderData = ({
                                     ? data.accessible
                                     : false
                             }
-                            onChange={value =>
+                            onChange={(value) =>
                                 setAndMarkModified('accessible', value)
                             }
                         >

@@ -80,7 +80,7 @@ const Finalize = withForm(
                         contactDataAction();
                         userSecretAction();
                         getTokenAction.reset();
-                        queueDataAction().then(qd => {
+                        queueDataAction().then((qd) => {
                             const initialData = {
                                 distance: 5,
                             };
@@ -103,7 +103,7 @@ const Finalize = withForm(
                             getTokenAction(
                                 contactData.data,
                                 userSecret.data
-                            ).then(hd => {
+                            ).then((hd) => {
                                 setSubmitting(false);
                                 if (hd.status === 'failed') return;
 
@@ -130,7 +130,7 @@ const Finalize = withForm(
                                     <Switch
                                         id={kv}
                                         checked={data[kv] || false}
-                                        onChange={value =>
+                                        onChange={(value) =>
                                             setAndMarkModified(kv, value)
                                         }
                                     >
@@ -208,7 +208,7 @@ const Finalize = withForm(
                                         />
                                         <RetractingLabelInput
                                             value={data.zipCode || ''}
-                                            onChange={value =>
+                                            onChange={(value) =>
                                                 setAndMarkModified(
                                                     'zipCode',
                                                     value
@@ -243,7 +243,7 @@ const Finalize = withForm(
                                         <RichSelect
                                             id="distance"
                                             value={data.distance || 5}
-                                            onChange={value =>
+                                            onChange={(value) =>
                                                 setAndMarkModified(
                                                     'distance',
                                                     value.value

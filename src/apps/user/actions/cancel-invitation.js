@@ -24,7 +24,6 @@ export async function cancelInvitation(
         const id = acceptedInvitation.offer.id;
 
         try {
-
             const result = await backend.appointments.cancelAppointment(
                 {
                     id: id,

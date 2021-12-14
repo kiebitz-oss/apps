@@ -42,7 +42,6 @@ export async function confirmOffers(
                 );
                 let result;
                 try {
-
                     result = await backend.appointments.bookAppointment(
                         {
                             id: offer.id,

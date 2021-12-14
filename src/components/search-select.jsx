@@ -17,7 +17,7 @@ export const SearchSelect = ({
     setSearch,
     candidates,
 }) => {
-    const items = candidates.map(candidate => (
+    const items = candidates.map((candidate) => (
         <li
             onClick={() => onSelect(candidate)}
             key={candidate.name}
@@ -45,7 +45,7 @@ export const SearchSelect = ({
         <div className="kip-search-select">
             <RetractingLabelInput
                 onChange={setSearch}
-                onEnter={e => e.preventDefault()}
+                onEnter={(e) => e.preventDefault()}
                 label={label}
                 disabled={disabled}
                 description={description}

@@ -165,12 +165,12 @@ const AcceptedInvitation = withActions(
             invitation: invitationData,
             slotData,
         } = acceptedInvitation.data;
-        const currentOffer = offers.find(of => of.id == offer.id);
+        const currentOffer = offers.find((of) => of.id == offer.id);
         let currentSlotData;
 
         if (currentOffer !== undefined)
             currentSlotData = currentOffer.slotData.find(
-                sl => sl.id === slotData.id
+                (sl) => sl.id === slotData.id
             );
 
         let notice;
@@ -299,19 +299,19 @@ const NoInvitations = ({ tokenData }) => {
 
 async function toggleOffers(state, keyStore, settings, offer, offers) {
     if (offer === null) return { data: [] };
-    if (state.data.find(i => i === offer.id) !== undefined) {
-        state.data = state.data.filter(i => i !== offer.id);
+    if (state.data.find((i) => i === offer.id) !== undefined) {
+        state.data = state.data.filter((i) => i !== offer.id);
     } else {
         state.data.push(offer.id);
     }
     // we remove non-existing offers
-    state.data = state.data.filter(i =>
-        offers.map(offer => offer.id).includes(i)
+    state.data = state.data.filter((i) =>
+        offers.map((offer) => offer.id).includes(i)
     );
     return { data: state.data };
 }
 
-toggleOffers.init = function() {
+toggleOffers.init = function () {
     return { data: [] };
 };
 
@@ -321,7 +321,7 @@ const PropertyTags = ({ appointment }) => {
     let props;
     props = Object.entries(appointment.properties)
         .map(([, v]) => <PropertyTag key={v} property={v} />)
-        .filter(p => p !== undefined);
+        .filter((p) => p !== undefined);
     return <F>{props}</F>;
 };
 
@@ -361,7 +361,7 @@ const InvitationDetails = withSettings(
                 toggleOffersAction(null);
             });
 
-            const toggle = offer => {
+            const toggle = (offer) => {
                 toggleOffersAction(offer, data.offers);
             };
 
@@ -370,7 +370,7 @@ const InvitationDetails = withSettings(
                 // we add the selected offers in the order the user chose
                 for (const offerID of toggleOffers.data) {
                     const offer = data.offers.find(
-                        offer => offer.id === offerID
+                        (offer) => offer.id === offerID
                     );
                     selectedOffers.push(offer);
                 }
@@ -394,8 +394,8 @@ const InvitationDetails = withSettings(
             const properties = settings.get('appointmentProperties');
             // to do: use something better than the index i for the key?
             const offers = data.offers
-                .filter(offer => offer.slotData.some(sl => sl.open))
-                .filter(a => new Date(a.timestamp) > new Date())
+                .filter((offer) => offer.slotData.some((sl) => sl.open))
+                .filter((a) => new Date(a.timestamp) > new Date())
                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                 .map((offer, i) => {
                     const d = new Date(offer.timestamp);
@@ -481,8 +481,8 @@ const InvitationDetails = withSettings(
                             disabled={
                                 confirming ||
                                 Object.keys(
-                                    toggleOffers.data.filter(id =>
-                                        data.offers.find(of => of.id === id)
+                                    toggleOffers.data.filter((id) =>
+                                        data.offers.find((of) => of.id === id)
                                     )
                                 ).length === 0
                             }
@@ -498,7 +498,7 @@ const InvitationDetails = withSettings(
     )
 );
 
-const filterInvitations = invitation => {
+const filterInvitations = (invitation) => {
     if (invitation.offers === null) return false;
     const expired = true;
     let noOpenSlots = false;
@@ -530,7 +530,7 @@ const Appointments = withActions(
                 for (const offer of invitation.data) {
                     if (
                         invitations.some(
-                            inv => inv.provider.name === offer.provider.name
+                            (inv) => inv.provider.name === offer.provider.name
                         )
                     )
                         continue;
@@ -541,12 +541,12 @@ const Appointments = withActions(
                 acceptedInvitation !== undefined &&
                 acceptedInvitation.data !== null
             ) {
-                const ai = invitations.find(inv => {
+                const ai = invitations.find((inv) => {
                     if (inv === null) return false;
-                    return inv.offers.some(offer =>
-                        offer.slotData.some(sla =>
+                    return inv.offers.some((offer) =>
+                        offer.slotData.some((sla) =>
                             acceptedInvitation.data.offer.slotData.some(
-                                slb => slb.id === sla.id
+                                (slb) => slb.id === sla.id
                             )
                         )
                     );
@@ -556,14 +556,14 @@ const Appointments = withActions(
             }
 
             // we only show relevant invitations
-            invitations = invitations.filter(inv =>
+            invitations = invitations.filter((inv) =>
                 filterInvitations(inv, acceptedInvitation)
             );
 
             if (invitations.length === 0)
                 return <NoInvitations tokenData={tokenData.data} />;
 
-            const details = invitations.map(data => (
+            const details = invitations.map((data) => (
                 <InvitationDetails
                     tokenData={tokenData}
                     data={data}

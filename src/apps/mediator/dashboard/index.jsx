@@ -31,11 +31,11 @@ import './index.scss';
 const UploadKeyPairsModal = ({ keyPairsAction }) => {
     const [invalidFile, setInvalidFile] = useState(false);
 
-    const readFile = e => {
+    const readFile = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const json = JSON.parse(e.target.result);
             if (
                 json.signing === undefined ||
@@ -68,7 +68,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
                         id="file-upload"
                         className="bulma-input"
                         type="file"
-                        onChange={e => readFile(e)}
+                        onChange={(e) => readFile(e)}
                     />
                 </label>
             </FieldSet>

@@ -39,7 +39,7 @@ class BaseLeaveGuard extends React.Component {
         }
     };
 
-    onBeforeUnload = e => {
+    onBeforeUnload = (e) => {
         const { saveToReload } = this.props;
         const { confirmed } = this.state;
         if (!saveToReload() && !confirmed) {

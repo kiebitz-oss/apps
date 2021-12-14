@@ -144,8 +144,8 @@ export const BackupDataLink = withSettings(
             useEffect(() => {
                 if (initialized) return;
                 setInitialized(true);
-                keyPairsAction().then(kp =>
-                    providerSecretAction().then(ps =>
+                keyPairsAction().then((kp) =>
+                    providerSecretAction().then((ps) =>
                         backupDataAction(kp.data, ps.data)
                     )
                 );

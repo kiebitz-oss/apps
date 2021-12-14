@@ -32,7 +32,7 @@ export const ListItem = ({ children, isCard = true, onClick }) => (
             'kip-is-card': isCard,
             'kip-is-clickable': onClick,
         })}
-        onClick={e => {
+        onClick={(e) => {
             e.preventDefault();
             if (onClick) onClick();
         }}

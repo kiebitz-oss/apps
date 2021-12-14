@@ -61,7 +61,7 @@ const BaseContactData = ({
         if (initialized) return;
         setInitialized(true);
         setModified(false);
-        contactDataAction().then(ct => reset(ct.data));
+        contactDataAction().then((ct) => reset(ct.data));
     });
 
     const submitting = false;
@@ -76,7 +76,7 @@ const BaseContactData = ({
             <ErrorFor error={error} field="code" />
             <RetractingLabelInput
                 value={data.code || ''}
-                onChange={value => setAndMarkModified('code', value)}
+                onChange={(value) => setAndMarkModified('code', value)}
                 description={
                     <T t={t} k="contact-data.access-code.description" />
                 }

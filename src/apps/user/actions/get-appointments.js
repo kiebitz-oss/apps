@@ -74,7 +74,7 @@ export async function getAppointments(state, keyStore, settings, queueData) {
                     for (const offer of item.offers) {
                         const verifiedOffer = await verifyOffer(offer, item);
                         for (const slot of verifiedOffer.slotData) {
-                            if (offer.bookedSlots.some(id => id === slot.id))
+                            if (offer.bookedSlots.some((id) => id === slot.id))
                                 slot.open = false;
                             else slot.open = true;
                         }

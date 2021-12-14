@@ -21,12 +21,12 @@ export function withForm(Component, Form, formName) {
             return new Form(data, settings, error);
         };
 
-        reset = populateData => {
+        reset = (populateData) => {
             this.actions.reset();
             if (populateData) this.actions.set({ data: populateData });
         };
 
-        setError = error => {
+        setError = (error) => {
             this.actions.update({ error: error });
         };
 
@@ -52,7 +52,7 @@ export function withForm(Component, Form, formName) {
             this.actions.update({ error: undefined });
         };
 
-        setError = error => {
+        setError = (error) => {
             this.actions.update({ error: error });
         };
 

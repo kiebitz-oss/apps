@@ -14,7 +14,7 @@ class ABase extends React.Component {
             : href;
     }
 
-    handleClick = event => {
+    handleClick = (event) => {
         const { external } = this.props;
         if (this.props._original.onClick !== undefined) {
             this.props._original.onClick(event);

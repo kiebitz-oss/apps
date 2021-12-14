@@ -18,7 +18,7 @@ export const Form = ({ className, onSubmit, children, id }: FormProps) => (
     <form
         className={classnames('kip-form', className)}
         id={id}
-        onSubmit={e => {
+        onSubmit={(e) => {
             e.preventDefault();
             if (onSubmit !== undefined) onSubmit();
         }}
@@ -107,7 +107,7 @@ export const Select = ({
     disabled = false,
     onChange,
 }: SelectProps) => {
-    const options = items.map(item => (
+    const options = items.map((item) => (
         <option key={item.value} value={item.value}>
             {item.text}
         </option>
@@ -117,7 +117,7 @@ export const Select = ({
             <select
                 defaultValue={defaultValue}
                 disabled={disabled}
-                onChange={e => onChange(e.target.value)}
+                onChange={(e) => onChange(e.target.value)}
             >
                 {options}
             </select>
@@ -147,7 +147,7 @@ export const Checkbox = ({ name, onChange, defaultChecked }: CheckboxProps) => (
     <input
         type="checkbox"
         tabIndex="0"
-        onChange={e => onChange(e.target.checked)}
+        onChange={(e) => onChange(e.target.checked)}
         name={name}
         id={name}
         defaultChecked={defaultChecked}
@@ -189,7 +189,7 @@ export class Input extends PureComponent<InputProps> {
                 ref={forwardedRef}
                 {...props}
                 tabIndex="0"
-                onKeyDown={e =>
+                onKeyDown={(e) =>
                     onEnter &&
                     (e.key === 'Enter' || e.keyCode === 13) &&
                     onEnter(e)

@@ -16,7 +16,7 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
         throw null; // we throw a null exception (which won't affect the store state)
     }
 
-    const decryptBookings = async bookings => {
+    const decryptBookings = async (bookings) => {
         for (const booking of bookings) {
             const dd = JSON.parse(
                 await ecdhDecrypt(
@@ -53,12 +53,12 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
             const appData = JSON.parse(appointment.data);
 
             // this appointment was loaded already (should not happen)
-            if (newAppointments.find(app => app.id === appData.id)) {
+            if (newAppointments.find((app) => app.id === appData.id)) {
                 continue;
             }
 
             const existingAppointment = openAppointments.find(
-                app => app.id === appData.id
+                (app) => app.id === appData.id
             );
 
             if (existingAppointment) {
@@ -70,17 +70,18 @@ export async function getAppointments(state, keyStore, settings, keyPairs) {
                 // that do not exist locally
 
                 // remove slots that do not exist in the backend
-                existingAppointment.slotData = existingAppointment.slotData.filter(
-                    sl => appData.slotData.some(slot => slot.id === sl.id)
-                );
+                existingAppointment.slotData =
+                    existingAppointment.slotData.filter((sl) =>
+                        appData.slotData.some((slot) => slot.id === sl.id)
+                    );
 
                 // add new slots from the backend
                 existingAppointment.slotData = [
                     ...existingAppointment.slotData,
                     ...appData.slotData.filter(
-                        sl =>
+                        (sl) =>
                             !existingAppointment.slotData.some(
-                                slot => slot.id === sl.id
+                                (slot) => slot.id === sl.id
                             )
                     ),
                 ];

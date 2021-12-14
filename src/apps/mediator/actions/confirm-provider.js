@@ -62,7 +62,11 @@ export async function confirmSingleProvider(providerData, keyPairs, backend) {
         providerData.entry.encryptedData.publicKey
     );
 
-    const signedEncryptedProviderData = await sign(keyPairs.signing.privateKey, encryptedProviderData, keyPairs.signing.publicKey)
+    const signedEncryptedProviderData = await sign(
+        keyPairs.signing.privateKey,
+        encryptedProviderData,
+        keyPairs.signing.publicKey
+    );
 
     const result = await backend.appointments.confirmProvider(
         {

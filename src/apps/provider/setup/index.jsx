@@ -20,7 +20,7 @@ const Setup = withRouter(
                 let data;
                 if (Object.keys(route.hashParams).length > 0)
                     data = route.hashParams;
-                providerDataAction(data).then(pd => {
+                providerDataAction(data).then((pd) => {
                     if (
                         route.handler.props.page === undefined &&
                         pd.data !== undefined &&

@@ -67,7 +67,7 @@ export default withForm(
 
                     const restore = () => {
                         setRestoring(true);
-                        restoreFromBackupAction(data.secret).then(data => {
+                        restoreFromBackupAction(data.secret).then((data) => {
                             setRestoring(false);
                             if (data.status === 'succeeded')
                                 router.navigateToUrl('/user/appointments');
@@ -101,7 +101,7 @@ export default withForm(
                                             value={formatSecret(
                                                 data.secret || ''
                                             )}
-                                            onChange={value =>
+                                            onChange={(value) =>
                                                 set('secret', value)
                                             }
                                             label={

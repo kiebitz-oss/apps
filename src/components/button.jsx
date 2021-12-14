@@ -46,7 +46,9 @@ export const Button = ({
     <A
         external={external}
         target={target}
-        onClick={e => (!disabled && onClick !== undefined ? onClick(e) : false)}
+        onClick={(e) =>
+            !disabled && onClick !== undefined ? onClick(e) : false
+        }
         href={href}
         params={params}
         hashParams={hashParams}

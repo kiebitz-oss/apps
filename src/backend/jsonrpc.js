@@ -21,7 +21,7 @@ class JSONRPCBackend {
     }
 
     request(opts) {
-        const normalize = data => {
+        const normalize = (data) => {
             if (data.errors === undefined) data.errors = {};
             return data;
         };

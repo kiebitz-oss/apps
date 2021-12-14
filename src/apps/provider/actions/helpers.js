@@ -9,11 +9,11 @@ export function enrichAppointments(appointments) {
                 new Date(a.timestamp).getTime() -
                 new Date(b.timestamp).getTime()
         )
-        .map(oa => ({ ...oa }));
+        .map((oa) => ({ ...oa }));
     let activeAppointments = [];
 
     for (const [i, oa] of sortedAppointments
-        .filter(app => app.slots > 0)
+        .filter((app) => app.slots > 0)
         .entries()) {
         oa.maxOverlap = 0;
         oa.index = i;
@@ -23,7 +23,7 @@ export function enrichAppointments(appointments) {
             oa.start.getTime() + 1000 * 60 * Math.max(0, oa.duration)
         );
         activeAppointments = activeAppointments.filter(
-            aa => aa.stop > oa.start
+            (aa) => aa.stop > oa.start
         );
         oa.overlapsWith = [...activeAppointments];
 

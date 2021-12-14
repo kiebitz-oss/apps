@@ -26,7 +26,7 @@ export async function cancelAppointment(
         // we select the appointment from the "official" list as the given appointment might
         // contain enrichment data and e.g. cyclic data structures...
         const canceledAppointment = openAppointments.find(
-            ap => ap.id === appointment.id
+            (ap) => ap.id === appointment.id
         );
 
         if (canceledAppointment === undefined)
@@ -35,7 +35,7 @@ export async function cancelAppointment(
             };
 
         const otherAppointments = openAppointments.filter(
-            ap => ap.id !== appointment.id
+            (ap) => ap.id !== appointment.id
         );
 
         // we simply remove all slots

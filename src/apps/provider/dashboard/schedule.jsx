@@ -45,7 +45,7 @@ import {
 import t from './translations.yml';
 import './schedule.scss';
 
-Date.prototype.addHours = function(h) {
+Date.prototype.addHours = function (h) {
     this.setHours(this.getHours() + h);
     return this;
 };
@@ -65,14 +65,14 @@ const AppointmentOverview = withActions(
     }) => {
         const [showDelete, setShowDelete] = useState(false);
         const acceptedItems = appointment.bookings
-            .map(booking => {
+            .map((booking) => {
                 return (
                     <li className="kip-is-code" key={booking.id}>
                         {booking.data.tokenData.code}
                     </li>
                 );
             })
-            .filter(it => it);
+            .filter((it) => it);
 
         const doDelete = () => {
             cancelAppointmentAction(appointment).then(() => {
@@ -196,7 +196,7 @@ const PropertyTags = ({ appointment, verbose, tiny }) => {
         .map(([k, v]) => (
             <PropertyTag tiny={tiny} verbose={verbose} key={k} property={k} />
         ))
-        .filter(p => p !== undefined);
+        .filter((p) => p !== undefined);
     return <F>{props}</F>;
 };
 
@@ -239,7 +239,7 @@ const AppointmentCard = withRouter(
             (new Date(appointment.timestamp).getMinutes() / 60) * 100
         );
         const i = appointment.overlapsWith.filter(
-            oa => oa.index < appointment.index
+            (oa) => oa.index < appointment.index
         ).length;
         const l = Math.floor(i * w);
         const tiny = p < 33 || w < 50;
@@ -272,7 +272,7 @@ const AppointmentCard = withRouter(
                     top: `calc(${y}% + 2.5%)`,
                     left: `calc(${l}% + 2.5%)`,
                 }}
-                onClick={e => {
+                onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     if (!active)
@@ -310,7 +310,7 @@ const CalendarAppointments = ({
     const [showModal, setShowModal] = useState(false);
     let modal;
     const appointmentsItems = appointments
-        .filter(ap => ap.startsHere && ap.appointment.slots > 0)
+        .filter((ap) => ap.startsHere && ap.appointment.slots > 0)
         .map(({ appointment }) => (
             <AppointmentCard
                 action={action}
@@ -476,7 +476,7 @@ const WeekCalendar = withRouter(
         let toHour;
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + 7);
-        appointments.forEach(app => {
+        appointments.forEach((app) => {
             const appStartDate = new Date(app.timestamp);
             const appEndDate = new Date(
                 new Date(app.timestamp).getTime() + 1000 * 60 * app.duration
@@ -569,14 +569,14 @@ const AppointmentItem = ({ appointment }) => {
                 return 0;
             }
         })
-        .map(booking => {
+        .map((booking) => {
             return (
                 <li className="kip-is-code" key={booking.id}>
                     {booking.data.tokenData.code}
                 </li>
             );
         })
-        .filter(it => it);
+        .filter((it) => it);
 
     return (
         <li className="kip-appointment-item">
@@ -610,8 +610,8 @@ const AppointmentItem = ({ appointment }) => {
 
 const AppointmentsList = ({ appointments }) => {
     const appointmentItems = appointments
-        .filter(app => app.bookings.length > 0)
-        .map(appointment => (
+        .filter((app) => app.bookings.length > 0)
+        .map((appointment) => (
             <AppointmentItem key={appointment.id} appointment={appointment} />
         ));
     return (
@@ -694,7 +694,7 @@ const NewAppointment = withSettings(
 
                     if (id !== undefined)
                         appointment = appointments.find(
-                            app => getHexId(app.id) === id
+                            (app) => getHexId(app.id) === id
                         );
 
                     const save = () => {
@@ -802,7 +802,7 @@ const NewAppointment = withSettings(
                                 }
                             }
 
-                            const changeTo = option => {
+                            const changeTo = (option) => {
                                 const newData = { ...data };
                                 for (const option of options)
                                     newData[option.value] = undefined;
@@ -818,7 +818,7 @@ const NewAppointment = withSettings(
                                     <RichSelect
                                         options={options}
                                         value={currentOption}
-                                        onChange={option => changeTo(option)}
+                                        onChange={(option) => changeTo(option)}
                                     />
                                 </F>
                             );
@@ -826,20 +826,8 @@ const NewAppointment = withSettings(
                     );
 
                     const durations = [
-                        5,
-                        10,
-                        15,
-                        20,
-                        30,
-                        45,
-                        60,
-                        90,
-                        120,
-                        150,
-                        180,
-                        210,
-                        240,
-                    ].map(v => ({
+                        5, 10, 15, 20, 30, 45, 60, 90, 120, 150, 180, 210, 240,
+                    ].map((v) => ({
                         value: v,
                         title: (
                             <T
@@ -882,7 +870,7 @@ const NewAppointment = withSettings(
                                             value={data.date || ''}
                                             type="date"
                                             className="bulma-input"
-                                            onChange={e =>
+                                            onChange={(e) =>
                                                 set('date', e.target.value)
                                             }
                                         />
@@ -896,7 +884,7 @@ const NewAppointment = withSettings(
                                             type="time"
                                             className="bulma-input"
                                             value={data.time || ''}
-                                            onChange={e =>
+                                            onChange={(e) =>
                                                 set('time', e.target.value)
                                             }
                                             step={60}
@@ -914,7 +902,7 @@ const NewAppointment = withSettings(
                                             type="number"
                                             className="bulma-input"
                                             value={data.slots || 1}
-                                            onChange={e =>
+                                            onChange={(e) =>
                                                 set(
                                                     'slots',
                                                     parseInt(e.target.value)
@@ -929,7 +917,7 @@ const NewAppointment = withSettings(
                                         <RichSelect
                                             id="duration"
                                             value={data.duration || 30}
-                                            onChange={value =>
+                                            onChange={(value) =>
                                                 set('duration', value.value)
                                             }
                                             options={durations}

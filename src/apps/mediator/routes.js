@@ -23,8 +23,7 @@ const routes = new Map([
     [
         'mediatorDashboard',
         {
-            url:
-                '/mediator(?:/(providers|stats|settings)(?:/([a-z0-9-]+))?(?:/([a-z0-9-]+))?(?:/([a-z0-9]+))?)?',
+            url: '/mediator(?:/(providers|stats|settings)(?:/([a-z0-9-]+))?(?:/([a-z0-9-]+))?(?:/([a-z0-9]+))?)?',
             handler: (tab, action, secondaryAction, id) => ({
                 t: t,
                 title: 'dashboard',
