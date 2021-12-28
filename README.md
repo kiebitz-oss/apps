@@ -17,16 +17,16 @@ Kiebietz consists of three apps for providers, mediators and users, which can be
 To run the app in dev mode, simply run
 
 ```bash
-npm run-script make-dev
+npm run-script build-dev
 ``` 
 
 after running `npm install`. To build the `dev` and `production` versions simply run
 
 ```bash
 # build the development version
-npm run-script make-dev
+npm run-script build-dev
 # build the production version
-npm run-script make
+npm run-script build
 ```
 
 # Linting & Formatting

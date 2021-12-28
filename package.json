@@ -10,9 +10,9 @@
     "lint-scss-fix": "stylelint ./src/scss/*.scss --fix",
     "lint": "eslint . --ext js,jsx,ts,tsx --quiet && stylelint src/**/*.scss",
     "lint-fix": "eslint . --ext js,jsx,ts,tsx --quiet --fix; stylelint src/**/*.scss --fix",
-    "make-test": "APP_ENV=test webpack-dev-server --config webpack.config.js --history-api-fallback",
-    "make-dev": "APP_ENV=dev webpack-dev-server --config webpack.config.js --history-api-fallback",
-    "make": "webpack --config webpack.config.js"
+    "build-test": "APP_ENV=test webpack-dev-server --config webpack.config.js --history-api-fallback",
+    "build-dev": "APP_ENV=dev webpack-dev-server --config webpack.config.js --history-api-fallback",
+    "build": "webpack --config webpack.config.js"
   },
   "author": "Andreas Dewes",
   "browserslist": [
