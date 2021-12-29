@@ -48,9 +48,6 @@ const copyPlugins = staticPaths.map(function(path) {
 let config = {
     target: "web",
     context: SRC_DIR,
-    watchOptions: {
-      ignored: [], 
-    },
     resolve: {
         fallback: { "buffer": require.resolve("buffer"), process: 'process/browser' },
         symlinks: false,
@@ -167,6 +164,7 @@ if (APP_ENV === "production") {
         devServer: {
             // enable Hot Module Replacement on the server
             host: '0.0.0.0',
+            hot: true,
             // match the output `publicPath`
             static: {
                 publicPath: "/",
@@ -174,13 +172,6 @@ if (APP_ENV === "production") {
             },
             //always render index.html if the document does not exist (we need this for correct routing)
             historyApiFallback: true,
-
-            proxy: {
-                "/api": {
-                    target: "http://localhost:8888/",
-                    secure: false
-                }
-            },
             // we enable CORS requests (useful for testing)
             headers: {
                 "Access-Control-Allow-Origin": "*",
@@ -192,7 +183,6 @@ if (APP_ENV === "production") {
         },
         plugins: [
             ...config.plugins,
-            new webpack.HotModuleReplacementPlugin(),
             new webpack.DefinePlugin({
                 "process.env.NODE_ENV": '"development"',
                 COMMIT_SHA: JSON.stringify(
