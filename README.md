@@ -9,7 +9,7 @@ Welcome to the Kiebitz project! Please visit our [website](https://kiebitz.eu) t
 
 # Getting Started
 
-Kiebietz consists of three apps for providers, mediators and users, which can be reached under `/provider`, `/mediator` and `/user`, respectively. The app can be built with different environments:
+Kiebitz consists of three apps for providers, mediators and users, which can be reached under `/provider`, `/mediator` and `/user`, respectively. The app can be built with different environments:
 
 * The `dev` environment works against a locally deployed backend and is great for testing the apps against a real backend.
 * The `production` environment build the app bundles for production deployment, i.e. minified and optimized code that works against the production backend.
