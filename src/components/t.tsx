@@ -5,9 +5,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withSettings } from './settings';
+import Settings from 'helpers/settings';
 
 // eslint-disable-next-line no-unused-vars
-const TBase = ({ t, k, safe, settings, ...args }) => {
+const TBase = ({ t, k, safe, settings, ...args }: {k: string[], t: {[Key: string]: any}, safe?: boolean, settings: Settings}) => {
     const tv = settings.t(t, k, args);
     if (safe)
         return (

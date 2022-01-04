@@ -39,23 +39,28 @@ export function update(
     return d;
 }
 
-function hget(d, key, defaultValue) {
+function hget(d: {[Key: string]: any}, key: string[], defaultValue?: any) {
     let kl = key;
     if (!Array.isArray(kl)) kl = [kl];
-    let cv = d;
+    let cv: any = d;
     for (let i = 0; i < kl.length; i++) {
         if (cv === undefined) return defaultValue;
         if (kl[i] !== undefined && kl[i].endsWith("?")) {
             const kle = kl[i].slice(0, kl[i].length - 1);
-            let cvn;
-            if (cv instanceof Map) cvn = cv.get(kle);
-            else cvn = cv[kle];
+            let cvn: any;
+            if (cv instanceof Map)
+                cvn = cv.get(kle);
+            else
+                cvn = cv[kle];
             if (cvn !== undefined)
                 // we only assign it if the value exists
                 cv = cvn;
         } else {
-            if (cv instanceof Map) cv = cv.get(kl[i]);
-            else cv = cv[kl[i]];
+            if (cv instanceof Map)
+                cv = cv.get(kl[i]);
+            else
+                // @ts-ignore
+                cv = cv[kl[i]];
         }
     }
     if (cv === undefined) return defaultValue;
@@ -133,7 +138,9 @@ export default class Settings {
         const value = hget(t, [...kl, lang]);
         if (value === undefined) {
             let source = '';
+            // @ts-ignore
             if (t._t !== undefined && t._t.path !== undefined)
+                // @ts-ignore
                 source = `/(${t._t.path})`;
             return [`[mt: ${kl.join("/")}/${lang}${source}]`];
         }

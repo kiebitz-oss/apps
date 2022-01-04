@@ -6,11 +6,11 @@
 
 const hasOwn = {}.hasOwnProperty;
 
-export default function classNames() {
+export default function classNames(...args: any[]): string {
     const classes = [];
 
-    for (let i = 0; i < arguments.length; i++) {
-        const arg = arguments[i];
+    for (let i = 0; i < args.length; i++) {
+        const arg = args[i];
         if (!arg) continue;
 
         const argType = typeof arg;

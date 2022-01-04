@@ -35,7 +35,7 @@ Form.propTypes = {
 interface FieldProps {
     children?: ReactChild;
     id?: string;
-    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export const Field = ({ children }: FieldProps) => (

@@ -5,6 +5,7 @@
 import React, { Component, ReactChild } from 'react';
 import { Message } from './message';
 import { T } from './t';
+// @ts-ignore
 import t from './translations.yml';
 import './loader.scss';
 
@@ -74,7 +75,14 @@ type WithLoaderProps = {
     onLoad: () => {};
 };
 
-export class WithLoader extends Component<WithLoaderProps> {
+type WithLoaderState = {
+    showLoader: boolean
+}
+
+export class WithLoader extends Component<WithLoaderProps, WithLoaderState> {
+
+    private mounted: boolean
+
     static defaultProps = {
         renderWait: RenderWait,
         renderFailed: RenderFailed,

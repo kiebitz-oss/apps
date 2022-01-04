@@ -1,10 +1,9 @@
 import { Mediator } from 'vanellus';
-import { useContext } from 'react';
 import { useBackend } from './use-backend';
 
-const mediators = {}
+const mediators: {[Key:string]: Mediator} = {}
 
-export const useUser = (name = 'main') => {
+export const useUser = (name: string = 'main'): Mediator => {
 
     const backend = useBackend();
 

@@ -2,14 +2,14 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-type Watcher = (store: Store, key: string, value: any) => void;
+type Watcher = (store: Store, key: string, value: any, notifyId?: number) => void;
 
 /*
 This function deep-copies objects and ensures only valid object types are store
 in our store (maps, array, objects, numbers, strings). It can handle self-referencing,
 circular data structures as well.
 */
-export function copy(value, memo) {
+export function copy(value: any, memo?: Map<any, any>) {
     memo = memo || new Map()
     if (memo.has(value))
         return memo.get(value)
@@ -53,6 +53,7 @@ export function copy(value, memo) {
 export default class Store {
     private watchers: Map<string, Map<number, Watcher>>;
     private watcherId: number;
+    private notifyId: number;
     private state: Record<string, any>;
 
     constructor() {
@@ -81,7 +82,7 @@ export default class Store {
     }
 
     public get(key?: string) {
-        if (key === "" || key === null)
+        if (key === "" || key === null || key === undefined)
             //we return the whole store
             return copy(this.state);
         return copy(this.state[key]);
@@ -89,14 +90,14 @@ export default class Store {
 
     public watch(key: string, watcher: Watcher) {
         if (!this.watchers.has(key)) this.watchers.set(key, new Map([]));
-        this.watchers.get(key).set(this.watcherId, watcher);
+        this.watchers.get(key)!.set(this.watcherId, watcher);
         return this.watcherId++;
     }
 
     public unwatch(key: string, watcherId: number) {
-        if (!this.watchers.has(key) || !this.watchers.get(key).has(watcherId))
+        if (!this.watchers.has(key) || !this.watchers.get(key)!.has(watcherId))
             throw new Error("unknown key");
-        this.watchers.get(key).delete(watcherId);
+        this.watchers.get(key)!.delete(watcherId);
     }
 
     private notify(key: string, value: any) {
@@ -106,11 +107,5 @@ export default class Store {
         watchers.forEach(watcher => {
             watcher(this, key, value, notifyId);
         });
-    }
-}
-
-export class LocalStorageStore extends Store {
-    constructor() {
-        super();
     }
 }

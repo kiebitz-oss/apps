@@ -4,7 +4,7 @@
 
 import Settings from "./settings";
 
-export function isEmpty(value: string): bool {
+export function isEmpty(value: string): boolean {
     return value === undefined || value === null || value === "";
 }
 
@@ -12,6 +12,8 @@ export default class Form {
     data: Record<string, any>;
     settings: Settings;
     _errors: Record<string, any>;
+    _errorMessage?: string;
+    _valid?: boolean;
 
     constructor(
         data: Record<string, any>,

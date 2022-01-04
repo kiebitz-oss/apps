@@ -1,23 +1,26 @@
-import { Settings, Store, Backend, StorageStore } from 'vanellus'
+import { Settings, Backend, StorageStore } from 'vanellus'
 import { useSettings } from './'
 
-let backend
+let backend: Backend
 
-export const useBackend = () => {
+export const useBackend = (): Backend => {
 
     const kbSettings = useSettings()
 
     if (backend === undefined){
 
-        const settings = {
+        const settings: Settings = {
             apiUrls: {
-                appointments: kbSettings.get('appointmentsApi'),
-                storage: kbSettings.get('storageApi'),
-            }
+                appointments: kbSettings.get('appointmentsApi') as string,
+                storage: kbSettings.get('storageApi') as string,
+            },
+            appointment: {
+                properties: {},
+            },
         }
 
-        const store: Store = new StorageStore(localStorage)
-        const temporaryStore: Store = new StorageStore(sessionStorage)
+        const store = new StorageStore(localStorage)
+        const temporaryStore = new StorageStore(sessionStorage)
         backend = new Backend(settings, store, temporaryStore)
     }
     return backend

@@ -90,9 +90,14 @@ let config = {
                 use: ["json-loader", "yaml-loader"]
             },
             {
-                test: /\.[tj]sx?$/,
+                test: /\.jsx?$/,
                 include: [SRC_DIR],
                 use: "babel-loader"
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
             }
         ]
     },

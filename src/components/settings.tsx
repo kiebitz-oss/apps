@@ -29,11 +29,14 @@ export const Settings = ({ children, settings }) => (
 );
 
 class ExtSettings extends React.Component {
+
+    private mounted: boolean; 
+
     constructor(props) {
         super(props);
-        const { settings } = props;
+        const { settings, externalSettingsActions } = props;
         this.mounted = false;
-        props.externalSettingsActions.loadSettings(settings);
+        externalSettingsActions.loadSettings(settings);
     }
 
     componentDidUpdate() {

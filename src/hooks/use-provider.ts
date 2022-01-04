@@ -1,8 +1,7 @@
 import { Provider } from 'vanellus';
-import { useContext } from 'react';
 import { useBackend } from './use-backend';
 
-const providers = {};
+const providers: {[Key: string]: Provider} = {};
 
 export const useProvider = (name = 'main') => {
     const backend = useBackend();

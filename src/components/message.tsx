@@ -3,12 +3,13 @@
 // README.md contains license information.
 
 import React, { ReactChild } from 'react';
-import PropTypes from 'prop-types';
 import { ButtonIcon } from './button';
 import classnames from 'helpers/classnames';
 import './message.scss';
 
 type MessageProps = {
+    className?: string;
+    waiting?: boolean;
     children: ReactChild;
     type: string;
 };
@@ -31,9 +32,3 @@ export const Message = ({
         </div>
     </div>
 );
-
-Message.propTypes = {
-    children: PropTypes.node.isRequired,
-    waiting: PropTypes.bool,
-    type: PropTypes.oneOf(['info', 'success', 'danger', 'primary', 'warning']),
-};

@@ -1,10 +1,9 @@
 import { User } from 'vanellus';
-import { useContext } from 'react';
 import { useBackend } from './use-backend';
 
-const users = {}
+const users: {[Key: string]: User} = {}
 
-export const useUser = (name = 'main') => {
+export const useUser = (name: string = 'main') => {
 
     const backend = useBackend();
 

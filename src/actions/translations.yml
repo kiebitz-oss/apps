@@ -1,4 +1,0 @@
-_t:
-  path: actions/translations.yml
-requestFailed:
-  en: API request failed.

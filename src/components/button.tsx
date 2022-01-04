@@ -9,7 +9,7 @@ import './button.scss';
 
 import { A } from './a';
 
-export const ButtonIcon = ({ icon, brand }) => (
+export const ButtonIcon = ({ icon, brand }: { icon: string, brand?: boolean }) => (
     <span className="bulma-icon bulma-is-small">
         <i className={(brand ? 'fab' : 'fas') + ` fa-${icon}`} />
     </span>
@@ -42,7 +42,7 @@ export const Button = ({
     className,
     disabled,
     ...props
-}) => (
+}: ButtonProps) => (
     <A
         external={external}
         target={target}
@@ -77,6 +77,23 @@ export const Button = ({
     </A>
 );
 
+type ButtonProps = {
+    className?: string;
+    children?: ReactChild;
+    disabled?: boolean;
+    brand?: boolean;
+    flex?: boolean;
+    href?: string;
+    icon?:string;
+    large?: boolean;
+    light?: boolean;
+    type?: string;
+    htmlType?: string;
+    waiting?: boolean;
+    primary?: boolean;
+    onClick?: () => void;
+};
+
 Button.defaultProps = {
     children: undefined,
     brand: false,
@@ -89,19 +106,4 @@ Button.defaultProps = {
     large: false,
     type: 'primary',
     onClick: undefined,
-};
-
-Button.propTypes = {
-    brand: PropTypes.bool,
-    children: PropTypes.node,
-    flex: PropTypes.bool,
-    href: PropTypes.string,
-    icon: PropTypes.node,
-    large: PropTypes.bool,
-    light: PropTypes.bool,
-    type: PropTypes.string,
-    htmlType: PropTypes.string,
-    waiting: PropTypes.bool,
-    primary: PropTypes.bool,
-    onClick: PropTypes.func,
 };
