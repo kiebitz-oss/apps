@@ -15,15 +15,15 @@ class ABase extends React.Component {
     }
 
     handleClick = (event) => {
-        const { external } = this.props;
-        if (this.props._original.onClick !== undefined) {
-            this.props._original.onClick(event);
+        const { external, router, _original } = this.props;
+        if (_original.onClick !== undefined) {
+            _original.onClick(event);
         }
         if (event.defaultPrevented) return;
         if (external) return;
         event.preventDefault();
-        if (this.href !== undefined && this.props.router !== undefined)
-            this.props.router.navigateToUrl(this.href);
+        if (this.href !== undefined && router !== undefined)
+            router.navigateToUrl(this.href);
     };
 
     _encode(params) {
@@ -51,18 +51,5 @@ class ABase extends React.Component {
         return <a {...rest} onClick={this.handleClick} href={this.href} />;
     }
 }
-
-ABase.propTypes = {
-    _original: PropTypes.shape({
-        onClick: PropTypes.func,
-    }).isRequired,
-    children: PropTypes.node.isRequired,
-    href: PropTypes.string,
-    external: PropTypes.bool,
-    params: PropTypes.object,
-    router: PropTypes.shape({
-        navigateToUrl: PropTypes.func.isRequired,
-    }),
-};
 
 export const A = withRouter(ABase);

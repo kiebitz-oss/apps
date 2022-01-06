@@ -10,5 +10,5 @@ interface ElementClassWithNames extends JSX.ElementClass {
 export const displayName = (
     WrappedComponent: ElementClassWithNames
 ): string => {
-    return WrappedComponent.displayName || WrappedComponent.name || "Component";
+    return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 };

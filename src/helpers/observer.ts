@@ -23,7 +23,7 @@ export default class Observer {
 
     unwatch(watcherId: number) {
         if (!this.watchers.has(watcherId))
-            throw new Error("watcher does not exist");
+            throw new Error('watcher does not exist');
         this.watchers.delete(watcherId);
     }
 

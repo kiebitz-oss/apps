@@ -10,7 +10,7 @@ export function format(str: string, ...rest: any[]): any[] {
     if (rest.length === 0) args = {};
     else
         args =
-            t === "string" || t === "number"
+            t === 'string' || t === 'number'
                 ? Array.prototype.slice.call(rest)
                 : rest[0];
 
@@ -34,7 +34,7 @@ export function format(str: string, ...rest: any[]): any[] {
             }
         } else {
             splits.push(s);
-            s = "";
+            s = '';
         }
     }
     return splits;

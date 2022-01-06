@@ -3,13 +3,22 @@
 // README.md contains license information.
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withSettings } from './settings';
-import Settings from 'helpers/settings';
+import { useSettings } from 'hooks';
 
 // eslint-disable-next-line no-unused-vars
-const TBase = ({ t, k, safe, settings, ...args }: {k: string[], t: {[Key: string]: any}, safe?: boolean, settings: Settings}) => {
+export const T = ({
+    t,
+    k,
+    safe,
+    ...args
+}: {
+    k: string[] | string;
+    t: { [Key: string]: any };
+    safe?: boolean;
+}) => {
+    const settings = useSettings();
     const tv = settings.t(t, k, args);
+
     if (safe)
         return (
             <span
@@ -18,19 +27,6 @@ const TBase = ({ t, k, safe, settings, ...args }: {k: string[], t: {[Key: string
                 }}
             />
         );
+
     return <React.Fragment>{tv}</React.Fragment>;
 };
-
-TBase.propTypes = {
-    k: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.arrayOf(PropTypes.string),
-    ]).isRequired,
-    safe: PropTypes.bool,
-    settings: PropTypes.shape({
-        t: PropTypes.func.isRequired,
-    }).isRequired,
-    t: PropTypes.oneOfType([PropTypes.object]).isRequired,
-};
-
-export const T = withSettings(TBase);

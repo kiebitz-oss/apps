@@ -76,12 +76,11 @@ type WithLoaderProps = {
 };
 
 type WithLoaderState = {
-    showLoader: boolean
-}
+    showLoader: boolean;
+};
 
 export class WithLoader extends Component<WithLoaderProps, WithLoaderState> {
-
-    private mounted: boolean
+    private mounted: boolean;
 
     static defaultProps = {
         renderWait: RenderWait,

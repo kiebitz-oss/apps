@@ -3,19 +3,25 @@
 // README.md contains license information.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'helpers/classnames';
 import './button.scss';
 
+// @ts-ignore
 import { A } from './a';
 
-export const ButtonIcon = ({ icon, brand }: { icon: string, brand?: boolean }) => (
+export const ButtonIcon = ({
+    icon,
+    brand,
+}: {
+    icon: string;
+    brand?: boolean;
+}) => (
     <span className="bulma-icon bulma-is-small">
         <i className={(brand ? 'fab' : 'fas') + ` fa-${icon}`} />
     </span>
 );
 
-export const ButtonLogo = ({ logo }) => (
+export const ButtonLogo = ({ logo }: { logo: string }) => (
     <span className="bulma-icon bulma-is-small kip-logo">
         <img src={logo} />
     </span>
@@ -46,7 +52,7 @@ export const Button = ({
     <A
         external={external}
         target={target}
-        onClick={(e) =>
+        onClick={(e: React.MouseEvent<HTMLLinkElement, MouseEvent>) =>
             !disabled && onClick !== undefined ? onClick(e) : false
         }
         href={href}
@@ -79,19 +85,25 @@ export const Button = ({
 
 type ButtonProps = {
     className?: string;
-    children?: ReactChild;
+    children?: React.ReactChild;
     disabled?: boolean;
     brand?: boolean;
     flex?: boolean;
     href?: string;
-    icon?:string;
+    icon?: string;
     large?: boolean;
     light?: boolean;
+    params?: any;
+    hashParams?: any;
     type?: string;
-    htmlType?: string;
+    target?: string;
+    noText?: boolean;
+    external?: boolean;
+    logo?: string;
+    htmlType?: 'submit' | 'reset' | 'button' | undefined;
     waiting?: boolean;
     primary?: boolean;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLLinkElement>) => void;
 };
 
 Button.defaultProps = {

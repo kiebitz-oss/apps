@@ -5,7 +5,6 @@
 import React, { Fragment } from 'react';
 import Menu from 'main/sidebar-menu';
 import PropTypes from 'prop-types';
-import Notification from 'main/notifications';
 import TitleActions from 'actions/title';
 import {
     withActions,
@@ -23,7 +22,6 @@ import {
 } from 'components';
 
 import t from './translations.yml';
-import { user } from 'actions';
 import { encodeQueryData } from 'helpers/url';
 import './app.scss';
 
@@ -35,7 +33,6 @@ class App extends React.Component {
             sidebarActive: false,
             outdated: false,
         };
-        this.checkRoute(true);
         this.mounted = false;
         this.commitSHA = settings.get('commitSHA');
     }
@@ -43,20 +40,6 @@ class App extends React.Component {
     handleSidebarToggle = () => {
         this.setState({ sidebarActive: !this.state.sidebarActive });
     };
-
-    checkRoute(redirect) {
-        const { route } = this.props;
-        if (route.handler.authentication !== undefined) {
-            if (user === undefined) {
-                if (redirect) {
-                    const data = encodeQueryData({ redirectTo: route.path });
-                    router.navigateToUrl(`/login#${data}`);
-                }
-                return false;
-            }
-        }
-        return true;
-    }
 
     componentDidMount() {
         this.mounted = true;
@@ -73,10 +56,6 @@ class App extends React.Component {
 
     componentWillUnmount() {
         this.mounted = false;
-    }
-
-    componentDidUpdate() {
-        this.checkRoute(true);
     }
 
     render() {
@@ -98,15 +77,6 @@ class App extends React.Component {
                 </Message>
             );
         }
-
-        if (!this.checkRoute())
-            return (
-                <CenteredCard>
-                    <CardContent>
-                        <T t={t} k="redirecting" />
-                    </CardContent>
-                </CenteredCard>
-            );
 
         let content;
         if (route.handler.isSimple)
@@ -154,7 +124,6 @@ class App extends React.Component {
         );
         return (
             <Fragment>
-                <Notification />
                 <TopNavbar
                     active={sidebarActive}
                     menu={navMenu}
@@ -204,5 +173,5 @@ App.propTypes = {
 };
 
 export default withSettings(
-    withActions(withRoute(withRouter(App)), [TitleActions, user])
+    withActions(withRoute(withRouter(App)), [TitleActions])
 );

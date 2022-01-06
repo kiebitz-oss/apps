@@ -29,8 +29,7 @@ export const Settings = ({ children, settings }) => (
 );
 
 class ExtSettings extends React.Component {
-
-    private mounted: boolean; 
+    private mounted: boolean;
 
     constructor(props) {
         super(props);

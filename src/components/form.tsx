@@ -11,7 +11,8 @@ import './form.scss';
 interface FormProps {
     children?: ReactChild;
     id?: string;
-    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    className?: string;
+    onSubmit: (event?: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export const Form = ({ className, onSubmit, children, id }: FormProps) => (
@@ -146,7 +147,7 @@ interface CheckboxProps {
 export const Checkbox = ({ name, onChange, defaultChecked }: CheckboxProps) => (
     <input
         type="checkbox"
-        tabIndex="0"
+        tabIndex={0}
         onChange={(e) => onChange(e.target.checked)}
         name={name}
         id={name}
@@ -162,6 +163,7 @@ Checkbox.propTypes = {
 interface InputProps {
     className?: string;
     forwardedRef?: React.Ref<HTMLInputElement>;
+    onEnter?: (event?: React.KeyboardEvent<HTMLInputElement>) => void;
     value: string;
     onChange: (value: string) => void;
 }
@@ -188,7 +190,7 @@ export class Input extends PureComponent<InputProps> {
             <input
                 ref={forwardedRef}
                 {...props}
-                tabIndex="0"
+                tabIndex={0}
                 onKeyDown={(e) =>
                     onEnter &&
                     (e.key === 'Enter' || e.keyCode === 13) &&
@@ -294,7 +296,17 @@ FieldSet.propTypes = {
     disabled: PropTypes.bool,
 };
 
-export const SubmitField = ({ onClick, disabled, title, ...props }) => (
+export const SubmitField = ({
+    onClick,
+    disabled,
+    title,
+    ...props
+}: {
+    onClick: () => void;
+    title: string;
+    disabled?: boolean;
+    props: { [Key: string]: any };
+}) => (
     <Field>
         <Control>
             <Button

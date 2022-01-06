@@ -21,7 +21,7 @@ export function update(
     clone = false
 ) {
     if (!(ed instanceof Map) || !(d instanceof Map)) {
-        throw new Error("Parameters are not maps!");
+        throw new Error('Parameters are not maps!');
     }
     if (clone) d = new Map(d);
     for (const key of ed.keys()) {
@@ -39,33 +39,29 @@ export function update(
     return d;
 }
 
-function hget(d: {[Key: string]: any}, key: string[], defaultValue?: any) {
+function hget(d: { [Key: string]: any }, key: string[], defaultValue?: any) {
     let kl = key;
     if (!Array.isArray(kl)) kl = [kl];
     let cv: any = d;
     for (let i = 0; i < kl.length; i++) {
         if (cv === undefined) return defaultValue;
-        if (kl[i] !== undefined && kl[i].endsWith("?")) {
+        if (kl[i] !== undefined && kl[i].endsWith('?')) {
             const kle = kl[i].slice(0, kl[i].length - 1);
             let cvn: any;
-            if (cv instanceof Map)
-                cvn = cv.get(kle);
-            else
-                cvn = cv[kle];
+            if (cv instanceof Map) cvn = cv.get(kle);
+            else cvn = cv[kle];
             if (cvn !== undefined)
                 // we only assign it if the value exists
                 cv = cvn;
         } else {
-            if (cv instanceof Map)
-                cv = cv.get(kl[i]);
-            else
-                // @ts-ignore
-                cv = cv[kl[i]];
+            if (cv instanceof Map) cv = cv.get(kl[i]);
+            // @ts-ignore
+            else cv = cv[kl[i]];
         }
     }
     if (cv === undefined) return defaultValue;
     // we convert empty strings to 'undefined'
-    if (cv === "") return undefined;
+    if (cv === '') return undefined;
     return cv;
 }
 
@@ -122,7 +118,7 @@ export default class Settings {
      * Get the current language for the app. This will affect translations.
      */
     lang(): string {
-        return this.get("lang", "en");
+        return this.get('lang', 'en');
     }
 
     /**
@@ -133,7 +129,7 @@ export default class Settings {
     t(t: object, key: string | string[], ...params: string[]): string[];
     t(t: object, key: string | string[], ...params: any[]): any[];
     t(t: object, key: string | string[], ...params: any[]): string | any[] {
-        const kl: string[] = Array.isArray(key) ? key : key.split(".");
+        const kl: string[] = Array.isArray(key) ? key : key.split('.');
         const lang = this.lang();
         const value = hget(t, [...kl, lang]);
         if (value === undefined) {
@@ -142,10 +138,10 @@ export default class Settings {
             if (t._t !== undefined && t._t.path !== undefined)
                 // @ts-ignore
                 source = `/(${t._t.path})`;
-            return [`[mt: ${kl.join("/")}/${lang}${source}]`];
+            return [`[mt: ${kl.join('/')}/${lang}${source}]`];
         }
-        if (typeof value !== "string")
-            return [`[not a string: ${kl.join("/")}/${lang}]`];
+        if (typeof value !== 'string')
+            return [`[not a string: ${kl.join('/')}/${lang}]`];
         if (params.length > 0) return format(value.toString(), ...params);
         return value;
     }

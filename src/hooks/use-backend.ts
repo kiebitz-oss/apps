@@ -1,14 +1,12 @@
-import { Settings, Backend, StorageStore } from 'vanellus'
-import { useSettings } from './'
+import { Settings, Backend, StorageStore } from 'vanellus';
+import { useSettings } from './';
 
-let backend: Backend
+let backend: Backend;
 
 export const useBackend = (): Backend => {
+    const kbSettings = useSettings();
 
-    const kbSettings = useSettings()
-
-    if (backend === undefined){
-
+    if (backend === undefined) {
         const settings: Settings = {
             apiUrls: {
                 appointments: kbSettings.get('appointmentsApi') as string,
@@ -17,11 +15,11 @@ export const useBackend = (): Backend => {
             appointment: {
                 properties: {},
             },
-        }
+        };
 
-        const store = new StorageStore(localStorage)
-        const temporaryStore = new StorageStore(sessionStorage)
-        backend = new Backend(settings, store, temporaryStore)
+        const store = new StorageStore(localStorage);
+        const temporaryStore = new StorageStore(sessionStorage);
+        backend = new Backend(settings, store, temporaryStore);
     }
-    return backend
+    return backend;
 };
