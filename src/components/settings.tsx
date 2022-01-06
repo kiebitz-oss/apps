@@ -3,14 +3,17 @@
 // README.md contains license information.
 
 import React from 'react';
+// @ts-ignore
 import { withActions } from './store';
 import { displayName } from 'helpers/hoc';
+// @ts-ignore
 import SettingsAction from 'actions/settings';
 import { SettingsContext } from './contexts';
 
-export function withSettings(Component) {
+export function withSettings(Component: any) {
     class Settings extends React.Component {
         static contextType = SettingsContext;
+        public static displayName: string;
 
         render() {
             return <Component {...this.props} settings={this.context} />;
@@ -22,16 +25,28 @@ export function withSettings(Component) {
     return Settings;
 }
 
-export const Settings = ({ children, settings }) => (
+export const Settings = ({
+    children,
+    settings,
+}: {
+    settings: any;
+    children: any;
+}) => (
     <SettingsContext.Provider value={settings}>
         {children}
     </SettingsContext.Provider>
 );
 
-class ExtSettings extends React.Component {
+interface ExtSettingsProps {
+    externalSettings: any;
+    externalSettingsActions: any;
+    settings: any;
+}
+
+class ExtSettings extends React.Component<ExtSettingsProps> {
     private mounted: boolean;
 
-    constructor(props) {
+    constructor(props: ExtSettingsProps) {
         super(props);
         const { settings, externalSettingsActions } = props;
         this.mounted = false;

@@ -1,27 +1,33 @@
 import { useState, useEffect } from 'react';
-import { User } from 'vanellus';
+import { User, Actor } from 'vanellus';
 import { useBackend } from './use-backend';
 
 const users: { [Key: string]: User } = {};
 
-export const useUser = (name: string = 'main') => {
-    const backend = useBackend();
-
+export function watch(actor: Actor, attributes?: string[]) {
     const [updated, setUpdated] = useState(0);
 
-    if (!(name in users)) users[name] = new User(name, backend);
-
     useEffect(() => {
-        const notify = (subject, ...args) => {
+        const notify = (_: Actor, key: string) => {
+            if (attributes && !attributes.find((k) => k === key)) return;
             setUpdated(updated + 1);
-            console.log(subject, args);
         };
-        const watcherId = users[name].watch(notify);
+        const watcherId = actor.watch(notify);
         return () => {
-            console.log('unwatching');
-            users[name].unwatch(watcherId);
+            actor.unwatch(watcherId);
         };
     }, []);
+}
 
+export const useUser = ({
+    name = 'main',
+    attributes,
+}: {
+    name: string;
+    attributes?: string[];
+}) => {
+    const backend = useBackend();
+    if (!(name in users)) users[name] = new User(name, backend);
+    watch(users[name], attributes);
     return users[name];
 };

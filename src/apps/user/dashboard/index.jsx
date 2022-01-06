@@ -63,6 +63,7 @@ const Dashboard = withRouter(
                     tokenDataAction,
                 }) => {
                     const [tv, setTv] = useState(-2);
+                    const user = useUser();
 
                     useEffect(() => {
                         // we do this only once per timer interval...
@@ -84,8 +85,6 @@ const Dashboard = withRouter(
 
                     let content;
                     let menu;
-
-                    const user = useUser();
 
                     user.getKeys().then((keys) => console.log(keys));
 

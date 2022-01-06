@@ -9,7 +9,7 @@ export default class Title extends Base {
         return 'title';
     }
 
-    setTitle(title: string) {
+    setTitle(title: any) {
         const oldTitle = this.get();
         if (title instanceof Array) title = title.join(' ');
         if (!(typeof title === 'string') && !(title instanceof String)) {

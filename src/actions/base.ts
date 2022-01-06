@@ -2,6 +2,10 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
+// this file will be removed
+
+// @ts-nocheck
+
 import BaseApi from 'apis/base';
 import Settings from 'helpers/settings';
 import Store, { copy } from 'helpers/store';
@@ -10,6 +14,7 @@ export enum ActionStates {
     undefined = 'undefined',
     loading = 'loading',
     loaded = 'loaded',
+    initialized = 'initialized',
     succeeded = 'succeeded',
     failed = 'failed',
     creating = 'creating',
