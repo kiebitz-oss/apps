@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Form from 'helpers/form';
+import { useUser } from 'hooks';
 import { contactData } from 'apps/user/actions';
 import {
     withRouter,
@@ -30,29 +31,17 @@ class ContactDataForm extends Form {
     }
 }
 
-/*
-            <ErrorFor error={error} field="email" />
-            <RetractingLabelInput
-                description={<T t={t} k="contact-data.email.description" />}
-                value={data.email || ''}
-                onChange={value => setAndMarkModified('email', value)}
-                label={<T t={t} k="contact-data.email.label" />}
-            />
-
-*/
-
 const BaseContactData = ({
-    contactData,
-    contactDataAction,
     form: { set, data, error, valid, reset },
     router,
 }) => {
     const [modified, setModified] = useState(false);
     const [initialized, setInitialized] = useState(false);
+    const user = useUser();
 
     const onSubmit = () => {
         if (!valid) return;
-        contactDataAction(data);
+        user.contactData = data;
         // we redirect to the 'verify' step
         router.navigateToUrl(`/user/setup/finalize`);
     };
@@ -61,7 +50,8 @@ const BaseContactData = ({
         if (initialized) return;
         setInitialized(true);
         setModified(false);
-        contactDataAction().then((ct) => reset(ct.data));
+        console.log(user.contactData);
+        reset(user.contactData || {});
     });
 
     const submitting = false;
@@ -132,9 +122,10 @@ const BaseContactData = ({
     );
 };
 
-const ContactData = withActions(
-    withForm(withRouter(BaseContactData), ContactDataForm, 'form'),
-    [contactData]
+const ContactData = withForm(
+    withRouter(BaseContactData),
+    ContactDataForm,
+    'form'
 );
 
 export default ContactData;
