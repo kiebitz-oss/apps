@@ -9,7 +9,6 @@ import { contactData } from 'apps/user/actions';
 import {
     withRouter,
     withForm,
-    withActions,
     WithLoader,
     Form as FormComponent,
     FieldSet,
@@ -37,9 +36,7 @@ const BaseContactData = ({
 }) => {
     const [modified, setModified] = useState(false);
     const [initialized, setInitialized] = useState(false);
-    const user = useUser({ attributes: ['keys'] });
-
-    console.log(user.keys().result());
+    const user = useUser();
 
     const onSubmit = () => {
         if (!valid) return;
@@ -50,8 +47,6 @@ const BaseContactData = ({
 
     useEffect(() => {
         if (initialized) return;
-        console.log('Getting keys...');
-        user.keys().get();
         setInitialized(true);
         setModified(false);
         reset(user.contactData || {});

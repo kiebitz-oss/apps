@@ -8,20 +8,10 @@ import Settings from './settings';
 import { keys } from 'apps/provider/actions';
 import { formatDuration, formatDate, formatTime } from 'helpers/time';
 import classNames from 'helpers/classnames';
-import {
-    tokenData,
-    userSecret,
-    invitation,
-    appointments,
-    confirmOffers,
-    getAppointments,
-    cancelInvitation,
-    confirmDeletion,
-    acceptedInvitation,
-} from 'apps/user/actions';
+import { useUser, useSettings } from 'hooks';
+
 import {
     withSettings,
-    withActions,
     ButtonIcon,
     Button,
     Card,
@@ -58,7 +48,8 @@ const ProviderDetails = ({ data }) => {
     );
 };
 
-const OfferDetails = withSettings(({ settings, offer }) => {
+const OfferDetails = ({ offer }) => {
+    const settings = useSettings();
     const lang = settings.get('lang');
     const notices = [];
     const properties = settings.get('appointmentProperties');
@@ -106,153 +97,28 @@ const OfferDetails = withSettings(({ settings, offer }) => {
                 );
         }
     }
-
     return <div className="kip-offer-details">{notices}</div>;
-});
+};
 
-const InvitationDeleted = withActions(
-    ({ confirmDeletionAction, acceptedInvitationAction }) => {
-        return (
-            <F>
-                <Message type="danger">
-                    <T t={t} k="invitation-accepted.deleted" />
-                </Message>
-                <CardFooter>
-                    <Button
-                        type="warning"
-                        onClick={() =>
-                            confirmDeletionAction().then(
-                                acceptedInvitationAction
-                            )
-                        }
-                    >
-                        <T t={t} k="invitation-accepted.confirm-deletion" />
-                    </Button>
-                </CardFooter>
-            </F>
-        );
-    },
-    [confirmDeletion, acceptedInvitation]
-);
-
-const AcceptedInvitation = withActions(
-    ({
-        tokenData,
-        acceptedInvitation,
-        acceptedInvitationAction,
-        cancelInvitation,
-        invitationAction,
-        cancelInvitationAction,
-        offers,
-        userSecret,
-    }) => {
-        const [showDelete, setShowDelete] = useState(false);
-
-        const doDelete = () => {
-            setShowDelete(false);
-            cancelInvitationAction(
-                acceptedInvitation.data,
-                tokenData.data
-            ).then(() => {
-                // we reload the appointments
-                invitationAction();
-                acceptedInvitationAction();
-            });
-        };
-
-        const {
-            offer,
-            invitation: invitationData,
-            slotData,
-        } = acceptedInvitation.data;
-        const currentOffer = offers.find((of) => of.id == offer.id);
-        let currentSlotData;
-
-        if (currentOffer !== undefined)
-            currentSlotData = currentOffer.slotData.find(
-                (sl) => sl.id === slotData.id
-            );
-
-        let notice;
-        let changed = false;
-        for (const [k, v] of Object.entries(currentOffer)) {
-            if (
-                k === 'open' ||
-                k === 'slotData' ||
-                k === 'properties' ||
-                k === 'slots'
-            )
-                continue;
-            if (offer[k] !== v) {
-                changed = true;
-                break;
-            }
-        }
-        if (changed)
-            notice = (
-                <F>
-                    <Message type="danger">
-                        <T t={t} k="invitation-accepted.changed" />
-                    </Message>
-                </F>
-            );
-        const d = new Date(currentOffer.timestamp);
-
-        let modal;
-
-        if (showDelete)
-            return (
-                <Modal
-                    onSave={doDelete}
-                    onClose={() => setShowDelete(false)}
-                    onCancel={() => setShowDelete(false)}
-                    saveType="danger"
-                    save={<T t={t} k="invitation-accepted.delete.confirm" />}
-                    cancel={<T t={t} k="invitation-accepted.delete.cancel" />}
-                    title={<T t={t} k="invitation-accepted.delete.title" />}
-                    className="kip-appointment-overview"
+const InvitationDeleted = ({}) => {
+    return (
+        <F>
+            <Message type="danger">
+                <T t={t} k="invitation-accepted.deleted" />
+            </Message>
+            <CardFooter>
+                <Button
+                    type="warning"
+                    onClick={() =>
+                        confirmDeletionAction().then(acceptedInvitationAction)
+                    }
                 >
-                    <p>
-                        <T t={t} k="invitation-accepted.delete.notice" />
-                    </p>
-                </Modal>
-            );
-
-        return (
-            <F>
-                <CardContent>
-                    {notice}
-                    <div className="kip-accepted-invitation">
-                        <h2>
-                            <T t={t} k="invitation-accepted.title" />
-                        </h2>
-                        <ProviderDetails data={invitationData.provider} />
-                        <OfferDetails offer={currentOffer} />
-                        <p className="kip-appointment-date">
-                            {d.toLocaleDateString()} ·{' '}
-                            <u>{d.toLocaleTimeString()}</u>
-                        </p>
-                        <p className="kip-booking-code">
-                            <span>
-                                <T
-                                    t={t}
-                                    k={'invitation-accepted.booking-code'}
-                                />
-                            </span>
-                            {userSecret.data.slice(0, 4)}
-                        </p>
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <Button type="warning" onClick={() => setShowDelete(true)}>
-                        <T t={t} k="cancel-appointment" />
-                    </Button>
-                </CardFooter>
-            </F>
-        );
-    },
-    [userSecret, acceptedInvitation, cancelInvitation, invitation, tokenData]
-);
+                    <T t={t} k="invitation-accepted.confirm-deletion" />
+                </Button>
+            </CardFooter>
+        </F>
+    );
+};
 
 const NoInvitations = ({ tokenData }) => {
     let createdAt;
@@ -339,164 +205,142 @@ const PropertyTag = withSettings(({ settings, property }) => {
         }
     }
 });
-const InvitationDetails = withSettings(
-    withActions(
-        ({
-            data,
-            tokenData,
-            settings,
-            userSecret,
-            toggleOffers,
-            toggleOffersAction,
-            acceptedInvitationAction,
-            confirmOffers,
-            confirmOffersAction,
-        }) => {
-            const [confirming, setConfirming] = useState(false);
-            const [initialized, setInitialized] = useState(false);
+const InvitationDetails = ({}) => {
+    const settings = useSettings();
 
-            useEffect(() => {
-                if (initialized) return;
-                setInitialized(true);
-                toggleOffersAction(null);
-            });
+    const [confirming, setConfirming] = useState(false);
+    const [initialized, setInitialized] = useState(false);
 
-            const toggle = (offer) => {
-                toggleOffersAction(offer, data.offers);
-            };
+    useEffect(() => {
+        if (initialized) return;
+        setInitialized(true);
+        toggleOffersAction(null);
+    });
 
-            const doConfirmOffers = () => {
-                const selectedOffers = [];
-                // we add the selected offers in the order the user chose
-                for (const offerID of toggleOffers.data) {
-                    const offer = data.offers.find(
-                        (offer) => offer.id === offerID
-                    );
-                    selectedOffers.push(offer);
-                }
-                setConfirming(true);
-                const p = confirmOffersAction(
-                    selectedOffers,
-                    data,
-                    tokenData.data
-                );
-                p.then(() => {
-                    acceptedInvitationAction();
-                });
-                p.finally(() => {
-                    setConfirming(false);
-                    toggleOffersAction(null);
-                });
-            };
+    const toggle = (offer) => {
+        toggleOffersAction(offer, data.offers);
+    };
 
-            let content;
+    const doConfirmOffers = () => {
+        const selectedOffers = [];
+        // we add the selected offers in the order the user chose
+        for (const offerID of toggleOffers.data) {
+            const offer = data.offers.find((offer) => offer.id === offerID);
+            selectedOffers.push(offer);
+        }
+        setConfirming(true);
+        const p = confirmOffersAction(selectedOffers, data, tokenData.data);
+        p.then(() => {
+            acceptedInvitationAction();
+        });
+        p.finally(() => {
+            setConfirming(false);
+            toggleOffersAction(null);
+        });
+    };
 
-            const properties = settings.get('appointmentProperties');
-            // to do: use something better than the index i for the key?
-            const offers = data.offers
-                .filter((offer) => offer.slotData.some((sl) => sl.open))
-                .filter((a) => new Date(a.timestamp) > new Date())
-                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-                .map((offer, i) => {
-                    const d = new Date(offer.timestamp);
-                    const selected = toggleOffers.data.includes(offer.id);
-                    let pref;
-                    if (selected)
-                        pref = toggleOffers.data.indexOf(offer.id) + 1;
-                    return (
-                        <tr
-                            key={offer.id}
-                            className={classNames(`kip-pref-${pref}`, {
-                                'kip-selected': selected,
-                                'kip-failed': false,
-                            })}
-                            onClick={() => toggle(offer)}
-                        >
-                            <td>{selected ? pref : '-'}</td>
-                            <td>
-                                {d.toLocaleString('de-DE', {
-                                    month: '2-digit',
-                                    day: '2-digit',
-                                    year: '2-digit',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                })}
-                            </td>
-                            <td>
-                                {formatDuration(offer.duration, settings, t)}
-                            </td>
-                            <td>
-                                <PropertyTags appointment={offer} />
-                            </td>
-                        </tr>
-                    );
-                });
+    let content;
 
-            let offerDetails;
-
-            if (offers.length === 0)
-                offerDetails = (
-                    <Message type="warning">
-                        <T t={t} k="no-offers-anymore" />
-                    </Message>
-                );
-            else
-                offerDetails = (
-                    <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <T t={t} k="appointment-preference" />
-                                </th>
-                                <th>
-                                    <T t={t} k="appointment-date" />
-                                </th>
-                                <th>
-                                    <T t={t} k="appointment-duration" />
-                                </th>
-                                <th>
-                                    <T t={t} k="appointment-vaccine" />
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>{offers}</tbody>
-                    </table>
-                );
-
+    const properties = settings.get('appointmentProperties');
+    // to do: use something better than the index i for the key?
+    const offers = data.offers
+        .filter((offer) => offer.slotData.some((sl) => sl.open))
+        .filter((a) => new Date(a.timestamp) > new Date())
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+        .map((offer, i) => {
+            const d = new Date(offer.timestamp);
+            const selected = toggleOffers.data.includes(offer.id);
+            let pref;
+            if (selected) pref = toggleOffers.data.indexOf(offer.id) + 1;
             return (
-                <F>
-                    <CardContent>
-                        <div className="kip-invitation-details">
-                            <ProviderDetails data={data.provider} />
-                            <p>
-                                <T t={t} k="appointments-notice" />
-                            </p>
-                            {offerDetails}
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button
-                            waiting={confirming}
-                            onClick={doConfirmOffers}
-                            disabled={
-                                confirming ||
-                                Object.keys(
-                                    toggleOffers.data.filter((id) =>
-                                        data.offers.find((of) => of.id === id)
-                                    )
-                                ).length === 0
-                            }
-                            type="success"
-                        >
-                            <T t={t} k="confirm-appointment" />
-                        </Button>
-                    </CardFooter>
-                </F>
+                <tr
+                    key={offer.id}
+                    className={classNames(`kip-pref-${pref}`, {
+                        'kip-selected': selected,
+                        'kip-failed': false,
+                    })}
+                    onClick={() => toggle(offer)}
+                >
+                    <td>{selected ? pref : '-'}</td>
+                    <td>
+                        {d.toLocaleString('de-DE', {
+                            month: '2-digit',
+                            day: '2-digit',
+                            year: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}
+                    </td>
+                    <td>{formatDuration(offer.duration, settings, t)}</td>
+                    <td>
+                        <PropertyTags appointment={offer} />
+                    </td>
+                </tr>
             );
-        },
-        [toggleOffers, confirmOffers, acceptedInvitation, userSecret]
-    )
-);
+        });
+
+    let offerDetails;
+
+    if (offers.length === 0)
+        offerDetails = (
+            <Message type="warning">
+                <T t={t} k="no-offers-anymore" />
+            </Message>
+        );
+    else
+        offerDetails = (
+            <table className="bulma-table bulma-is-striped bulma-is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            <T t={t} k="appointment-preference" />
+                        </th>
+                        <th>
+                            <T t={t} k="appointment-date" />
+                        </th>
+                        <th>
+                            <T t={t} k="appointment-duration" />
+                        </th>
+                        <th>
+                            <T t={t} k="appointment-vaccine" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>{offers}</tbody>
+            </table>
+        );
+
+    return (
+        <F>
+            <CardContent>
+                <div className="kip-invitation-details">
+                    <ProviderDetails data={data.provider} />
+                    <p>
+                        <T t={t} k="appointments-notice" />
+                    </p>
+                    {offerDetails}
+                </div>
+            </CardContent>
+            <CardFooter>
+                <Button
+                    waiting={confirming}
+                    onClick={doConfirmOffers}
+                    disabled={
+                        confirming ||
+                        Object.keys(
+                            toggleOffers.data.filter((id) =>
+                                data.offers.find((of) => of.id === id)
+                            )
+                        ).length === 0
+                    }
+                    type="success"
+                >
+                    <T t={t} k="confirm-appointment" />
+                </Button>
+            </CardFooter>
+        </F>
+    );
+};
 
 const filterInvitations = (invitation) => {
     if (invitation.offers === null) return false;
@@ -510,77 +354,71 @@ const filterInvitations = (invitation) => {
     return true;
 };
 
-const Appointments = withActions(
-    ({ settings, invitation, appointments, acceptedInvitation, tokenData }) => {
-        const [initialized, setInitialized] = useState(false);
+const Appointments = () => {
+    const user = useUser();
 
-        useEffect(() => {
-            if (initialized) return;
-            setInitialized(true);
-        });
+    const appointments = user.appointments().result().appointments;
 
-        const render = () => {
-            let invitations = [];
+    const render = () => {
+        let invitations = [];
 
-            if (appointments !== undefined && appointments.data !== null)
-                for (const appointment of appointments.data)
-                    invitations.push(appointment);
+        if (appointments !== undefined && appointments.data !== null)
+            for (const appointment of appointments.data)
+                invitations.push(appointment);
 
-            if (invitation !== undefined && invitation.data !== null)
-                for (const offer of invitation.data) {
-                    if (
-                        invitations.some(
-                            (inv) => inv.provider.name === offer.provider.name
-                        )
+        if (invitation !== undefined && invitation.data !== null)
+            for (const offer of invitation.data) {
+                if (
+                    invitations.some(
+                        (inv) => inv.provider.name === offer.provider.name
                     )
-                        continue;
-                    invitations.push(offer);
-                }
-
-            if (
-                acceptedInvitation !== undefined &&
-                acceptedInvitation.data !== null
-            ) {
-                const ai = invitations.find((inv) => {
-                    if (inv === null) return false;
-                    return inv.offers.some((offer) =>
-                        offer.slotData.some((sla) =>
-                            acceptedInvitation.data.offer.slotData.some(
-                                (slb) => slb.id === sla.id
-                            )
-                        )
-                    );
-                });
-                if (ai === undefined) return <InvitationDeleted />;
-                return <AcceptedInvitation offers={ai.offers} />;
+                )
+                    continue;
+                invitations.push(offer);
             }
 
-            // we only show relevant invitations
-            invitations = invitations.filter((inv) =>
-                filterInvitations(inv, acceptedInvitation)
-            );
+        if (
+            acceptedInvitation !== undefined &&
+            acceptedInvitation.data !== null
+        ) {
+            const ai = invitations.find((inv) => {
+                if (inv === null) return false;
+                return inv.offers.some((offer) =>
+                    offer.slotData.some((sla) =>
+                        acceptedInvitation.data.offer.slotData.some(
+                            (slb) => slb.id === sla.id
+                        )
+                    )
+                );
+            });
+            if (ai === undefined) return <InvitationDeleted />;
+            return <AcceptedInvitation offers={ai.offers} />;
+        }
 
-            if (invitations.length === 0)
-                return <NoInvitations tokenData={tokenData.data} />;
-
-            const details = invitations.map((data) => (
-                <InvitationDetails
-                    tokenData={tokenData}
-                    data={data}
-                    key={data.provider.signature}
-                />
-            ));
-
-            return <F>{details}</F>;
-        };
-        return (
-            <WithLoader
-                resources={[tokenData, invitation, appointments]}
-                renderLoaded={render}
-            />
+        // we only show relevant invitations
+        invitations = invitations.filter((inv) =>
+            filterInvitations(inv, acceptedInvitation)
         );
-    },
-    [tokenData, invitation, appointments, acceptedInvitation]
-);
+
+        if (invitations.length === 0)
+            return <NoInvitations tokenData={tokenData.data} />;
+
+        const details = invitations.map((data) => (
+            <InvitationDetails
+                tokenData={tokenData}
+                data={data}
+                key={data.provider.signature}
+            />
+        ));
+
+        return <F>{details}</F>;
+    };
+    return (
+        <WithLoader
+            resources={[user.appointments().result()]}
+            renderLoaded={render}
+        />
+    );
+};
 
 export default Appointments;

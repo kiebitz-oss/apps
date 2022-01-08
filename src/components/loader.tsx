@@ -4,6 +4,7 @@
 
 import React, { Component, ReactChild } from 'react';
 import { Message } from './message';
+import { Status } from 'vanellus';
 import { T } from './t';
 // @ts-ignore
 import t from './translations.yml';
@@ -35,7 +36,7 @@ export const RenderFailed = () => (
 
 function allAre(resources: Resource[], statuses: Array<string>) {
     for (const resource of resources) {
-        if (resource === undefined) return false;
+        if (resource === null) return false;
         let found = false;
         for (const status of statuses) {
             if (resource.status === status) {
@@ -50,21 +51,21 @@ function allAre(resources: Resource[], statuses: Array<string>) {
 
 function oneIs(resources: Resource[], status: string) {
     for (const resource of resources) {
-        if (resource !== undefined && resource.status === status) return true;
+        if (resource !== null && resource.status === status) return true;
     }
     return false;
 }
 
 function isFailed(resources: Resource[]) {
-    return oneIs(resources, 'failed');
+    return oneIs(resources, Status.Failed);
 }
 
 function isLoaded(resources: Resource[]) {
-    return allAre(resources, ['loaded', 'updating']);
+    return allAre(resources, [Status.Succeeded, Status.Updating]);
 }
 
 function isUpdating(resources: Resource[]) {
-    return oneIs(resources, 'updating');
+    return oneIs(resources, Status.Updating);
 }
 
 type WithLoaderProps = {

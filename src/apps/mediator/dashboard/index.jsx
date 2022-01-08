@@ -8,6 +8,7 @@ import Settings from './settings';
 import Providers from './providers';
 import Stats from './stats';
 
+import { useMediator, useSettings } from 'hooks';
 import {
     withSettings,
     withActions,
@@ -28,7 +29,9 @@ import { keyPairs, validKeyPairs } from '../actions';
 import t from './translations.yml';
 import './index.scss';
 
-const UploadKeyPairsModal = ({ keyPairsAction }) => {
+const UploadKeyPairsModal = () => {
+    const mediator = useMediator();
+
     const [invalidFile, setInvalidFile] = useState(false);
 
     const readFile = (e) => {
@@ -43,7 +46,7 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
                 json.provider === undefined
             )
                 setInvalidFile(true);
-            else keyPairsAction(json);
+            else mediator.keyPairs = json;
         };
 
         reader.readAsBinaryString(file);
@@ -85,109 +88,83 @@ const UploadKeyPairsModal = ({ keyPairsAction }) => {
     );
 };
 
-const Dashboard = withActions(
-    withSettings(
-        ({
-            route: {
-                handler: {
-                    props: { tab, action, secondaryAction, id },
-                },
-            },
-            settings,
-            keyPairs,
-            keyPairsAction,
-            validKeyPairs,
-            validKeyPairsAction,
-        }) => {
-            const [key, setKey] = useState(false);
-            const [validKey, setValidKey] = useState(false);
+const Dashboard = ({
+    route: {
+        handler: {
+            props: { tab, action, secondaryAction, id },
+        },
+    },
+}) => {
+    const settings = useSettings();
+    const mediator = useMediator();
 
-            useEffect(() => {
-                if (!key) {
-                    setKey(true);
-                    keyPairsAction();
-                }
-                if (!validKey && keyPairs !== undefined) {
-                    setValidKey(true);
-                    validKeyPairsAction(keyPairs);
-                }
-            });
+    let content, modal;
 
-            let content, modal;
+    if (mediator.keyPairs === null) {
+        modal = <UploadKeyPairsModal />;
+    }
 
-            if (keyPairs !== undefined && keyPairs.data === null) {
-                modal = <UploadKeyPairsModal keyPairsAction={keyPairsAction} />;
-            }
-
-            if (keyPairs !== undefined) {
-                switch (tab) {
-                    case 'settings':
-                        content = (
-                            <Settings
-                                action={action}
-                                secondaryAction={secondaryAction}
-                                id={id}
-                            />
-                        );
-                        break;
-                    case 'providers':
-                        content = (
-                            <Providers action={action} id={secondaryAction} />
-                        );
-                        break;
-                    case 'stats':
-                        content = (
-                            <Stats
-                                action={action}
-                                secondaryAction={secondaryAction}
-                                id={id}
-                            />
-                        );
-                        break;
-                }
-            }
-
-            let invalidKeyMessage;
-
-            if (validKeyPairs !== undefined && validKeyPairs.valid === false) {
-                invalidKeyMessage = (
-                    <Message type="danger">
-                        <T t={t} k="invalidKey" />
-                    </Message>
+    if (mediator.keyPairs !== null) {
+        switch (tab) {
+            case 'settings':
+                content = (
+                    <Settings
+                        action={action}
+                        secondaryAction={secondaryAction}
+                        id={id}
+                    />
                 );
-            }
-
-            return (
-                <CenteredCard size="fullwidth" tight>
-                    <CardHeader>
-                        <Tabs>
-                            <Tab
-                                active={tab === 'providers'}
-                                href="/mediator/providers"
-                            >
-                                <T t={t} k="providers.title" />
-                            </Tab>
-                            <Tab
-                                active={tab === 'stats'}
-                                href="/mediator/stats"
-                            >
-                                <T t={t} k="stats.title" />
-                            </Tab>
-                            <Tab
-                                active={tab === 'settings'}
-                                href="/mediator/settings"
-                            >
-                                <T t={t} k="settings.title" />
-                            </Tab>
-                        </Tabs>
-                    </CardHeader>
-                    {modal}
-                    {content}
-                </CenteredCard>
-            );
+                break;
+            case 'providers':
+                content = <Providers action={action} id={secondaryAction} />;
+                break;
+            case 'stats':
+                content = (
+                    <Stats
+                        action={action}
+                        secondaryAction={secondaryAction}
+                        id={id}
+                    />
+                );
+                break;
         }
-    ),
-    [keyPairs, validKeyPairs]
-);
+    }
+
+    let invalidKeyMessage;
+
+    // to do: implement validation flow
+    /*
+    if (mediator.validKeyPairs !== undefined && validKeyPairs.valid === false) {
+        invalidKeyMessage = (
+            <Message type="danger">
+                <T t={t} k="invalidKey" />
+            </Message>
+        );
+    }
+    */
+
+    return (
+        <CenteredCard size="fullwidth" tight>
+            <CardHeader>
+                <Tabs>
+                    <Tab
+                        active={tab === 'providers'}
+                        href="/mediator/providers"
+                    >
+                        <T t={t} k="providers.title" />
+                    </Tab>
+                    <Tab active={tab === 'stats'} href="/mediator/stats">
+                        <T t={t} k="stats.title" />
+                    </Tab>
+                    <Tab active={tab === 'settings'} href="/mediator/settings">
+                        <T t={t} k="settings.title" />
+                    </Tab>
+                </Tabs>
+            </CardHeader>
+            {modal}
+            {content}
+        </CenteredCard>
+    );
+};
 
 export default Dashboard;

@@ -17,12 +17,15 @@ import {
     A,
 } from 'components';
 import { userSecret } from 'apps/user/actions';
+import { useSettings, useUser } from 'hooks';
 import t from './translations.yml';
 import './store-secrets.scss';
 
-export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
+export const StoreOnline = ({ secret, embedded, hideNotice }) => {
     const [bookmarkModal, setBookmarkModal] = useState(false);
     const [copyModal, setCopyModal] = useState(false);
+    const settings = useSettings();
+    const user = useUser();
 
     let modal;
 
@@ -30,7 +33,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
         history.pushState(
             {},
             settings.t(t, 'store-secrets.restore.title'),
-            `/user/restore#${secret},v0.1`
+            `/user/restore#${user.secret}`
         );
         setBookmarkModal(true);
     };
@@ -50,7 +53,7 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
             </Modal>
         );
 
-    const chunks = secret.match(/.{1,4}/g);
+    const chunks = user.secret.match(/.{1,4}/g);
 
     const fragments = [];
     for (let i = 0; i < chunks.length; i++) {
@@ -103,65 +106,17 @@ export const StoreOnline = ({ settings, secret, embedded, hideNotice }) => {
     );
 };
 
-const StoreLocal = ({ data }) => {
-    const blob = new Blob([b642buf(data)], {
-        type: 'application/octet-stream',
-    });
-    const date = new Date().toLocaleDateString();
+export default ({ userSecret }) => {
     return (
         <F>
-            <p className="kip-secrets-notice">
-                <T t={t} k="store-secrets.local.text" />
-            </p>
-            <a
-                className="bulma-button"
-                download={`geheime-daten.kiebitz`}
-                href={URL.createObjectURL(blob)}
-            >
-                <T t={t} k="store-secrets.download" />
-            </a>
+            <CardContent className="kip-secrets">
+                <StoreOnline />
+            </CardContent>
+            <CardFooter>
+                <Button type="success" href={`/user/appointments`}>
+                    <T t={t} k="wizard.leave" />
+                </Button>
+            </CardFooter>
         </F>
     );
 };
-
-export default withActions(
-    withSettings(({ settings, userSecret }) => {
-        const [url, setUrl] = useState(null);
-        const [tab, setTab] = useState('online');
-
-        let content;
-
-        switch (tab) {
-            case 'online':
-                content = (
-                    <StoreOnline settings={settings} secret={userSecret.data} />
-                );
-                break;
-            case 'local':
-                content = <StoreLocal settings={settings} data={'data'} />;
-                break;
-        }
-
-        return (
-            <F>
-                <CardContent className="kip-secrets">{content}</CardContent>
-                <CardFooter>
-                    <Button type="success" href={`/user/appointments`}>
-                        <T t={t} k="wizard.leave" />
-                    </Button>
-                </CardFooter>
-            </F>
-        );
-    }),
-    [userSecret]
-);
-
-/*
-    <Switch
-        onChange={() =>
-            setTab(tab === 'online' ? 'local' : 'online')
-        }
-    >
-        <T t={t} k={`store-secrets.${tab}.title`} />
-    </Switch>
-*/

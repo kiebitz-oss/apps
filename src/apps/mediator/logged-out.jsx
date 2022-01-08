@@ -4,7 +4,6 @@
 
 import React from 'react';
 import {
-    withSettings,
     Message,
     CenteredCard,
     CardHeader,
@@ -14,31 +13,37 @@ import {
     A,
     T,
 } from 'components';
+import { useSettings } from 'hooks';
 import t from './translations.yml';
 import './logged-out.scss';
 
-export default withSettings(({ settings }) => (
-    <CenteredCard className="kip-logged-out">
-        <CardHeader>
-            <h1 className="bulma-subtitle">
-                <T t={t} k="logged-out.title" />
-            </h1>
-        </CardHeader>
-        <CardContent>
-            <Message type="success">
-                <T
-                    t={t}
-                    k="logged-out.notice"
-                    service={
-                        <strong key="service">{settings.get('title')}</strong>
-                    }
-                />
-            </Message>
-        </CardContent>
-        <CardFooter>
-            <Button href="/mediator">
-                <T t={t} k="logged-out.log-in-again" />
-            </Button>
-        </CardFooter>
-    </CenteredCard>
-));
+export default () => {
+    const settings = useSettings();
+    return (
+        <CenteredCard className="kip-logged-out">
+            <CardHeader>
+                <h1 className="bulma-subtitle">
+                    <T t={t} k="logged-out.title" />
+                </h1>
+            </CardHeader>
+            <CardContent>
+                <Message type="success">
+                    <T
+                        t={t}
+                        k="logged-out.notice"
+                        service={
+                            <strong key="service">
+                                {settings.get('title')}
+                            </strong>
+                        }
+                    />
+                </Message>
+            </CardContent>
+            <CardFooter>
+                <Button href="/mediator">
+                    <T t={t} k="logged-out.log-in-again" />
+                </Button>
+            </CardFooter>
+        </CenteredCard>
+    );
+};
