@@ -25,7 +25,7 @@ import t from './translations.yml';
 import './providers.scss';
 
 const sortProviderByDate = (a, b) => {
-    return new Date(b.entry.timestamp) - new Date(a.entry.timestamp);
+    return new Date(b.timestamp) - new Date(a.timestamp);
 };
 
 const Providers = ({ action, id }) => {
@@ -142,6 +142,8 @@ const Providers = ({ action, id }) => {
                     </Modal>
                 );
         }
+
+        console.log(providers);
 
         const providerItems = providers.data
             .sort(sortProviderByDate)

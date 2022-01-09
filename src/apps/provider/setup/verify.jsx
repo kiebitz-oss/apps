@@ -2,11 +2,8 @@
 // Copyright (C) 2021-2021 The Kiebitz Authors
 // README.md contains license information.
 
-import React, { useEffect, useRef, useState, Fragment as F } from 'react';
+import React, { useState } from 'react';
 import {
-    withSettings,
-    withActions,
-    withRouter,
     Modal,
     Message,
     CardContent,
@@ -18,27 +15,28 @@ import {
     A,
 } from 'components';
 import Wizard from './wizard';
+import { Status } from 'vanellus';
+import { useProvider, useRouter, useSettings } from 'hooks';
 import classNames from 'helpers/classnames';
-import { submitProviderData, providerData, keyPairs, keys } from '../actions';
 
 import t from './translations.yml';
 import './verify.scss';
 
-export const ProviderData = ({ providerData, changeHref, verified }) => {
+export const ProviderData = ({ changeHref, verified }) => {
+    const provider = useProvider({ name: 'main', attributes: ['data'] });
+
     let data;
     if (verified) {
-        if (providerData.data === null)
+        if (provider.data === null)
             return (
-                <F>
-                    <p>
-                        <T t={t} k="provider-data.not-verified-yet" />
-                    </p>
-                </F>
+                <p>
+                    <T t={t} k="provider-data.not-verified-yet" />
+                </p>
             );
-        data = providerData.data.signedData.json;
-    } else data = providerData.data.data;
+        data = provider.verifiedData;
+    } else data = provider.data;
     return (
-        <F>
+        <>
             <div
                 className={classNames('kip-provider-data', 'kip-is-box', {
                     'kip-is-verified': verified,
@@ -123,142 +121,97 @@ export const ProviderData = ({ providerData, changeHref, verified }) => {
                     <T t={t} k="provider-data.change" />
                 </A>
             </div>
-        </F>
+        </>
     );
 };
 
-/*
-Here the user has a chance to review all data that was entered before confirming
-the setup. Once the button gets clicked, the system generates the QR
-codes, encrypts the contact data and stores the settings in the storage backend.
-*/
-const Verify = withRouter(
-    withSettings(
-        withActions(
-            ({
-                router,
-                settings,
-                providerData,
-                submitProviderData,
-                submitProviderDataAction,
-                keyPairsAction,
-                keysAction,
-                keys,
-                keyPairs,
-                providerDataAction,
-            }) => {
-                const [initialized, setInitialized] = useState(false);
-                const [submitting, setSubmitting] = useState(false);
+const Verify = () => {
+    const router = useRouter();
+    const settings = useSettings();
+    const provider = useProvider();
 
-                useEffect(() => {
-                    if (initialized) return;
-                    providerDataAction();
-                    submitProviderDataAction.reset();
-                    keyPairsAction();
-                    keysAction();
-                    setInitialized(true);
-                });
+    const [submitting, setSubmitting] = useState(false);
+    const [response, setResponse] = useState(null);
 
-                const submit = () => {
-                    if (submitting) return;
+    const submit = async () => {
+        if (submitting) return;
 
-                    setSubmitting(true);
+        setSubmitting(true);
+        const response = await provider.storeData();
+        setSubmitting(false);
 
-                    submitProviderDataAction(
-                        providerData.data,
-                        keyPairs.data,
-                        keys.data
-                    ).then((pd) => {
-                        setSubmitting(false);
-                        if (pd.status === 'succeeded')
-                            router.navigateToUrl(
-                                '/provider/setup/store-secrets'
-                            );
-                    });
-                };
+        setResponse(response);
 
-                let failedMessage;
-                let failed;
+        if (response.status === Status.Succeeded)
+            router.navigateToUrl('/provider/setup/store-secrets');
+    };
 
-                if (
-                    submitProviderData !== undefined &&
-                    submitProviderData.status === 'failed'
-                ) {
-                    failed = true;
-                    if (
-                        submitProviderData.error.error !== undefined &&
-                        submitProviderData.error.error.code === 401
-                    ) {
-                        failedMessage = (
-                            <Message type="danger">
-                                <T t={t} k="wizard.failed.invalid-code" />
-                            </Message>
-                        );
-                    }
-                }
+    let failedMessage;
+    let failed;
 
-                if (failed && !failedMessage)
-                    failedMessage = (
-                        <Message type="danger">
-                            <T t={t} k="wizard.failed.notice" />
-                        </Message>
-                    );
+    if (response && response.status === Status.Failed) {
+        console.log(response);
+        failed = true;
+        if (
+            response.error.error !== undefined &&
+            response.error.error.code === 401
+        ) {
+            failedMessage = (
+                <Message type="danger">
+                    <T t={t} k="wizard.failed.invalid-code" />
+                </Message>
+            );
+        }
+    }
 
-                const render = () => (
-                    <React.Fragment>
-                        <CardContent>
-                            {failedMessage}
-                            <p className="kip-verify-notice">
-                                <T
-                                    t={t}
-                                    k="verify.text"
-                                    link={
-                                        <A
-                                            key="letUsKnow"
-                                            external
-                                            href={settings.get('supportEmail')}
-                                        >
-                                            <T
-                                                t={t}
-                                                k="wizard.letUsKnow"
-                                                key="letUsKnow"
-                                            />
-                                        </A>
-                                    }
-                                />
-                            </p>
-                            <ProviderData providerData={providerData || {}} />
-                        </CardContent>
-                        <CardFooter>
-                            <Button
-                                type={failed ? 'danger' : 'success'}
-                                disabled={submitting}
-                                onClick={submit}
+    if (failed && !failedMessage)
+        failedMessage = (
+            <Message type="danger">
+                <T t={t} k="wizard.failed.notice" />
+            </Message>
+        );
+
+    return (
+        <>
+            <CardContent>
+                {failedMessage}
+                <p className="kip-verify-notice">
+                    <T
+                        t={t}
+                        k="verify.text"
+                        link={
+                            <A
+                                key="letUsKnow"
+                                external
+                                href={settings.get('supportEmail')}
                             >
-                                <T
-                                    t={t}
-                                    k={
-                                        failed
-                                            ? 'wizard.failed.title'
-                                            : submitting
-                                            ? 'wizard.please-wait'
-                                            : 'wizard.continue'
-                                    }
-                                />
-                            </Button>
-                        </CardFooter>
-                    </React.Fragment>
-                );
-                return (
-                    <WithLoader
-                        resources={[providerData, keyPairs]}
-                        renderLoaded={render}
+                                <T t={t} k="wizard.letUsKnow" key="letUsKnow" />
+                            </A>
+                        }
                     />
-                );
-            },
-            [submitProviderData, providerData, keys, keyPairs]
-        )
-    )
-);
+                </p>
+                <ProviderData />
+            </CardContent>
+            <CardFooter>
+                <Button
+                    type={failed ? 'danger' : 'success'}
+                    disabled={submitting}
+                    onClick={submit}
+                >
+                    <T
+                        t={t}
+                        k={
+                            failed
+                                ? 'wizard.failed.title'
+                                : submitting
+                                ? 'wizard.please-wait'
+                                : 'wizard.continue'
+                        }
+                    />
+                </Button>
+            </CardFooter>
+        </>
+    );
+};
 
 export default Verify;

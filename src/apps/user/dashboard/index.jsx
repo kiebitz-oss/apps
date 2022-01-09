@@ -52,13 +52,11 @@ export default withRouter(
                 const toDate = new Date();
                 toDate.setUTCDate(toDate.getUTCDate() + 1);
 
-                const appointments = await user
-                    .appointments()
-                    .get({
-                        zipCode: '10707',
-                        from: fromDate.toISOString(),
-                        to: toDate.toISOString(),
-                    });
+                const appointments = await user.appointments().get({
+                    zipCode: '10707',
+                    from: fromDate.toISOString(),
+                    to: toDate.toISOString(),
+                });
 
                 console.log(appointments);
             });

@@ -13,10 +13,10 @@ const Setup = ({ route }) => {
     const provider = useProvider();
     const router = useRouter();
 
-    useEffectOnce(() => {
-        if (provider.data !== null && providerData.submittedAt)
+    useEffectOnce(async () => {
+        if (provider.data !== null && provider.data.submittedAt)
             router.navigateToUrl('/provider/schedule');
-
+        if (provider.keyPairs === null) await provider.initialize();
         if (Object.keys(route.hashParams).length > 0)
             provider.data = route.hashParams; // pre-filled data
     });
