@@ -5,7 +5,6 @@
 import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
-import { keys } from 'apps/provider/actions';
 import { formatDuration, formatDate, formatTime } from 'helpers/time';
 import classNames from 'helpers/classnames';
 import { useUser, useSettings } from 'hooks';

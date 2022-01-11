@@ -5,8 +5,6 @@
 import React from 'react';
 import {
     BarChart,
-    withActions,
-    withSettings,
     A,
     Message,
     WithLoader,
@@ -15,8 +13,8 @@ import {
     CardContent,
     T,
 } from 'components';
-import { getStats } from '../actions';
 import SummaryBox from './summary-box';
+import { useMediator, useEffectOnce } from 'hooks';
 import t from './translations.yml';
 import './stats.scss';
 
@@ -161,14 +159,9 @@ const prepareHourlyStats = (hourlyStats, settings) => {
     };
 };
 
-class Stats extends React.Component {
-    constructor(props) {
-        super(props);
-        this.fetchStatistics();
-    }
-
-    fetchStatistics() {
-        const { getStatsAction } = this.props;
+const Stats = () => {
+    const mediator = useMediator();
+    useEffectOnce(() => {
         const params = {
             filter: { zipCode: null },
             id: 'queues',
@@ -176,12 +169,12 @@ class Stats extends React.Component {
             from: todayPlusN(-1).toISOString(),
             to: todayPlusN(1).toISOString(),
         };
-        getStatsAction(params);
-    }
+        mediator.stats().get(params);
+    });
 
-    renderLoaded = () => {
-        const { getStats, settings } = this.props;
-        const summary = prepareOverallStats(getStats);
+    const renderLoaded = () => {
+        const stats = mediator.stats().result();
+        const summary = prepareOverallStats(stats);
         let content;
         if (summary.show === 0) {
             content = (
@@ -237,11 +230,8 @@ class Stats extends React.Component {
                             </CardHeader>
                             <CardContent className="kip-cm-overview">
                                 <BarChart
-                                    hash={getStats.hash}
-                                    data={prepareHourlyStats(
-                                        getStats,
-                                        settings
-                                    )}
+                                    hash={stats.hash}
+                                    data={prepareHourlyStats(stats)}
                                 />
                             </CardContent>
                         </Card>
@@ -258,15 +248,12 @@ class Stats extends React.Component {
         );
     };
 
-    render() {
-        const { getStats } = this.props;
-        return (
-            <WithLoader
-                resources={[getStats]}
-                renderLoaded={this.renderLoaded}
-            />
-        );
-    }
-}
+    return (
+        <WithLoader
+            resources={[mediator.stats().result()]}
+            renderLoaded={renderLoaded}
+        />
+    );
+};
 
-export default withActions(withSettings(Stats), [getStats], []);
+export default Stats;

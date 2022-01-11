@@ -6,7 +6,6 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 
 import Settings from './settings';
 import Appointments from './appointments';
-import { keys } from 'apps/provider/actions';
 import { useUser, useEffectOnce } from 'hooks';
 
 import {
@@ -15,8 +14,6 @@ import {
     CardContent,
     CardFooter,
     withRouter,
-    withSettings,
-    withActions,
     withTimer,
     Icon,
     Tabs,
@@ -38,7 +35,6 @@ export default withRouter(
             },
             settings,
             timer,
-            keys,
             router,
         }) => {
             const [tv, setTv] = useState(-2);

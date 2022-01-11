@@ -3,7 +3,6 @@
 // README.md contains license information.
 
 import React, { useState, useEffect, Fragment as F } from 'react';
-import { keyPairs, testQueues } from '../actions';
 import {
     withRouter,
     withSettings,
@@ -26,81 +25,74 @@ import t from './translations.yml';
 import './settings.scss';
 
 const TestQueuesModal = withRouter(
-    withActions(
-        ({ keyPairs, router, testQueues, testQueuesAction }) => {
-            const [initialized, setInitialized] = useState(false);
+    withActions(({ keyPairs, router, testQueues, testQueuesAction }) => {
+        const [initialized, setInitialized] = useState(false);
 
-            useEffect(() => {
-                if (initialized) return;
-                setInitialized(true);
-                testQueuesAction(keyPairs);
-            });
+        useEffect(() => {
+            if (initialized) return;
+            setInitialized(true);
+            testQueuesAction(keyPairs);
+        });
 
-            const readFile = (e) => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
+        const readFile = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
 
-                reader.onload = function (e) {
-                    const json = JSON.parse(e.target.result);
-                    testQueuesAction(keyPairs, json);
-                };
-
-                reader.readAsBinaryString(file);
+            reader.onload = function (e) {
+                const json = JSON.parse(e.target.result);
+                testQueuesAction(keyPairs, json);
             };
 
-            let notice;
+            reader.readAsBinaryString(file);
+        };
 
-            const { status } = testQueues;
+        let notice;
 
-            if (status === 'invalid')
-                notice = (
-                    <Message type="danger">
-                        <T t={t} k="upload-queues.invalid-file" />
-                    </Message>
-                );
-            else if (status === 'valid')
-                notice = (
-                    <Message type="success">
-                        <T t={t} k="upload-queues.valid-file" />
-                    </Message>
-                );
-            else notice = <T t={t} k="upload-queues.notice" />;
+        const { status } = testQueues;
 
-            const footer = (
-                <Form>
-                    <FieldSet>
-                        <label
-                            htmlFor="file-upload"
-                            className="custom-file-upload"
-                        >
-                            <T t={t} k="upload-queues.input" />
-                            <input
-                                id="file-upload"
-                                disabled={
-                                    keyPairs === undefined ||
-                                    keyPairs.data === null
-                                }
-                                className="bulma-input"
-                                type="file"
-                                onChange={(e) => readFile(e)}
-                            />
-                        </label>
-                    </FieldSet>
-                </Form>
+        if (status === 'invalid')
+            notice = (
+                <Message type="danger">
+                    <T t={t} k="upload-queues.invalid-file" />
+                </Message>
             );
-            return (
-                <Modal
-                    footer={footer}
-                    onClose={() => router.navigateToUrl('/mediator/settings')}
-                    className="kip-upload-file"
-                    title={<T t={t} k="upload-queues.title" />}
-                >
-                    {notice}
-                </Modal>
+        else if (status === 'valid')
+            notice = (
+                <Message type="success">
+                    <T t={t} k="upload-queues.valid-file" />
+                </Message>
             );
-        },
-        [testQueues]
-    )
+        else notice = <T t={t} k="upload-queues.notice" />;
+
+        const footer = (
+            <Form>
+                <FieldSet>
+                    <label htmlFor="file-upload" className="custom-file-upload">
+                        <T t={t} k="upload-queues.input" />
+                        <input
+                            id="file-upload"
+                            disabled={
+                                keyPairs === undefined || keyPairs.data === null
+                            }
+                            className="bulma-input"
+                            type="file"
+                            onChange={(e) => readFile(e)}
+                        />
+                    </label>
+                </FieldSet>
+            </Form>
+        );
+        return (
+            <Modal
+                footer={footer}
+                onClose={() => router.navigateToUrl('/mediator/settings')}
+                className="kip-upload-file"
+                title={<T t={t} k="upload-queues.title" />}
+            >
+                {notice}
+            </Modal>
+        );
+    }, [])
 );
 
 const BaseSettings = ({
@@ -196,8 +188,6 @@ const BaseSettings = ({
     );
 };
 
-const Settings = withActions(withRouter(withSettings(BaseSettings)), [
-    keyPairs,
-]);
+const Settings = withActions(withRouter(withSettings(BaseSettings)), []);
 
 export default Settings;

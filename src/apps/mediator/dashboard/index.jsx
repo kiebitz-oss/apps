@@ -10,8 +10,6 @@ import Stats from './stats';
 
 import { useMediator, useSettings } from 'hooks';
 import {
-    withSettings,
-    withActions,
     Tabs,
     Tab,
     T,
@@ -25,7 +23,6 @@ import {
     CardHeader,
     CardContent,
 } from 'components';
-import { keyPairs, validKeyPairs } from '../actions';
 import t from './translations.yml';
 import './index.scss';
 

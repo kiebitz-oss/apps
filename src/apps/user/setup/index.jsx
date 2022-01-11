@@ -4,7 +4,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { withActions, withRouter } from 'components';
-import { contactData, queueData, tokenData } from 'apps/user/actions';
 import Wizard from './wizard';
 
 import './index.scss';
@@ -44,7 +43,7 @@ const Setup = withRouter(
                 </React.Fragment>
             );
         },
-        [contactData, queueData, tokenData]
+        []
     )
 );
 

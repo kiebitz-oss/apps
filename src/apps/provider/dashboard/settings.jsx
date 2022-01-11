@@ -28,14 +28,6 @@ import { ProviderData } from '../setup/verify';
 import { BackupDataLink } from '../setup/store-secrets';
 import { DataSecret } from '../setup/store-secrets';
 import { str2ab } from 'helpers/conversion';
-import {
-    keys,
-    keyPairs,
-    backupData,
-    providerData,
-    providerSecret,
-    verifiedProviderData,
-} from '../actions';
 import t from './translations.yml';
 import './settings.scss';
 import { copyToClipboard } from '../../../helpers/clipboard';
@@ -317,14 +309,7 @@ const Settings = withActions(
             }
         )
     ),
-    [
-        keys,
-        providerData,
-        backupData,
-        keyPairs,
-        verifiedProviderData,
-        providerSecret,
-    ]
+    []
 );
 
 export default Settings;

@@ -21,7 +21,6 @@ import {
     A,
     T,
 } from 'components';
-import { restoreFromBackup } from 'apps/provider/actions';
 import t from './translations.yml';
 import Form from 'helpers/form';
 import './restore.scss';
@@ -241,7 +240,7 @@ export default withForm(
                 }
             )
         ),
-        [restoreFromBackup]
+        []
     ),
     LoadBackupForm,
     'form'

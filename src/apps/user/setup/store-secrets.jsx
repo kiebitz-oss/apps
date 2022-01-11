@@ -6,8 +6,6 @@ import React, { useEffect, useState, Fragment as F } from 'react';
 import { b642buf } from 'helpers/conversion';
 import {
     Modal,
-    withActions,
-    withSettings,
     Message,
     Switch,
     CardContent,
@@ -16,7 +14,6 @@ import {
     T,
     A,
 } from 'components';
-import { userSecret } from 'apps/user/actions';
 import { useSettings, useUser } from 'hooks';
 import t from './translations.yml';
 import './store-secrets.scss';

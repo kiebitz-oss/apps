@@ -12,23 +12,12 @@ import {
     Settings,
     ExternalSettings,
 } from 'components';
-import Backend, { LocalStorageStore, SessionStorageStore } from 'backend';
 
 import 'scss/main.scss';
 
 const appElement = document.getElementById('app');
 
 export const render = (settings) => {
-    if (settings.get('backend') === undefined) {
-        const backend = new Backend(
-            settings,
-            new LocalStorageStore(),
-            new SessionStorageStore()
-        );
-
-        settings.set('backend', backend);
-    }
-
     // Set the lang attribute on <html> for accessibility
     document.documentElement.setAttribute('lang', settings.lang());
     settings.get('router').init(settings.get('routes'));

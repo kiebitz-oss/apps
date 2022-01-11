@@ -143,8 +143,6 @@ const Providers = ({ action, id }) => {
                 );
         }
 
-        console.log(providers);
-
         const providerItems = providers.data
             .sort(sortProviderByDate)
             .map((provider) => (

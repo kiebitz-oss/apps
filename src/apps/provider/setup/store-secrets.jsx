@@ -17,7 +17,6 @@ import {
     T,
     A,
 } from 'components';
-import { providerSecret, providerData, keyPairs, backupData } from '../actions';
 import t from './translations.yml';
 import './store-secrets.scss';
 
@@ -186,7 +185,7 @@ export const BackupDataLink = withSettings(
                 </Message>
             );
         },
-        [providerSecret, backupData, keyPairs, providerData]
+        []
     )
 );
 
@@ -234,7 +233,7 @@ export default withActions(
             </React.Fragment>
         );
     }),
-    [providerSecret]
+    []
 );
 
 /*

@@ -4,7 +4,6 @@
 
 import React, { useState, Fragment as F } from 'react';
 import { StoreOnline } from 'apps/user/setup/store-secrets';
-import { userSecret, backupData } from 'apps/user/actions';
 import './settings.scss';
 import t from './translations.yml';
 
@@ -106,7 +105,7 @@ const Settings = withActions(
             }
         )
     ),
-    [userSecret, backupData]
+    []
 );
 
 export default Settings;
