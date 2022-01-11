@@ -7,7 +7,13 @@ import { buf2hex, b642buf } from 'helpers/conversion';
 import classNames from 'helpers/classnames';
 import { urlEncode } from 'helpers/data';
 import { formatDate, formatTime, getMonday } from 'helpers/time';
-import { useProvider, useInterval, useEffectOnce } from 'hooks';
+import {
+    useProvider,
+    useInterval,
+    useEffectOnce,
+    useRouter,
+    useSettings,
+} from 'hooks';
 import Form from 'helpers/form';
 import {
     withForm,
@@ -172,6 +178,7 @@ const PropertyTags = ({ appointment, verbose, tiny }) => {
 };
 
 const PropertyTag = ({ property, tiny, verbose }) => {
+    const settings = useSettings();
     const lang = settings.get('lang');
     const properties = settings.get('appointmentProperties');
     for (const [category, values] of Object.entries(properties)) {
@@ -203,6 +210,7 @@ const PropertyTag = ({ property, tiny, verbose }) => {
 };
 
 const AppointmentCard = ({ action, secondaryAction, id, appointment, n }) => {
+    const router = useRouter();
     const p = Math.floor((appointment.duration / 60) * 100);
     const w = Math.floor(100 / (1 + appointment.maxOverlap));
     const y = Math.floor(
@@ -339,6 +347,8 @@ const HourRow = ({
             });
     }
 
+    const router = useRouter();
+
     const showNewAppointment = () => {
         const query = urlEncode({ timestamp: ots.toISOString() });
         router.navigateToUrl(`/provider/schedule/${action}/new#${query}`);
@@ -437,7 +447,6 @@ const DayLabelColumn = ({ fromHour, toHour }) => {
 
 const WeekCalendar = ({
     action,
-    router,
     secondaryAction,
     id,
     startDate,
@@ -445,6 +454,7 @@ const WeekCalendar = ({
 }) => {
     let fromHour;
     let toHour;
+    const router = useRouter();
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 7);
     appointments.forEach((app) => {
@@ -628,6 +638,8 @@ class AppointmentForm extends Form {
 const NewAppointment = withForm(
     ({ route, action, id, form: { valid, error, data, set, reset } }) => {
         let actionUrl = '';
+        const settings = useSettings();
+        const router = useRouter();
         if (action !== undefined) actionUrl = `/${action}`;
         if (id !== undefined) actionUrl += `/view/${id}`;
         const [saving, setSaving] = useState(false);
@@ -845,13 +857,8 @@ const NewAppointment = withForm(
 
 const Schedule = ({ action, secondaryAction, id, route }) => {
     const [view, setView] = useState('calendar');
-
-    useEffectOnce(() => {
-        // we load all the necessary data
-        keyPairsAction();
-        openAppointmentsAction();
-        keysAction();
-    });
+    const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleString());
+    const provider = useProvider();
 
     let startDate;
 
@@ -865,7 +872,18 @@ const Schedule = ({ action, secondaryAction, id, route }) => {
         }
     }
 
-    if (startDate === undefined) startDate = getMonday(new Date());
+    if (startDate === undefined)
+        startDate = getMonday(new Date().setHours(0, 0, 0, 0));
+
+    useEffectOnce(async () => {
+        const endDate = new Date(startDate);
+        endDate.setUTCDate(endDate.getUTCDate() + 7);
+        // we load all the necessary data
+        const response = await provider
+            .appointments()
+            .get({ from: startDate.toISOString(), to: endDate.toISOString() });
+        console.log(response);
+    });
 
     if (action === undefined) {
         action = formatDate(startDate);
@@ -875,8 +893,8 @@ const Schedule = ({ action, secondaryAction, id, route }) => {
 
     const render = () => {
         let newAppointmentModal;
-
         let content;
+        const appointments = provider.appointments().result().data;
         switch (view) {
             case 'calendar':
                 content = (
@@ -885,7 +903,7 @@ const Schedule = ({ action, secondaryAction, id, route }) => {
                         action={action}
                         secondaryAction={secondaryAction}
                         id={id}
-                        appointments={openAppointments.enrichedData}
+                        appointments={appointments}
                     />
                 );
                 break;
@@ -896,7 +914,7 @@ const Schedule = ({ action, secondaryAction, id, route }) => {
                         id={id}
                         action={action}
                         secondaryAction={secondaryAction}
-                        appointments={openAppointments.enrichedData}
+                        appointments={appointments}
                     />
                 );
                 break;
@@ -906,7 +924,7 @@ const Schedule = ({ action, secondaryAction, id, route }) => {
             newAppointmentModal = (
                 <NewAppointment
                     route={route}
-                    appointments={openAppointments.data}
+                    appointments={appointments}
                     action={action}
                     id={id}
                 />
@@ -956,7 +974,7 @@ const Schedule = ({ action, secondaryAction, id, route }) => {
     // we wait until all resources have been loaded before we display the form
     return (
         <WithLoader
-            resources={[keyPairs, openAppointments]}
+            resources={[provider.appointments().result()]}
             renderLoaded={render}
         />
     );
