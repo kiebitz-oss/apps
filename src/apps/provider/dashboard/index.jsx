@@ -37,7 +37,7 @@ const Dashboard = ({
     const provider = useProvider();
 
     useInterval(async () => {
-        await provider.checkData();
+        const response = await provider.checkData().get();
     }, 10000);
 
     let content;

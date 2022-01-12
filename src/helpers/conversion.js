@@ -137,3 +137,7 @@ export function b642buf(base64) {
     }
     return bytes.buffer;
 }
+
+export function hexId(id) {
+    return buf2hex(b642buf(id));
+}
